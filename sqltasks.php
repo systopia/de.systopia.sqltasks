@@ -1,4 +1,17 @@
 <?php
+/*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
 
 require_once 'sqltasks.civix.php';
 use CRM_Sqltasks_ExtensionUtil as E;
@@ -27,6 +40,11 @@ function sqltasks_civicrm_xmlMenu(&$files) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
 function sqltasks_civicrm_install() {
+  // create civicrm_sqltasks table
+  $config = CRM_Core_Config::singleton();
+  $sqlfile = dirname(__FILE__) . '/sql/civicrm_sqltasks.sql';
+  CRM_Utils_File::sourceSQLFile($config->dsn, $sqlfile, NULL, false);
+
   _sqltasks_civix_civicrm_install();
 }
 

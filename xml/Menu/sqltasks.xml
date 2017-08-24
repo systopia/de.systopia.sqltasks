@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/sqltasks/manage</path>
+    <page_callback>CRM_Sqltasks_Page_Manager</page_callback>
+    <title>Manager</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/sqltasks/configure</path>
+    <page_callback>CRM_Sqltasks_Form_Configure</page_callback>
+    <title>Configure</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
