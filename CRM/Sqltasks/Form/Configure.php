@@ -35,8 +35,10 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       throw new Exception("Invalid task id (tid) given.", 1);
     } elseif ($task_id) {
       $this->task = CRM_Sqltasks_Task::getTask($task_id);
+      CRM_Utils_System::setTitle(E::ts("Configure SQL Task '%1'", array(1 => $this->task->getAttribute('name'))));
     } else {
       $this->task = new CRM_Sqltasks_Task($task_id);
+      CRM_Utils_System::setTitle(E::ts("Create new SQL Task"));
     }
 
     // add some hidden attributes
@@ -83,7 +85,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       FALSE
     );
 
-
+    error_log($task_id);
     $this->addButtons(array(
       array(
         'type' => 'submit',

@@ -60,8 +60,39 @@ class CRM_Sqltasks_Task {
   /**
    * get a single attribute from the task
    */
+  public function getID() {
+    return $this->task_id;
+  }
+
+  /**
+   * get configuration
+   */
+  public function getConfiguration() {
+    return $this->config;
+  }
+
+  /**
+   * get a single attribute from the task
+   */
   public function getAttribute($attribute_name) {
     return CRM_Utils_Array::value($attribute_name, $this->attributes);
+  }
+
+  /**
+   * set a single attribute
+   */
+  public function setAttribute($attribute_name, $value, $writeTrough = FALSE) {
+    if (isset(self::$main_attributes[$attribute_name])) {
+      $this->attributes[$attribute_name] = $value;
+      if ($writeTrough && $this->task_id) {
+        CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks`
+                                    SET `{$attribute_name}` = %1
+                                    WHERE id = {$this->task_id}",
+                                    array(1 => array($value, self::$main_attributes[$attribute_name])));
+      }
+    } else {
+      throw new Exception("Attribute '{$attribute_name}' unknown", 1);
+    }
   }
 
   /**
@@ -104,12 +135,20 @@ class CRM_Sqltasks_Task {
       $values_sql  = implode(',', $values);
       $sql = "INSERT INTO `civicrm_sqltasks` ({$columns_sql}) VALUES ({$values_sql});";
     }
-    error_log("STORE QUERY: " . $sql);
-    error_log("STORE PARAM: " . json_encode($params));
+    // error_log("STORE QUERY: " . $sql);
+    // error_log("STORE PARAM: " . json_encode($params));
     CRM_Core_DAO::executeQuery($sql, $params);
   }
 
 
+  /**
+   * delete a task with the given ID
+   */
+  public static function delete($tid) {
+    $tid = (int) $tid;
+    if (empty($tid)) return NULL;
+    CRM_Core_DAO::executeQuery("DELETE FROM civicrm_sqltasks WHERE id = {$tid}");
+  }
 
   /**
    * Get a list of all tasks
@@ -129,13 +168,32 @@ class CRM_Sqltasks_Task {
    * Load a list of tasks based on the data yielded by the given SQL query
    */
   public static function getTasks($sql_query) {
+    $tasks = array();
+    $task_search = CRM_Core_DAO::executeQuery($sql_query);
+    while ($task_search->fetch()) {
+      $data = array();
+      foreach (self::$main_attributes as $attribute_name => $attribute_type) {
+        $data[$attribute_name] = $task_search->$attribute_name;
+      }
+      if (isset($task_search->config)) {
+        $config = json_decode($task_search->config, TRUE);
+        foreach ($config as $key => $value) {
+          $data[$key] = $value;
+        }
+      }
+      $tasks[] = new CRM_Sqltasks_Task($task_search->id, $data);
+    }
 
+    return $tasks;
   }
 
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
    */
   public static function getTask($tid) {
-
+    $tid = (int) $tid;
+    if (empty($tid)) return NULL;
+    $tasks = self::getTasks("SELECT * FROM `civicrm_sqltasks` WHERE id = {$tid}");
+    return reset($tasks);
   }
 }

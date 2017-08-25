@@ -52,3 +52,21 @@
 <div class="crm-submit-buttons">
 {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+
+
+<!-- move to the right spot -->
+{literal}
+<script type="text/javascript">
+
+function decodeHTML(selector) {
+  var raw = cj(selector).val();
+  var decoded = cj('<div/>').html(raw).text();
+  cj(selector).val(decoded);
+}
+
+// decode HTML entities
+decodeHTML("#main_sql");
+decodeHTML("#post_sql");
+
+</script>
+{/literal}
