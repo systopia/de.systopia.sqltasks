@@ -27,7 +27,7 @@ tr.sqltasks-plugin-disabled {
   {else}
     {ts}It looks like you're new here. This is the control center for all you SQL based scheduled tasks, but there is no task configured yet.{/ts}
   {/if}
-  <a href="{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=new"}">{ts}Add a new one.{/ts}</a>
+  <a href="{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=0"}">{ts}Add a new one.{/ts}</a>
 </div>
 <table class="display" id="option11">
   <thead>

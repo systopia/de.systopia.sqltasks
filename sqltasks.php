@@ -44,6 +44,7 @@ function sqltasks_civicrm_install() {
   $config = CRM_Core_Config::singleton();
   $sqlfile = dirname(__FILE__) . '/sql/civicrm_sqltasks.sql';
   CRM_Utils_File::sourceSQLFile($config->dsn, $sqlfile, NULL, false);
+  // TODO: rebuild log tables
 
   _sqltasks_civix_civicrm_install();
 }

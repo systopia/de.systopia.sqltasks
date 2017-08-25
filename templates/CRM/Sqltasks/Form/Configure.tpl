@@ -12,6 +12,8 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+{$form.task_id.html}{$form.enabled.html}{$form.weight.html}
+
 <div class="sql-tasks">
   <div class="crm-section">
     <div class="label">{$form.name.label}</div><!--a onclick='CRM.help("{ts domain="de.systopia.sqlsearch"}Instructions{/ts}", {literal}{"id":"id-token-help","file":"CRM\/moregreetings\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqlsearch"}Help{/ts}" class="helpicon">&nbsp;</a-->
@@ -25,15 +27,11 @@
     <div class="clear"></div>
   </div>
 
-  <div class="crm-section">
-    <div class="label">{$form.pre_sql.label}</div>
-    <div class="content">{$form.pre_sql.html}</div>
-    <div class="clear"></div>
-  </div>
+  <h3>{ts}Queries{/ts}</h3>
 
   <div class="crm-section">
-    <div class="label">{$form.select_sql.label}</div>
-    <div class="content">{$form.select_sql.html}</div>
+    <div class="label">{$form.main_sql.label}</div>
+    <div class="content">{$form.main_sql.html}</div>
     <div class="clear"></div>
   </div>
 
@@ -43,9 +41,9 @@
     <div class="clear"></div>
   </div>
 
-  <hr/>
+  <h3>{ts}Execution{/ts}</h3>
 
-
+  <h3>{ts}Actions{/ts}</h3>
 
 </div>
 

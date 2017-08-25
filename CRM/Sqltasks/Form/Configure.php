@@ -22,7 +22,27 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
 
+  /** stores the task */
+  protected $task = NULL;
+
+  /**
+   * Compile config form
+   */
   public function buildQuickForm() {
+    // get the ID
+    $task_id = CRM_Utils_Request::retrieve('tid', 'Integer');
+    if (!is_numeric($task_id)) {
+      throw new Exception("Invalid task id (tid) given.", 1);
+    } elseif ($task_id) {
+      $this->task = CRM_Sqltasks_Task::getTask($task_id);
+    } else {
+      $this->task = new CRM_Sqltasks_Task($task_id);
+    }
+
+    // add some hidden attributes
+    $this->add('hidden', 'tid',     $task_id);
+    $this->add('hidden', 'enabled', $this->task->getAttribute('enabled'));
+    $this->add('hidden', 'weight',  $this->task->getAttribute('weight'));
 
     // compile the form
     $this->add(
@@ -34,17 +54,9 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     );
 
     $this->add(
-      'text',
+      'textarea',
       'description',
       E::ts('Description'),
-      array('class' => 'huge'),
-      FALSE
-    );
-
-    $this->add(
-      'textarea',
-      'pre_sql',
-      E::ts('Pre-SQL'),
       array('rows' => 8,
             'cols' => 60,
       ),
@@ -53,18 +65,18 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
 
     $this->add(
       'textarea',
-      'select_sql',
-      E::ts('Select-SQL'),
+      'main_sql',
+      E::ts('Main Script (SQL)'),
       array('rows' => 8,
             'cols' => 60,
       ),
-      FALSE
+      TRUE
     );
 
     $this->add(
       'textarea',
       'post_sql',
-      E::ts('Post-SQL'),
+      E::ts('Cleanup Script (SQL)'),
       array('rows' => 8,
             'cols' => 60,
       ),
@@ -75,7 +87,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $this->addButtons(array(
       array(
         'type' => 'submit',
-        'name' => E::ts('Save'),
+        'name' => $task_id ? E::ts('Save') : E::ts('Create'),
         'isDefault' => TRUE,
       ),
     ));
@@ -83,13 +95,48 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     parent::buildQuickForm();
   }
 
+  /**
+   * set the default (=current) values in the form
+   */
+  public function setDefaultValues() {
+    $current_values = array();
+    $current_values['name'] = $this->task->getAttribute('name');
+    $current_values['description'] = $this->task->getAttribute('description');
+    $current_values['main_sql'] = $this->task->getAttribute('main_sql');
+    $current_values['post_sql'] = $this->task->getAttribute('post_sql');
+
+    $configuration = $this->task->getConfiguration();
+    foreach ($configuration as $key => $value) {
+      $current_values[$key] = $value;
+    }
+    return $current_values;
+  }
+
+
+  /**
+   * store the data
+   */
   public function postProcess() {
     $values = $this->exportValues();
 
+    // clean out some stuff
+    $data = $values;
+    if (isset($data['_qf_Configure_submit'])) unset($data['_qf_Configure_submit']);
+    if (isset($data['_qf_default']))          unset($data['_qf_default']);
+    if (isset($data['qfKey']))                unset($data['qfKey']);
+    if (isset($data['entryURL']))             unset($data['entryURL']);
+    if (isset($data['tid']))                  unset($data['tid']);
 
-    CRM_Core_Session::setStatus(E::ts('You picked color "%1"', array(
-      1 => $options[$values['favorite_color']],
-    )));
+    // write to DB
+    $task_id = CRM_Utils_Array::value('tid', $values);
+    $task = new CRM_Sqltasks_Task($task_id, $data);
+    $task->store();
+
+    // CRM_Core_Session::setStatus(E::ts('You picked color "%1"', array(
+    //   1 => $options[$values['favorite_color']],
+    // )));
+
     parent::postProcess();
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/sqltasks/manage'));
   }
 }
