@@ -46,7 +46,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $this->add('hidden', 'enabled', $this->task->getAttribute('enabled'));
     $this->add('hidden', 'weight',  $this->task->getAttribute('weight'));
 
-    // compile the form
+    // BUILD MAIN FORM
     $this->add(
       'text',
       'name',
@@ -85,7 +85,19 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       FALSE
     );
 
-    error_log($task_id);
+
+    // BUILD ACTIONS
+    $action_list = array();
+    $actions = CRM_Sqltasks_Action::getAllActions($this->task);
+    foreach ($actions as $action) {
+      $action->buildForm($this);
+      $action_list[$action->getID()] = array(
+        'name' => $action->getName(),
+        'tpl'  => $action->getFormTemplate());
+    }
+    $this->assign('action_list', $action_list);
+
+
     $this->addButtons(array(
       array(
         'type' => 'submit',

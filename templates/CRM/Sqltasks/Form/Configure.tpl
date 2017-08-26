@@ -44,7 +44,17 @@
   <h3>{ts}Execution{/ts}</h3>
 
   <h3>{ts}Actions{/ts}</h3>
-
+  {foreach from=$action_list item=action key=action_id}
+  <div class="crm-accordion-wrapper crm-sqltask-{$action_id} collapsed">
+    <!--input type="checkbox" class="crm-sqltask-action-enable" name="{$action_id}_enable" /-->
+    {capture assign=enabledfield}{$action_id}_enabled{/capture}
+    <div class="crm-accordion-header active">{$form.$enabledfield.html}&nbsp;{$form.$enabledfield.label}</div>
+      <div class="crm-accordion-body">
+        {include file=$action.tpl}
+      </div>
+    </div>
+  </div>
+  {/foreach}
 </div>
 
 
@@ -57,6 +67,14 @@
 <!-- move to the right spot -->
 {literal}
 <script type="text/javascript">
+
+// enable/disable actions
+cj("input.crm-sqltask-action-enable").click(function(event) {
+  // TODO: open accordeon
+
+  // stop further processing for this event
+  event.stopPropagation();
+});
 
 function decodeHTML(selector) {
   var raw = cj(selector).val();
