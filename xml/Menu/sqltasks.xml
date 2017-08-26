@@ -12,4 +12,10 @@
     <title>Configure</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/sqltasks/run</path>
+    <page_callback>CRM_Sqltasks_Page_Runner</page_callback>
+    <title>Runner</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

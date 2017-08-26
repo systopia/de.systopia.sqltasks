@@ -87,7 +87,7 @@ tr.sqltasks-plugin-disabled {
               {/if}
               <a href="{crmURL p='civicrm/sqltasks/configure' q="reset=1&tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Configure{/ts}">{ts}Configure{/ts}</a>
               <a href="{crmURL p='civicrm/sqltasks/manage' q="delete=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Delete{/ts}">{ts}Delete{/ts}</a>
-              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Run Now{/ts}">{ts}Run Now{/ts}</a>
+              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button" title="{ts}Run Now{/ts}">{ts}Run Now{/ts}</a>
             </li>
           </ul>
         </span>
