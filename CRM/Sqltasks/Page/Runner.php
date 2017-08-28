@@ -32,7 +32,9 @@ class CRM_Sqltasks_Page_Runner extends CRM_Core_Page {
     }
 
     // set title
-    CRM_Utils_System::setTitle(E::ts("Running SQL Task '%1'", array(1 => $task->getAttribute('name'))));
+    CRM_Utils_System::setTitle(E::ts("Running SQL task '%1'", array(1 => $task->getAttribute('name'))));
+
+    $this->assign('task_id', $task_id);
 
     parent::run();
   }

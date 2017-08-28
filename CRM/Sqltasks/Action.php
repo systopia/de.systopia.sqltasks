@@ -46,6 +46,13 @@ abstract class CRM_Sqltasks_Action {
   abstract public function execute();
 
   /**
+   * log to the task (during execution)
+   */
+  public function log($message) {
+    $this->task->log($message);
+  }
+
+  /**
    * Check if this action is currently enabled
    */
   public function isEnabled() {

@@ -46,7 +46,7 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
   $params['task_id'] = array(
     'name'         => 'task_id',
     'api.required' => 1,
-    'type'         => CRM_Utils_Type::T_INTEGER,
+    'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',
     );

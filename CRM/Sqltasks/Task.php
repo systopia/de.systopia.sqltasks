@@ -35,14 +35,16 @@ class CRM_Sqltasks_Task {
   protected $task_id;
   protected $attributes;
   protected $config;
+  protected $log_messages;
 
   /**
    * Constructor
    */
   public function __construct($task_id, $data = array()) {
-    $this->task_id    = $task_id;
-    $this->attributes = array();
-    $this->config     = array();
+    $this->task_id      = $task_id;
+    $this->attributes   = array();
+    $this->config       = array();
+    $this->log_messages = array();
 
     // main attributes go into $this->attributes
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
@@ -71,6 +73,19 @@ class CRM_Sqltasks_Task {
     return $this->config;
   }
 
+  /**
+   * append log messages
+   */
+  public function log($message) {
+    $this->log_messages[] = $message;
+  }
+
+  /**
+   * clear log
+   */
+  public function resetLog() {
+    $this->log_messages = array();
+  }
   /**
    * get a single attribute from the task
    */
@@ -140,6 +155,57 @@ class CRM_Sqltasks_Task {
     CRM_Core_DAO::executeQuery($sql, $params);
   }
 
+
+
+  /**
+   * Executes the given task
+   */
+  public function execute() {
+    $this->resetLog();
+
+    // 1. run the main SQL
+    $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
+
+    // 2. run the actions
+    $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
+    foreach ($actions as $action) {
+      $action_name = $action->getName();
+      $timestamp = microtime(TRUE);
+      try {
+        $action->execute();
+        $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
+        $this->log("Action '{$action_name}' executed in {$runtime}s.");
+      } catch (Exception $e) {
+        $this->log("Error in action '{$action_name}': " . $e -> getMessage());
+      }
+    }
+
+    // 3. run the post SQL
+    $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
+
+    return $this->log_messages;
+  }
+
+  /**
+   * execute a single SQL script
+   */
+  protected function executeSQLScript($script, $script_name) {
+    if (empty($script)) {
+      $this->log("No '{$script_name}'given.");
+      return;
+    }
+
+    $timestamp = microtime(TRUE);
+    try {
+      $script = html_entity_decode($script);
+      error_log($script);
+      CRM_Core_DAO::executeQuery($script);
+      $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
+      $this->log("Script '{$script_name}' executed in {$runtime}s.");
+    } catch (Exception $e) {
+      $this->log("Script '{$script_name}' failed: " . $e -> getMessage());
+    }
+  }
 
   /**
    * delete a task with the given ID
