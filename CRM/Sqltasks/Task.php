@@ -207,11 +207,12 @@ class CRM_Sqltasks_Task {
 
     $timestamp = microtime(TRUE);
     try {
+      // prepare
       $config = CRM_Core_Config::singleton();
       $script = html_entity_decode($script);
-      error_log($script);
+
+      // run the whole script
       CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
-      // CRM_Core_DAO::executeQuery($script);
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
       $this->log("Script '{$script_name}' executed in {$runtime}s.");
     } catch (Exception $e) {
