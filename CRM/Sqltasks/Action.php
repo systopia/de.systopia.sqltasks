@@ -53,11 +53,27 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * Get the given key from the config
+   */
+  public function getConfigValue($name, $prefix = 'ID') {
+    if ($prefix == 'ID') {
+      $prefix = $this->getID() . '_';
+    }
+
+    $key = $prefix . $name;
+    if (isset($this->config[$key])) {
+      return $this->config[$key];
+    } else {
+      return NULL;
+    }
+  }
+
+  /**
    * Check if this action is currently enabled
    */
   public function isEnabled() {
-    $key = $this->getID() . '_enabled';
-    return !empty($this->config[$key]);
+    $enabled = $this->getConfigValue('enabled');
+    return !empty($enabled);
   }
 
   /**
@@ -102,7 +118,7 @@ abstract class CRM_Sqltasks_Action {
   public static function getAllActions($task) {
     // just compile list manually (for now)
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
-
+    $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     return $actions;
   }
 
@@ -118,6 +134,6 @@ abstract class CRM_Sqltasks_Action {
         $active_actions[] = $action;
       }
     }
-    return $actions;
+    return $active_actions;
   }
 }

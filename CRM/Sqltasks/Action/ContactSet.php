@@ -20,18 +20,49 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
 
-  /** stores the table where the contact_ids can be found */
-  protected $contact_table = NULL;
+  /**
+   * Build the configuration UI
+   */
+  public function buildForm(&$form) {
+    parent::buildForm($form);
+
+    $form->add(
+      'text',
+      $this->getID() . '_contact_table',
+      E::ts('Contact Table (<code>contact_id</code>)'),
+      TRUE
+    );
+  }
+
+  /**
+   * get the table with the contact_id column
+   */
+  public function getContactTable() {
+    $table_name = $this->getConfigValue('contact_table');
+    return trim($table_name);
+  }
+
 
   /**
    * Check if this action is configured correctly
    * Overwrite for checks
    */
   public function checkConfiguration() {
-    if (empty($this->contact_table)) {
-      $this->raiseError("Contact table is not set.");
+    $contact_table = $this->getContactTable();
+    if (empty($contact_table)) {
+      throw new Exception("Contact Table not configured.", 1);
+    }
+
+    // check if table exists
+
+    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$contact_table}';");
+    if (!$existing_table) {
+      throw new Exception("Contact Table '{$contact_table}' doesn't exist.", 1);
+    }
+
+    $existing_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$contact_table}` LIKE 'contact_id';");
+    if (!$existing_column) {
+      throw new Exception("Contact Table '{$contact_table}' doesn't have a column 'contact_id'.", 1);
     }
   }
-
-
 }

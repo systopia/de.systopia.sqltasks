@@ -171,6 +171,15 @@ class CRM_Sqltasks_Task {
     foreach ($actions as $action) {
       $action_name = $action->getName();
       $timestamp = microtime(TRUE);
+
+      // check action configuration
+      try {
+        $action->checkConfiguration();
+      } catch (Exception $e) {
+        $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
+      }
+
+      // run action
       try {
         $action->execute();
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
@@ -186,6 +195,7 @@ class CRM_Sqltasks_Task {
     return $this->log_messages;
   }
 
+
   /**
    * execute a single SQL script
    */
@@ -197,9 +207,11 @@ class CRM_Sqltasks_Task {
 
     $timestamp = microtime(TRUE);
     try {
+      $config = CRM_Core_Config::singleton();
       $script = html_entity_decode($script);
       error_log($script);
-      CRM_Core_DAO::executeQuery($script);
+      CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
+      // CRM_Core_DAO::executeQuery($script);
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
       $this->log("Script '{$script_name}' executed in {$runtime}s.");
     } catch (Exception $e) {

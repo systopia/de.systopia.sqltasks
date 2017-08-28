@@ -14,20 +14,20 @@
 
 <div class="sql-tasks">
   <div class="crm-section">
-    <div class="label">{$form.group_contact_table.label}</div>
-    <div class="content">{$form.group_contact_table.html}</div>
+    <div class="label">{$form.tag_contact_table.label}</div>
+    <div class="content">{$form.tag_contact_table.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.group_group_id.label}</div>
-    <div class="content">{$form.group_group_id.html}</div>
+    <div class="label">{$form.tag_tag_id.label}</div>
+    <div class="content">{$form.tag_tag_id.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.group_use_api.label}</div>
-    <div class="content">{$form.group_use_api.html}</div>
+    <div class="label">{$form.tag_use_api.label}</div>
+    <div class="content">{$form.tag_use_api.html}</div>
     <div class="clear"></div>
   </div>
 </div>
