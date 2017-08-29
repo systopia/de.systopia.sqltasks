@@ -46,7 +46,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       'select',
       $this->getID() . '_tag_id',
       E::ts('Synchronise Tag'),
-      $this->getEligibleGroups()
+      $this->getEligibleTags()
     );
 
     $form->add(
@@ -134,7 +134,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
   /**
    * get a list of eligible groups
    */
-  protected function getEligibleGroups() {
+  protected function getEligibleTags() {
     $tag_list = array();
     $tag_query = civicrm_api3('Tag', 'get', array(
       'is_enabled'   => 1,
