@@ -102,6 +102,26 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * get a list of the options from the given option group
+   */
+  protected function getOptions($option_group_name, $empty_option = TRUE) {
+    $options = array();
+    if ($empty_option) {
+      $options[''] = E::ts('- none -');
+    }
+    $values = civicrm_api3('OptionValue', 'get', array(
+      'option_group_id' => $option_group_name,
+      'is_active'       => 1,
+      'return'          => 'value,label',
+      'option.limit'    => 0))['values'];
+    foreach ($values as $option_value) {
+      $options[$option_value['value']] = $option_value['label'];
+    }
+
+    return $options;
+  }
+
+  /**
    * get the template file for the configuration UI
    */
   public function getFormTemplate() {
@@ -119,6 +139,7 @@ abstract class CRM_Sqltasks_Action {
     // just compile list manually (for now)
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
     $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
+    $actions[] = new CRM_Sqltasks_Action_CreateActivity($task);
     return $actions;
   }
 
