@@ -134,24 +134,46 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $use_api       = $this->getConfigValue('use_api');
     $contact_table = $this->getContactTable();
 
+    // load one line for the tokens
+    $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} LIMIT 1;");
+    $record->fetch();
+
     // create activity first
-    $activity = array(
+    $activity_data = array(
       'activity_date_time' => $this->getDateTime($this->getConfigValue('activity_date_time')),
       'activity_type_id'   => $this->getConfigValue('activity_type_id'),
       'campaign_id'        => $this->getConfigValue('campaign_id'),
       'status_id'          => $this->getConfigValue('status_id'),
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
-      'subject'            => $this->getConfigValue('subject'),
-      'details'            => $this->getConfigValue('details'),
+      'subject'            => $this->resolveTokens($this->getConfigValue('subject'), $record),
+      'details'            => $this->resolveTokens($this->getConfigValue('details'), $record),
       'assigned_to'        => $this->getIDList($this->getConfigValue('assigned_to')));
-    civicrm_api3('Activity', 'create', $activity);
+    if (empty($activity_data['source_contact_id'])) {
+      unset($activity_data['source_contact_id']);
+    }
+    $activity = civicrm_api3('Activity', 'create', $activity_data);
 
     if ($use_api) {
-      // TODO: add all targets separately
+      // add all targets separately
+      $target_query = CRM_Core_DAO::executeQuery("SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL;");
+      while ($target_query->fetch()) {
+        civicrm_api3('ActivityContact', 'create', array(
+          'activity_id'    => $activity['id'],
+          'contact_id'     => (int) $target_query->contact_id,
+          'record_type_id' => 3));
+      }
 
     } else {
-      // TODO: assign all targets by SQL
-
+      // just add everyone in the group as a target
+      CRM_Core_DAO::executeQuery("
+        INSERT IGNORE INTO civicrm_activity_contact
+         (SELECT
+            NULL              AS id,
+            {$activity['id']} AS activity_id,
+            contact_id        AS contact_id,
+            3                 AS record_type
+          FROM `{$contact_table}`
+          WHERE contact_id IS NOT NULL);");
     }
   }
 
@@ -171,6 +193,17 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'status_id'          => $this->getConfigValue('status_id'),
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
       'assigned_to'        => $this->getIDList($this->getConfigValue('assigned_to')));
+    if (empty($activity_template['source_contact_id'])) {
+      unset($activity_template['source_contact_id']);
+    }
+    if (!$use_api) {
+      // add some defaults for SQL
+      $activity_template['priority_id'] = 2;
+      $activity_template['is_test'] = 0;
+      $activity_template['is_auto'] = 0;
+      $activity_template['is_current_revision'] = 1;
+      $activity_template['is_deleted'] = 0;
+    }
 
     // now iterate through all entries
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table};");
@@ -185,15 +218,78 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
       if ($use_api) {
         civicrm_api3('Activity', 'create', $activity);
+
       } else {
-        $this->createActivtySQL($activity);
+        $this->createActivitySQL($activity);
       }
     }
   }
 
+  /**
+   * use SQL to create that activity
+   */
+  protected function createActivitySQL($data) {
+    // use the BAO
+    $activity = new CRM_Activity_BAO_Activity();
+    foreach ($data as $key => $value) {
+      $activity->$key = $value;
+    }
+    $activity = $activity->save();
 
+    if (!empty($data['target_id'])) {
+      $link = new CRM_Activity_BAO_ActivityContact();
+      $link->contact_id     = (int) $data['target_id'];
+      $link->activity_id    = (int) $activity->id;
+      $link->record_type_id = 3;
+      $link->save();
+      $link->free();
+    }
 
+    if (!empty($data['source_contact_id'])) {
+      $link = new CRM_Activity_BAO_ActivityContact();
+      $link->contact_id     = (int) $data['source_contact_id'];
+      $link->activity_id    = (int) $activity->id;
+      $link->record_type_id = 2;
+      $link->save();
+      $link->free();
+    }
 
+    if (!empty($data['assigned_to']) && is_array($data['assigned_to'])) {
+      foreach ($data['assigned_to'] as $contact_id) {
+        $link = new CRM_Activity_BAO_ActivityContact();
+        $link->contact_id     = (int) $contact_id;
+        $link->activity_id    = (int) $activity->id;
+        $link->record_type_id = 1;
+        $link->save();
+        $link->free();
+      }
+    }
+
+    $activity->free();
+  }
+
+  /**
+   * Replace all tokens in the string with data from the record
+   */
+  protected function resolveTokens($string, $record) {
+    while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
+      $token = $match['token'];
+      $value = isset($record->$token) ? $record->$token : '';
+      $string = str_replace('{' . $match['token'] . '}', $value, $string);
+    }
+    return $string;
+  }
+
+  /**
+   * Extract and format the time
+   */
+  protected function getDateTime($string) {
+    if (empty($string)) {
+      $string = 'now';
+    }
+
+    return date('YmdHis', strtotime($string));
+  }
 
   /**
    * get a list of eligible groups

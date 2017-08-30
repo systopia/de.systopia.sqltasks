@@ -69,6 +69,24 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * Get a list of ints from the string
+   */
+  protected function getIDList($string) {
+    $id_list = array();
+    if (!empty($string)) {
+      $items = explode(',', $string);
+      foreach ($items as $item) {
+        $value = (int) $item;
+        if ($value) {
+          $id_list[] = $value;
+        }
+      }
+    }
+
+    return $id_list;
+  }
+
+  /**
    * Check if this action is currently enabled
    */
   public function isEnabled() {
