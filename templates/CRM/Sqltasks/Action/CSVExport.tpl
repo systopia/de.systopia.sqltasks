@@ -32,7 +32,7 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_headers.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.csv_headers.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Columns{/ts}", {literal}{"id":"id-csv-columns","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_headers.html}</div>
     <div class="clear"></div>
   </div>
@@ -44,25 +44,25 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_filename.label}</div>
+    <div class="label">{$form.csv_filename.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Filename{/ts}", {literal}{"id":"id-csv-filename","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_filename.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_path.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.csv_path.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Path{/ts}", {literal}{"id":"id-csv-path","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_path.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_email.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.csv_email.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-csv-email","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_email.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_upload.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Timestamp Options{/ts}", {literal}{"id":"id-activity-datetime","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.csv_upload.label}</div>
     <div class="content">{$form.csv_upload.html}</div>
     <div class="clear"></div>
   </div>

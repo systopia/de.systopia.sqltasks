@@ -238,7 +238,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // first: get filename, open stream
-    $filepath = $this->getFilePath($this->getFileName());
+    $filename = $this->getFileName();
+    $filepath = $this->getFilePath($filename);
     // if (!file_exists($filepath)) {
     //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
     // }
@@ -281,7 +282,19 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $this->log("Written {$count} records to '{$filepath}'");
 
     // POST PROCESSING
-    // 1) ZIP
+    if ($this->getConfigValue('delimiter')) {
+      // zip the file
+      $zip = new ZipArchive();
+      $zipfile = $filepath . '.zip';
+      if ($zip->open($zipfile, ZipArchive::CREATE)!==TRUE) {
+        throw new Exception("Cannot open zipfile '{$zipfile}'", 1);
+      }
+      $zip->addFile($filepath, $filename);
+      $zip->close();
+      $filepath = $zipfile;
+      $this->log("Zipped file into '{$filepath}'");
+    }
+
     // 2) EMAIL
     // 3) UPLOAD
   }

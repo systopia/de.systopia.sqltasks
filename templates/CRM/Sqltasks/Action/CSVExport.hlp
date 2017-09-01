@@ -13,9 +13,9 @@
 +-------------------------------------------------------*}
 
 {htxt id='id-csv-columns'}
-  <p>{ts domain="de.systopia.sqltasks"}Here you have to define the columns you want to see in your CSV file. Every line in this text field represents one column.{/ts}</p>
-  <p>{ts domain="de.systopia.sqltasks"}For format is very simple:{/ts}</p>
-  <p>&nbsp;&nbsp;{ts domain="de.systopia.sqltasks"}<code>[CSV Column Name]=[SQL Column name in select table]</code>, e.g.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Here you have to define the columns you want to see in your CSV file. Every line in this text field represents one column, which then is mapped to one column in the SQL table that is being exported.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}The format is very simple:{/ts}</p>
+  <p>&nbsp;&nbsp;{ts domain="de.systopia.sqltasks"}<code>[CSV Column Name]=[SQL Column]</code>, e.g.{/ts}</p>
   <p>&nbsp;&nbsp;{ts domain="de.systopia.sqltasks"}<code>My supernice contact ID=contact_id</code>{/ts}</p>
   <p>{ts domain="de.systopia.sqltasks"}Each line that doesn't follow this format will be ignored.{/ts}</p>
 {/htxt}
@@ -26,7 +26,7 @@
 
 {htxt id='id-csv-filename'}
   <p>{ts domain="de.systopia.sqltasks"}The file name of the resulting CSV file.{/ts}</p>
-  <p>{ts domain="de.systopia.sqltasks"}You can use the token <code>{xxx}</code>, which will be replaced by a current date string. The format (i.e. the xxx) is defined <a href="https://secure.php.net/manual/en/function.date.php#refsect1-function.date-parameters">here</a>. An example would be <code>{Y-m-d}</code>.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}You can use the token {literal}<code>{xxx}</code>{/literal}, which will be replaced by a current date string. The format (i.e. the xxx) is defined <a href="https://secure.php.net/manual/en/function.date.php#refsect1-function.date-parameters">here</a>. An example would be <code>{literal}{Y-m-d}{/literal}</code>.{/ts}</p>
 {/htxt}
 
 {htxt id='id-csv-path'}
