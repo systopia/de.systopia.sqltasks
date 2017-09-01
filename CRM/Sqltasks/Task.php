@@ -192,6 +192,10 @@ class CRM_Sqltasks_Task {
     // 3. run the post SQL
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
 
+    // 4. mark task as executed
+    error_log("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+
     return $this->log_messages;
   }
 
@@ -274,5 +278,45 @@ class CRM_Sqltasks_Task {
     if (empty($tid)) return NULL;
     $tasks = self::getTasks("SELECT * FROM `civicrm_sqltasks` WHERE id = {$tid}");
     return reset($tasks);
+  }
+
+
+
+  //  +---------------------------------+
+  //  |       Scheduling Logic          |
+  //  +---------------------------------+
+
+  /**
+   * Check if the task should run according to scheduling
+   */
+  public function shouldRun() {
+    // TODO: implement
+    return TRUE;
+  }
+
+  /**
+   * get the option for scheduling (simple version)
+   */
+  public static function getSchedulingOptions() {
+    return array(
+      'always'  => E::ts('always'),
+      'hourly'  => E::ts('every hour'),
+      'daily'   => E::ts('every day (after midnight)'),
+      'weekly'  => E::ts('every week'),
+      'monthly' => E::ts('every month'),
+      'yearly'  => E::ts('annually'),
+      );
+  }
+
+  /**
+   * calculate the next execution date
+   */
+  public static function getNextExecutionTime() {
+    // TODO:
+    // 1) find out if cron-job is there/enabled
+    // 2) find out how often it runs
+    // 3) calculate next date based on last exec date
+
+    return '';
   }
 }

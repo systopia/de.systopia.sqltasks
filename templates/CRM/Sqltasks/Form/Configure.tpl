@@ -43,6 +43,12 @@
 
   <h3>{ts}Execution{/ts}</h3>
 
+  <div class="crm-section">
+    <div class="label">{$form.scheduled.label}</div>
+    <div class="content">{$form.scheduled.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <h3>{ts}Actions{/ts}</h3>
   {foreach from=$action_list item=action key=action_id}
   <div class="crm-accordion-wrapper crm-sqltask-{$action_id} collapsed">

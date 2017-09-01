@@ -85,6 +85,14 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       FALSE
     );
 
+    $this->add(
+      'select',
+      'scheduled',
+      E::ts('Execution'),
+      CRM_Sqltasks_Task::getSchedulingOptions(),
+      TRUE
+    );
+
 
     // BUILD ACTIONS
     $action_list = array();
