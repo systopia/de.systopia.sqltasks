@@ -1,0 +1,34 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-csv-columns'}
+  <p>{ts domain="de.systopia.sqltasks"}Here you have to define the columns you want to see in your CSV file. Every line in this text field represents one column.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}For format is very simple:{/ts}</p>
+  <p>&nbsp;&nbsp;{ts domain="de.systopia.sqltasks"}<code>[CSV Column Name]=[SQL Column name in select table]</code>, e.g.{/ts}</p>
+  <p>&nbsp;&nbsp;{ts domain="de.systopia.sqltasks"}<code>My supernice contact ID=contact_id</code>{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Each line that doesn't follow this format will be ignored.{/ts}</p>
+{/htxt}
+
+{htxt id='id-csv-email'}
+  <p>{ts domain="de.systopia.sqltasks"}You can specify a comma separated list of email addresses that the resulting file will be sent to.{/ts}</p>
+{/htxt}
+
+{htxt id='id-csv-filename'}
+  <p>{ts domain="de.systopia.sqltasks"}The file name of the resulting CSV file.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}You can use the token <code>{xxx}</code>, which will be replaced by a current date string. The format (i.e. the xxx) is defined <a href="https://secure.php.net/manual/en/function.date.php#refsect1-function.date-parameters">here</a>. An example would be <code>{Y-m-d}</code>.{/ts}</p>
+{/htxt}
+
+{htxt id='id-csv-path'}
+  <p>{ts domain="de.systopia.sqltasks"}This defines the path about where the resulting file is stored. If you leave it empty, a default path will be used.{/ts}</p>
+{/htxt}

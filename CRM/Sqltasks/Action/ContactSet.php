@@ -45,9 +45,10 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
 
   /**
    * Check if this action is configured correctly
-   * Overwrite for checks
    */
   public function checkConfiguration() {
+    parent::checkConfiguration();
+
     $contact_table = $this->getContactTable();
     if (empty($contact_table)) {
       throw new Exception("Contact Table not configured.", 1);

@@ -46,13 +46,9 @@
   <h3>{ts}Actions{/ts}</h3>
   {foreach from=$action_list item=action key=action_id}
   <div class="crm-accordion-wrapper crm-sqltask-{$action_id} collapsed">
-    <!--input type="checkbox" class="crm-sqltask-action-enable" name="{$action_id}_enable" /-->
     {capture assign=enabledfield}{$action_id}_enabled{/capture}
     <div class="crm-accordion-header active">{$form.$enabledfield.html}&nbsp;{$form.$enabledfield.label}</div>
-      <div class="crm-accordion-body">
-        {include file=$action.tpl}
-      </div>
-    </div>
+    <div class="crm-accordion-body">{include file=$action.tpl}</div>
   </div>
   {/foreach}
 </div>
@@ -70,10 +66,24 @@
 
 // enable/disable actions
 cj("input.crm-sqltask-action-enable").click(function(event) {
-  // TODO: open accordeon
+  // open accordeon
+  var action = cj(this);
+  if (action.prop('checked')) {
+    action.closest("div.crm-accordion-wrapper").removeClass("collapsed");
+  } else {
+    action.closest("div.crm-accordion-wrapper").addClass("collapsed");
+  }
 
   // stop further processing for this event
   event.stopPropagation();
+});
+
+// open all active task wrappers
+cj("input.crm-sqltask-action-enable").each(function() {
+  var action = cj(this);
+  if (action.prop('checked')) {
+    action.closest("div.crm-accordion-wrapper").removeClass("collapsed");
+  }
 });
 
 function decodeHTML(selector) {

@@ -58,16 +58,14 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'select',
       $this->getID() . '_activity_type_id',
       E::ts('Activity Type'),
-      $this->getOptions('activity_type'),
-      TRUE
+      $this->getOptions('activity_type')
     );
 
     $form->add(
       'select',
       $this->getID() . '_status_id',
       E::ts('Status'),
-      $this->getOptions('activity_status'),
-      TRUE
+      $this->getOptions('activity_status')
     );
 
     $form->add(

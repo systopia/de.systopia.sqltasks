@@ -155,9 +155,10 @@ abstract class CRM_Sqltasks_Action {
    */
   public static function getAllActions($task) {
     // just compile list manually (for now)
-    $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
-    $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     $actions[] = new CRM_Sqltasks_Action_CreateActivity($task);
+    $actions[] = new CRM_Sqltasks_Action_CSVExport($task);
+    $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
+    $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
     return $actions;
   }
 
