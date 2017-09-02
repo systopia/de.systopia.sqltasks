@@ -100,6 +100,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     );
 
     $form->add(
+      'select',
+      $this->getID() . '_email_template',
+      E::ts('Email Template'),
+      $this->getAllTemplates()
+    );
+
+    $form->add(
       'checkbox',
       $this->getID() . '_upload',
       E::ts('Upload')
@@ -116,6 +123,21 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       ';' => E::ts('Semicolon (;)'),
       ',' => E::ts('Comma (,)')
         );
+  }
+
+  /**
+   * get a list of eligible templates for the email
+   */
+  protected function getAllTemplates() {
+    $template_options = array();
+    $template_query = civicrm_api3('MessageTemplate', 'get', array(
+      'is_active'    => 1,
+      'return'       => 'id,msg_title',
+      'option.limit' => 0));
+    foreach ($template_query['values'] as $template) {
+      $template_options[$template['id']] = $template['msg_title'];
+    }
+    return $template_options;
   }
 
   /**
@@ -281,8 +303,10 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     fclose($out);
     $this->log("Written {$count} records to '{$filepath}'");
 
+
     // POST PROCESSING
-    if ($this->getConfigValue('delimiter')) {
+    // 1) ZIP
+    if ($this->getConfigValue('zip')) {
       // zip the file
       $zip = new ZipArchive();
       $zipfile = $filepath . '.zip';
@@ -296,7 +320,32 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // 2) EMAIL
+    if (!empty($this->getConfigValue('email')) && !empty($this->getConfigValue('email_template'))) {
+      // add all the variables
+      $email_list = $this->getConfigValue('email');
+      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      $attachment  = array('fullPath'  => $filepath,
+                           'mime_type' => $this->getConfigValue('zip') ? 'application/zip' : 'text/csv',
+                           'cleanName' => $filename);
+      // and send the template via email
+      $email = array(
+        'id'              => $this->getConfigValue('email_template'),
+        'to_name'         => $this->getConfigValue('email'),
+        'to_email'        => $this->getConfigValue('email'),
+        'from'            => 'SQL Tasks',
+        'reply_to'        => "do-not-reply@$emailDomain",
+        'attachments'     => array($attachment),
+        );
+      civicrm_api3('MessageTemplate', 'send', $email);
+      $this->log("Sent file to '{$email_list}'");
+    }
+
     // 3) UPLOAD
+    if ($this->getConfigValue('upload')) {
+      // TODO: implement
+      $this->log("UPLOAD not yet implemented");
+    }
   }
 
   /**
