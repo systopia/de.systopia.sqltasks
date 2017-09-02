@@ -72,8 +72,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'text',
       $this->getID() . '_subject',
       E::ts('Subject'),
-      array('class' => 'huge'),
-      TRUE
+      array('class' => 'huge')
     );
 
     $form->add(

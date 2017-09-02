@@ -119,6 +119,10 @@ class CRM_Sqltasks_Task {
     $fields = array();
     $index  = 1;
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
+      if ($attribute_name == 'last_execution') {
+        // don't overwrite timestamp
+        continue;
+      }
       $value = $this->getAttribute($attribute_name);
       if ($value === NULL || $value === '') {
         $fields[$attribute_name] = "NULL";
@@ -193,7 +197,6 @@ class CRM_Sqltasks_Task {
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
 
     // 4. mark task as executed
-    error_log("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
 
     return $this->log_messages;
@@ -290,8 +293,23 @@ class CRM_Sqltasks_Task {
    * Check if the task should run according to scheduling
    */
   public function shouldRun() {
-    // TODO: implement
-    return TRUE;
+    $last_execution = strtotime($this->getAttribute('last_execution'));
+    $scheduled = $this->getAttribute('scheduled');
+
+    // if this is the first time, or it should always be executed
+    //  => YES!
+    if (empty($last_execution) || $scheduled == 'always') {
+      return TRUE;
+    }
+
+    // get the comparison date format
+    $date_format = self::getDateFormatForSchedulingOption($scheduled);
+    $last_exec = date($date_format, $last_execution);
+    $now       = date($date_format);
+
+    // if those two strings are the same, that means
+    //   we have already executed in this interval
+    return $last_exec != $now;
   }
 
   /**
@@ -309,6 +327,28 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * get the option for scheduling (simple version)
+   */
+  public static function getDateFormatForSchedulingOption($option) {
+    switch ($option) {
+      case 'always':
+        return ('YmdHis');
+      case 'hourly':
+        return ('YmdH');
+      case 'daily':
+        return ('Ymd');
+      case 'weekly':
+        return ('YW');
+      case 'monthly':
+        return ('Ym');
+      case 'yearly':
+        return ('Y');
+      default:
+        throw new Exception("Illegal scheduling option {$option}.", 1);
+    }
+  }
+
+  /**
    * calculate the next execution date
    */
   public static function getNextExecutionTime() {
@@ -317,6 +357,6 @@ class CRM_Sqltasks_Task {
     // 2) find out how often it runs
     // 3) calculate next date based on last exec date
 
-    return '';
+    return 'TODO';
   }
 }

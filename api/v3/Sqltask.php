@@ -31,7 +31,7 @@ function civicrm_api3_sqltask_execute($params) {
   $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
   $results = array();
   foreach ($tasks as $task) {
-    if ($tasks->isScheduled()) {
+    if ($task->shouldRun()) {
       $results[] = $task->execute();
     }
   }
@@ -45,7 +45,7 @@ function civicrm_api3_sqltask_execute($params) {
 function _civicrm_api3_sqltask_execute_spec(&$params) {
   $params['task_id'] = array(
     'name'         => 'task_id',
-    'api.required' => 1,
+    'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',

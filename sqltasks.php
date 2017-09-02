@@ -14,6 +14,7 @@
 +--------------------------------------------------------*/
 
 require_once 'sqltasks.civix.php';
+require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -74,6 +75,7 @@ function sqltasks_civicrm_uninstall() {
  */
 function sqltasks_civicrm_enable() {
   _sqltasks_civix_civicrm_enable();
+  CRM_Sqltasks_Config::installScheduledJob();
 }
 
 /**

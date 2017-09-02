@@ -50,9 +50,9 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       'id'             => $task->getID(),
       'name'           => $task->getAttribute('name'),
       'description'    => $task->getAttribute('description'),
-      'schedule'       => $task->getAttribute('scheduled'),
+      'schedule'       => $this->renderSchedule($task->getAttribute('scheduled')),
       'last_executed'  => $this->renderDate($task->getAttribute('last_execution')),
-      'next_execution' => $this->renderDate($task->getNextExecutionTime()),
+      'next_execution' => 'TODO', //$this->renderDate($task->getNextExecutionTime()),
       'enabled'        => $task->getAttribute('enabled'),
       );
     if (strlen($data['description']) > 64) {
@@ -71,6 +71,18 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       return E::ts('never');
     } else {
       return date('Y-m-d H:i:s', strtotime($string));
+    }
+  }
+
+  /**
+   * render a scheduling option
+   */
+  protected function renderSchedule($string) {
+    $options = CRM_Sqltasks_Task::getSchedulingOptions();
+    if (isset($options[$string])) {
+      return $options[$string];
+    } else {
+      return E::ts('ERROR');
     }
   }
 
