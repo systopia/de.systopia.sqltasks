@@ -25,6 +25,7 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     CRM_Utils_System::setTitle(E::ts('SQL Task Manager'));
 
     // first: process commands (if any)
+    $this->processExportCommand();
     $this->processDeleteCommand();
     $this->processEnableDisableCommand();
     $this->processRearrangeCommand();
@@ -83,6 +84,20 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       return $options[$string];
     } else {
       return E::ts('ERROR');
+    }
+  }
+
+  /**
+   * export a file
+   */
+  protected function processExportCommand() {
+    $export_id = CRM_Utils_Request::retrieve('export', 'Integer');
+    if ($export_id) {
+      $task = CRM_Sqltasks_Task::getTask($export_id);
+      CRM_Utils_System::download(
+        $task->getAttribute('name') . '.sqltask',
+        'application/json',
+        $task->exportConfiguration());
     }
   }
 

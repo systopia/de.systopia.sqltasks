@@ -283,6 +283,19 @@ class CRM_Sqltasks_Task {
     return reset($tasks);
   }
 
+  /**
+   * Export task configuration
+   */
+  public function exportConfiguration() {
+    // copy the attributes
+    $config = $this->attributes;
+    unset($config['enabled']);
+    unset($config['weight']);
+    unset($config['last_execution']);
+    $config['config'] = $this->config;
+    return json_encode($config, JSON_PRETTY_PRINT);
+  }
+
 
 
   //  +---------------------------------+
