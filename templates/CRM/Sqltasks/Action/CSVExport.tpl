@@ -62,7 +62,13 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.csv_upload.label}</div>
+    <div class="label">{$form.csv_email_template.label}</div>
+    <div class="content">{$form.csv_email_template.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.csv_upload.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}SFTP Upload{/ts}", {literal}{"id":"id-csv-sftp","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_upload.html}</div>
     <div class="clear"></div>
   </div>

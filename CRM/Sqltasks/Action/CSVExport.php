@@ -82,21 +82,21 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_filename',
       E::ts('File Name'),
-      TRUE
+      array('class' => 'huge')
     );
 
     $form->add(
       'text',
       $this->getID() . '_path',
       E::ts('File Path'),
-      TRUE
+      array('class' => 'huge')
     );
 
     $form->add(
       'text',
       $this->getID() . '_email',
       E::ts('Email to'),
-      TRUE
+      array('class' => 'huge')
     );
 
     $form->add(
@@ -107,12 +107,11 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     );
 
     $form->add(
-      'checkbox',
+      'text',
       $this->getID() . '_upload',
-      E::ts('Upload')
+      E::ts('Upload to'),
+      array('class' => 'huge')
     );
-
-    // TODO: upload parameters
   }
 
   /**
@@ -150,6 +149,24 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $encodings[$mb_encoding] = $mb_encoding;
     }
     return $encodings;
+  }
+
+  /**
+   * Parse the credentials
+   * @return FALSE if nothing is entered, 'ERROR' if it cannot be parsed
+   */
+  protected function getCredentials() {
+    $credentials = $this->getConfigValue('upload');
+    if (!empty($credentials)) {
+      $credentials = trim($credentials);
+      // if (preg_match('(?<protocol>[\w]+):\/\/(?<user>[^@]+):(?<password>[\w-]+)@(?<host>[\w_.-]+)(?<remote_path>\/[\w_-]+)$', $credentials, $match)) {
+      if (preg_match('#^sftp:\/\/(?<user>[^@]+):(?<password>[\w_-]+)@(?<host>[\w.-]+)(?<remote_path>\/[\w_-]+)$#', $credentials, $match)) {
+        return $match;
+      } else {
+        return 'ERROR';
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -343,8 +360,27 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     // 3) UPLOAD
     if ($this->getConfigValue('upload')) {
-      // TODO: implement
-      $this->log("UPLOAD not yet implemented");
+      $credentials = $this->getCredentials();
+      if ($credentials && $credentials != 'ERROR') {
+        // connect
+        require_once('Net/SFTP.php');
+        define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
+        $sftp = new Net_SFTP($credentials['host']);
+        if (!$sftp->login($credentials['user'], $credentials['password'])) {
+          throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
+        }
+
+        // upload
+        $target_file = $credentials['remote_path'] . '/' . $filename;
+        if (!$sftp->put($target_file, $filepath, NET_SFTP_LOCAL_FILE)) {
+          throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
+        }
+
+        $this->log("Uploaded file '{$filename}' to {{$credentials['host']}/{$target_file}");
+
+      } else {
+        throw new Exception("Upload failed, couldn't parse credentials", 1);
+      }
     }
   }
 
