@@ -188,7 +188,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // substitute tokens
-    while (preg_match('/\{(?P<token>\.+)\}/', $file_name, $match)) {
+    while (preg_match('/{(?P<token>.+)}/', $file_name, $match)) {
       $token = $match['token'];
       $value = date($token);
       $file_name = str_replace('{' . $match['token'] . '}', $value, $file_name);
