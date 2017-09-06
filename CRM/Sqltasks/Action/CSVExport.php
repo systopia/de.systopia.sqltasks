@@ -159,8 +159,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $credentials = $this->getConfigValue('upload');
     if (!empty($credentials)) {
       $credentials = trim($credentials);
-      // if (preg_match('(?<protocol>[\w]+):\/\/(?<user>[^@]+):(?<password>[\w-]+)@(?<host>[\w_.-]+)(?<remote_path>\/[\w_-]+)$', $credentials, $match)) {
-      if (preg_match('#^sftp:\/\/(?<user>[^@]+):(?<password>[\w_-]+)@(?<host>[\w.-]+)(?<remote_path>\/[\w_-]+)$#', $credentials, $match)) {
+      if (preg_match('#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#', $credentials, $match)) {
         return $match;
       } else {
         return 'ERROR';
@@ -371,7 +370,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
           throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
         }
 
-        $this->log("Uploaded file '{$filename}' to {{$credentials['host']}/{$target_file}");
+        $this->log("Uploaded file '{$filename}' to {$credentials['host']}/{$target_file}");
 
       } else {
         throw new Exception("Upload failed, couldn't parse credentials", 1);
