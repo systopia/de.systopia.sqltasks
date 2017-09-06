@@ -41,12 +41,13 @@ tr.sqltasks-plugin-disabled {
 {* NORMAL PAGE *}
 <div id="help">
   {if $tasks}
-    {ts}This is the list of currently configured tasks{/ts}
+    {ts}This is the list of currently configured tasks.{/ts}
   {else}
     {ts}It looks like you're new here. This is the control center for all you SQL based scheduled tasks, but there is no task configured yet.{/ts}
   {/if}
   <a href="{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=0"}">{ts}Add a new one.{/ts}</a>
 </div>
+<br/>
 <table class="display" id="option11">
   <thead>
     <tr>
@@ -98,6 +99,11 @@ tr.sqltasks-plugin-disabled {
   {/foreach}
   </tbody>
 </table>
+<br/>
+<div id="help">
+  {ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> Be aware that these tasks can execute arbitrary SQL statements, which <i>can potentially destroy your database</i>. Only use this if you really know what you're doing, and always keep a backup of your database before experimenting.{/ts}
+</div>
+
 {/if}
 
 <script type="text/javascript">

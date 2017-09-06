@@ -15,8 +15,11 @@
 {$form.task_id.html}{$form.enabled.html}{$form.weight.html}
 
 <div class="sql-tasks">
+
+  <h3>{ts}Basic Information{/ts}</h3>
+
   <div class="crm-section">
-    <div class="label">{$form.name.label}</div><!--a onclick='CRM.help("{ts domain="de.systopia.sqlsearch"}Instructions{/ts}", {literal}{"id":"id-token-help","file":"CRM\/moregreetings\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqlsearch"}Help{/ts}" class="helpicon">&nbsp;</a-->
+    <div class="label">{$form.name.label}</div>
     <div class="content">{$form.name.html}</div>
     <div class="clear"></div>
   </div>
@@ -59,8 +62,14 @@
   {/foreach}
 </div>
 
+<br/>
+<div id="help">
+  {ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> Be aware that these tasks can execute arbitrary SQL statements, which <i>can potentially destroy your database</i>. Only use this if you really know what you're doing, and always keep a backup of your database before experimenting.{/ts}
+</div>
+
 
 {* FOOTER *}
+<br/>
 <div class="crm-submit-buttons">
 {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>

@@ -14,7 +14,9 @@
 
 {$form.task_id.html}
 
-<div id="help">{ts domain="de.systopia.sqltasks"}This allows you to import configurations (<code>.sqltask</code> files) that you have previously exported. It will not update metadata like name, last run, enabled, or execution order.{/ts}</div>
+<div id="help">
+  {ts domain="de.systopia.sqltasks"}This allows you to import configurations (<code>.sqltask</code> files) that you have previously exported. It will not update metadata like name, last run, enabled, or execution order.{/ts}
+</div>
 
 <div>
   <span>{$form.config_file.label}</span>
