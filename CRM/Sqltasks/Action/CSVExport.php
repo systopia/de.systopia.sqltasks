@@ -254,11 +254,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       throw new Exception("Export Table '{$export_table}' doesn't exist.", 1);
     }
 
-    $existing_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$export_table}` LIKE 'contact_id';");
-    if (!$existing_column) {
-      throw new Exception("Export Table '{$export_table}' doesn't have a column 'contact_id'.", 1);
-    }
-
     // check file path
     $file_check = $this->getFilePath();
     if (!is_writeable($file_check)) {
