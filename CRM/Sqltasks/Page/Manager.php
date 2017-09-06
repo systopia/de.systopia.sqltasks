@@ -94,10 +94,11 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     $export_id = CRM_Utils_Request::retrieve('export', 'Integer');
     if ($export_id) {
       $task = CRM_Sqltasks_Task::getTask($export_id);
+      $config = $task->exportConfiguration();
       CRM_Utils_System::download(
         $task->getAttribute('name') . '.sqltask',
         'application/json',
-        $task->exportConfiguration());
+        $config);
     }
   }
 
