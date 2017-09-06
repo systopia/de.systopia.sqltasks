@@ -72,7 +72,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       array('rows' => 8,
             'cols' => 60,
       ),
-      TRUE
+      FALSE
     );
 
     $this->add(

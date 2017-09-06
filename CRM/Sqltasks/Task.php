@@ -74,6 +74,13 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * set entire configuration
+   */
+  public function setConfiguration($config) {
+    return $this->config = $config;
+  }
+
+  /**
    * append log messages
    */
   public function log($message) {
@@ -289,6 +296,7 @@ class CRM_Sqltasks_Task {
   public function exportConfiguration() {
     // copy the attributes
     $config = $this->attributes;
+    unset($config['name']);
     unset($config['enabled']);
     unset($config['weight']);
     unset($config['last_execution']);

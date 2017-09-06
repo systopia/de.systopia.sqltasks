@@ -87,7 +87,8 @@ tr.sqltasks-plugin-disabled {
               {/if}
               <a href="{crmURL p='civicrm/sqltasks/configure' q="reset=1&tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Configure{/ts}">{ts}Configure{/ts}</a>
               <a href="{crmURL p='civicrm/sqltasks/manage' q="delete=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Delete Task{/ts}">{ts}Delete{/ts}</a>
-              <a href="{crmURL p='civicrm/sqltasks/manage' q="export=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Export Configuration{/ts}">{ts}Export{/ts}</a>
+              <a href="{crmURL p='civicrm/sqltasks/manage' q="export=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Export Configuration{/ts}">{ts}Export Config{/ts}</a>
+              <a href="{crmURL p='civicrm/sqltasks/import' q="tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Import Configuration{/ts}">{ts}Import Config{/ts}</a>
               <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button" title="{ts}Run the task manually{/ts}">{ts}Run Now{/ts}</a>
             </li>
           </ul>
