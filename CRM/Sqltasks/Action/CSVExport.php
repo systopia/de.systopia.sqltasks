@@ -344,14 +344,14 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
       $attachment  = array('fullPath'  => $filepath,
                            'mime_type' => $this->getConfigValue('zip') ? 'application/zip' : 'text/csv',
-                           'cleanName' => $filename);
+                           'cleanName' => basename($filepath));
       // and send the template via email
       $email = array(
         'id'              => $this->getConfigValue('email_template'),
-        'to_name'         => $this->getConfigValue('email'),
+        // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
-        'from'            => 'SQL Tasks',
-        'reply_to'        => "do-not-reply@$emailDomain",
+        'from'            => "SQL Tasks <{$domainEmailAddress}>",
+        'reply_to'        => "do-not-reply@{$domainEmailAddress}",
         'attachments'     => array($attachment),
         );
       civicrm_api3('MessageTemplate', 'send', $email);
