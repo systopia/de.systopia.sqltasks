@@ -331,7 +331,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // 2) EMAIL
-    if (!empty($this->getConfigValue('email')) && !empty($this->getConfigValue('email_template'))) {
+    $config_email = $this->getConfigValue('email');
+    $config_email_template = $this->getConfigValue('email_template');
+    if (!empty($config_email) && !empty($config_email_template)) {
       // add all the variables
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
