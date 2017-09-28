@@ -87,6 +87,18 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * Replace all tokens in the string with data from the record
+   */
+  protected function resolveTokens($string, $record) {
+    while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
+      $token = $match['token'];
+      $value = isset($record->$token) ? $record->$token : '';
+      $string = str_replace('{' . $match['token'] . '}', $value, $string);
+    }
+    return $string;
+  }
+
+  /**
    * Check if this action is currently enabled
    */
   public function isEnabled() {
@@ -156,6 +168,7 @@ abstract class CRM_Sqltasks_Action {
   public static function getAllActions($task) {
     // just compile list manually (for now)
     $actions[] = new CRM_Sqltasks_Action_CreateActivity($task);
+    $actions[] = new CRM_Sqltasks_Action_APICall($task);
     $actions[] = new CRM_Sqltasks_Action_CSVExport($task);
     $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);

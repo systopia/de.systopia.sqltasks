@@ -266,18 +266,6 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
   }
 
   /**
-   * Replace all tokens in the string with data from the record
-   */
-  protected function resolveTokens($string, $record) {
-    while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
-      $token = $match['token'];
-      $value = isset($record->$token) ? $record->$token : '';
-      $string = str_replace('{' . $match['token'] . '}', $value, $string);
-    }
-    return $string;
-  }
-
-  /**
    * Extract and format the time
    */
   protected function getDateTime($string) {
