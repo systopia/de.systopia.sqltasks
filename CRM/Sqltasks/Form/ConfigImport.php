@@ -48,7 +48,7 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
     $this->add(
       'file',
       'config_file',
-      E::ts('Configuration File'),
+      E::ts('Configuration file to be imported:'),
       TRUE
     );
 

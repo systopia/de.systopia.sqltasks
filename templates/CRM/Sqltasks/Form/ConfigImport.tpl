@@ -18,9 +18,17 @@
   {ts domain="de.systopia.sqltasks"}This allows you to import configurations (<code>.sqltask</code> files) that you have previously exported. It will not update metadata like name, last run, enabled, or execution order.{/ts}
 </div>
 
-<div>
-  <span>{$form.config_file.label}</span>
-  <span>{$form.config_file.html}</span>
+<br/>
+<div class="crm-section" align="center">
+  <div class="label">{$form.config_file.label}</div>
+  <div class="content">{$form.config_file.html}</div>
+  <div class="clear"></div>
+</div>
+<br/>
+
+<div id="help">
+  {ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> Please review the task configuration after import, especially if imported from another environment.{/ts}
+  {ts domain="de.systopia.sqltasks"}The configuration file only contains the IDs of certain entities (e.g. actvity types, templates, campaigns, etc.), and those can vary from system to system.{/ts}
 </div>
 
 {* FOOTER *}
