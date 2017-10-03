@@ -174,6 +174,9 @@ class CRM_Sqltasks_Task {
   public function execute() {
     $this->resetLog();
 
+    // 0. mark task as started
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+
     // 1. run the main SQL
     $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
 
@@ -202,9 +205,6 @@ class CRM_Sqltasks_Task {
 
     // 3. run the post SQL
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
-
-    // 4. mark task as executed
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
 
     return $this->log_messages;
   }
