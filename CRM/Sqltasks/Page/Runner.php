@@ -23,6 +23,7 @@ class CRM_Sqltasks_Page_Runner extends CRM_Core_Page {
   public function run() {
     // get the task ID
     $task_id = CRM_Utils_Request::retrieve('tid', 'Integer');
+    $reload  = CRM_Utils_Request::retrieve('reload', 'Integer');
     if (!is_numeric($task_id)) {
       throw new Exception("Invalid task id (tid) given.", 1);
     } elseif ($task_id) {
@@ -34,7 +35,9 @@ class CRM_Sqltasks_Page_Runner extends CRM_Core_Page {
     // set title
     CRM_Utils_System::setTitle(E::ts("Running SQL task '%1'", array(1 => $task->getAttribute('name'))));
 
-    $this->assign('task_id', $task_id);
+    $this->assign('task_id',    $task_id);
+    $this->assign('reload',     $reload);
+    $this->assign('reload_url', CRM_Utils_System::url('civicrm/sqltasks/run', "reload=1&tid={$task_id}"));
 
     parent::run();
   }
