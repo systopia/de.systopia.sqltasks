@@ -45,7 +45,9 @@ tr.sqltasks-plugin-disabled {
   {else}
     {ts}It looks like you're new here. This is the control center for all you SQL based scheduled tasks, but there is no task configured yet.{/ts}
   {/if}
-  <a href="{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=0"}">{ts}Add a new one.{/ts}</a>
+  {capture assign=add_url}{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=0"}{/capture}
+  {capture assign=repo_url}https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md{/capture}
+  {ts 1=$add_url 2=$repo_url}You might want to <a href="%1">ADD A NEW ONE</a>. Check out our <a href="%2" target="_blank">REPOSITORY</a> for examples to get you started.{/ts}</a>
 </div>
 <br/>
 <table class="display" id="option11">
