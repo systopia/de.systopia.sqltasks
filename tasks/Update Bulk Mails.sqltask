@@ -1,0 +1,29 @@
+{
+    "description": "MySQL script to set is_bulkmail to all unique email addresses per contact",
+    "scheduled": "daily",
+    "main_sql": "UPDATE civicrm_email a\r\n    INNER JOIN\r\n    (\r\n        SELECT contact_id, MIN(id) id, email\r\n        FROM civicrm_email \r\n        GROUP BY contact_id, email\r\n    ) b\r\n        ON a.id = b.id AND a.contact_id = b.contact_id AND a.email = b.email\r\nSET is_bulkmail = 1",
+    "post_sql": null,
+    "config": {
+        "activity_contact_table": "",
+        "activity_activity_type_id": "",
+        "activity_status_id": "",
+        "activity_subject": "",
+        "activity_details": "",
+        "activity_activity_date_time": "",
+        "activity_source_contact_id": "",
+        "activity_assigned_to": "",
+        "csv_table": "",
+        "csv_encoding": "pass",
+        "csv_delimiter": ";",
+        "csv_headers": "",
+        "csv_filename": "",
+        "csv_path": "",
+        "csv_email": "",
+        "csv_email_template": "1",
+        "csv_upload": "",
+        "tag_contact_table": "",
+        "tag_tag_id": "2",
+        "group_contact_table": "",
+        "group_group_id": "153"
+    }
+}
