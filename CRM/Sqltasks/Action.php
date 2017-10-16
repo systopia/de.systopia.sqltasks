@@ -107,6 +107,14 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * Check if this action is a handler,
+   * which has be be executed after all other actions
+   */
+  public function isResultHandler() {
+    return FALSE;
+  }
+
+  /**
    * Check if this action is configured correctly
    * Overwrite for checks
    */
@@ -172,6 +180,8 @@ abstract class CRM_Sqltasks_Action {
     $actions[] = new CRM_Sqltasks_Action_CSVExport($task);
     $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
+    $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'success', E::ts('Success Handler'));
+    $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'error',   E::ts('Error Handler'));
     return $actions;
   }
 

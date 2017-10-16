@@ -35,6 +35,7 @@ class CRM_Sqltasks_Task {
   protected $task_id;
   protected $attributes;
   protected $config;
+  protected $status;
   protected $log_messages;
 
   /**
@@ -45,6 +46,7 @@ class CRM_Sqltasks_Task {
     $this->attributes   = array();
     $this->config       = array();
     $this->log_messages = array();
+    $this->status       = 'init';
 
     // main attributes go into $this->attributes
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
@@ -64,6 +66,19 @@ class CRM_Sqltasks_Task {
    */
   public function getID() {
     return $this->task_id;
+  }
+
+  /**
+   * get the current status of this task
+   *
+   * Should return one of:
+   *  'init'    - task object has not yet been executed
+   *  'running' - task object is curreently being executed
+   *  'success' - task has been executed successfully
+   *  'error'   - task has report one or more errors during execution
+   */
+  public function getStatus() {
+    return $this->status;
   }
 
   /**
@@ -93,6 +108,23 @@ class CRM_Sqltasks_Task {
   public function resetLog() {
     $this->log_messages = array();
   }
+
+  /**
+   * write current log into a temp file
+   */
+  public function writeLogfile() {
+    $logfile = tempnam(sys_get_temp_dir(), 'sqltask-') . '.log';
+    if ($logfile) {
+      $handle = fopen($logfile, 'w');
+      foreach ($this->log_messages as $message) {
+        // fwrite($handle, mb_convert_encoding($message . "\n", 'utf8'));
+        fwrite($handle, $message . "\n");
+      }
+      fclose($handle);
+    }
+    return $logfile;
+  }
+
   /**
    * get a single attribute from the task
    */
@@ -172,6 +204,8 @@ class CRM_Sqltasks_Task {
    * Executes the given task
    */
   public function execute() {
+    $this->status = 'running';
+    $error_count  = 0;
     $this->resetLog();
 
     // 0. mark task as started
@@ -183,6 +217,10 @@ class CRM_Sqltasks_Task {
     // 2. run the actions
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
     foreach ($actions as $action) {
+      if ($action->isResultHandler()) {
+        continue; // result handlers will only be executed at the end
+      }
+
       $action_name = $action->getName();
       $timestamp = microtime(TRUE);
 
@@ -190,6 +228,7 @@ class CRM_Sqltasks_Task {
       try {
         $action->checkConfiguration();
       } catch (Exception $e) {
+        $error_count += 1;
         $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
       }
 
@@ -199,12 +238,28 @@ class CRM_Sqltasks_Task {
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.");
       } catch (Exception $e) {
+        $error_count += 1;
         $this->log("Error in action '{$action_name}': " . $e -> getMessage());
       }
     }
 
     // 3. run the post SQL
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
+
+    // 4. update/close the task
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    if ($error_count) {
+      $this->status = 'error';
+    } else {
+      $this->status = 'success';
+    }
+
+    // 5. run result handlers
+    foreach ($actions as $action) {
+      if ($action->isResultHandler()) {
+        $action->execute();
+      }
+    }
 
     return $this->log_messages;
   }

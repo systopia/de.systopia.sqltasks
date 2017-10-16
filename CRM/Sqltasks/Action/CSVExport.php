@@ -347,7 +347,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
         'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$domainEmailAddress}",
+        'reply_to'        => "do-not-reply@{$emailDomain}",
         'attachments'     => array($attachment),
         );
       civicrm_api3('MessageTemplate', 'send', $email);
