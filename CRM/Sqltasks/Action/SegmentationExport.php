@@ -233,6 +233,14 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       throw new Exception("No exporters selected", 1);
     }
 
+    $use_last_assignment = $this->getConfigValue('date_current');
+    if ($use_last_assignment) {
+      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->getID());
+      if (!$timestamp) {
+        throw new Exception("Restrict export to current assignemnt requested, but no current assignemnt detected. Activate the 'Assign to Campaign' task!", 1);
+      }
+    }
+
     // check file path
     $file_check = $this->getFilePath();
     if (!is_writeable($file_check)) {
@@ -259,7 +267,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     // Assignment timestamp
     $use_last_assignment = $this->getConfigValue('date_current');
     if ($use_last_assignment) {
-      // TODO: take values from 'Assign to campaign'
+      // take values from 'Assign to campaign'
+      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->getID());
+      if ($timestamp) {
+        $params['start_date'] = $timestamp;
+        $params['end_date']   = $timestamp;
+      }
     } else {
       $date_from = strtotime($this->getConfigValue('date_from'));
       if ($date_from) {
@@ -271,7 +284,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       }
     }
 
-    error_log("PARAMS " . json_encode($params));
     // FIRST: run all exporters
     $exporters = $this->getConfigValue('exporter');
     foreach ($exporters as $exporter_id) {
