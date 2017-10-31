@@ -230,6 +230,7 @@ class CRM_Sqltasks_Task {
       } catch (Exception $e) {
         $error_count += 1;
         $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
+        continue;
       }
 
       // run action
