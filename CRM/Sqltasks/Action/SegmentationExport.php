@@ -17,7 +17,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
  * This action allows you to export campaign contacts
- * if you have de.systopia.segmentation installed
+ *  if you have de.systopia.segmentation installed
  *
  * @see https://github.com/systopia/de.systopia.segmentation
  */
@@ -44,40 +44,72 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     parent::buildForm($form);
 
     $form->add(
-      'text',
-      $this->getID() . '_table',
-      E::ts('Export Table'),
-      TRUE
+      'select',
+      $this->getID() . '_campaign_id',
+      E::ts('Campaign'),
+      $this->getEligibleCampaigns(),
+      FALSE,
+      array('class' => 'crm-select2 huge')
     );
 
     $form->add(
       'select',
-      $this->getID() . '_encoding',
-      E::ts('File Encoding'),
-      $this->getEncodingOptions()
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_delimiter',
-      E::ts('Delimiter'),
-      $this->getDelimiterOptions()
-    );
-
-    $form->add(
-      'textarea',
-      $this->getID() . '_headers',
-      E::ts('Columns'),
-      array('rows' => 8, 'cols' => 40),
+      $this->getID() . '_segment_list',
+      E::ts('Segments'),
+      array(),
       FALSE
     );
 
+    $form->add( // this hidden field will yield the actual value
+      'hidden',
+      $this->getID() . '_segments',
+      $this->getConfigValue('segments'));
+
+    $form->add(
+      'select',
+      $this->getID() . '_exporter',
+      E::ts('Exporter'),
+      CRM_Segmentation_Exporter::getExporterList(),
+      FALSE,
+      array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
+    );
+
+    // don't use date fields, so we can have tokens:
+
+    // $form->addDate(
+    //   $this->getID() . '_date_from',
+    //   E::ts('Assignment not before'),
+    //   FALSE,
+    //   array('formatType' => 'activityDateTime'));
+
+    // $form->addDate(
+    //   $this->getID() . '_date_to',
+    //   E::ts('Assignment not after'),
+    //   FALSE,
+    //   array('formatType' => 'activityDateTime'));
+
+    $form->add(
+      'text',
+      $this->getID() . '_date_from',
+      E::ts('Assignment not before'),
+      array()
+    );
+
+    $form->add(
+      'text',
+      $this->getID() . '_date_to',
+      E::ts('Assignment not after'),
+      array()
+    );
 
     $form->add(
       'checkbox',
-      $this->getID() . '_zip',
-      E::ts('ZIP File')
+      $this->getID() . '_date_current',
+      E::ts('Current Assignment')
     );
+
+
+
 
     $form->add(
       'text',
@@ -104,7 +136,9 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_email_template',
       E::ts('Email Template'),
-      $this->getAllTemplates()
+      $this->getAllTemplates(),
+      FALSE,
+      array('class' => 'crm-select2 huge')
     );
 
     $form->add(
@@ -113,16 +147,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       E::ts('Upload to'),
       array('class' => 'huge')
     );
-  }
-
-  /**
-   * get all possible delimiters
-   */
-  protected function getDelimiterOptions() {
-    return array(
-      ';' => E::ts('Semicolon (;)'),
-      ',' => E::ts('Comma (,)')
-        );
   }
 
   /**
@@ -141,18 +165,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get all possible encodings
-   */
-  protected function getEncodingOptions() {
-    $encodings = array();
-    $mb_list = mb_list_encodings();
-    foreach ($mb_list as $mb_encoding) {
-      $encodings[$mb_encoding] = $mb_encoding;
-    }
-    return $encodings;
-  }
-
-  /**
    * Parse the credentials
    * @return FALSE if nothing is entered, 'ERROR' if it cannot be parsed
    */
@@ -167,14 +179,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       }
     }
     return FALSE;
-  }
-
-  /**
-   * get the table with the contact_id column
-   */
-  protected function getExportTable() {
-    $table_name = $this->getConfigValue('table');
-    return trim($table_name);
   }
 
   /**
@@ -197,28 +201,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     return $file_name;
   }
 
-  /**
-   * get a list of (header, column) definitions
-   */
-  protected function getColumnSpecs() {
-    $header2column = array();
-    $columns_spec = trim($this->getConfigValue('headers'));
-    $spec_lines = explode(PHP_EOL, $columns_spec);
-    foreach ($spec_lines as $spec_line) {
-      $separator_index = strpos($spec_line, '=');
-      if ($separator_index > 0) {
-        $header = trim(substr($spec_line, 0, $separator_index));
-        $column = trim(substr($spec_line, $separator_index + 1));
-        if (!empty($header) && !empty($column)) {
-          $header2column[] = array($header, $column);
-        }
-      } else {
-        // this line is ignored, it doesn't have the asdasd=asdasd form
-      }
-    }
-
-    return $header2column;
-  }
 
   /**
    * get the selected filepath
@@ -243,95 +225,69 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   public function checkConfiguration() {
     parent::checkConfiguration();
 
-    $export_table = $this->getExportTable();
-    if (empty($export_table)) {
-      throw new Exception("Export Table not configured.", 1);
-    }
-
-    // check if table exists
-    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$export_table}';");
-    if (!$existing_table) {
-      throw new Exception("Export Table '{$export_table}' doesn't exist.", 1);
-    }
+    // TODO:
 
     // check file path
     $file_check = $this->getFilePath();
     if (!is_writeable($file_check)) {
       throw new Exception("Cannot export file to '{$file_check}'.", 1);
     }
-
-    // check if there is at least one column
-    $column_specs = $this->getColumnSpecs();
-    if (empty($column_specs)) {
-      throw new Exception("No valid column specifications found'.", 1);
-    }
   }
+
 
   /**
    * RUN this action
    */
   public function execute() {
-    // first: get filename, open stream
+    // get some basic data
+    $campaign_id = $this->getConfigValue('campaign_id');
+    $exported_files = array();
+
+    // compile parameters
+    $params = array();
+    $segments = $this->getConfigValue('segments');
+    if (!empty($segments)) {
+      $params['segments'] = $segments;
+    }
+
+    // TODO: time restraints:
+    // $params['start_date'] / $params['end_date']
+
+    // FIRST: run all exporters
+    $exporters = $this->getConfigValue('exporter');
+    foreach ($exporters as $exporter_id) {
+      // export file
+      $exporter = CRM_Segmentation_Exporter::getExporter($exporter_id);
+      $exporter->generateFile($campaign_id, $params);
+      $exported_file      = $exporter->getExportedFile();
+      $exported_file_name = $exporter->getFileName();
+      $exported_files[$exported_file] = $exported_file_name;
+
+      // add log entry
+      $exporter_name = $exporter->getName();
+      $this->log("Exported '{$exporter_name}' to file '{$exported_file_name}'");
+    }
+
+    // NEXT: zip all files
     $filename = $this->getFileName();
     $filepath = $this->getFilePath($filename);
-    // if (!file_exists($filepath)) {
-    //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
-    // }
-    $out = fopen($filepath, 'w');
-
-    // then: run the query
-    $export_table = $this->getExportTable();
-    $column_specs = $this->getColumnSpecs();
-    $delimiter = $this->getConfigValue('delimiter');
-    $encoding  = $this->getConfigValue('encoding');
-
-    // parse specs
-    $headers = array();
-    $columns = array();
-    foreach ($column_specs as $column_spec) {
-      $headers[] = $column_spec[0];
-      $columns[] = $column_spec[1];
+    if (file_exists($filepath)) {
+      // make sure this is a fresh file, ZIP will append otherwise
+      unlink($filepath);
+      $this->log("Overwriting existing file '{$filepath}'.");
     }
-
-    // write headers
-    $this->writeLine($out, $headers, $delimiter, $encoding);
-
-    // write the records
-    $count = 0;
-    $column_list = implode(',', $columns);
-    // error_log("SELECT {$column_list} FROM {$export_table}");
-    $query = CRM_Core_DAO::executeQuery("SELECT {$column_list} FROM {$export_table}");
-    while ($query->fetch()) {
-      $record = array();
-      foreach ($column_specs as $column_spec) {
-        $column = $column_spec[1];
-        // TODO: formatting?
-        $record[] = isset($query->$column) ? $query->$column : '';
-      }
-      $this->writeLine($out, $record, $delimiter, $encoding);
-      $count++;
+    $zip = new ZipArchive();
+    if ($zip->open($filepath, ZipArchive::CREATE)!==TRUE) {
+      throw new Exception("Cannot open zipfile '{$filepath}'", 1);
     }
-    $query->free();
-    fclose($out);
-    $this->log("Written {$count} records to '{$filepath}'");
-
-
-    // POST PROCESSING
-    // 1) ZIP
-    if ($this->getConfigValue('zip')) {
-      // zip the file
-      $zip = new ZipArchive();
-      $zipfile = $filepath . '.zip';
-      if ($zip->open($zipfile, ZipArchive::CREATE)!==TRUE) {
-        throw new Exception("Cannot open zipfile '{$zipfile}'", 1);
-      }
-      $zip->addFile($filepath, $filename);
-      $zip->close();
-      $filepath = $zipfile;
-      $this->log("Zipped file into '{$filepath}'");
+    foreach ($exported_files as $exported_file => $exported_file_name) {
+      $zip->addFile($exported_file, $exported_file_name);
     }
+    $zip->close();
+    $this->log("Zipped file into '{$filepath}'");
 
-    // 2) EMAIL
+
+    // PROCESS 1: EMAIL
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
@@ -340,7 +296,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
       $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
       $attachment  = array('fullPath'  => $filepath,
-                           'mime_type' => $this->getConfigValue('zip') ? 'application/zip' : 'text/csv',
+                           'mime_type' => 'application/zip',
                            'cleanName' => basename($filepath));
       // and send the template via email
       $email = array(
@@ -355,7 +311,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       $this->log("Sent file to '{$email_list}'");
     }
 
-    // 3) UPLOAD
+    // PROCESS 2: UPLOAD
     if ($this->getConfigValue('upload')) {
       $credentials = $this->getCredentials();
       if ($credentials && $credentials != 'ERROR') {
@@ -378,22 +334,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       } else {
         throw new Exception("Upload failed, couldn't parse credentials", 1);
       }
-    }
-  }
-
-  /**
-   *
-   * @todo: configure more of fputcsv ( resource $handle , array $fields [, string $delimiter = "," [, string $enclosure = '"' [, string $escape_char = "\" ]]] )
-   */
-  protected function writeLine($out, $record, $delimiter, $encoding = NULL) {
-    if ($encoding) {
-      $encoded_record = array();
-      foreach ($record as $value) {
-        $encoded_record[] = mb_convert_encoding($value, $encoding);
-      }
-      fputcsv($out, $encoded_record, $delimiter);
-    } else {
-      fputcsv($out, $record, $delimiter);
     }
   }
 }
