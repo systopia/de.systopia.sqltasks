@@ -143,9 +143,11 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // get some basic data
-    $timestamp  = date('Y-m-d H:i:s');
+    $timestamp   = date('Y-m-d H:i:s');
     $campaign_id = $this->getConfigValue('campaign_id');
     $data_table  = $this->getDataTable();
+    $task_id     = $this->task->getID();
+    $temp_table  = "temp_segmentation_sqltask{$task_id}_assignment_cache";
     $membership_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$data_table}` LIKE 'membership_id';");
 
     // RESOLVE
@@ -187,35 +189,66 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
         $segment_filter = '';
       }
 
-      // CRM_Core_DAO::executeQuery("DROP TABLE temp_segmentation__internal_assignment IF EXISTS");
+      CRM_Core_DAO::executeQuery("DROP TEMPORARY TABLE IF EXISTS `{$temp_table}`;");
       if ($membership_column) {
         // ASSIGN MEMBERSHIPS (multi-segment)
+        // create temp table
         CRM_Core_DAO::executeQuery("
-            INSERT IGNORE INTO `civicrm_segmentation` (entity_id,datetime,campaign_id,segment_id,test_group,membership_id)
+            CREATE TEMPORARY TABLE `{$temp_table}` AS
             SELECT civicrm_membership.contact_id AS entity_id,
                    %3                            AS datetime,
                    %1                            AS campaign_id,
                    %2                            AS segment_id,
                    NULL                          AS test_group,
-                   `{$data_table}`.membership_id AS membership_id
+                   `{$data_table}`.membership_id AS membership_id,
+                   civicrm_segmentation.id       AS already_assigned
             FROM `{$data_table}`
-            LEFT JOIN civicrm_membership ON civicrm_membership.id = `{$data_table}`.membership_id
+            LEFT JOIN civicrm_membership   ON civicrm_membership.id = `{$data_table}`.membership_id
+            LEFT JOIN civicrm_segmentation ON civicrm_segmentation.campaign_id    = %1
+                                           AND civicrm_segmentation.membership_id = civicrm_membership.id
+                                           AND civicrm_segmentation.segment_id    = %2
             {$segment_filter}", $params);
-        $this->log("Assigned memberships to segment '{$segment_name}'.");
+        // get count
+        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL;");
+        // assign memberships
+        CRM_Core_DAO::executeQuery("
+          INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
+          SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL;");
+
+        $this->log("Assigned {$count} new memberships to segment '{$segment_name}'.");
+
       } else {
         // ASSIGN CONTACTS (multi-segment)
+        // create temp table
         CRM_Core_DAO::executeQuery("
-            INSERT IGNORE INTO `civicrm_segmentation` (entity_id,datetime,campaign_id,segment_id,test_group,membership_id)
-            SELECT contact_id AS entity_id,
-                   %3         AS datetime,
-                   %1         AS campaign_id,
-                   %2         AS segment_id,
-                   NULL       AS test_group,
-                   NULL       AS membership_id
+            CREATE TEMPORARY TABLE `{$temp_table}` AS
+            SELECT contact_id              AS entity_id,
+                   %3                      AS datetime,
+                   %1                      AS campaign_id,
+                   %2                      AS segment_id,
+                   NULL                    AS test_group,
+                   NULL                    AS membership_id,
+                   civicrm_segmentation.id AS already_assigned
             FROM `{$data_table}`
+            LEFT JOIN civicrm_segmentation ON civicrm_segmentation.campaign_id = %1
+                                           AND civicrm_segmentation.entity_id  = `{$data_table}`.contact_id
+                                           AND civicrm_segmentation.segment_id = %2
             {$segment_filter}", $params);
-        $this->log("Assigned contacts to segment '{$segment_name}'.");
+        // get count
+        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL;");
+        // assign memberships
+        CRM_Core_DAO::executeQuery("
+          INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
+          SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL;");
+        $this->log("Assigned {$count} new contacts to segment '{$segment_name}'.");
       }
+
+      // cleanup
+      CRM_Core_DAO::executeQuery("DROP TEMPORARY TABLE IF EXISTS `{$temp_table}`;");
     }
 
     // store assignment start/end dates
