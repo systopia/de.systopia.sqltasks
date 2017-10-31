@@ -1,0 +1,26 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-segmentation-assign-table'}
+  <p>{ts domain="de.systopia.sqltasks"}Select the DB table to yield your contacts or memberships. Therefore table has to feature a <code>contact_id</code> or <code>membership_id</code> column. Should both exist, the <code>membership_id</code> takes preference and memberships are assigned.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-assign-segment-name'}
+  <p>{ts domain="de.systopia.sqltasks"}Contacts or memberships will be assigned to this segment. If the segment doesn't exist yet, it will be created.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-assign-segment-from-table'}
+  <p>{ts domain="de.systopia.sqltasks"}If this option is activated, the segment the contacts or memberships will be assigned to will be taken from the table column <code>segment_name</code>. This column has to exist and cannot be empty.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}In this case the segment name entered above is ignored.{/ts}</p>
+{/htxt}

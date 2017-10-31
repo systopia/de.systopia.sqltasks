@@ -184,7 +184,7 @@ abstract class CRM_Sqltasks_Action {
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
     // add Segmentation Extension tasks (de.systopia.segmentation)
     if (function_exists('sqltasks_civicrm_install')) {
-      // $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
+      $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
       $actions[] = new CRM_Sqltasks_Action_SegmentationExport($task);
     }
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'success', E::ts('Success Handler'));
