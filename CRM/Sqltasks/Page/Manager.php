@@ -51,8 +51,11 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       'id'             => $task->getID(),
       'name'           => $task->getAttribute('name'),
       'description'    => $task->getAttribute('description'),
+      'category'       => $task->getAttribute('category'),
       'schedule'       => $this->renderSchedule($task->getAttribute('scheduled')),
       'last_executed'  => $this->renderDate($task->getAttribute('last_execution')),
+      'last_runtime'   => $this->renderRuntime($task->getAttribute('last_runtime')),
+      'parallel_exec'  => $task->getAttribute('parallel_exec'),
       'next_execution' => 'TODO', //$this->renderDate($task->getNextExecutionTime()),
       'enabled'        => $task->getAttribute('enabled'),
       );
@@ -79,6 +82,30 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
    * render a scheduling option
    */
   protected function renderSchedule($string) {
+    $options = CRM_Sqltasks_Task::getSchedulingOptions();
+    if (isset($options[$string])) {
+      return $options[$string];
+    } else {
+      return E::ts('ERROR');
+    }
+  }
+
+  /**
+   * render an integer microtime value
+   */
+  protected function renderRuntime($value) {
+    if (!$value) {
+      return E::ts('n/a');
+    } elseif ($value > (1000 * 60)) {
+      // render values > 1 minute as min:second
+      $minutes = $value / (1000 * 60);
+      $seconds = ($value % (1000 * 60)) / 1000;
+      return sprintf("%d:%02d min", $minutes, $seconds);
+    } else {
+      // render values < 1 minute as 0.000 seconds
+      return sprintf("%d.%03ds", ($value/1000), ($value%1000));
+    }
+
     $options = CRM_Sqltasks_Task::getSchedulingOptions();
     if (isset($options[$string])) {
       return $options[$string];

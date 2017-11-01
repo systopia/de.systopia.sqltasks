@@ -25,10 +25,13 @@ class CRM_Sqltasks_Task {
   protected static $main_attributes = array(
     'name'            => 'String',
     'description'     => 'String',
+    'category'        => 'String',
     'scheduled'       => 'String',
     'enabled'         => 'Integer',
     'weight'          => 'Integer',
     'last_execution'  => 'Date',
+    'last_runtime'    => 'Integer',
+    'parallel_exec'   => 'Integer',
     'main_sql'        => 'String',
     'post_sql'        => 'String');
 
@@ -158,7 +161,8 @@ class CRM_Sqltasks_Task {
     $fields = array();
     $index  = 1;
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
-      if ($attribute_name == 'last_execution') {
+      if (  $attribute_name == 'last_execution'
+         || $attribute_name == 'last_runtime') {
         // don't overwrite timestamp
         continue;
       }
@@ -209,7 +213,8 @@ class CRM_Sqltasks_Task {
     $this->resetLog();
 
     // 0. mark task as started
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    $task_timestamp = microtime(TRUE) * 1000;
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
 
     // 1. run the main SQL
     $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
@@ -247,7 +252,8 @@ class CRM_Sqltasks_Task {
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
 
     // 4. update/close the task
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
     if ($error_count) {
       $this->status = 'error';
     } else {

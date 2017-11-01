@@ -30,6 +30,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.category.label}</div>
+    <div class="content">{$form.category.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <h3>{ts}Queries{/ts}</h3>
 
   <div class="crm-section">
@@ -49,6 +55,12 @@
   <div class="crm-section">
     <div class="label">{$form.scheduled.label}</div>
     <div class="content">{$form.scheduled.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.parallel_exec.label}</div>
+    <div class="content">{$form.parallel_exec.html}</div>
     <div class="clear"></div>
   </div>
 
