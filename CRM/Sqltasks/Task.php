@@ -211,10 +211,18 @@ class CRM_Sqltasks_Task {
     $this->status = 'running';
     $error_count  = 0;
     $this->resetLog();
+    $task_timestamp = microtime(TRUE) * 1000;
 
     // 0. mark task as started
-    $task_timestamp = microtime(TRUE) * 1000;
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
+    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id};");
+    if ($is_still_running) {
+      $this->status = 'error';
+      $this->log("Task is still running. Execution skipped.");
+      return $this->log_messages;
+    } else {
+      // set last_execution and running_since
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
+    }
 
     // 1. run the main SQL
     $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
@@ -319,6 +327,13 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get a list of tasks ready for execution
+   */
+  public static function getParallelExecutionTaskList() {
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC');
+  }
+
+  /**
    * Load a list of tasks based on the data yielded by the given SQL query
    */
   public static function getTasks($sql_query) {
@@ -370,6 +385,46 @@ class CRM_Sqltasks_Task {
   //  +---------------------------------+
   //  |       Scheduling Logic          |
   //  +---------------------------------+
+
+  /**
+   * main dispatcher, triggered by a scheduled Job
+   */
+  public static function runDispatcher() {
+    $results = array();
+
+    // FIRST reset timed out tasks (after 23 hours)
+    CRM_Core_DAO::executeQuery("
+      UPDATE `civicrm_sqltasks`
+         SET running_since = NULL
+       WHERE running_since < (NOW() - INTERVAL 23 HOUR);");
+
+    // THEN: find out if still running
+    $still_running = CRM_Core_DAO::singleValueQuery("
+      SELECT COUNT(*)
+        FROM `civicrm_sqltasks`
+       WHERE running_since IS NOT NULL;");
+
+    if (!$still_running) {
+      // NORMAL DISPATCH
+      $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
+      foreach ($tasks as $task) {
+        if ($task->shouldRun()) {
+          $results[] = $task->execute();
+        }
+      }
+
+    } else {
+      // PARALLEL DISPATCH: only run tasks flagged as parallel
+      $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
+      foreach ($tasks as $task) {
+        if ($task->shouldRun()) {
+          $results[] = $task->execute();
+        }
+      }
+    }
+
+    return $results;
+  }
 
   /**
    * Check if the task should run according to scheduling
