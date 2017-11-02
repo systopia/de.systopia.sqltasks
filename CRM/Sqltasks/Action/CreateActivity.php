@@ -282,7 +282,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
   protected function getEligibleCampaigns() {
     $campaign_list = array();
     $campaign_query = civicrm_api3('Campaign', 'get', array(
-      'is_enabled'   => 1,
+      'is_active'    => 1,
       'option.limit' => 0,
       'return'       => 'id,title'))['values'];
     foreach ($campaign_query as $campaign) {
