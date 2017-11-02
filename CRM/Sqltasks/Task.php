@@ -270,7 +270,7 @@ class CRM_Sqltasks_Task {
    */
   protected function executeSQLScript($script, $script_name) {
     if (empty($script)) {
-      $this->log("No '{$script_name}'given.");
+      $this->log("No '{$script_name}' given.");
       return;
     }
 
@@ -280,8 +280,14 @@ class CRM_Sqltasks_Task {
       $config = CRM_Core_Config::singleton();
       $script = html_entity_decode($script);
 
-      // run the whole script
-      CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
+      // run the whole script (see CRM-20428 and
+      //   https://github.com/systopia/de.systopia.sqltasks/issues/2)
+      if (version_compare(CRM_Utils_System::version(), '4.7.20', '<')) {
+        CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
+      } else {
+        CRM_Utils_File::runSqlQuery($config->dsn, $script);
+      }
+
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
       $this->log("Script '{$script_name}' executed in {$runtime}s.");
     } catch (Exception $e) {
