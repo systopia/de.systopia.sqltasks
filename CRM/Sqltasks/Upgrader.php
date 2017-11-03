@@ -35,13 +35,13 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
   }
 
   /**
-   * Update to version 0.4
+   * Update to version 0.5
    *
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0040() {
-    $this->ctx->log->info('Updating "SQL Tasks" schema to version 0.4...');
+  public function upgrade_0050() {
+    $this->ctx->log->info('Updating "SQL Tasks" schema to version 0.5...');
 
     // add column: category
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'category';");
