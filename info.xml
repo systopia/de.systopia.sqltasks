@@ -14,11 +14,12 @@
     <url desc="Support">https://github.com/systopia/de.systopia.sqltasks/issues</url>
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
-  <releaseDate>2017-10-16</releaseDate>
-  <version>0.4.dev</version>
+  <releaseDate>2017-11-03</releaseDate>
+  <version>0.4.alpha1</version>
   <develStage>dev</develStage>
   <compatibility>
     <ver>4.6</ver>
+    <ver>4.7</ver>
   </compatibility>
   <comments>The initial development of this handy tool was funded by Greenpeace Central and Eastern Europe</comments>
   <civix>
