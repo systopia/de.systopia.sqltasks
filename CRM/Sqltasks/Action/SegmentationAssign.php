@@ -73,6 +73,12 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
 
     $form->add(
       'checkbox',
+      $this->getID() . '_clear',
+      E::ts('Clear before assignment')
+    );
+
+    $form->add(
+      'checkbox',
       $this->getID() . '_segment_from_table',
       E::ts('Segment from data table')
     );
@@ -149,6 +155,15 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $task_id     = $this->task->getID();
     $temp_table  = "temp_segmentation_sqltask{$task_id}_assignment_cache";
     $membership_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$data_table}` LIKE 'membership_id';");
+
+    // CLEAR (if requested)
+    $clear = $this->getConfigValue('clear');
+    if ($clear) {
+      // clear out campaign
+      CRM_Core_DAO::executeQuery("DELETE FROM civicrm_segmentation WHERE campaign_id = %1",
+        array(1 => array($campaign_id, 'Integer')));
+      $this->log("Cleared out campaign [{$campaign_id}]");
+    }
 
     // RESOLVE
     $segment_name_2_id = array();

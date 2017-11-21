@@ -20,6 +20,10 @@
   <p>{ts domain="de.systopia.sqltasks"}Contacts or memberships will be assigned to this segment. If the segment doesn't exist yet, it will be created.{/ts}</p>
 {/htxt}
 
+{htxt id='id-segmentation-assign-clear'}
+  <p>{ts domain="de.systopia.sqltasks"}Caution: this option will clear the campaign before assigning new contacts. That means all previous assignments will be removed - regardless of the campaign's status.{/ts}</p>
+{/htxt}
+
 {htxt id='id-segmentation-assign-segment-from-table'}
   <p>{ts domain="de.systopia.sqltasks"}If this option is activated, the segment the contacts or memberships will be assigned to will be taken from the table column <code>segment_name</code>. This column has to exist and cannot be empty.{/ts}</p>
   <p>{ts domain="de.systopia.sqltasks"}In this case the segment name entered above is ignored.{/ts}</p>

@@ -26,6 +26,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.segmentation_assign_clear.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Clear Campaign{/ts}", {literal}{"id":"id-segmentation-assign-clear","file":"CRM\/Sqltasks\/Action\/SegmentationAssign"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.segmentation_assign_clear.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <div class="crm-section assign-segment">
     <div class="label">{$form.segmentation_assign_segment_name.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Segment{/ts}", {literal}{"id":"id-segmentation-assign-segment-name","file":"CRM\/Sqltasks\/Action\/SegmentationAssign"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.segmentation_assign_segment_name.html}</div>
