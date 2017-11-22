@@ -83,6 +83,31 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       E::ts('Segment from data table')
     );
 
+    $form->add(
+      'select',
+      $this->getID() . '_start',
+      E::ts('Change Campaign Status'),
+      $this->getCampaignStatusOptions(),
+      FALSE,
+      array('class' => 'crm-select2 huge')
+    );
+
+    $form->add(
+      'textarea',
+      $this->getID() . '_segment_order',
+      E::ts('Segment Order'),
+      array('rows' => 8, 'cols' => 40),
+      FALSE
+    );
+
+    $form->add(
+      'text',
+      $this->getID() . '_segment_order_table',
+      E::ts('Segment Order Table'),
+      array('class' => 'huge')
+    );
+
+
     // pass on specs for the 'custom segment' option
     $form->assign($this->getID() . '_custom_segment_label', E::ts('[<i>from data table</i>: <code>segment_name</code>]'));
     $form->assign($this->getID() . '_custom_segment_id', CUSTOM_SEGMENT_ID);
@@ -264,6 +289,35 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
 
       // cleanup
       CRM_Core_DAO::executeQuery("DROP TEMPORARY TABLE IF EXISTS `{$temp_table}`;");
+
+    }
+
+    // CHANGE STATUS
+    $status_change = $this->getConfigValue('start');
+    $new_status = NULL;
+    switch ($status_change) {
+      case 'planned':
+        # reset status to planned
+        $has_changed = $this->setCampaignToPlanned($campaign_id);
+        if ($has_changed) {
+          $this->log("Campaign {$campaign_id} set to status 'planned'");
+        } else {
+          $this->log("Campaign {$campaign_id} was already in status 'planned'");
+        }
+        break;
+
+      case 'restart':
+      case 'restart_t':
+        $this->setCampaignToPlanned($campaign_id); # otherwise we can't re-start it
+        $segment_order = $this->getSegmentOrder($campaign_id);
+        CRM_Segmentation_Logic::startCampaign($campaign_id, $segment_order);
+        $this->log("Campaign {$campaign_id} has been consolidated and (re)started.");
+        break;
+
+      default:
+      case 'leave':
+        // do nothing
+        break;
     }
 
     // store assignment start/end dates
@@ -281,5 +335,64 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     } else {
       return NULL;
     }
+  }
+
+  /**
+   * get the campaign status options
+   */
+  protected function getCampaignStatusOptions() {
+    return array(
+      'leave'     => E::ts("don't change status"),
+      'planned'   => E::ts("(re)set to 'planned'"),
+      // 'start'     => E::ts("start (if 'planned') with fixed segment order"),
+      // 'start_t'   => E::ts("start (if 'planned') with segment order from table"),
+      'restart'   => E::ts("(re)start with fixed segment order"),
+      'restart_t' => E::ts("(re)start with segment order from table"),
+      );
+  }
+
+  /**
+   * make sure the status of the campaign is 'planned' (1)
+   *
+   * @return TRUE if the campaign needed to be modified for this
+   */
+  protected function setCampaignToPlanned($campaign_id) {
+    $campaign = civicrm_api3('Campaign', 'getsingle', array(
+      'id'     => $campaign_id,
+      'return' => 'id,status_id'));
+    if ($campaign['status_id'] == 1) {
+      return FALSE;
+    } else {
+      civicrm_api3('Campaign', 'create', array(
+        'id'        => $campaign_id,
+        'status_id' => 1));
+      return TRUE;
+    }
+  }
+
+  /**
+   * Extract a segment order from the configuration
+   * The order will be based on the current order, with
+   * the configured parts going to the top
+   */
+  protected function getSegmentOrder($campaign_id) {
+    $new_order = array();
+    $status_change = $this->getConfigValue('start');
+    if ($status_change == 'restart_t') {
+      // get the order from the table
+      $table_name = $this->getConfigValue('segment_order_table');
+      $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(`segment_id`) AS sid FROM `{$table_name}` ORDER BY `segment_weight` ASC");
+      while ($query->fetch()) {
+        $new_order[] = $query->sid;
+      }
+
+    } else {
+      // get the order from the text field
+      $order_value = $this->getConfigValue('segment_order');
+    }
+
+    // TODO: extend
+
+    return $new_order;
   }
 }
