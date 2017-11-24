@@ -22,6 +22,8 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 abstract class CRM_Sqltasks_Action {
 
+  protected static $_campaign_list = NULL;
+
   protected $task = NULL;
   protected $config = NULL;
 
@@ -180,6 +182,11 @@ abstract class CRM_Sqltasks_Action {
     $actions[] = new CRM_Sqltasks_Action_CSVExport($task);
     $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
+    // add Segmentation Extension tasks (de.systopia.segmentation)
+    if (function_exists('sqltasks_civicrm_install')) {
+      $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
+      $actions[] = new CRM_Sqltasks_Action_SegmentationExport($task);
+    }
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'success', E::ts('Success Handler'));
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'error',   E::ts('Error Handler'));
     return $actions;
@@ -198,5 +205,36 @@ abstract class CRM_Sqltasks_Action {
       }
     }
     return $active_actions;
+  }
+
+  /**
+   * get a list of eligible groups
+   */
+  protected function getEligibleCampaigns($empty_option = FALSE) {
+    $campaign_list = array();
+
+    // add empty option (if requested)
+    if ($empty_option) {
+      $campaign_list[0] = E::ts('- none -');
+    }
+
+    // load campaigns (cached)
+    if (self::$_campaign_list === NULL) {
+      self::$_campaign_list = array();
+      $campaign_query = civicrm_api3('Campaign', 'get', array(
+        'is_enabled'   => 1,
+        'option.limit' => 0,
+        'return'       => 'id,title'))['values'];
+      foreach ($campaign_query as $campaign) {
+        self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value('title', $campaign, "Campaign {$campaign['id']}");
+      }
+    }
+
+    // add camapaigns to list
+    foreach (self::$_campaign_list as $key => $value) {
+      $campaign_list[$key] = $value;
+    }
+
+    return $campaign_list;
   }
 }

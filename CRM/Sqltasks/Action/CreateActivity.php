@@ -94,7 +94,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'select',
       $this->getID() . '_campaign_id',
       E::ts('Campaign'),
-      $this->getEligibleCampaigns(),
+      $this->getEligibleCampaigns(TRUE),
       FALSE
     );
 
