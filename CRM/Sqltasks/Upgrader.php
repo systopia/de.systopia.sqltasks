@@ -67,6 +67,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
       CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `parallel_exec` tinyint COMMENT 'should this task be executed in parallel?';");
     }
 
+    // update rebuild log tables
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
+
     return TRUE;
   }
 }
