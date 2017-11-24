@@ -153,6 +153,21 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       }
     }
 
+    // check segmentation order
+    $status_change = $this->getConfigValue('start');
+    if ($status_change == 'restart_t') {
+      // get the order from the table
+      $table_name = $this->getConfigValue('segment_order_table');
+      $segment_colum = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table_name}` LIKE 'segment_id';");
+      if (!$segment_colum) {
+        throw new Exception("Segmentation order table '{$table_name}' has no column 'segment_id'.", 1);
+      }
+      $segment_colum = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table_name}` LIKE 'segment_weight';");
+      if (!$segment_colum) {
+        throw new Exception("Segmentation order table '{$table_name}' has no column 'segment_weight'.", 1);
+      }
+    }
+
     // check campaign
     $campaign_id = $this->getConfigValue('campaign_id');
     if (!$campaign_id) {
@@ -378,6 +393,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
   protected function getSegmentOrder($campaign_id) {
     $new_order = array();
     $status_change = $this->getConfigValue('start');
+
     if ($status_change == 'restart_t') {
       // get the order from the table
       $table_name = $this->getConfigValue('segment_order_table');
@@ -389,9 +405,25 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     } else {
       // get the order from the text field
       $order_value = $this->getConfigValue('segment_order');
+      $segment_names = explode("\n", $order_value);
+      foreach ($segment_names as $segment_name) {
+        $segment_name = trim($segment_name);
+        $segment_id = CRM_Core_DAO::singleValueQuery("SELECT id FROM `civicrm_segmentation_index` WHERE name = %1", array(1 => array($segment_name, 'String')));
+        if ($segment_id) {
+          $new_order[] = $segment_id;
+        } else {
+          $this->log("Warning: referenced segment '{$segment_name}' could not be identified!");
+        }
+      }
     }
 
-    // TODO: extend
+    // extend the remaining according to the current order
+    $current_order = CRM_Segmentation_Logic::getSegmentOrder($campaign_id, TRUE);
+    foreach ($current_order as $segment_id) {
+      if ($segment_id && !in_array($segment_id, $new_order)) {
+        $new_order[] = $segment_id;
+      }
+    }
 
     return $new_order;
   }
