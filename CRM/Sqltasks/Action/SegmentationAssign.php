@@ -59,7 +59,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_campaign_id',
       E::ts('Campaign'),
-      $this->getEligibleCampaigns(),
+      $this->getEligibleCampaigns(TRUE),
       FALSE,
       array('class' => 'crm-select2 huge')
     );
