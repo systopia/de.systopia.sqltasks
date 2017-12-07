@@ -29,7 +29,7 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
 
   public function __construct($task, $id, $name) {
     parent::__construct($task);
-    $this->id = $id;
+    $this->id   = $id;
     $this->name = $name;
   }
 
@@ -125,7 +125,9 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // check if we need to be executed
-    if ($this->id == $this->task->getStatus()) {
+    if (   ($this->id == 'success' && !$this->task->hasExecutionErrors())
+        || ($this->id == 'error'   && $this->task->hasExecutionErrors())) {
+
       $config_email = $this->getConfigValue('email');
       $config_email_template = $this->getConfigValue('email_template');
       if (!empty($config_email) && !empty($config_email_template)) {

@@ -39,6 +39,7 @@ class CRM_Sqltasks_Task {
   protected $attributes;
   protected $config;
   protected $status;
+  protected $error_count;
   protected $log_messages;
 
   /**
@@ -50,6 +51,7 @@ class CRM_Sqltasks_Task {
     $this->config       = array();
     $this->log_messages = array();
     $this->status       = 'init';
+    $this->error_count  = 0;
 
     // main attributes go into $this->attributes
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
@@ -82,6 +84,13 @@ class CRM_Sqltasks_Task {
    */
   public function getStatus() {
     return $this->status;
+  }
+
+  /**
+   * check if the task has encountered errors during execution
+   */
+  public function hasExecutionErrors() {
+    return $this->error_count > 0 || $this->status == 'error';
   }
 
   /**
@@ -121,7 +130,7 @@ class CRM_Sqltasks_Task {
       $handle = fopen($logfile, 'w');
       foreach ($this->log_messages as $message) {
         // fwrite($handle, mb_convert_encoding($message . "\n", 'utf8'));
-        fwrite($handle, $message . "\n");
+        fwrite($handle, $message . "\r\n");
       }
       fclose($handle);
     }
@@ -209,7 +218,7 @@ class CRM_Sqltasks_Task {
    */
   public function execute() {
     $this->status = 'running';
-    $error_count  = 0;
+    $this->error_count = 0;
     $this->resetLog();
     $task_timestamp = microtime(TRUE) * 1000;
 
@@ -241,7 +250,7 @@ class CRM_Sqltasks_Task {
       try {
         $action->checkConfiguration();
       } catch (Exception $e) {
-        $error_count += 1;
+        $this->error_count += 1;
         $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
         continue;
       }
@@ -252,7 +261,7 @@ class CRM_Sqltasks_Task {
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.");
       } catch (Exception $e) {
-        $error_count += 1;
+        $this->error_count += 1;
         $this->log("Error in action '{$action_name}': " . $e -> getMessage());
       }
     }
@@ -263,7 +272,7 @@ class CRM_Sqltasks_Task {
     // 4. update/close the task
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
-    if ($error_count) {
+    if ($this->error_count) {
       $this->status = 'error';
     } else {
       $this->status = 'success';
@@ -285,7 +294,7 @@ class CRM_Sqltasks_Task {
    */
   protected function executeSQLScript($script, $script_name) {
     if (empty($script)) {
-      $this->log("No '{$script_name}'given.");
+      $this->log("No '{$script_name}' given.");
       return;
     }
 
@@ -295,11 +304,18 @@ class CRM_Sqltasks_Task {
       $config = CRM_Core_Config::singleton();
       $script = html_entity_decode($script);
 
-      // run the whole script
-      CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
+      // run the whole script (see CRM-20428 and
+      //   https://github.com/systopia/de.systopia.sqltasks/issues/2)
+      if (version_compare(CRM_Utils_System::version(), '4.7.20', '<')) {
+        CRM_Utils_File::sourceSQLFile($config->dsn, $script, NULL, TRUE);
+      } else {
+        CRM_Utils_File::runSqlQuery($config->dsn, $script);
+      }
+
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
       $this->log("Script '{$script_name}' executed in {$runtime}s.");
     } catch (Exception $e) {
+      $this->error_count += 1;
       $this->log("Script '{$script_name}' failed: " . $e -> getMessage());
     }
   }
