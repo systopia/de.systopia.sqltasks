@@ -301,6 +301,7 @@ class CRM_Sqltasks_Task {
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
       $this->log("Script '{$script_name}' executed in {$runtime}s.");
     } catch (Exception $e) {
+      $this->error_count += 1;
       $this->log("Script '{$script_name}' failed: " . $e -> getMessage());
     }
   }
