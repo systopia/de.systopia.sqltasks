@@ -38,6 +38,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.csv_discard_empty.label}</div>
+    <div class="content">{$form.csv_discard_empty.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.csv_zip.label}</div>
     <div class="content">{$form.csv_zip.html}</div>
     <div class="clear"></div>
@@ -72,4 +78,5 @@
     <div class="content">{$form.csv_upload.html}</div>
     <div class="clear"></div>
   </div>
+
 </div>

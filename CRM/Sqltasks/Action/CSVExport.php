@@ -112,6 +112,12 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       E::ts('Upload to'),
       array('class' => 'huge')
     );
+
+    $form->add(
+      'checkbox',
+      $this->getID() . '_discard_empty',
+      E::ts('Discard empty file?')
+    );
   }
 
   /**
@@ -314,6 +320,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     fclose($out);
     $this->log("Written {$count} records to '{$filepath}'");
 
+    // CONTINUE WITH EMPTY FILES?
+    $discard_empty = $this->getConfigValue('discard_empty');
+    if ($count == 0 && !empty($discard_empty)) {
+      unlink($filepath);
+      $this->log("Discarded empty file, no upload/email will succeed");
+      return;
+    }
 
     // POST PROCESSING
     // 1) ZIP
