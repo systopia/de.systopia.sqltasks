@@ -209,7 +209,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $segment_name_2_id = array();
     $segment_from_table = $this->getConfigValue('segment_from_table');
     if ($segment_from_table) {
-      $segment_query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(segment_name) AS segment_name FROM '{$data_table}'");
+      $segment_query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(segment_name) AS segment_name FROM `{$data_table}`");
       while ($segment_query->fetch()) {
         $segment_name_2_id[$segment_query->segment_name] = 0;
       }
