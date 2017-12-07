@@ -127,7 +127,7 @@ class CRM_Sqltasks_Task {
       $handle = fopen($logfile, 'w');
       foreach ($this->log_messages as $message) {
         // fwrite($handle, mb_convert_encoding($message . "\n", 'utf8'));
-        fwrite($handle, $message . "\n");
+        fwrite($handle, $message . "\r\n");
       }
       fclose($handle);
     }
