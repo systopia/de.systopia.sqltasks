@@ -53,9 +53,10 @@ tr.sqltasks-plugin-disabled {
 <table class="display" id="option11">
   <thead>
     <tr>
+      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Category{/ts}</th>
+      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}ID{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Name{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Description{/ts}</th>
-      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Category{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Enabled?{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Schedule{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Last Execution{/ts}</th>
@@ -68,9 +69,10 @@ tr.sqltasks-plugin-disabled {
   {foreach from=$tasks item=task}
     <tr class="{cycle values="odd-row,even-row"} {if not $task.enabled}sqltasks-plugin-disabled{/if}">
       {assign var=task_id value=$task.id}
-      <td>[{$task.id}]&nbsp;{$task.name}</td>
-      <td><div title="{$task.description}">{$task.short_desc}</div></td>
       <td>{$task.category}</div></td>
+      <td>[{$task.id}]</td>
+      <td>{$task.name}</td>
+      <td><div title="{$task.description}">{$task.short_desc}</div></td>
       <td>{if $task.enabled}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
       <td>{$task.schedule}{if $task.parallel_exec}<br/><strong>{ts}(parallel){/ts}{/if}</td>
       <td>{$task.last_executed}</td>
