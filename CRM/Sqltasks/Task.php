@@ -36,6 +36,7 @@ class CRM_Sqltasks_Task {
   protected $attributes;
   protected $config;
   protected $status;
+  protected $error_count;
   protected $log_messages;
 
   /**
@@ -47,6 +48,7 @@ class CRM_Sqltasks_Task {
     $this->config       = array();
     $this->log_messages = array();
     $this->status       = 'init';
+    $this->error_count  = 0;
 
     // main attributes go into $this->attributes
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
@@ -79,6 +81,13 @@ class CRM_Sqltasks_Task {
    */
   public function getStatus() {
     return $this->status;
+  }
+
+  /**
+   * check if the task has encountered errors during execution
+   */
+  public function hasExecutionErrors() {
+    return $this->error_count > 0 || $this->status == 'error';
   }
 
   /**
@@ -205,7 +214,7 @@ class CRM_Sqltasks_Task {
    */
   public function execute() {
     $this->status = 'running';
-    $error_count  = 0;
+    $this->error_count = 0;
     $this->resetLog();
 
     // 0. mark task as started
@@ -228,8 +237,9 @@ class CRM_Sqltasks_Task {
       try {
         $action->checkConfiguration();
       } catch (Exception $e) {
-        $error_count += 1;
+        $this->error_count += 1;
         $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
+        continue;
       }
 
       // run action
@@ -238,7 +248,7 @@ class CRM_Sqltasks_Task {
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.");
       } catch (Exception $e) {
-        $error_count += 1;
+        $this->error_count += 1;
         $this->log("Error in action '{$action_name}': " . $e -> getMessage());
       }
     }
@@ -248,7 +258,7 @@ class CRM_Sqltasks_Task {
 
     // 4. update/close the task
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
-    if ($error_count) {
+    if ($this->error_count) {
       $this->status = 'error';
     } else {
       $this->status = 'success';
