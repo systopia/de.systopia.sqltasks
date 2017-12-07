@@ -189,9 +189,45 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     }
 
     // substitute tokens
-    while (preg_match('/{(?P<token>.+)}/', $file_name, $match)) {
+    while (preg_match('/{(?P<token>[^}]+)}/', $file_name, $match)) {
       $token = $match['token'];
-      $value = date($token);
+      $value = '';
+      switch ($token) {
+        case 'campaign_id':
+          $value = $this->getConfigValue('campaign_id');
+          break;
+
+        case 'campaign_title':
+          try {
+            $campaign_id = $this->getConfigValue('campaign_id');
+            if ($campaign_id) {
+              $value = civicrm_api3('Campaign', 'getvalue', array(
+                'return' => 'title',
+                'id'     => $campaign_id));
+            }
+          } catch (Exception $e) {
+            $value = "ERROR";
+          }
+          break;
+
+        case 'campaign_external_identifier':
+          try {
+            $campaign_id = $this->getConfigValue('campaign_id');
+            if ($campaign_id) {
+              $value = civicrm_api3('Campaign', 'getvalue', array(
+                'return' => 'external_identifier',
+                'id'     => $campaign_id));
+            }
+          } catch (Exception $e) {
+            // probably just not set....
+          }
+          break;
+
+        default:
+          # we'll assume it's a date token
+          $value = date($token);
+          break;
+      }
       $file_name = str_replace('{' . $match['token'] . '}', $value, $file_name);
     }
 
