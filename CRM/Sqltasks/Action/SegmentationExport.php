@@ -47,7 +47,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_campaign_id',
       E::ts('Campaign'),
-      $this->getEligibleCampaigns(TRUE),
+      $this->getEligibleCampaigns(),
       FALSE,
       array('class' => 'crm-select2 huge')
     );

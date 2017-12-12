@@ -222,8 +222,9 @@ abstract class CRM_Sqltasks_Action {
     if (self::$_campaign_list === NULL) {
       self::$_campaign_list = array();
       $campaign_query = civicrm_api3('Campaign', 'get', array(
-        'is_enabled'   => 1,
+        'is_active'    => 1,
         'option.limit' => 0,
+        'option.sort'  => 'title ASC',
         'return'       => 'id,title'))['values'];
       foreach ($campaign_query as $campaign) {
         self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value('title', $campaign, "Campaign {$campaign['id']}");
