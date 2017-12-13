@@ -44,9 +44,9 @@
 {/htxt}
 
 {htxt id='id-segmentation-assign-segment-order-table'}
-  <p>{ts domain="de.systopia.sqltasks"}The table referenced here needs to have two columns:{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}The table referenced here needs to feature the following two columns:{/ts}</p>
   <ul>
-    <li>{ts domain="de.systopia.sqltasks"}<code>segment_id</code>: The ID of the segment (as in <code>civicrm_segmentation_index</code>){/ts}</li>
+    <li>{ts domain="de.systopia.sqltasks"}<code>segment_name</code>: The name of the segment (as in <code>civicrm_segmentation_index</code>). Will be created if it doesn't exist.{/ts}</li>
     <li>{ts domain="de.systopia.sqltasks"}<code>segment_weight</code>: A numeric weight value of the segment, lower value means higher ranking.{/ts}</li>
   </ul>
 {/htxt}

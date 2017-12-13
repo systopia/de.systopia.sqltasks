@@ -158,9 +158,9 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     if ($status_change == 'restart_t') {
       // get the order from the table
       $table_name = $this->getConfigValue('segment_order_table');
-      $segment_colum = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table_name}` LIKE 'segment_id';");
+      $segment_colum = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table_name}` LIKE 'segment_name';");
       if (!$segment_colum) {
-        throw new Exception("Segmentation order table '{$table_name}' has no column 'segment_id'.", 1);
+        throw new Exception("Segmentation order table '{$table_name}' has no column 'segment_name'.", 1);
       }
       $segment_colum = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table_name}` LIKE 'segment_weight';");
       if (!$segment_colum) {
@@ -397,9 +397,15 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     if ($status_change == 'restart_t') {
       // get the order from the table
       $table_name = $this->getConfigValue('segment_order_table');
-      $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(`segment_id`) AS sid FROM `{$table_name}` ORDER BY `segment_weight` ASC");
+      $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(`segment_name`) AS sname FROM `{$table_name}` ORDER BY `segment_weight` ASC");
       while ($query->fetch()) {
-        $new_order[] = $query->sid;
+        // look up segment by name
+        $segment = civicrm_api3('Segmentation', 'getsegmentid', array('name' => $query->sname));
+        if (!empty($segment['id'])) {
+          $new_order[] = $segment['id'];
+        } else {
+          $this->log("Warning: Couldn't resolve segment '{$query->sname}'.");
+        }
       }
 
     } else {
