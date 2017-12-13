@@ -21,9 +21,9 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.segmentation_export_segment_list.label}</div>
-    <div class="content">{$form.segmentation_export_segment_list.html}</div>
-    <div class="clear">{$form.segmentation_export_segments.html}</div>
+    <div class="label">{$form.segmentation_export_segments.label}</div>
+    <div class="content">{$form.segmentation_export_segments.html}</div>
+    <div class="clear"></div>
   </div>
 
   <div class="crm-section export-date">
@@ -99,6 +99,9 @@ segmentation_export_updateDateStatus();
 
 
 <script type="text/javascript">
+
+var segmentation_export_segments_current = {$segmentation_export_segments_current};
+
 {literal}
 
 /*******************************
@@ -106,32 +109,21 @@ segmentation_export_updateDateStatus();
  ******************************/
 cj("#segmentation_export_campaign_id").change(function() {
   // rebuild segment list
-  cj("#segmentation_export_segment_list option").remove();
+  cj("#segmentation_export_segments option").remove();
   CRM.api3('Segmentation', 'segmentlist', {
     "campaign_id": cj("#segmentation_export_campaign_id").val(),
   }).done(function(result) {
-    var old_selected_segment_id = cj("input[name=segmentation_export_segments]").val();
-    var new_selected_segment_id = '0';
     for (segment_id in result.values) {
-      var segment_selected = '';
-      if (segment_id == old_selected_segment_id) {
-        segment_selected = 'selected="selected"';
-        new_selected_segment_id = segment_id;
-      }
-      cj("#segmentation_export_segment_list").append('<option value="' + segment_id + '" ' + segment_selected + '>' + result.values[segment_id] + '</option>');
+      cj("#segmentation_export_segments").append('<option value="' + segment_id + '">' + result.values[segment_id] + '</option>');
     }
-    if (new_selected_segment_id == '0') {
-      new_selected_segment_id = cj("#segmentation_export_segment_list").val();
+    if (segmentation_export_segments_current == 'CHANGED') {
+      cj("#segmentation_export_segments").val('');
+    } else {
+      cj("#segmentation_export_segments").val(segmentation_export_segments_current);
+      segmentation_export_segments_current = 'CHANGED';
     }
-    cj("input[name=segmentation_export_segments]").val(new_selected_segment_id);
+    cj("#segmentation_export_segments").change();
   });
-});
-
-/*******************************
- *    segment list handler     *
- *******************************/
-cj("#segmentation_export_segment_list").change(function() {
-  cj("input[name=segmentation_export_segments]").val(cj("#segmentation_export_segment_list").val());
 });
 
 // fire off event once

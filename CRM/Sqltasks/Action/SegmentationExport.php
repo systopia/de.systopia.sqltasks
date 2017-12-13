@@ -54,16 +54,14 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     $form->add(
       'select',
-      $this->getID() . '_segment_list',
-      E::ts('Segments'),
-      array(),
-      FALSE
-    );
-
-    $form->add( // this hidden field will yield the actual value
-      'hidden',
       $this->getID() . '_segments',
-      $this->getConfigValue('segments'));
+      E::ts('Segments'),
+      array(), // no segements to choose from initially
+      FALSE,
+      array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
+    );
+    // store current value so we can set it when the segments are loaded
+    $form->assign('segmentation_export_segments_current', json_encode($this->getSelectedSegments()));
 
     $form->add(
       'select',
@@ -253,6 +251,21 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   }
 
   /**
+   * get the list of selected segment (ids)
+   * as an array
+   */
+  protected function getSelectedSegments() {
+    $segments = $this->getConfigValue('segments');
+    if (empty($segments)) {
+      return array();
+    } elseif (is_array($segments)) {
+      return $segments;
+    } else {
+      return explode(',', $segments);
+    }
+  }
+
+  /**
    * Check if this action is configured correctly
    */
   public function checkConfiguration() {
@@ -295,9 +308,9 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     // compile parameters
     $params = array();
-    $segments = $this->getConfigValue('segments');
+    $segments = $this->getSelectedSegments();
     if (!empty($segments)) {
-      $params['segments'] = explode(',', $segments);
+      $params['segments'] = $segments;
     }
 
     // Assignment timestamp
