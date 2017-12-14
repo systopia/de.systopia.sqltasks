@@ -193,7 +193,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $campaign_id = $this->getConfigValue('campaign_id');
     $data_table  = $this->getDataTable();
     $task_id     = $this->task->getID();
-    $temp_table  = "temp_segmentation_sqltask{$task_id}_assignment_cache";
+    $temp_table  = "temp_sqltask{$task_id}_assign_" . substr(microtime(), 2,8);
     $membership_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$data_table}` LIKE 'membership_id';");
 
     // CLEAR (if requested)
@@ -221,9 +221,9 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
 
     // resolve each segment individually
     $segment_count = count($segment_name_2_id);
-    foreach ($segment_name_2_id as $segment_name => &$segment_id) {
+    foreach (array_keys($segment_name_2_id) as $segment_name) {
       $segment = civicrm_api3('Segmentation', 'getsegmentid', array('name' => $segment_name));
-      $segment_id = $segment['id'];
+      $segment_name_2_id[$segment_name] = $segment['id'];
     }
     $this->log("Resolved {$segment_count} segment(s).");
 
