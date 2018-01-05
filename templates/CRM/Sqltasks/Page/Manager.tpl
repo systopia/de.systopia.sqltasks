@@ -29,10 +29,10 @@ tr.sqltasks-plugin-disabled {
       {ts 1=$delete.name 2=$delete.id}You are about to delete plugin "%1" [%2]. You should consider simply disabling it, since all data will be lost.{/ts}
     </p>
     {assign var=plugin_id value=$delete.id}
-    <a id="crm-create-new-link" class="button" href="{crmURL p="civicrm/sqltasks/manage" q="reset=1&confirmed=1&delete=$plugin_id"}">
+    <a class="button" href="{crmURL p="civicrm/sqltasks/manage" q="reset=1&confirmed=1&delete=$plugin_id"}">
       <span><div class="icon ui-icon-trash css_left"></div>Delete</span>
     </a>
-    <a id="crm-create-new-link" class="button" href="{crmURL p="civicrm/sqltasks/manage"}">
+    <a class="button" href="{crmURL p="civicrm/sqltasks/manage"}">
       <span>Back</span>
     </a>
  </div>
