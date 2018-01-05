@@ -29,10 +29,10 @@ tr.sqltasks-plugin-disabled {
       {ts 1=$delete.name 2=$delete.id}You are about to delete plugin "%1" [%2]. You should consider simply disabling it, since all data will be lost.{/ts}
     </p>
     {assign var=plugin_id value=$delete.id}
-    <a id="crm-create-new-link" class="button" href="{crmURL p="civicrm/sqltasks/manage" q="reset=1&confirmed=1&delete=$plugin_id"}">
+    <a class="button" href="{crmURL p="civicrm/sqltasks/manage" q="reset=1&confirmed=1&delete=$plugin_id"}">
       <span><div class="icon ui-icon-trash css_left"></div>Delete</span>
     </a>
-    <a id="crm-create-new-link" class="button" href="{crmURL p="civicrm/sqltasks/manage"}">
+    <a class="button" href="{crmURL p="civicrm/sqltasks/manage"}">
       <span>Back</span>
     </a>
  </div>
@@ -53,12 +53,14 @@ tr.sqltasks-plugin-disabled {
 <table class="display" id="option11">
   <thead>
     <tr>
+      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Category{/ts}</th>
+      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}ID{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Name{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Description{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Enabled?{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Schedule{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Last Execution{/ts}</th>
-      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Next Execution{/ts}</th>
+      <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Last Runtime{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Selection Order{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1"></th>
     </tr>
@@ -67,12 +69,14 @@ tr.sqltasks-plugin-disabled {
   {foreach from=$tasks item=task}
     <tr class="{cycle values="odd-row,even-row"} {if not $task.enabled}sqltasks-plugin-disabled{/if}">
       {assign var=task_id value=$task.id}
+      <td>{$task.category}</div></td>
+      <td>[{$task.id}]</td>
       <td>{$task.name}</td>
       <td><div title="{$task.description}">{$task.short_desc}</div></td>
       <td>{if $task.enabled}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
-      <td>{$task.schedule}</td>
+      <td>{$task.schedule}{if $task.parallel_exec}<br/><strong>{ts}(parallel){/ts}{/if}</td>
       <td>{$task.last_executed}</td>
-      <td>{$task.next_execution}</td>
+      <td>{$task.last_runtime}</td>
       <td>
         <a class="crm-weight-arrow" href="{crmURL p='civicrm/sqltasks/manage' q="top=$task_id"}"><img src="{$config->resourceBase}i/arrow/first.gif" title="Move to top" alt="Move to top" class="order-icon"></a>&nbsp;
         <a class="crm-weight-arrow" href="{crmURL p='civicrm/sqltasks/manage' q="up=$task_id"}"><img src="{$config->resourceBase}i/arrow/up.gif" title="Move up one row" alt="Move up one row" class="order-icon"></a>&nbsp;

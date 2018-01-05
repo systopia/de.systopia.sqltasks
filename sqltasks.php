@@ -41,12 +41,6 @@ function sqltasks_civicrm_xmlMenu(&$files) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
 function sqltasks_civicrm_install() {
-  // create civicrm_sqltasks table
-  $config = CRM_Core_Config::singleton();
-  $sqlfile = dirname(__FILE__) . '/sql/civicrm_sqltasks.sql';
-  CRM_Utils_File::sourceSQLFile($config->dsn, $sqlfile, NULL, false);
-  // TODO: rebuild log tables
-
   _sqltasks_civix_civicrm_install();
 }
 

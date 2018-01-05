@@ -25,21 +25,27 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.description.label}</div>
+    <div class="label">{$form.description.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Description{/ts}", {literal}{"id":"id-configure-description","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.description.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.category.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Category{/ts}", {literal}{"id":"id-configure-category","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.category.html}</div>
     <div class="clear"></div>
   </div>
 
   <h3>{ts}Queries{/ts}</h3>
 
   <div class="crm-section">
-    <div class="label">{$form.main_sql.label}</div>
+    <div class="label">{$form.main_sql.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Main Script{/ts}", {literal}{"id":"id-configure-main","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.main_sql.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.post_sql.label}</div>
+    <div class="label">{$form.post_sql.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Clean Up{/ts}", {literal}{"id":"id-configure-post","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.post_sql.html}</div>
     <div class="clear"></div>
   </div>
@@ -49,6 +55,12 @@
   <div class="crm-section">
     <div class="label">{$form.scheduled.label}</div>
     <div class="content">{$form.scheduled.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.parallel_exec.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Parallel Execution{/ts}", {literal}{"id":"id-configure-parallel","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.parallel_exec.html}</div>
     <div class="clear"></div>
   </div>
 

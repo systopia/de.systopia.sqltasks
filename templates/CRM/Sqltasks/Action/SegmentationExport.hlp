@@ -1,0 +1,50 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-segmentation-export-datetime'}
+  <p>{ts domain="de.systopia.sqltasks"}You can use any string as processed by PHP's <code>strtotime</code> function, see <a href="https://secure.php.net/manual/en/datetime.formats.php">HERE</a>.{/ts}</p>
+  <p>
+    {ts domain="de.systopia.sqltasks"}Examples:{/ts}
+    <ul>
+      <li>{ts domain="de.systopia.sqltasks"}<code>now</code>{/ts}</li>
+      <li>{ts domain="de.systopia.sqltasks"}<code>now + 2 days</code>{/ts}</li>
+      <li>{ts domain="de.systopia.sqltasks"}<code>tomorrow</code>{/ts}</li>
+    </ul>
+  </p>
+  <p>{ts domain="de.systopia.sqltasks"}The default is <code>now</code>.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-export-current'}
+  <p>{ts domain="de.systopia.sqltasks"}If yo select this, the date frame will be automatically set to the time used by the 'Assign to Campaign' task above.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-export-email'}
+  <p>{ts domain="de.systopia.sqltasks"}You can specify a comma separated list of email addresses that the resulting file will be sent to.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> The data will be sent unencrypted. Please do not use this option if the resulting files contains sensitive data.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-export-filename'}
+  <p>{ts domain="de.systopia.sqltasks"}The file name of the resulting CSV file.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}You can use the token {literal}<code>{xxx}</code>{/literal}, which will be replaced by a current date string. The format (i.e. the xxx) is defined <a href="https://secure.php.net/manual/en/function.date.php#refsect1-function.date-parameters">here</a>. An example would be <code>{literal}{Y-m-d}{/literal}</code>.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Additionally, you can use the tokens {literal}<code>{campaign_id}</code>{/literal}, {literal}<code>{campaign_title}</code>{/literal} and {literal}<code>{campaign_external_identifier}</code>{/literal}, which obviously refer to the selected campaign.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-export-path'}
+  <p>{ts domain="de.systopia.sqltasks"}This defines the path about where the resulting file is stored. If you leave it empty, a default path will be used.{/ts}</p>
+{/htxt}
+
+{htxt id='id-segmentation-export-sftp'}
+  <p>{ts domain="de.systopia.sqltasks"}Define the target SFTP path to upload your file to. The format is <code>sftp://user:password@host/path</code>, e.g. <code>sftp://reports:123456@www.reports-server.de/civic-reports</code>{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> These credentials will be stored in the CiviCRM database unencrypted. Please don't use sensitive accounts for uploading files.{/ts}</p>
+{/htxt}

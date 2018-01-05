@@ -51,7 +51,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       'text',
       'name',
       E::ts('Name'),
-      array('class' => 'huge'),
+      array('class' => 'huge', 'maxlength' => '64'),
       TRUE
     );
 
@@ -62,6 +62,14 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       array('rows' => 8,
             'cols' => 60,
       ),
+      FALSE
+    );
+
+    $this->add(
+      'text',
+      'category',
+      E::ts('Category'),
+      array('class' => 'huge', 'maxlength' => '64'),
       FALSE
     );
 
@@ -91,6 +99,12 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       E::ts('Execution'),
       CRM_Sqltasks_Task::getSchedulingOptions(),
       TRUE
+    );
+
+    $this->add(
+      'checkbox',
+      'parallel_exec',
+      E::ts('Allow parallel execution')
     );
 
 
@@ -124,7 +138,9 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $current_values = array();
     $current_values['name'] = $this->task->getAttribute('name');
     $current_values['description'] = $this->task->getAttribute('description');
+    $current_values['category'] = $this->task->getAttribute('category');
     $current_values['scheduled'] = $this->task->getAttribute('scheduled');
+    $current_values['parallel_exec'] = $this->task->getAttribute('parallel_exec');
     $current_values['main_sql'] = $this->task->getAttribute('main_sql');
     $current_values['post_sql'] = $this->task->getAttribute('post_sql');
 

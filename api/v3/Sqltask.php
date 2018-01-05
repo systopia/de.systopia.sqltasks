@@ -27,15 +27,7 @@ function civicrm_api3_sqltask_execute($params) {
 
   // DEFAULT MODE:
   //   run all enabled tasks according to schedule
-  //
-  $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
-  $results = array();
-  foreach ($tasks as $task) {
-    if ($task->shouldRun()) {
-      $results[] = $task->execute();
-    }
-  }
-
+  $results = CRM_Sqltasks_Task::runDispatcher();
   return civicrm_api3_create_success($results);
 }
 

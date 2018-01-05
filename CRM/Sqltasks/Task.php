@@ -25,10 +25,13 @@ class CRM_Sqltasks_Task {
   protected static $main_attributes = array(
     'name'            => 'String',
     'description'     => 'String',
+    'category'        => 'String',
     'scheduled'       => 'String',
     'enabled'         => 'Integer',
     'weight'          => 'Integer',
     'last_execution'  => 'Date',
+    'last_runtime'    => 'Integer',
+    'parallel_exec'   => 'Integer',
     'main_sql'        => 'String',
     'post_sql'        => 'String');
 
@@ -167,7 +170,8 @@ class CRM_Sqltasks_Task {
     $fields = array();
     $index  = 1;
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
-      if ($attribute_name == 'last_execution') {
+      if (  $attribute_name == 'last_execution'
+         || $attribute_name == 'last_runtime') {
         // don't overwrite timestamp
         continue;
       }
@@ -216,9 +220,18 @@ class CRM_Sqltasks_Task {
     $this->status = 'running';
     $this->error_count = 0;
     $this->resetLog();
+    $task_timestamp = microtime(TRUE) * 1000;
 
     // 0. mark task as started
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id};");
+    if ($is_still_running) {
+      $this->status = 'error';
+      $this->log("Task is still running. Execution skipped.");
+      return $this->log_messages;
+    } else {
+      // set last_execution and running_since
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
+    }
 
     // 1. run the main SQL
     $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
@@ -257,7 +270,8 @@ class CRM_Sqltasks_Task {
     $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
 
     // 4. update/close the task
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW() WHERE id = {$this->task_id};");
+    $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
     if ($this->error_count) {
       $this->status = 'error';
     } else {
@@ -330,6 +344,13 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get a list of tasks ready for execution
+   */
+  public static function getParallelExecutionTaskList() {
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC');
+  }
+
+  /**
    * Load a list of tasks based on the data yielded by the given SQL query
    */
   public static function getTasks($sql_query) {
@@ -381,6 +402,46 @@ class CRM_Sqltasks_Task {
   //  +---------------------------------+
   //  |       Scheduling Logic          |
   //  +---------------------------------+
+
+  /**
+   * main dispatcher, triggered by a scheduled Job
+   */
+  public static function runDispatcher() {
+    $results = array();
+
+    // FIRST reset timed out tasks (after 23 hours)
+    CRM_Core_DAO::executeQuery("
+      UPDATE `civicrm_sqltasks`
+         SET running_since = NULL
+       WHERE running_since < (NOW() - INTERVAL 23 HOUR);");
+
+    // THEN: find out if still running
+    $still_running = CRM_Core_DAO::singleValueQuery("
+      SELECT COUNT(*)
+        FROM `civicrm_sqltasks`
+       WHERE running_since IS NOT NULL;");
+
+    if (!$still_running) {
+      // NORMAL DISPATCH
+      $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
+      foreach ($tasks as $task) {
+        if ($task->shouldRun()) {
+          $results[] = $task->execute();
+        }
+      }
+
+    } else {
+      // PARALLEL DISPATCH: only run tasks flagged as parallel
+      $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
+      foreach ($tasks as $task) {
+        if ($task->shouldRun()) {
+          $results[] = $task->execute();
+        }
+      }
+    }
+
+    return $results;
+  }
 
   /**
    * Check if the task should run according to scheduling
