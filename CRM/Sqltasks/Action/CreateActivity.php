@@ -148,6 +148,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     if (empty($activity_data['source_contact_id'])) {
       unset($activity_data['source_contact_id']);
     }
+    if (empty($activity_data['campaign_id'])) {
+      unset($activity_data['campaign_id']);
+    }
     $activity = civicrm_api3('Activity', 'create', $activity_data);
 
     if ($use_api) {
@@ -192,6 +195,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'assigned_to'        => $this->getIDList($this->getConfigValue('assigned_to')));
     if (empty($activity_template['source_contact_id'])) {
       unset($activity_template['source_contact_id']);
+    }
+    if (empty($activity_template['campaign_id'])) {
+      unset($activity_template['campaign_id']);
     }
     if (!$use_api) {
       // add some defaults for SQL
