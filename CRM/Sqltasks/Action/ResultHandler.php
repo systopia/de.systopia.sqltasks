@@ -75,6 +75,14 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   public function buildForm(&$form) {
     parent::buildForm($form);
 
+    if ($this->id == 'success') {
+      $form->add(
+        'checkbox',
+        $this->getID() . '_always',
+        E::ts('Execute always')
+      );
+    }
+
     $form->add(
       'text',
       $this->getID() . '_email',
@@ -121,12 +129,37 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * RUN this action
+   * generic execute implementation
    */
   public function execute() {
+    // nothing to do here
+  }
+
+  /**
+   * RUN this action
+   */
+  public function executeResultHandler($actions) {
     // check if we need to be executed
     if (   ($this->id == 'success' && !$this->task->hasExecutionErrors())
         || ($this->id == 'error'   && $this->task->hasExecutionErrors())) {
+
+      // for success handler: check if anything was executed
+      if ($this->id == 'success') {
+        $execute_always = $this->getConfigValue('always');
+        if (!$execute_always) {
+          // only excute handler if something was executed
+          $has_done_something = FALSE;
+          foreach ($actions as $action) {
+            if (!$action->isResultHandler()) {
+              $has_done_something |= $action->has_executed;
+            }
+          }
+          if (!$has_done_something) {
+            $this->log("Nothing happened, so the success handler won't do anything either.");
+            return;
+          }
+        }
+      }
 
       $config_email = $this->getConfigValue('email');
       $config_email_template = $this->getConfigValue('email_template');

@@ -281,7 +281,7 @@ class CRM_Sqltasks_Task {
     // 5. run result handlers
     foreach ($actions as $action) {
       if ($action->isResultHandler()) {
-        $action->execute();
+        $action->executeResultHandler($actions);
       }
     }
 
