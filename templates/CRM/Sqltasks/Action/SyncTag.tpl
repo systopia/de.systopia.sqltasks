@@ -26,6 +26,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.tag_entity_table.label}</div>
+    <div class="content">{$form.tag_entity_table.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.tag_use_api.label}</div>
     <div class="content">{$form.tag_use_api.html}</div>
     <div class="clear"></div>

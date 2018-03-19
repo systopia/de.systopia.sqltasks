@@ -50,6 +50,13 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     );
 
     $form->add(
+      'select',
+      $this->getID() . '_entity_table',
+      E::ts('Choose Entity'),
+      $this->getEligibleEntities()
+    );
+
+    $form->add(
       'checkbox',
       $this->getID() . '_use_api',
       E::ts('Use API (slow)')
@@ -73,20 +80,21 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
    */
   protected function executeSQL() {
     $contact_table = $this->getContactTable();
+    $entity_table  = $this->getEntityTable();
     $tag_id        = (int) $this->getConfigValue('tag_id');
 
     // first: remove the contacts that are NOT tagged
     CRM_Core_DAO::executeQuery("
       DELETE FROM civicrm_entity_tag
        WHERE tag_id = {$tag_id}
-         AND entity_table = 'civicrm_contact'
+         AND entity_table = '{$entity_table}'
          AND entity_id NOT IN (SELECT contact_id FROM `{$contact_table}`);");
 
     // then: add all missing contacts
     CRM_Core_DAO::executeQuery("
       INSERT IGNORE INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
         (SELECT
-          'civicrm_contact'  AS entity_table,
+          '{$entity_table}'  AS entity_table,
           contact_id         AS entity_id,
           {$tag_id}          AS tag_id
         FROM {$contact_table}
@@ -98,6 +106,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
    */
   protected function executeAPI() {
     $contact_table = $this->getContactTable();
+    $entity_table  = $this->getEntityTable();
     $tag_id        = (int) $this->getConfigValue('tag_id');
 
     // first: remove the ones that are NO in there
@@ -105,7 +114,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       SELECT entity_id AS contact_id
         FROM civicrm_entity_tag
        WHERE tag_id = {$tag_id}
-         AND entity_table = 'civicrm_contact'
+         AND entity_table = '{$entity_table}'
          AND entity_id NOT IN (SELECT contact_id FROM `{$contact_table}`);");
     while ($tags2remove->fetch()) {
       civicrm_api3('EntityTag', 'delete',
@@ -118,7 +127,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       SELECT contact_id
       FROM `{$contact_table}`
       LEFT JOIN civicrm_entity_tag et ON  et.entity_id = contact_id
-                                      AND et.entity_table = 'civicrm_contact'
+                                      AND et.entity_table = '{$entity_table}'
                                       AND et.tag_id = {$tag_id}
       WHERE contact_id IS NOT NULL
         AND et.entity_id IS NULL;");
@@ -126,7 +135,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     while ($tags2add->fetch()) {
       civicrm_api3('EntityTag', 'create', array(
         'entity_id'    => $tags2add->contact_id,
-        'entity_table' => 'civicrm_contact',
+        'entity_table' => $entity_table,
         'tag_id'       => $tag_id));
     }
   }
@@ -144,5 +153,34 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, "Tag {$tag['id']}");
     }
     return $tag_list;
+  }
+
+  /**
+   * get a list of eligible groups
+   */
+  protected function getEligibleEntities() {
+    return array(
+      'civicrm_contact'      => E::ts("Contacts"),
+      'civicrm_activity'     => E::ts("Activities"),
+      'civicrm_case'         => E::ts("Cases"),
+      'civicrm_file'         => E::ts("Attachments"),
+      'civicrm_membership'   => E::ts("Memberships"),
+      'civicrm_contribution' => E::ts("Contributions"),
+    );
+  }
+
+  /**
+   * get the entity table to use for the tag
+   *
+   * defaults to 'civicrm_contact'
+   */
+  public function getEntityTable() {
+    $table_name = $this->getConfigValue('entity_table');
+    $table_name = trim($table_name);
+    if (empty($table_name)) {
+      return 'civicrm_contact';
+    } else {
+      return $table_name;
+    }
   }
 }
