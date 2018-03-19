@@ -470,7 +470,7 @@ class CRM_Sqltasks_Task {
    * get the option for scheduling (simple version)
    */
   public static function getSchedulingOptions() {
-    return array(
+    $frequencies = array(
       'always'  => E::ts('always'),
       'hourly'  => E::ts('every hour'),
       'daily'   => E::ts('every day (after midnight)'),
@@ -478,6 +478,32 @@ class CRM_Sqltasks_Task {
       'monthly' => E::ts('every month'),
       'yearly'  => E::ts('annually'),
       );
+
+    // get scheduler information
+    $config = CRM_Sqltasks_Config::singleton();
+    $dispatcher_frequency = $config->getCurrentDispatcherFrequency();
+    switch ($dispatcher_frequency) {
+      case 'Always':
+        break;
+
+      case 'Hourly':
+        $frequencies['always'] = $frequencies['always'] . ' ' . E::ts("(currently triggered hourly)");
+        break;
+
+      case 'Daily':
+        $frequencies['always'] = $frequencies['always'] . ' ' . E::ts("(currently triggered daily)");
+        $frequencies['hourly'] = $frequencies['hourly'] . ' ' . E::ts("(currently triggered daily)");
+        break;
+
+      default:
+        // add a warning to all entries
+        foreach ($frequencies as $key => &$value) {
+          $value = $value . ' ' . E::ts("(warning: dispatcher currently disabled)");
+        }
+        break;
+    }
+
+    return $frequencies;
   }
 
   /**

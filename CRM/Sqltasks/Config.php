@@ -66,4 +66,41 @@ class CRM_Sqltasks_Config {
     }
     return $this->jobs;
   }
+
+  /**
+   * Get the current dispatcher call frequency, as
+   * derived from the scheduled job
+   * @return 'Always', 'Hourly' or 'Daily' or NULL if not active
+   */
+  public function getCurrentDispatcherFrequency() {
+    $frequency = NULL;
+    $jobs = civicrm_api3('Job', 'get', array(
+        'api_entity'    => 'Sqltask',
+        'api_action'    => 'execute',
+        'is_active'     => '1'));
+    foreach ($jobs['values'] as $job) {
+      switch ($job['run_frequency']) {
+        case 'Always':
+          $frequency = 'Always';
+          break;
+
+        case 'Hourly':
+          if ($frequency == NULL || $frequency == 'Daily') {
+            $frequency = 'Hourly';
+          }
+          break;
+
+        case 'Daily':
+          if ($frequency == NULL) {
+            $frequency = 'Daily';
+          }
+          break;
+
+        default:
+          CRM_Core_Session::setStatus(E::ts('Unexpected run frequency: %1', array(1 => $job['run_frequency'])), E::ts('Error'), 'error');
+          break;
+      }
+    }
+    return $frequency;
+  }
 }

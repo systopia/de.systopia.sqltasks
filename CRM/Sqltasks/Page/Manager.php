@@ -39,6 +39,11 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     $this->assign('tasks', $rendered_tasks);
     $this->assign('baseurl', CRM_Utils_System::url('civicrm/sqltasks/manage'));
 
+    // add scheduler information
+    $config = CRM_Sqltasks_Config::singleton();
+    $frequency = $config->getCurrentDispatcherFrequency();
+    $this->assign('dispatcher_frequency', $frequency);
+
     parent::run();
   }
 

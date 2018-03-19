@@ -50,6 +50,21 @@ tr.sqltasks-plugin-disabled {
   {ts 1=$add_url 2=$repo_url}You might want to <a href="%1">ADD A NEW ONE</a>. Check out our <a href="%2" target="_blank">REPOSITORY</a> for examples to get you started.{/ts}</a>
 </div>
 <br/>
+
+{* dispatcher frequency *}
+<div id="help">
+  {if $dispatcher_frequency eq 'Daily'}
+    {ts domain="de.systopia.sqltasks"}The dispatcher is run <strong>every day</strong> after midnight. This is effectively the maximum frequency these taks are being executed with.{/ts}
+  {elseif $dispatcher_frequency eq 'Hourly'}
+    {ts domain="de.systopia.sqltasks"}The dispatcher is run <strong>every hour</strong> on the hour. This is effectively the maximum frequency these taks are being executed with.{/ts}
+  {elseif $dispatcher_frequency eq 'Always'}
+    {ts domain="de.systopia.sqltasks"}The dispatcher (and therefore all active tasks) will be triggered <strong>with every cron-run</strong>. Ask your administrator how often that is, in order to know the effective maximum frequency these taks are being executed with.{/ts}
+  {else}
+    {ts domain="de.systopia.sqltasks"}The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.{/ts}
+  {/if}
+</div>
+<br/>
+
 <table class="display" id="option11">
   <thead>
     <tr>
