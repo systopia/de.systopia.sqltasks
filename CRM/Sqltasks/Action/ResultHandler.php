@@ -85,6 +85,12 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
 
     $form->add(
       'text',
+      $this->getID() . '_table',
+      E::ts('User Error Table')
+    );
+
+    $form->add(
+      'text',
       $this->getID() . '_email',
       E::ts('Email to'),
       array('class' => 'huge')
@@ -136,7 +142,7 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Should this handler (a success handler) run?
+   * Should the success handler run?
    */
   public function shouldSuccessHandlerRun($actions) {
     // is there errors?
@@ -164,13 +170,21 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Should this handler (a error handler) run?
+   * Should the error handler run?
    */
   public function shouldErrorHandlerRun($actions) {
     // is there recorded errors?
     if ($this->task->hasExecutionErrors()) {
       return TRUE;
     }
+
+    // is there user-generated errors?
+    $errors = $this->getErrorsFromTable();
+    if (!empty($errors)) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
   /**
@@ -186,6 +200,14 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     }
     if (!$should_run) {
       return;
+    }
+
+    // inject user reported errors
+    if ($this->id == 'error') {
+      $errors = $this->getErrorsFromTable();
+      foreach ($errors as $error) {
+        $this->log("Reported error: " . $error);
+      }
     }
 
     // send out email
@@ -220,5 +242,41 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       civicrm_api3('MessageTemplate', 'send', $email);
       $this->log("Sent {$this->id} message to '{$email_list}'");
     }
+  }
+
+  /**
+   * this is a handler function, where
+   * you can set a table with error messages
+   */
+  protected function getErrorsFromTable() {
+    // see if a table is set
+    $error_table = $this->getConfigValue('table');
+    if (empty($error_table)) {
+      return array();
+    }
+
+    // make sure the table exists
+    $error_table = trim($error_table);
+    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$error_table}';");
+    if (!$existing_table) {
+      return array();
+    }
+
+    // find error_message column
+    $existing_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$error_table}` LIKE 'error_message';");
+    if (!$existing_column) {
+      return array();
+    }
+
+    // finally, return the errors
+    $errors = array();
+    $query = CRM_Core_DAO::executeQuery("SELECT `error_message` FROM `{$error_table}`;");
+    while ($query->fetch()) {
+      if (!empty($query->error_message)) {
+        $errors[] = $query->error_message;
+      }
+    }
+
+    return $errors;
   }
 }

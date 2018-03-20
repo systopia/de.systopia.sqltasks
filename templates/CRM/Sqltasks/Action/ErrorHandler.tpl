@@ -18,6 +18,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.error_table.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Error Table{/ts}", {literal}{"id":"id-handler-error-table","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.error_table.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.error_email.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-handler-email","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.error_email.html}</div>
     <div class="clear"></div>

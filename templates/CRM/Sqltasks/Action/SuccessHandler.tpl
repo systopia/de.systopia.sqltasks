@@ -18,8 +18,8 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.success_always.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-handler-always","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
-    <div class="content">{$form.success_always.html}</div>
+    <div class="label">{$form.success_table.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Error Table{/ts}", {literal}{"id":"id-handler-error-table","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.success_table.html}</div>
     <div class="clear"></div>
   </div>
 
@@ -32,6 +32,12 @@
   <div class="crm-section">
     <div class="label">{$form.success_email_template.label}</div>
     <div class="content">{$form.success_email_template.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.success_always.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Execute Always{/ts}", {literal}{"id":"id-handler-always","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.success_always.html}</div>
     <div class="clear"></div>
   </div>
 
