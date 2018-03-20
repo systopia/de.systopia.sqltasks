@@ -189,6 +189,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // get some basic data
+    $this->resetHasExecuted();
     $timestamp   = date('Y-m-d H:i:s');
     $campaign_id = $this->getConfigValue('campaign_id');
     $data_table  = $this->getDataTable();
@@ -273,6 +274,9 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
           WHERE already_assigned IS NULL;");
 
         $this->log("Assigned {$count} new memberships to segment '{$segment_name}'.");
+        if ($count) {
+          $this->setHasExecuted();
+        }
 
       } else {
         // ASSIGN CONTACTS (multi-segment)
@@ -300,6 +304,10 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
           FROM `{$temp_table}`
           WHERE already_assigned IS NULL;");
         $this->log("Assigned {$count} new contacts to segment '{$segment_name}'.");
+
+        if ($count) {
+          $this->setHasExecuted();
+        }
       }
 
       // cleanup

@@ -3,8 +3,11 @@
   <item>
     <path>civicrm/sqltasks/manage</path>
     <page_callback>CRM_Sqltasks_Page_Manager</page_callback>
-    <title>Manager</title>
+    <title>SQL Task Manager</title>
     <access_arguments>administer CiviCRM</access_arguments>
+    <desc>Manage your SQL Tasks</desc>
+    <adminGroup>System Settings</adminGroup>
+    <icon>admin/small/option.png</icon>
   </item>
   <item>
     <path>civicrm/sqltasks/configure</path>

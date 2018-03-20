@@ -276,6 +276,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    * RUN this action
    */
   public function execute() {
+    $this->resetHasExecuted();
+
     // first: get filename, open stream
     $filename = $this->getFileName();
     $filepath = $this->getFilePath($filename);
@@ -307,6 +309,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // error_log("SELECT {$column_list} FROM {$export_table}");
     $query = CRM_Core_DAO::executeQuery("SELECT {$column_list} FROM {$export_table}");
     while ($query->fetch()) {
+      $this->setHasExecuted();
       $record = array();
       foreach ($column_specs as $column_spec) {
         $column = $column_spec[1];

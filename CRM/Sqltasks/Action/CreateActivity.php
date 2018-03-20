@@ -116,6 +116,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
    * RUN this action
    */
   public function execute() {
+    $this->resetHasExecuted();
     $individual = $this->getConfigValue('individual');
     if ($individual) {
       $this->createIndividualActivities();
@@ -133,7 +134,10 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     // load one line for the tokens
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} LIMIT 1;");
-    $record->fetch();
+    $entries_exist = $record->fetch();
+    if ($entries_exist) {
+      $this->setHasExecuted();
+    }
 
     // create activity first
     $activity_data = array(
@@ -212,6 +216,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table};");
     while ($record->fetch()) {
       if (empty($record->contact_id)) continue;
+      $this->setHasExecuted();
 
       // compile activity
       $activity = $activity_template;

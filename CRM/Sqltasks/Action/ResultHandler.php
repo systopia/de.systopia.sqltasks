@@ -75,6 +75,20 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   public function buildForm(&$form) {
     parent::buildForm($form);
 
+    if ($this->id == 'success') {
+      $form->add(
+        'checkbox',
+        $this->getID() . '_always',
+        E::ts('Execute always')
+      );
+    }
+
+    $form->add(
+      'text',
+      $this->getID() . '_table',
+      E::ts('User Error Table')
+    );
+
     $form->add(
       'text',
       $this->getID() . '_email',
@@ -121,45 +135,148 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * RUN this action
+   * generic execute implementation
    */
   public function execute() {
-    // check if we need to be executed
-    if (   ($this->id == 'success' && !$this->task->hasExecutionErrors())
-        || ($this->id == 'error'   && $this->task->hasExecutionErrors())) {
+    // nothing to do here
+  }
 
-      $config_email = $this->getConfigValue('email');
-      $config_email_template = $this->getConfigValue('email_template');
-      if (!empty($config_email) && !empty($config_email_template)) {
+  /**
+   * Should the success handler run?
+   */
+  public function shouldSuccessHandlerRun($actions) {
+    // is there errors?
+    if ($this->shouldErrorHandlerRun($actions)) {
+      return FALSE;
+    }
 
-        // compile email
-        $email_list = $this->getConfigValue('email');
-        list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-        $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-        $email = array(
-          'id'              => $this->getConfigValue('email_template'),
-          // 'to_name'         => $this->getConfigValue('email'),
-          'to_email'        => $this->getConfigValue('email'),
-          'from'            => "SQL Tasks <{$domainEmailAddress}>",
-          'reply_to'        => "do-not-reply@{$emailDomain}",
-          );
+    // check if we always want the success handler to run
+    if ($this->getConfigValue('always')) {
+      return TRUE;
+    }
 
-        // attach the log
-        $attach_log = $this->getConfigValue('attach_log');
-        if ($attach_log) {
-          // write out log
-          $logfile = $this->task->writeLogfile();
-
-          // attach it
-          $email['attachments'][] = array('fullPath'  => $logfile,
-                                          'mime_type' => 'application/zip',
-                                          'cleanName' => $this->task->getAttribute('name') . '-execution.log');
+    // otherwise we want to make sure that at least one
+    //  action has done something
+    foreach ($actions as $action) {
+      if (!$action->isResultHandler()) {
+        if ($action->hasExecuted()) {
+          return TRUE;
         }
-
-        // and send the template via email
-        civicrm_api3('MessageTemplate', 'send', $email);
-        $this->log("Sent {$this->id} message to '{$email_list}'");
       }
     }
+
+    // if none of the above is TRUE, we shouldn't execute
+    return FALSE;
+  }
+
+  /**
+   * Should the error handler run?
+   */
+  public function shouldErrorHandlerRun($actions) {
+    // is there recorded errors?
+    if ($this->task->hasExecutionErrors()) {
+      return TRUE;
+    }
+
+    // is there user-generated errors?
+    $errors = $this->getErrorsFromTable();
+    if (!empty($errors)) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * RUN this action
+   */
+  public function executeResultHandler($actions) {
+    // check if we need to be executed
+    $should_run = FALSE;
+    if ($this->id == 'success') {
+      $should_run = $this->shouldSuccessHandlerRun($actions);
+    } elseif ($this->id == 'error') {
+      $should_run = $this->shouldErrorHandlerRun($actions);
+    }
+    if (!$should_run) {
+      return;
+    }
+
+    // inject user reported errors
+    if ($this->id == 'error') {
+      $errors = $this->getErrorsFromTable();
+      foreach ($errors as $error) {
+        $this->log("Reported error: " . $error);
+      }
+    }
+
+    // send out email
+    $config_email = $this->getConfigValue('email');
+    $config_email_template = $this->getConfigValue('email_template');
+    if (!empty($config_email) && !empty($config_email_template)) {
+      // compile email
+      $email_list = $this->getConfigValue('email');
+      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      $email = array(
+        'id'              => $this->getConfigValue('email_template'),
+        // 'to_name'         => $this->getConfigValue('email'),
+        'to_email'        => $this->getConfigValue('email'),
+        'from'            => "SQL Tasks <{$domainEmailAddress}>",
+        'reply_to'        => "do-not-reply@{$emailDomain}",
+        );
+
+      // attach the log
+      $attach_log = $this->getConfigValue('attach_log');
+      if ($attach_log) {
+        // write out log
+        $logfile = $this->task->writeLogfile();
+
+        // attach it
+        $email['attachments'][] = array('fullPath'  => $logfile,
+                                        'mime_type' => 'application/zip',
+                                        'cleanName' => $this->task->getAttribute('name') . '-execution.log');
+      }
+
+      // and send the template via email
+      civicrm_api3('MessageTemplate', 'send', $email);
+      $this->log("Sent {$this->id} message to '{$email_list}'");
+    }
+  }
+
+  /**
+   * this is a handler function, where
+   * you can set a table with error messages
+   */
+  protected function getErrorsFromTable() {
+    // see if a table is set
+    $error_table = $this->getConfigValue('table');
+    if (empty($error_table)) {
+      return array();
+    }
+
+    // make sure the table exists
+    $error_table = trim($error_table);
+    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$error_table}';");
+    if (!$existing_table) {
+      return array();
+    }
+
+    // find error_message column
+    $existing_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$error_table}` LIKE 'error_message';");
+    if (!$existing_column) {
+      return array();
+    }
+
+    // finally, return the errors
+    $errors = array();
+    $query = CRM_Core_DAO::executeQuery("SELECT `error_message` FROM `{$error_table}`;");
+    while ($query->fetch()) {
+      if (!empty($query->error_message)) {
+        $errors[] = $query->error_message;
+      }
+    }
+
+    return $errors;
   }
 }

@@ -149,6 +149,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // API Call specs
+    $this->resetHasExecuted();
     $entity = $this->getConfigValue('entity');
     $action = $this->getConfigValue('action');
     $parameter_specs = $this->getParameters();
@@ -161,6 +162,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $data_table = $this->getDataTable();
     $query = CRM_Core_DAO::executeQuery("SELECT * FROM {$data_table}");
     while ($query->fetch()) {
+      $this->setHasExecuted();
       $parameters = $this->fillParameters($parameter_specs, $query);
       try {
         // error_log("Calling {$entity}.{$action}: " . json_encode($parameters));

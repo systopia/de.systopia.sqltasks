@@ -16,6 +16,16 @@
   <p>{ts domain="de.systopia.sqltasks"}Specify a comma separated list of email addresses that the resulting file will be sent to.{/ts}</p>
 {/htxt}
 
+{htxt id='id-handler-always'}
+  <p>{ts domain="de.systopia.sqltasks"}If you check this, the success handler will be always be executed unless there was an error. Otherwise it will only be sent if any of the tasks have actually "done something".{/ts}</p>
+{/htxt}
+
 {htxt id='id-handler-attach-log'}
   <p>{ts domain="de.systopia.sqltasks"}Selecting this option will attach the log file of the execution to the email.{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-error-table'}
+  <p>{ts domain="de.systopia.sqltasks"}If you enter a table here, and it has a column called <code>error_message</code>, the listed errors will count as errors just as any other execution error.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}You should make sure to use the same table for the success and error handler, otherwise there might be inconsistencies.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Since the success/error handlers will be executed <i>after</i> cleanup, the table used here has to be persistant.{/ts}</p>
 {/htxt}

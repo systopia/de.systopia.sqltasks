@@ -26,10 +26,12 @@ abstract class CRM_Sqltasks_Action {
 
   protected $task = NULL;
   protected $config = NULL;
+  protected $has_executed = TRUE;
 
   public function __construct($task) {
     $this->task = $task;
     $this->config = $task->getConfiguration();
+    $this->has_executed = TRUE;
   }
 
   /**
@@ -238,4 +240,31 @@ abstract class CRM_Sqltasks_Action {
 
     return $campaign_list;
   }
+
+  /**
+   * If this action wants to use the
+   *  has_executed FLAG (used for success handler)
+   *  then it needs to first reset the FLAG
+   *  and then use setHasExecuted to mark it
+   */
+  protected function resetHasExecuted() {
+    $this->has_executed = FALSE;
+  }
+
+  /**
+   * Mark that this action has executed,
+   *  as opposed to 'done nothing'
+   * @see ::resetHasExecuted
+   */
+  protected function setHasExecuted() {
+    $this->has_executed = TRUE;
+  }
+
+  /**
+   * check if this process has "done anything"
+   */
+  public function hasExecuted() {
+    return $this->has_executed;
+  }
+
 }
