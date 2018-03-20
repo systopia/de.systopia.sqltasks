@@ -303,6 +303,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
    */
   public function execute() {
     // get some basic data
+    $this->resetHasExecuted();
     $campaign_id = $this->getConfigValue('campaign_id');
     $exported_files = array();
 
@@ -339,13 +340,26 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       // export file
       $exporter = CRM_Segmentation_Exporter::getExporter($exporter_id);
       $exporter->generateFile($campaign_id, $params);
-      $exported_file      = $exporter->getExportedFile();
-      $exported_file_name = $exporter->getFileName();
-      $exported_files[$exported_file] = $exported_file_name;
+      $exported_file = $exporter->getExportedFile();
+      if ($exported_file) {
+        $this->setHasExecuted(); // something was created
+        $exported_file_name = $exporter->getFileName();
+        $exported_files[$exported_file] = $exported_file_name;
 
-      // add log entry
-      $exporter_name = $exporter->getName();
-      $this->log("Exported '{$exporter_name}' to file '{$exported_file_name}'");
+        // add log entry
+        $exporter_name = $exporter->getName();
+        $this->log("Exporter '{$exporter_name}' to file '{$exported_file_name}'");
+
+      } else {
+        // add log entry
+        $exporter_name = $exporter->getName();
+        $this->log("Exporter '{$exporter_name}' did not produce a file.");
+      }
+    }
+
+    if (!$this->hasExecuted()) {
+      $this->log("No export produced, skipping upload/email.");
+      return;
     }
 
     // NEXT: zip all files
