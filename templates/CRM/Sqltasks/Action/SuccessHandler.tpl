@@ -24,6 +24,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.success_drop_table.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Drop Error Table{/ts}", {literal}{"id":"id-handler-error-table-drop","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.success_drop_table.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.success_email.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-handler-email","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.success_email.html}</div>
     <div class="clear"></div>
