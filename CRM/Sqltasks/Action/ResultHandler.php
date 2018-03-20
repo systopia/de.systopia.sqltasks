@@ -136,63 +136,89 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
+   * Should this handler (a success handler) run?
+   */
+  public function shouldSuccessHandlerRun($actions) {
+    // is there errors?
+    if ($this->shouldErrorHandlerRun($actions)) {
+      return FALSE;
+    }
+
+    // check if we always want the success handler to run
+    if ($this->getConfigValue('always')) {
+      return TRUE;
+    }
+
+    // otherwise we want to make sure that at least one
+    //  action has done something
+    foreach ($actions as $action) {
+      if (!$action->isResultHandler()) {
+        if ($action->hasExecuted()) {
+          return TRUE;
+        }
+      }
+    }
+
+    // if none of the above is TRUE, we shouldn't execute
+    return FALSE;
+  }
+
+  /**
+   * Should this handler (a error handler) run?
+   */
+  public function shouldErrorHandlerRun($actions) {
+    // is there recorded errors?
+    if ($this->task->hasExecutionErrors()) {
+      return TRUE;
+    }
+  }
+
+  /**
    * RUN this action
    */
   public function executeResultHandler($actions) {
     // check if we need to be executed
-    if (   ($this->id == 'success' && !$this->task->hasExecutionErrors())
-        || ($this->id == 'error'   && $this->task->hasExecutionErrors())) {
+    $should_run = FALSE;
+    if ($this->id == 'success') {
+      $should_run = $this->shouldSuccessHandlerRun($actions);
+    } elseif ($this->id == 'error') {
+      $should_run = $this->shouldErrorHandlerRun($actions);
+    }
+    if (!$should_run) {
+      return;
+    }
 
-      // for success handler: check if anything was executed
-      if ($this->id == 'success') {
-        $execute_always = $this->getConfigValue('always');
-        if (!$execute_always) {
-          // only excute handler if something was executed
-          $has_done_something = FALSE;
-          foreach ($actions as $action) {
-            if (!$action->isResultHandler()) {
-              $has_done_something |= $action->has_executed;
-            }
-          }
-          if (!$has_done_something) {
-            $this->log("Nothing happened, so the success handler won't do anything either.");
-            return;
-          }
-        }
+    // send out email
+    $config_email = $this->getConfigValue('email');
+    $config_email_template = $this->getConfigValue('email_template');
+    if (!empty($config_email) && !empty($config_email_template)) {
+      // compile email
+      $email_list = $this->getConfigValue('email');
+      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      $email = array(
+        'id'              => $this->getConfigValue('email_template'),
+        // 'to_name'         => $this->getConfigValue('email'),
+        'to_email'        => $this->getConfigValue('email'),
+        'from'            => "SQL Tasks <{$domainEmailAddress}>",
+        'reply_to'        => "do-not-reply@{$emailDomain}",
+        );
+
+      // attach the log
+      $attach_log = $this->getConfigValue('attach_log');
+      if ($attach_log) {
+        // write out log
+        $logfile = $this->task->writeLogfile();
+
+        // attach it
+        $email['attachments'][] = array('fullPath'  => $logfile,
+                                        'mime_type' => 'application/zip',
+                                        'cleanName' => $this->task->getAttribute('name') . '-execution.log');
       }
 
-      $config_email = $this->getConfigValue('email');
-      $config_email_template = $this->getConfigValue('email_template');
-      if (!empty($config_email) && !empty($config_email_template)) {
-
-        // compile email
-        $email_list = $this->getConfigValue('email');
-        list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-        $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-        $email = array(
-          'id'              => $this->getConfigValue('email_template'),
-          // 'to_name'         => $this->getConfigValue('email'),
-          'to_email'        => $this->getConfigValue('email'),
-          'from'            => "SQL Tasks <{$domainEmailAddress}>",
-          'reply_to'        => "do-not-reply@{$emailDomain}",
-          );
-
-        // attach the log
-        $attach_log = $this->getConfigValue('attach_log');
-        if ($attach_log) {
-          // write out log
-          $logfile = $this->task->writeLogfile();
-
-          // attach it
-          $email['attachments'][] = array('fullPath'  => $logfile,
-                                          'mime_type' => 'application/zip',
-                                          'cleanName' => $this->task->getAttribute('name') . '-execution.log');
-        }
-
-        // and send the template via email
-        civicrm_api3('MessageTemplate', 'send', $email);
-        $this->log("Sent {$this->id} message to '{$email_list}'");
-      }
+      // and send the template via email
+      civicrm_api3('MessageTemplate', 'send', $email);
+      $this->log("Sent {$this->id} message to '{$email_list}'");
     }
   }
 }

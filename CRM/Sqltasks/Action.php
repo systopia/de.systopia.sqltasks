@@ -260,4 +260,11 @@ abstract class CRM_Sqltasks_Action {
     $this->has_executed = TRUE;
   }
 
+  /**
+   * check if this process has "done anything"
+   */
+  public function hasExecuted() {
+    return $this->has_executed;
+  }
+
 }

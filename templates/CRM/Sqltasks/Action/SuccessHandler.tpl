@@ -17,6 +17,11 @@
     {ts domain="de.systopia.sqltasks"}This action will be triggered after the <strong>successful</strong> execution of the task.{/ts}
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.success_always.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-handler-always","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.success_always.html}</div>
+    <div class="clear"></div>
+  </div>
 
   <div class="crm-section">
     <div class="label">{$form.success_email.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Email{/ts}", {literal}{"id":"id-handler-email","file":"CRM\/Sqltasks\/Action\/ResultHandler"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
