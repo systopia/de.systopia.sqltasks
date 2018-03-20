@@ -90,6 +90,12 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     );
 
     $form->add(
+      'checkbox',
+      $this->getID() . '_drop_table',
+      E::ts('Drop Error Table')
+    );
+
+    $form->add(
       'text',
       $this->getID() . '_email',
       E::ts('Email to'),
@@ -210,6 +216,9 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       }
     }
 
+    // now drop table if requested
+    $this->dropErrorTable();
+
     // send out email
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
@@ -249,16 +258,10 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
    * you can set a table with error messages
    */
   protected function getErrorsFromTable() {
-    // see if a table is set
-    $error_table = $this->getConfigValue('table');
-    if (empty($error_table)) {
-      return array();
-    }
-
-    // make sure the table exists
-    $error_table = trim($error_table);
-    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$error_table}';");
-    if (!$existing_table) {
+    // get the error table
+    $error_table = $this->getErrorTable();
+    if (!$error_table) {
+      // it's not properly set
       return array();
     }
 
@@ -279,4 +282,42 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
 
     return $errors;
   }
+
+  /**
+   * Will drop the error table if the setting is activated
+   */
+  protected function dropErrorTable() {
+    $drop_table = $this->getConfigValue('drop_table');
+    if ($drop_table) {
+      $error_table = $this->getErrorTable();
+      if ($error_table) {
+        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `{$error_table}`;");
+        CRM_Core_DAO::executeQuery("DROP VIEW IF EXISTS `{$error_table}`;");
+      }
+    }
+  }
+
+  /**
+   * Return the error table if
+   *  - the setting is set
+   *  - the table exists
+   */
+  protected function getErrorTable() {
+    // see if a table is set
+    $error_table = $this->getConfigValue('table');
+    if (empty($error_table)) {
+      return NULL;
+    }
+
+    // make sure the table exists
+    $error_table = trim($error_table);
+    $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$error_table}';");
+    if (!$existing_table) {
+      return NULL;
+    }
+
+    return $error_table;
+  }
+
+
 }

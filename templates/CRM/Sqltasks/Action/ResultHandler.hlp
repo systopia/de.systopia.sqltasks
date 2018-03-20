@@ -27,5 +27,9 @@
 {htxt id='id-handler-error-table'}
   <p>{ts domain="de.systopia.sqltasks"}If you enter a table here, and it has a column called <code>error_message</code>, the listed errors will count as errors just as any other execution error.{/ts}</p>
   <p>{ts domain="de.systopia.sqltasks"}You should make sure to use the same table for the success and error handler, otherwise there might be inconsistencies.{/ts}</p>
-  <p>{ts domain="de.systopia.sqltasks"}Since the success/error handlers will be executed <i>after</i> cleanup, the table used here has to be persistant.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Since the success/error handlers will be executed <i>after</i> cleanup, the table used here can not be removed by the cleanup script. Use the <code>drop</code> option below.{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-error-table-drop'}
+  <p>{ts domain="de.systopia.sqltasks"}If you select this, the user error table (or view) will be dropped after this task finishes.{/ts}</p>
 {/htxt}
