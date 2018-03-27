@@ -148,7 +148,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
       'subject'            => $this->resolveTokens($this->getConfigValue('subject'), $record),
       'details'            => $this->resolveTokens($this->getConfigValue('details'), $record),
-      'assigned_to'        => $this->getIDList($this->getConfigValue('assigned_to')));
+      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')));
     if (empty($activity_data['source_contact_id'])) {
       unset($activity_data['source_contact_id']);
     }
@@ -196,7 +196,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'campaign_id'        => $this->getConfigValue('campaign_id'),
       'status_id'          => $this->getConfigValue('status_id'),
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
-      'assigned_to'        => $this->getIDList($this->getConfigValue('assigned_to')));
+      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')));
     if (empty($activity_template['source_contact_id'])) {
       unset($activity_template['source_contact_id']);
     }
@@ -262,8 +262,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       $link->free();
     }
 
-    if (!empty($data['assigned_to']) && is_array($data['assigned_to'])) {
-      foreach ($data['assigned_to'] as $contact_id) {
+    if (!empty($data['assignee_id']) && is_array($data['assignee_id'])) {
+      foreach ($data['assignee_id'] as $contact_id) {
         $link = new CRM_Activity_BAO_ActivityContact();
         $link->contact_id     = (int) $contact_id;
         $link->activity_id    = (int) $activity->id;
