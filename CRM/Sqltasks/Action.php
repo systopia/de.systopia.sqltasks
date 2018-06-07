@@ -189,6 +189,7 @@ abstract class CRM_Sqltasks_Action {
       $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
       $actions[] = new CRM_Sqltasks_Action_SegmentationExport($task);
     }
+    $actions[] = new CRM_Sqltasks_Action_CallTask($task);
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'success', E::ts('Success Handler'));
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'error',   E::ts('Error Handler'));
     return $actions;
