@@ -32,7 +32,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
    * Get a human readable name
    */
   public function getName() {
-    return E::ts('Run SQL Task');
+    return E::ts('Run SQL Task(s)');
   }
 
   /**
@@ -80,15 +80,21 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       $or_clauses[] = '`id` IN (' . implode(',', $tasks) . ')';
     }
     if (!empty($categories)) {
-      // todo: escape
-      $or_clauses[] = '`category` IN (' . implode(',', $categories) . ')';
+      $escaped_categories = array();
+      foreach ($categories as $category) {
+        $escaped_categories[] = "'" . mysql_escape_string($category) . "'";
+      }
+      $or_clauses[] = '`category` IN (' . implode(',', $escaped_categories) . ')';
     }
-    $query .= '(' . implode(') OR (', $or_clauses). ')';
+    $query .= '((' . implode(') OR (', $or_clauses). '))';
     $query .= ' ORDER BY weight ASC';
-    error_log($query);
     $tasks2run = CRM_Sqltasks_Task::getTasks($query);
 
     foreach ($tasks2run as $task) {
+      if ($task->getID() == $this->task->getID()) {
+        continue;
+      }
+      // all good: execute!
       $task->execute();
       $this->log("Executed task '" . $task->getAttribute('name') . "' [" . $task->getID() . ']');
     }

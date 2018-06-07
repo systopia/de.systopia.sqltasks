@@ -14,13 +14,13 @@
 
 <div class="sql-tasks">
   <div class="crm-section">
-    <div class="label">{$form.task_tasks.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Data Source{/ts}", {literal}{"id":"id-api-data","file":"CRM\/Sqltasks\/Action\/APICall"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.task_tasks.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tasks{/ts}", {literal}{"id":"id-task-tasks","file":"CRM\/Sqltasks\/Action\/CallTask"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.task_tasks.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.task_categories.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Entity{/ts}", {literal}{"id":"id-api-entity","file":"CRM\/Sqltasks\/Action\/APICall"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.task_categories.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Categories{/ts}", {literal}{"id":"id-task-categories","file":"CRM\/Sqltasks\/Action\/CallTask"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.task_categories.html}</div>
     <div class="clear"></div>
   </div>
