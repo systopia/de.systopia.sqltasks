@@ -18,6 +18,20 @@
 tr.sqltasks-plugin-disabled {
   color: lightgray;
 }
+
+.ui-state-highlight {
+  height: 30px;
+  width: 100%;
+  border: 2px solid #4999DA;
+  margin: 0 0 0.75rem 0;
+  position: relative;
+  z-index: 6;
+}
+
+.handle {
+  text-align: center;
+  cursor: pointer;
+}
 {/literal}
 </style>
 
@@ -78,11 +92,12 @@ tr.sqltasks-plugin-disabled {
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Last Runtime{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1">{ts}Selection Order{/ts}</th>
       <th class="sorting_disabled" rowspan="1" colspan="1"></th>
+      <th class="sorting_disabled" rowspan="1" colspan="1"></th>
     </tr>
   </thead>
-  <tbody>
-  {foreach from=$tasks item=task}
-    <tr class="{cycle values="odd-row,even-row"} {if not $task.enabled}sqltasks-plugin-disabled{/if}">
+  <tbody id="sortable-tasks">
+  {foreach from=$tasks key=key item=task}
+    <tr id="{$task.id}_{$key}" class="{cycle values="odd-row,even-row"} {if not $task.enabled}sqltasks-plugin-disabled{/if}">
       {assign var=task_id value=$task.id}
       <td>{$task.category}</div></td>
       <td>[{$task.id}]</td>
@@ -115,6 +130,9 @@ tr.sqltasks-plugin-disabled {
             </li>
           </ul>
         </span>
+      </td>
+      <td>
+        <div class="handle">&#8693;</div>
       </td>
     </tr>
   {/foreach}
