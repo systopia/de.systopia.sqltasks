@@ -179,14 +179,20 @@ abstract class CRM_Sqltasks_Action {
    */
   public static function getAllActions($task) {
     // just compile list manually (for now)
+
+    // add Segmentation Extension tasks (de.systopia.segmentation)
+    if (function_exists('segmentation_civicrm_install')) {
+      // this should run before CreateActivity and APICall because those tasks
+      // might depend on segmentation data being available
+      $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
+    }
     $actions[] = new CRM_Sqltasks_Action_CreateActivity($task);
     $actions[] = new CRM_Sqltasks_Action_APICall($task);
     $actions[] = new CRM_Sqltasks_Action_CSVExport($task);
     $actions[] = new CRM_Sqltasks_Action_SyncTag($task);
     $actions[] = new CRM_Sqltasks_Action_SyncGroup($task);
-    // add Segmentation Extension tasks (de.systopia.segmentation)
+
     if (function_exists('segmentation_civicrm_install')) {
-      $actions[] = new CRM_Sqltasks_Action_SegmentationAssign($task);
       $actions[] = new CRM_Sqltasks_Action_SegmentationExport($task);
     }
     $actions[] = new CRM_Sqltasks_Action_ResultHandler($task, 'success', E::ts('Success Handler'));
