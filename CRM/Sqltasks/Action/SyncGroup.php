@@ -77,6 +77,14 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     $group_id      = (int) $this->getConfigValue('group_id');
     $now           = date('YmdHis');
 
+    $excludeSql = '';
+    $excludeSqlWhere = '';
+    if ($this->_columnExists($contact_table, 'exclude')) {
+      $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
+      $excludeSqlWhere = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+
     // 1. add the contacts, that have never been added
     // 1.1. subscription history
     CRM_Core_DAO::executeQuery("
@@ -90,7 +98,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
         FROM {$contact_table}
         WHERE contact_id NOT IN (SELECT contact_id
                                    FROM civicrm_group_contact
-                                  WHERE group_id = {$group_id}));");
+                                  WHERE group_id = {$group_id}) {$excludeSql});");
 
     // 1.2. actual group
     CRM_Core_DAO::executeQuery("
@@ -102,7 +110,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
         FROM {$contact_table}
         WHERE contact_id NOT IN (SELECT contact_id
                                    FROM civicrm_group_contact
-                                  WHERE group_id = {$group_id}));");
+                                  WHERE group_id = {$group_id}) {$excludeSql});");
 
     // 2. update the ones that have been previously removed
     // 2.1. subscription history
@@ -118,7 +126,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
         WHERE contact_id IN (SELECT contact_id
                                FROM civicrm_group_contact
                               WHERE group_id = {$group_id}
-                                AND status = 'Removed'));");
+                                AND status = 'Removed') {$excludeSql});");
 
     // 2.1. actual group
     CRM_Core_DAO::executeQuery("
@@ -127,7 +135,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
        WHERE group_id = {$group_id}
          AND status = 'Removed'
          AND contact_id IN (SELECT contact_id
-                               FROM {$contact_table})");
+                               FROM {$contact_table} {$excludeSqlWhere})");
 
 
     // 3. remove the ones that are not in the list any more
@@ -144,7 +152,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
         WHERE group_id = {$group_id}
           AND status = 'Added'
           AND contact_id NOT IN (SELECT contact_id
-                                 FROM {$contact_table}))");
+                                 FROM {$contact_table} {$excludeSqlWhere}))");
 
     // 3.2. actual group
     CRM_Core_DAO::executeQuery("
@@ -153,7 +161,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
        WHERE group_id = {$group_id}
          AND status = 'Added'
          AND contact_id NOT IN (SELECT contact_id
-                                  FROM {$contact_table})");
+                                  FROM {$contact_table} {$excludeSqlWhere})");
 
   }
 
@@ -164,6 +172,12 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     $contact_table = $this->getContactTable();
     $group_id      = (int) $this->getConfigValue('group_id');
 
+    $excludeSql = '';
+    if ($this->_columnExists($contact_table, 'exclude')) {
+      $excludeSql = "AND (result.exclude IS NULL OR result.exclude != 1)";
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+
     // first: remove the ones not in the new list
     $contacts2remove = CRM_Core_DAO::executeQuery("
       SELECT civicrm_group_contact.contact_id AS contact_id
@@ -171,7 +185,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
       LEFT JOIN `{$contact_table}` result ON civicrm_group_contact.contact_id = result.contact_id
       WHERE civicrm_group_contact.group_id = {$group_id}
         AND civicrm_group_contact.status = 'Added'
-        AND result.contact_id IS NULL;");
+        AND result.contact_id IS NULL {$excludeSql}");
     while ($contacts2remove->fetch()) {
       civicrm_api3('GroupContact', 'create', array(
         'contact_id'        => $contacts2remove->contact_id,
@@ -187,7 +201,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
       LEFT JOIN civicrm_group_contact ON civicrm_group_contact.contact_id = result.contact_id
                                       AND civicrm_group_contact.group_id = {$group_id}
       WHERE (civicrm_group_contact.status IS NULL OR civicrm_group_contact.status = 'Removed')
-        AND result.contact_id IS NOT NULL;");
+        AND result.contact_id IS NOT NULL {$excludeSql}");
     while ($contacts2add->fetch()) {
       civicrm_api3('GroupContact', 'create', array(
         'contact_id'        => $contacts2add->contact_id,

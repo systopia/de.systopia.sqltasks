@@ -157,9 +157,15 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
     $activity = civicrm_api3('Activity', 'create', $activity_data);
 
+    $excludeSql = '';
+    if ($this->_columnExists($contact_table, 'exclude')) {
+      $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+
     if ($use_api) {
       // add all targets separately
-      $target_query = CRM_Core_DAO::executeQuery("SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL;");
+      $target_query = CRM_Core_DAO::executeQuery("SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL {$excludeSql}");
       while ($target_query->fetch()) {
         civicrm_api3('ActivityContact', 'create', array(
           'activity_id'    => $activity['id'],
@@ -177,7 +183,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
             contact_id        AS contact_id,
             3                 AS record_type
           FROM `{$contact_table}`
-          WHERE contact_id IS NOT NULL);");
+          WHERE contact_id IS NOT NULL {$excludeSql});");
 
       if (class_exists('CRM_Segmentation_Logic')) {
         CRM_Segmentation_Logic::addSegmentForMassActivity($activity['id'], $this->getConfigValue('campaign_id'));
@@ -216,8 +222,14 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       $activity_template['is_deleted'] = 0;
     }
 
+    $excludeSql = '';
+    if ($this->_columnExists($contact_table, 'exclude')) {
+      $excludeSql = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+
     // now iterate through all entries
-    $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table};");
+    $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} {$excludeSql}");
     while ($record->fetch()) {
       if (empty($record->contact_id)) continue;
       $this->setHasExecuted();

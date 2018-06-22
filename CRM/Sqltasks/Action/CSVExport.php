@@ -307,7 +307,12 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $count = 0;
     $column_list = implode(',', $columns);
     // error_log("SELECT {$column_list} FROM {$export_table}");
-    $query = CRM_Core_DAO::executeQuery("SELECT {$column_list} FROM {$export_table}");
+    $excludeSql = '';
+    if ($this->_columnExists($export_table, 'exclude')) {
+      $excludeSql = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+    $query = CRM_Core_DAO::executeQuery("SELECT {$column_list} FROM {$export_table} {$excludeSql}");
     while ($query->fetch()) {
       $this->setHasExecuted();
       $record = array();

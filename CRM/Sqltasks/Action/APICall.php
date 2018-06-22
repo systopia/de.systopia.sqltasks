@@ -160,7 +160,12 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $more_fails_counter = 0;
 
     $data_table = $this->getDataTable();
-    $query = CRM_Core_DAO::executeQuery("SELECT * FROM {$data_table}");
+    $excludeSql = '';
+    if ($this->_columnExists($data_table, 'exclude')) {
+      $excludeSql = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
+    $query = CRM_Core_DAO::executeQuery("SELECT * FROM {$data_table} {$excludeSql}");
     while ($query->fetch()) {
       $this->setHasExecuted();
       $parameters = $this->fillParameters($parameter_specs, $query);
