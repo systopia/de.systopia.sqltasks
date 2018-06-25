@@ -44,6 +44,11 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     $frequency = $config->getCurrentDispatcherFrequency();
     $this->assign('dispatcher_frequency', $frequency);
 
+    /*
+    * Add sortTasks.js to the view
+    */
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/sortTasks.js');
+
     parent::run();
   }
 
