@@ -47,7 +47,7 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     /*
     * Add sortTasks.js to the view
     */
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'JS/sortTasks.js');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/sortTasks.js');
 
     parent::run();
   }
