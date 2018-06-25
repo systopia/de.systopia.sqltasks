@@ -102,7 +102,7 @@ tr.sqltasks-plugin-disabled {
         <span class="btn-slide crm-hover-button">{ts}Actions{/ts}
           <ul class="panel">
             <li>
-              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button" title="{ts}Run the task manually{/ts}">{ts}Run Now{/ts}</a>
+              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button sqltasks-job-run" title="{ts}Run the task manually{/ts}">{ts}Run Now{/ts}</a>
               <a href="{crmURL p='civicrm/sqltasks/configure' q="reset=1&tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Configure{/ts}">{ts}Configure{/ts}</a>
               {if $task.enabled}
                 <a href="{crmURL p='civicrm/sqltasks/manage' q="disable=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Disable for scheduled execution{/ts}">{ts}Disable{/ts}</a>
@@ -130,4 +130,15 @@ tr.sqltasks-plugin-disabled {
 <script type="text/javascript">
 // reset the URL
 window.history.replaceState("", "", "{$baseurl}");
+{literal}
+CRM.$('.sqltasks-job-run').click(function(e) {
+  e.preventDefault();
+  var href = CRM.$(this).attr('href');
+  CRM.confirm({
+    message: {/literal}'{ts}Are you sure you want to run this task?{/ts}'{literal}
+  }).on('crmConfirm:yes', function() {
+    window.location.href = href;
+  });
+});
+{/literal}
 </script>
