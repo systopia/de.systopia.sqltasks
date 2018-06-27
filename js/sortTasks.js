@@ -19,5 +19,5 @@ cj( document ).ready(function() {
 
         }
         });
-    cj( "#sortable-tasks" ).disableSelection();
+    //cj( "#sortable-tasks" ).disableSelection();
 });
