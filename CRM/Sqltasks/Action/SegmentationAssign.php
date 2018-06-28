@@ -228,6 +228,11 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     }
     $this->log("Resolved {$segment_count} segment(s).");
 
+    $excludeSql = '0 AS exclude';
+    if ($this->_columnExists($data_table, 'exclude')) {
+      $excludeSql = "`{$data_table}`.exclude AS exclude";
+      $this->log('Column "exclude" exists, might skip some rows');
+    }
 
     // ASSIGN CONTACT/MEMBERSHIPS
     foreach ($segment_name_2_id as $segment_name => $segment_id) {
@@ -257,21 +262,28 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
                    %2                            AS segment_id,
                    NULL                          AS test_group,
                    `{$data_table}`.membership_id AS membership_id,
-                   civicrm_segmentation.id       AS already_assigned
+                   civicrm_segmentation.id       AS already_assigned,
+                   {$excludeSql}
             FROM `{$data_table}`
             LEFT JOIN civicrm_membership   ON civicrm_membership.id = `{$data_table}`.membership_id
             LEFT JOIN civicrm_segmentation ON civicrm_segmentation.campaign_id    = %1
                                            AND civicrm_segmentation.membership_id = civicrm_membership.id
                                            AND civicrm_segmentation.segment_id    = %2
-            {$segment_filter}", $params);
+            {$segment_filter} {}", $params);
         // get count
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL;");
+        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
         // assign memberships
         CRM_Core_DAO::executeQuery("
           INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
           SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
           FROM `{$temp_table}`
-          WHERE already_assigned IS NULL;");
+          WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
+
+        CRM_Core_DAO::executeQuery("
+          INSERT IGNORE INTO `civicrm_segmentation_exclude` (campaign_id, segment_id, contact_id, membership_id, created_date)
+          SELECT campaign_id, segment_id, entity_id, membership_id, datetime
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL AND exclude = 1");
 
         $this->log("Assigned {$count} new memberships to segment '{$segment_name}'.");
         if ($count) {
@@ -289,20 +301,27 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
                    %2                      AS segment_id,
                    NULL                    AS test_group,
                    NULL                    AS membership_id,
-                   civicrm_segmentation.id AS already_assigned
+                   civicrm_segmentation.id AS already_assigned,
+                   {$excludeSql}
             FROM `{$data_table}`
             LEFT JOIN civicrm_segmentation ON civicrm_segmentation.campaign_id = %1
                                            AND civicrm_segmentation.entity_id  = `{$data_table}`.contact_id
                                            AND civicrm_segmentation.segment_id = %2
             {$segment_filter}", $params);
         // get count
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL;");
+        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
         // assign memberships
         CRM_Core_DAO::executeQuery("
           INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
           SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
           FROM `{$temp_table}`
-          WHERE already_assigned IS NULL;");
+          WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
+
+        CRM_Core_DAO::executeQuery("
+          INSERT IGNORE INTO `civicrm_segmentation_exclude` (campaign_id, segment_id, contact_id, membership_id, created_date)
+          SELECT campaign_id, segment_id, entity_id, membership_id, datetime
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL AND exclude = 1");
         $this->log("Assigned {$count} new contacts to segment '{$segment_name}'.");
 
         if ($count) {

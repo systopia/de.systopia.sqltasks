@@ -266,6 +266,10 @@ abstract class CRM_Sqltasks_Action {
     $this->has_executed = TRUE;
   }
 
+  protected function _columnExists($table, $column) {
+    return CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$table}` LIKE '{$column}';");
+  }
+
   /**
    * check if this process has "done anything"
    */
