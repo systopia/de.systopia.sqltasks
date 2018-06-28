@@ -205,6 +205,7 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       $should_run = $this->shouldErrorHandlerRun($actions);
     }
     if (!$should_run) {
+      $this->log("Skipping Success Handler, actions didn't do anything");
       return;
     }
 

@@ -336,13 +336,17 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     // FIRST: run all exporters
     $exporters = $this->getConfigValue('exporter');
+    $has_exported = FALSE;
     foreach ($exporters as $exporter_id) {
       // export file
       $exporter = CRM_Segmentation_Exporter::getExporter($exporter_id);
-      $exporter->generateFile($campaign_id, $params);
+      $exportedRowCount = $exporter->generateFile($campaign_id, $params);
+      if ($exportedRowCount > 0) {
+        $this->setHasExecuted(); // exporter iterated over > 0 rows
+      }
       $exported_file = $exporter->getExportedFile();
       if ($exported_file) {
-        $this->setHasExecuted(); // something was created
+        $has_exported = TRUE;
         $exported_file_name = $exporter->getFileName();
         $exported_files[$exported_file] = $exported_file_name;
 
@@ -357,7 +361,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       }
     }
 
-    if (!$this->hasExecuted()) {
+    if (!$has_exported) {
       $this->log("No export produced, skipping upload/email.");
       return;
     }
