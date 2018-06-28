@@ -31,6 +31,7 @@ tr.sqltasks-plugin-disabled {
 .handle {
   text-align: center;
   cursor: pointer;
+  vertical-align: middle!important;
 }
 {/literal}
 </style>
@@ -131,8 +132,8 @@ tr.sqltasks-plugin-disabled {
           </ul>
         </span>
       </td>
-      <td>
-        <div class="handle">&#8693;</div>
+      <td class="handle">
+        <div>&#8693;</div>
       </td>
     </tr>
   {/foreach}
