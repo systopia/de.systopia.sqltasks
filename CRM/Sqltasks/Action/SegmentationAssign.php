@@ -269,7 +269,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
             LEFT JOIN civicrm_segmentation ON civicrm_segmentation.campaign_id    = %1
                                            AND civicrm_segmentation.membership_id = civicrm_membership.id
                                            AND civicrm_segmentation.segment_id    = %2
-            {$segment_filter} {}", $params);
+            {$segment_filter}", $params);
         // get count
         $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
         // assign memberships
