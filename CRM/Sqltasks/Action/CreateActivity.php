@@ -138,6 +138,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     if ($entries_exist) {
       $this->setHasExecuted();
     }
+    else {
+      return;
+    }
 
     // create activity first
     $activity_data = array(
