@@ -133,7 +133,7 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       $task = CRM_Sqltasks_Task::getTask($export_id);
       $config = $task->exportConfiguration();
       CRM_Utils_System::download(
-        $task->getAttribute('name') . '.sqltask',
+        preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->getAttribute('name')) . '.sqltask',
         'application/json',
         $config);
     }
