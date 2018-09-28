@@ -81,4 +81,40 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.activity_source_record_id.label} <a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CreateActivity"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.activity_source_record_id.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.activity_medium_id.label}</div>
+    <div class="content">{$form.activity_medium_id.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.activity_engagement_level.label}</div>
+    <div class="content">{$form.activity_engagement_level.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.activity_location.label} <a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CreateActivity"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.activity_location.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.activity_duration.label} <a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Tokens{/ts}", {literal}{"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CreateActivity"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.activity_duration.html} <span class="description">{ts}minutes{/ts}</span></div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.activity_priority_id.label}</div>
+    <div class="content">{$form.activity_priority_id.html}</div>
+    <div class="clear"></div>
+  </div>
+
 </div>
