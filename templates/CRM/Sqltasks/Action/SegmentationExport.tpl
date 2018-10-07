@@ -47,6 +47,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.segmentation_export_discard_empty.label}</div>
+    <div class="content">{$form.segmentation_export_discard_empty.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.segmentation_export_exporter.label}</div>
     <div class="content">{$form.segmentation_export_exporter.html}</div>
     <div class="clear"></div>

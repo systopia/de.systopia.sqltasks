@@ -46,6 +46,9 @@ div.task-results {
   <!-- <span class="crm-button-icon ui-icon-check"></span> -->
   <div onClick="location.replace('{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}');" title="{ts}Run again{/ts}">{ts}Run again{/ts}</div>
 </span>
+<span class="crm-button crm-icon-button">
+  <div onClick="location.replace('{crmURL p='civicrm/sqltasks/configure' q="tid=$task_id"}');" title="{ts}Configure task{/ts}">{ts}Configure task{/ts}</div>
+</span>
 
 
 {* API CALL *}

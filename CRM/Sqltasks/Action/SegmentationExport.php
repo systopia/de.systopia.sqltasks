@@ -142,6 +142,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       E::ts('Upload to'),
       array('class' => 'huge')
     );
+
+    $form->add(
+      'checkbox',
+      $this->getID() . '_discard_empty',
+      E::ts('Discard empty file?')
+    );
   }
 
   /**
@@ -345,7 +351,8 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
         $this->setHasExecuted(); // exporter iterated over > 0 rows
       }
       $exported_file = $exporter->getExportedFile();
-      if ($exported_file) {
+      $discard_empty = $this->getConfigValue('discard_empty');
+      if ($exported_file && (!$discard_empty || $exportedRowCount > 0)) {
         $has_exported = TRUE;
         $exported_file_name = $exporter->getFileName();
         $exported_files[$exported_file] = $exported_file_name;
@@ -354,7 +361,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
         $exporter_name = $exporter->getName();
         $this->log("Exporter '{$exporter_name}' to file '{$exported_file_name}'");
 
-      } else {
+      }
+      elseif ($discard_empty && $exportedRowCount == 0) {
+        $this->log("No contacts found in segment, discarding file.");
+        unlink($exported_file);
+      }
+      else {
         // add log entry
         $exporter_name = $exporter->getName();
         $this->log("Exporter '{$exporter_name}' did not produce a file.");

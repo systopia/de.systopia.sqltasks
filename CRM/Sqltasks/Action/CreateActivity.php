@@ -95,19 +95,60 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       $this->getID() . '_campaign_id',
       E::ts('Campaign'),
       $this->getEligibleCampaigns(TRUE),
-      FALSE
+      FALSE,
+      array('class' => 'crm-select2 huge')
     );
 
-    $form->add(
-      'text',
+    $form->addEntityRef(
       $this->getID() . '_source_contact_id',
       E::ts('Source Contact')
     );
 
+    $form->addEntityRef(
+      $this->getID() . '_assigned_to',
+      E::ts('Assigned To'),
+      [
+        'multiple' => TRUE
+      ]
+    );
+
+    $form->add(
+      'select',
+      $this->getID() . '_medium_id',
+      E::ts('Activity Medium'),
+      $this->getOptions('encounter_medium')
+    );
+
     $form->add(
       'text',
-      $this->getID() . '_assigned_to',
-      E::ts('Assigned To')
+      $this->getID() . '_source_record_id',
+      E::ts('Source Record ID')
+    );
+
+    $form->add(
+      'select',
+      $this->getID() . '_priority_id',
+      E::ts('Priority'),
+      $this->getOptions('priority')
+    );
+
+    $form->add(
+      'select',
+      $this->getID() . '_engagement_level',
+      E::ts('Engagement Index'),
+      $this->getOptions('engagement_index')
+    );
+
+    $form->add(
+      'text',
+      $this->getID() . '_location',
+      E::ts('Location')
+    );
+
+    $form->add(
+      'text',
+      $this->getID() . '_duration',
+      E::ts('Duration')
     );
   }
 
@@ -123,6 +164,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     } else {
       $this->createMassActivity();
     }
+    $this->createExclusionActivity();
   }
 
   /**
@@ -151,12 +193,22 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
       'subject'            => $this->resolveTokens($this->getConfigValue('subject'), $record),
       'details'            => $this->resolveTokens($this->getConfigValue('details'), $record),
-      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')));
-    if (empty($activity_data['source_contact_id'])) {
-      unset($activity_data['source_contact_id']);
-    }
-    if (empty($activity_data['campaign_id'])) {
-      unset($activity_data['campaign_id']);
+      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')),
+      'medium_id'          => $this->getConfigValue('medium_id'),
+      'source_record_id'   => $this->resolveTokens($this->getConfigValue('source_record_id'), $record),
+      'priority_id'        => $this->getConfigValue('priority_id'),
+      'engagement_level'   => $this->getConfigValue('engagement_level'),
+      'location'           => $this->resolveTokens($this->getConfigValue('location'), $record),
+      'duration'           => $this->resolveTokens($this->getConfigValue('duration'), $record),
+    );
+    $unsetIfEmpty = [
+      'source_contact_id', 'campaign_id', 'medium_id', 'source_record_id',
+      'priority_id', 'engagement_level', 'location', 'duration'
+    ];
+    foreach ($unsetIfEmpty as $field) {
+      if (empty($activity_data[$field])) {
+        unset($activity_data[$field]);
+      }
     }
     $activity = civicrm_api3('Activity', 'create', $activity_data);
 
@@ -209,12 +261,16 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'campaign_id'        => $this->getConfigValue('campaign_id'),
       'status_id'          => $this->getConfigValue('status_id'),
       'source_contact_id'  => $this->getConfigValue('source_contact_id'),
-      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')));
-    if (empty($activity_template['source_contact_id'])) {
-      unset($activity_template['source_contact_id']);
-    }
-    if (empty($activity_template['campaign_id'])) {
-      unset($activity_template['campaign_id']);
+      'assignee_id'        => $this->getIDList($this->getConfigValue('assigned_to')),
+      'medium_id'          => $this->getConfigValue('medium_id'),
+      'priority_id'        => $this->getConfigValue('priority_id'),
+      'engagement_level'   => $this->getConfigValue('engagement_level'),
+    );
+    $unsetIfEmpty = ['source_contact_id', 'campaign_id', 'medium_id', 'priority_id', 'engagement_level'];
+    foreach ($unsetIfEmpty as $field) {
+      if (empty($activity_template[$field])) {
+        unset($activity_template[$field]);
+      }
     }
     if (!$use_api) {
       // add some defaults for SQL
@@ -233,22 +289,87 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     // now iterate through all entries
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} {$excludeSql}");
+    $unsetIfEmpty = ['source_record_id', 'location', 'duration'];
     while ($record->fetch()) {
       if (empty($record->contact_id)) continue;
       $this->setHasExecuted();
 
       // compile activity
       $activity = $activity_template;
-      $activity['subject']   = $this->resolveTokens($this->getConfigValue('subject'), $record);
-      $activity['details']   = $this->resolveTokens($this->getConfigValue('details'), $record);
+      $activity['subject']          = $this->resolveTokens($this->getConfigValue('subject'), $record);
+      $activity['details']          = $this->resolveTokens($this->getConfigValue('details'), $record);
+      $activity['source_record_id'] = $this->resolveTokens($this->getConfigValue('source_record_id'), $record);
+      $activity['location']         = $this->resolveTokens($this->getConfigValue('location'), $record);
+      $activity['duration']         = $this->resolveTokens($this->getConfigValue('duration'), $record);
       $activity['target_id'] = (int) $record->contact_id;
-
+      foreach ($unsetIfEmpty as $field) {
+        if (empty($activity[$field])) {
+          unset($activity[$field]);
+        }
+      }
       if ($use_api) {
         civicrm_api3('Activity', 'create', $activity);
 
       } else {
         $this->createActivitySQL($activity);
       }
+    }
+  }
+
+  public function createExclusionActivity() {
+    $contact_table = $this->getContactTable();
+    if (!$this->_columnExists($contact_table, 'exclude')) {
+      return;
+    }
+    $count = CRM_Core_DAO::singleValueQuery("
+      SELECT
+        COUNT(*) AS contact_count
+      FROM {$contact_table}
+      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND campaign_id = %0
+      WHERE exclude = 1", [[$this->getConfigValue('campaign_id'), 'Integer']]);
+    if ($count > 0) {
+      $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} WHERE exclude = 1 LIMIT 1")->fetch();
+      $activity_data = [
+        'activity_date_time' => $this->getDateTime($this->getConfigValue('activity_date_time')),
+        'activity_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_Activity', 'activity_type_id', 'Exclusion Record'),
+        'campaign_id' => $this->getConfigValue('campaign_id'),
+        'status_id' => $this->getConfigValue('status_id'),
+        'source_contact_id' => $this->getConfigValue('source_contact_id'),
+        'subject' => ts('Control Group - %1', [
+          1 => $this->resolveTokens($this->getConfigValue('subject'), $record)
+        ]),
+        'medium_id' => $this->getConfigValue('medium_id'),
+        'priority_id' => $this->getConfigValue('priority_id'),
+        'engagement_level' => $this->getConfigValue('engagement_level'),
+      ];
+      $unsetIfEmpty = [
+        'source_contact_id',
+        'campaign_id',
+        'medium_id',
+        'priority_id',
+        'engagement_level',
+      ];
+      foreach ($unsetIfEmpty as $field) {
+        if (empty($activity_data[$field])) {
+          unset($activity_data[$field]);
+        }
+      }
+      $activity = civicrm_api3('Activity', 'create', $activity_data);
+      $query = "INSERT IGNORE INTO civicrm_activity_contact
+                   (SELECT
+                      NULL               AS id,
+                      %0                 AS activity_id,
+                      civicrm_contact.id AS contact_id,
+                      3                  AS record_type
+                    FROM {$contact_table}
+                    JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id
+                    LEFT JOIN civicrm_contact ON civicrm_contact.id = civicrm_segmentation_exclude.contact_id
+                    LEFT JOIN civicrm_segmentation_order ON civicrm_segmentation_order.campaign_id = civicrm_segmentation_exclude.campaign_id AND civicrm_segmentation_order.segment_id = civicrm_segmentation_exclude.segment_id
+                    WHERE civicrm_segmentation_exclude.campaign_id = %1
+                      AND civicrm_contact.is_deleted = 0)";
+      CRM_Core_DAO::executeQuery($query, [[$activity['id'], 'Integer'], [$this->getConfigValue('campaign_id'), 'Integer']]);
+      CRM_Segmentation_Logic::addExclusionSegmentForMassActivity($activity['id'], $this->getConfigValue('campaign_id'));
+      $this->log("Created exclusion record activities for {$count} contacts");
     }
   }
 
