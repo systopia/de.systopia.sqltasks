@@ -86,7 +86,8 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     $form->add(
       'text',
       $this->getID() . '_table',
-      E::ts('User Error Table')
+      E::ts('User Error Table'),
+      ['style' => 'font-family: monospace, monospace !important']
     );
 
     $form->add(

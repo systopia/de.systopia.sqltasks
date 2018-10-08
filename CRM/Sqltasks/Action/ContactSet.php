@@ -30,6 +30,7 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_contact_table',
       E::ts('Contact Table (<code>contact_id</code>)'),
+      ['style' => 'font-family: monospace, monospace !important'],
       TRUE
     );
   }

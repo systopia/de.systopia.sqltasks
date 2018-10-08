@@ -78,7 +78,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       'main_sql',
       E::ts('Main Script (SQL)'),
       array('rows' => 8,
-            'cols' => 60,
+            'style' => 'font-family: monospace, monospace !important; width: 95%; min-width: 240px;',
       ),
       FALSE
     );
@@ -88,7 +88,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       'post_sql',
       E::ts('Cleanup Script (SQL)'),
       array('rows' => 8,
-            'cols' => 60,
+            'style' => 'font-family: monospace, monospace !important; width: 95%; min-width: 240px;',
       ),
       FALSE
     );

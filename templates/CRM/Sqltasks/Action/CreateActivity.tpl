@@ -33,6 +33,8 @@
 
   <hr/>
 
+  <div class="spacer"></div>
+
   <div class="crm-section">
     <div class="label">{$form.activity_activity_type_id.label}</div>
     <div class="content">{$form.activity_activity_type_id.html}</div>

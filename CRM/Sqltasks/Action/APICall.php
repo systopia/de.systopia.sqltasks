@@ -48,6 +48,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_table',
       E::ts('Data Table'),
+      ['style' => 'font-family: monospace, monospace !important'],
       TRUE
     );
 
@@ -55,6 +56,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_entity',
       E::ts('Entity'),
+      ['style' => 'font-family: monospace, monospace !important'],
       TRUE
     );
 
@@ -62,6 +64,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_action',
       E::ts('Action'),
+      ['style' => 'font-family: monospace, monospace !important'],
       TRUE
     );
 
@@ -69,7 +72,11 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       'textarea',
       $this->getID() . '_parameters',
       E::ts('Parameters'),
-      array('rows' => 8, 'cols' => 40),
+      [
+        'rows' => 8,
+        'cols' => 40,
+        'style' => 'font-family: monospace, monospace !important',
+      ],
       FALSE
     );
   }
