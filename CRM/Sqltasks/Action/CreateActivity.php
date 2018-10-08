@@ -72,14 +72,14 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'text',
       $this->getID() . '_subject',
       E::ts('Subject'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
       'textarea',
       $this->getID() . '_details',
       E::ts('Details'),
-      array('rows' => 4, 'cols' => 60),
+      array('rows' => 4, 'cols' => 60, 'style' => 'font-family: monospace, monospace !important'),
       FALSE
     );
 
@@ -87,6 +87,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'text',
       $this->getID() . '_activity_date_time',
       E::ts('Timestamp'),
+      ['style' => 'font-family: monospace, monospace !important'],
       FALSE
     );
 
@@ -122,7 +123,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $form->add(
       'text',
       $this->getID() . '_source_record_id',
-      E::ts('Source Record ID')
+      E::ts('Source Record ID'),
+      ['style' => 'font-family: monospace, monospace !important']
     );
 
     $form->add(
@@ -142,13 +144,15 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $form->add(
       'text',
       $this->getID() . '_location',
-      E::ts('Location')
+      E::ts('Location'),
+      ['style' => 'font-family: monospace, monospace !important']
     );
 
     $form->add(
       'text',
       $this->getID() . '_duration',
-      E::ts('Duration')
+      E::ts('Duration'),
+      ['style' => 'font-family: monospace, monospace !important']
     );
   }
 

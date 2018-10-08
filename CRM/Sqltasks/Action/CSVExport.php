@@ -46,6 +46,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_table',
       E::ts('Export Table'),
+      ['style' => 'font-family: monospace, monospace !important'],
       TRUE
     );
 
@@ -67,7 +68,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'textarea',
       $this->getID() . '_headers',
       E::ts('Columns'),
-      array('rows' => 8, 'cols' => 40),
+      array('rows' => 8, 'cols' => 40, 'style' => 'font-family: monospace, monospace !important'),
       FALSE
     );
 
@@ -82,14 +83,14 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_filename',
       E::ts('File Name'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
       'text',
       $this->getID() . '_path',
       E::ts('File Path'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
@@ -110,7 +111,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_upload',
       E::ts('Upload to'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
