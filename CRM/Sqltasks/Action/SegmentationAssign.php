@@ -52,7 +52,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_table',
       E::ts('Data Table'),
-      array()
+      ['style' => 'font-family: monospace, monospace !important']
     );
 
     $form->add(
@@ -96,7 +96,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       'textarea',
       $this->getID() . '_segment_order',
       E::ts('Segment Order'),
-      array('rows' => 8, 'cols' => 40),
+      array('rows' => 8, 'cols' => 40, 'style' => 'font-family: monospace, monospace !important'),
       FALSE
     );
 
@@ -104,7 +104,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_segment_order_table',
       E::ts('Segment Order Table'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
 
