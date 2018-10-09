@@ -38,17 +38,15 @@ div.task-results {
 </div>
 
 {* BACK BUTTON *}
-<span class="crm-button crm-icon-button">
-  <!-- <span class="crm-button-icon ui-icon-check"></span> -->
-  <div onClick="location.replace('{crmURL p='civicrm/sqltasks/manage'}');" title="{ts}Back to Manager{/ts}">{ts}Back to Manager{/ts}</div>
-</span>
-<span class="crm-button crm-icon-button">
-  <!-- <span class="crm-button-icon ui-icon-check"></span> -->
-  <div onClick="location.replace('{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}');" title="{ts}Run again{/ts}">{ts}Run again{/ts}</div>
-</span>
-<span class="crm-button crm-icon-button">
-  <div onClick="location.replace('{crmURL p='civicrm/sqltasks/configure' q="tid=$task_id"}');" title="{ts}Configure task{/ts}">{ts}Configure task{/ts}</div>
-</span>
+<a class="button" href="{crmURL p='civicrm/sqltasks/manage'}" title="{ts}Back to Manager{/ts}">
+  {ts}Back to Manager{/ts}
+</a>
+<a class="button" href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" title="{ts}Run again{/ts}">
+  {ts}Run again{/ts}
+</a>
+<a class="button" href="{crmURL p='civicrm/sqltasks/configure' q="tid=$task_id"}" title="{ts}Configure task{/ts}">
+  {ts}Configure task{/ts}
+</a>
 
 
 {* API CALL *}

@@ -79,16 +79,14 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'textarea',
       $this->getID() . '_details',
       E::ts('Details'),
-      array('rows' => 4, 'cols' => 60, 'style' => 'font-family: monospace, monospace !important'),
-      FALSE
+      array('rows' => 4, 'cols' => 60, 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
       'text',
       $this->getID() . '_activity_date_time',
       E::ts('Timestamp'),
-      ['style' => 'font-family: monospace, monospace !important'],
-      FALSE
+      ['style' => 'font-family: monospace, monospace !important']
     );
 
     $form->add(

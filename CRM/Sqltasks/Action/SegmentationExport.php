@@ -110,14 +110,14 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       'text',
       $this->getID() . '_filename',
       E::ts('File Name'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
       'text',
       $this->getID() . '_path',
       E::ts('File Path'),
-      array('class' => 'huge')
+      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
     );
 
     $form->add(
