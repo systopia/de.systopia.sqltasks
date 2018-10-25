@@ -6,7 +6,8 @@ cj( document ).ready(function() {
         forceHelperSize: true,
         items: '.sorting-init',
         update: function (event, ui) {
-
+            sortable.find('tr').addClass('sorting-init');
+            sortable.sortable('refresh');
             var data = cj(this).sortable( "toArray");
 
             CRM.api3('Sqltask', 'sort', {
