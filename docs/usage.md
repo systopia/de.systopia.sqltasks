@@ -7,6 +7,28 @@ change the order in which they are executed when started via the dispatcher.
 This can be done by either clicking the arrows under "Selection Order" or by
 using drag-and-drop on the rightmost icon.
 
+## Best practices
+
+When developing SQL tasks, you should check the cron configuration for your web
+server, since SQL tasks may take a long time to execute, depending on what they
+do, and there could be interferences with other cron jobs interacting with the
+database, such as regular dumps. Make sure that each cron job gets the chance to
+finish before another one is accessing the database.
+
+Therefore, each SQL task should only query those records necessary for the
+action to take, in order to avoid unneeded write queries to the database.
+
+Also, schedule your tasks with reasonable intervals. Not every task needs to be
+run each time the Job Scheduler is executing.
+
+Instead of making `INSERT`, `UPDATE`, or `DELETE` queries directly within the
+task's SQL code, always prefer using the "API Call" action, as this helps
+preserving data integrity and allows other things to happen for each action
+(e.g. logging, or running any hook implementations by other extensions).
+
+For queries that don't need additional indices, prefer to create views instead
+of tables, as this increases performance.
+
 ## Actions
 
 Tasks are SQL-driven, meaning the workflow usually starts with an SQL query
