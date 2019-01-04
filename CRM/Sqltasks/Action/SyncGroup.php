@@ -89,7 +89,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     // 1.1. subscription history
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_subscription_history (group_id, contact_id, date, method, status)
-        (SELECT
+        (SELECT DISTINCT
           {$group_id}        AS group_id,
           contact_id         AS contact_id,
           '{$now}'           AS date,
@@ -103,20 +103,22 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     // 1.2. actual group
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_group_contact (group_id, contact_id, status)
-        (SELECT
+        (SELECT DISTINCT
           {$group_id}        AS group_id,
           contact_id         AS contact_id,
           'Added'            AS status
         FROM {$contact_table}
         WHERE contact_id NOT IN (SELECT contact_id
                                    FROM civicrm_group_contact
-                                  WHERE group_id = {$group_id}) {$excludeSql});");
+                                  WHERE group_id = {$group_id}) {$excludeSql})
+        ON DUPLICATE KEY UPDATE
+          id = id");
 
     // 2. update the ones that have been previously removed
     // 2.1. subscription history
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_subscription_history (group_id, contact_id, date, method, status)
-        (SELECT
+        (SELECT DISTINCT
           {$group_id}        AS group_id,
           contact_id         AS contact_id,
           '{$now}'           AS date,
@@ -196,7 +198,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
 
     // then: add the new ones
     $contacts2add = CRM_Core_DAO::executeQuery("
-      SELECT result.contact_id AS contact_id
+      SELECT DISTINCT result.contact_id AS contact_id
       FROM `{$contact_table}` result
       LEFT JOIN civicrm_group_contact ON civicrm_group_contact.contact_id = result.contact_id
                                       AND civicrm_group_contact.group_id = {$group_id}

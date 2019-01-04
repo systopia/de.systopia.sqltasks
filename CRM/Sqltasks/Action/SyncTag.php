@@ -100,13 +100,15 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
 
     // then: add all missing contacts
     CRM_Core_DAO::executeQuery("
-      INSERT IGNORE INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
+      INSERT INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
         (SELECT
           '{$entity_table}'  AS entity_table,
           contact_id         AS entity_id,
           {$tag_id}          AS tag_id
         FROM {$contact_table}
-        WHERE contact_id IS NOT NULL {$excludeSql})");
+        WHERE contact_id IS NOT NULL {$excludeSql})
+        ON DUPLICATE KEY UPDATE
+          id = id");
   }
 
   /**
@@ -140,7 +142,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
 
     // then: add the new ones
     $tags2add = CRM_Core_DAO::executeQuery("
-      SELECT contact_id
+      SELECT DISTINCT contact_id
       FROM `{$contact_table}`
       LEFT JOIN civicrm_entity_tag et ON  et.entity_id = contact_id
                                       AND et.entity_table = '{$entity_table}'
