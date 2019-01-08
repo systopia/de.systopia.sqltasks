@@ -108,7 +108,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
         FROM {$contact_table}
         WHERE contact_id IS NOT NULL {$excludeSql})
         ON DUPLICATE KEY UPDATE
-          id = id");
+          civicrm_entity_tag.id = civicrm_entity_tag.id");
   }
 
   /**

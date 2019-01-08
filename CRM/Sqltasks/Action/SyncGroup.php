@@ -112,7 +112,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
                                    FROM civicrm_group_contact
                                   WHERE group_id = {$group_id}) {$excludeSql})
         ON DUPLICATE KEY UPDATE
-          id = id");
+          civicrm_group_contact.id = civicrm_group_contact.id");
 
     // 2. update the ones that have been previously removed
     // 2.1. subscription history
