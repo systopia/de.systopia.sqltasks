@@ -64,6 +64,37 @@
     <div class="clear"></div>
   </div>
 
+  <div id="advSchedule">
+    <div id="advSchedule-weekday" class="crm-section">
+      <div class="label">{$form.scheduled_weekday.label}</div>
+      <div class="content">{$form.scheduled_weekday.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div id="advSchedule-day" class="crm-section">
+      <div class="label">{$form.scheduled_day.label}</div>
+      <div class="content">{$form.scheduled_day.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div id="advSchedule-hour" class="crm-section">
+      <div class="label">{$form.scheduled_hour.label}</div>
+      <div class="content">{$form.scheduled_hour.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div id="advSchedule-minute" class="crm-section">
+      <div class="label">{$form.scheduled_minute.label}</div>
+      <div class="content">{$form.scheduled_minute.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="description" class="crm-section">
+      {ts}Set the exact <i>Weekday / Day / Hour / Minute</i> when the job will be executed, on the first cron call after this datetime.{/ts}
+      <br />
+    </div>
+  </div>
+
   <div class="crm-section">
     <div class="label">{$form.parallel_exec.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Parallel Execution{/ts}", {literal}{"id":"id-configure-parallel","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.parallel_exec.html}</div>
@@ -129,5 +160,53 @@ function decodeHTML(selector) {
 decodeHTML("#main_sql");
 decodeHTML("#post_sql");
 
+
+CRM.$(function(){
+  setControls(CRM.$('#scheduled').val());
+
+  CRM.$('#scheduled').change(function(){
+    setControls(CRM.$('#scheduled').val());
+  });
+
+  function setControls(value){
+    switch(value){
+    case "daily":
+      CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-weekday').hide();
+      CRM.$('#advSchedule-day').hide();
+      CRM.$('#advSchedule-hour').show();
+      CRM.$('#advSchedule-min').show();
+      break;
+    case "hourly":
+      CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-weekday').hide();
+      CRM.$('#advSchedule-day').hide();
+      CRM.$('#advSchedule-hour').hide();
+      CRM.$('#advSchedule-min').show();
+      break;
+    case "weekly":
+      CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-weekday').show();
+      CRM.$('#advSchedule-day').hide();
+      CRM.$('#advSchedule-hour').show();
+      CRM.$('#advSchedule-min').show();
+      break;
+    case "monthly":
+      CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-weekday').hide();
+      CRM.$('#advSchedule-day').show();
+      CRM.$('#advSchedule-hour').show();
+      CRM.$('#advSchedule-min').show();
+      break;
+    case "yearly":
+    case "always":
+      CRM.$('#advSchedule').hide();
+      break;
+    default:
+      CRM.$('#advSchedule').hide();
+      break;
+    }
+  }
+});
 </script>
 {/literal}
