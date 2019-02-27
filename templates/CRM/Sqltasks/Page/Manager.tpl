@@ -15,10 +15,6 @@
 {* TODO: move to CSS file? *}
 <style type="text/css">
 {literal}
-tr.sqltasks-plugin-disabled {
-  color: lightgray;
-}
-
 .ui-state-highlight {
   height: 30px;
   width: 100%;
@@ -98,7 +94,7 @@ tr.sqltasks-plugin-disabled {
   </thead>
   <tbody id="sortable-tasks">
   {foreach from=$tasks key=key item=task}
-    <tr id="{$task.id}_{$key}" class="{cycle values="odd-row,even-row"} {if not $task.enabled}sqltasks-plugin-disabled{/if}">
+    <tr id="{$task.id}_{$key}" class="{cycle values="odd-row,even-row"} {if not $task.enabled}disabled{/if}">
       {assign var=task_id value=$task.id}
       <td>{$task.category}</div></td>
       <td>[{$task.id}]</td>
@@ -119,14 +115,24 @@ tr.sqltasks-plugin-disabled {
           <ul class="panel">
             <li>
               <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button sqltasks-job-run" title="{ts}Run the task manually{/ts}">{ts}Run Now{/ts}</a>
+            </li>
+            <li>
               <a href="{crmURL p='civicrm/sqltasks/configure' q="reset=1&tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Configure{/ts}">{ts}Configure{/ts}</a>
+            </li>
+            <li>
               {if $task.enabled}
                 <a href="{crmURL p='civicrm/sqltasks/manage' q="disable=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Disable for scheduled execution{/ts}">{ts}Disable{/ts}</a>
               {else}
                 <a href="{crmURL p='civicrm/sqltasks/manage' q="enable=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Enable for scheduled execution{/ts}">{ts}Enable{/ts}</a>
               {/if}
+            </li>
+            <li>
               <a href="{crmURL p='civicrm/sqltasks/manage' q="delete=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Delete Task{/ts}">{ts}Delete{/ts}</a>
+            </li>
+            <li>
               <a href="{crmURL p='civicrm/sqltasks/manage' q="export=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Export Configuration{/ts}">{ts}Export Config{/ts}</a>
+            </li>
+            <li>
               <a href="{crmURL p='civicrm/sqltasks/import' q="tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Import Configuration{/ts}">{ts}Import Config{/ts}</a>
             </li>
           </ul>
