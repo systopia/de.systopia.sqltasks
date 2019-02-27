@@ -230,6 +230,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   protected function getFilePath($filename = NULL) {
     $file_path = $this->getConfigValue('path');
     $file_path = trim($file_path);
+    if(empty($file_path)){
+      $file_path = CRM_Core_Config::singleton()->uploadDir;
+    }
     while (DIRECTORY_SEPARATOR == substr($file_path, strlen($file_path) - 1)) {
       $file_path = substr($file_path, 0, strlen($file_path) - 1);
     }
