@@ -154,3 +154,30 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
   ));
   _sqltasks_civix_navigationMenu($menu);
 }
+
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens/
+ */
+function sqltasks_civicrm_tokens(&$tokens) {
+  $tokens['sqltasks'] = array(
+    'sqltasks.downloadURL' => ts("SQL Tasks: csv download URL"),
+  );
+}
+
+/**
+ * Implements hook_civicrm_tokenValues().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
+ */
+function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
+  if (!empty($tokens['sqltasks'])) {
+    if ($tokens['sqltasks']['downloadURL']) {
+      $downloadURL = CRM_Core_Session::singleton()->get('sqltasks.downloadURL');
+      foreach ($cids as $cid) {
+        $values[$cid]['sqltasks.downloadURL'] = $downloadURL;
+      }
+    }
+  }
+}
