@@ -31,6 +31,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section" id="section-delimiter-other">
+    <div class="label">{$form.csv_delimiter_other.label}</div>
+    <div class="content">{$form.csv_delimiter_other.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <div class="crm-section">
     <div class="label">{$form.csv_headers.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Columns{/ts}", {literal}{"id":"id-csv-columns","file":"CRM\/Sqltasks\/Action\/CSVExport"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.csv_headers.html}</div>
@@ -80,3 +86,25 @@
   </div>
 
 </div>
+
+{literal}
+<script type="text/javascript">
+  CRM.$(function($) {
+    if ($('#csv_delimiter').val() == '') {
+      $('#section-delimiter-other').show();
+    }
+    else {
+      $('#section-delimiter-other').hide();
+    }
+
+    $('#csv_delimiter').change(function() {
+      if ($(this).val() == '') {
+        $('#section-delimiter-other').show();
+      }
+      else {
+        $('#section-delimiter-other').hide();
+      }
+    });
+  });
+</script>
+{/literal}
