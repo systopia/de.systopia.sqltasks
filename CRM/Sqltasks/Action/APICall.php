@@ -142,7 +142,21 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   protected function fillParameters($specs, $data_row) {
     $parameters = array();
     foreach ($specs as $key => $value) {
-      $parameters[$key] = $this->resolveTokens($value, $data_row);
+      // calculate value by
+      $param_value = $this->resolveTokens($value, $data_row);
+
+      // check if this happens to be a complex JSON string (#50)
+      $first_character = substr($param_value, 0, 1);
+      if ($first_character == '[' || $first_character == '{' || $first_character == '"') {
+        $json_value = json_decode($param_value, TRUE);
+        if ($json_value !== NULL) {
+          // json parsing worked, let's use it
+          $param_value = $json_value;
+        }
+      }
+
+      // set the value
+      $parameters[$key] = $param_value;
     }
     return $parameters;
   }

@@ -1,11 +1,13 @@
 cj( document ).ready(function() {
 
-    cj( "#sortable-tasks" ).sortable({
+    var sortable = cj( "#sortable-tasks" ).sortable({
         placeholder: "ui-state-highlight",
         handle: '.handle',
         forceHelperSize: true,
+        items: '.sorting-init',
         update: function (event, ui) {
-
+            sortable.find('tr').addClass('sorting-init');
+            sortable.sortable('refresh');
             var data = cj(this).sortable( "toArray");
 
             CRM.api3('Sqltask', 'sort', {
@@ -18,6 +20,9 @@ cj( document ).ready(function() {
             });
 
         }
-        });
-    //cj( "#sortable-tasks" ).disableSelection();
+    });
+    sortable.find('tr').one('mouseenter', function() {
+        cj(this).addClass('sorting-init');
+        sortable.sortable('refresh');
+    });
 });
