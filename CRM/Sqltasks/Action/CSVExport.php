@@ -64,6 +64,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     );
 
     $form->add(
+      'text',
+      $this->getID() . '_delimiter_other',
+      E::ts('Other delimiter'),
+      ['style' => 'width: 50px; font-family: monospace, monospace !important']
+    );
+
+    $form->add(
       'textarea',
       $this->getID() . '_headers',
       E::ts('Columns'),
@@ -125,8 +132,10 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   protected function getDelimiterOptions() {
     return array(
       ';' => E::ts('Semicolon (;)'),
-      ',' => E::ts('Comma (,)')
-        );
+      ',' => E::ts('Comma (,)'),
+      '|' => E::ts('Vertical bar (|)'),
+      '' => E::ts('other'),
+    );
   }
 
   /**
@@ -292,6 +301,11 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $export_table = $this->getExportTable();
     $column_specs = $this->getColumnSpecs();
     $delimiter = $this->getConfigValue('delimiter');
+    $delimiter_other = $this->getConfigValue('delimiter_other');
+    if(empty($delimiter) && !empty($delimiter_other)){
+      $delimiter = $delimiter_other;
+    }
+
     $encoding  = $this->getConfigValue('encoding');
 
     // parse specs
