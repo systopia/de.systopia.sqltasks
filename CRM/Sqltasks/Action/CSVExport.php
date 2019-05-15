@@ -374,9 +374,18 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $this->log("Zipped file into '{$filepath}'");
     }
 
+    // store/register the generated file file
+    $config_offer_link = $this->getConfigValue('downloadURL');
+    $mime_type = $this->getConfigValue('zip') ? 'application/zip' : 'text/csv';
+    $this->task->addGeneratedFile(
+        E::ts("%1 CSV Export", [1 => $this->getName()]),
+        $filename,
+        $filepath,
+        $mime_type,
+        $config_offer_link);
+
     // 2) EMAIL
     $config_email = $this->getConfigValue('email');
-    $config_downloadURL = $this->getConfigValue('downloadURL');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
       // add all the variables
@@ -386,32 +395,19 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
       // and send the template via email
       $email = array(
-        'id'              => $this->getConfigValue('email_template'),
-        // 'to_name'         => $this->getConfigValue('email'),
-        'to_email'        => $this->getConfigValue('email'),
-        'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$emailDomain}",
+          'id'        => $this->getConfigValue('email_template'),
+          'to_email'  => $this->getConfigValue('email'),
+          'from'      => "SQL Tasks <{$domainEmailAddress}>",
+          'reply_to'  => "do-not-reply@{$emailDomain}",
+          'contactId' => CRM_Core_Session::getLoggedInContactID() // sluc: if contactId param is empty, it won't get into hook_civicrm_tokenValues()
         );
 
-      $mime_type = $this->getConfigValue('zip') ? 'application/zip' : 'text/csv';
       // add file as attachment or setup URL token
-      if(!$config_downloadURL){
-        $attachment  = array('fullPath'  => $filepath,
-                           'mime_type' => $mime_type,
-                           'cleanName' => basename($filepath));
-
-        $email['attachments'] = array($attachment);
-      }
-      else{
-        // store download URL in session to be replaced in token's hook
-        $urlParams = 'filename=' . $filename . "&mime-type=" . $mime_type;
-        $url = CRM_Utils_System::url('civicrm/file', $urlParams, TRUE);
-        $url = sprintf('<a href="%s">%s</a>', $url, $filename);
-        $session = CRM_Core_Session::singleton();
-        $session->set('sqltasks.downloadURL', $url);
-
-        // if contactId param is empty, it won't get into hook_civicrm_tokenValues()
-        $email['contactId'] = CRM_Core_Session::getLoggedInContactID();
+      if(!$config_offer_link){
+        $attachment = array('fullPath'  => $filepath,
+                            'mime_type' => $mime_type,
+                            'cleanName' => basename($filepath));
+        $email['attachments'] = [$attachment];
       }
 
       civicrm_api3('MessageTemplate', 'send', $email);
