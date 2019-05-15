@@ -522,6 +522,13 @@ class CRM_Sqltasks_Task {
 
         return (($thisDay >= $thisMonth . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisMonth > $lastMonth));
 
+      case 'yearly':
+        $thisDay = date('YmdHi', strtotime($now));
+        $thisYear = date('Y', strtotime($now));
+        $lastYear = date('Y', strtotime($last_execution));
+
+        return (($thisDay >= $thisYear . $scheduled_month . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisYear > $lastYear));
+
     }
     return FALSE;
   }

@@ -65,6 +65,12 @@
   </div>
 
   <div id="advSchedule">
+    <div id="advSchedule-month" class="crm-section">
+      <div class="label">{$form.scheduled_month.label}</div>
+      <div class="content">{$form.scheduled_month.html}</div>
+      <div class="clear"></div>
+    </div>
+
     <div id="advSchedule-weekday" class="crm-section">
       <div class="label">{$form.scheduled_weekday.label}</div>
       <div class="content">{$form.scheduled_weekday.html}</div>
@@ -172,6 +178,7 @@ CRM.$(function(){
     switch(value){
     case "daily":
       CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-month').hide();
       CRM.$('#advSchedule-weekday').hide();
       CRM.$('#advSchedule-day').hide();
       CRM.$('#advSchedule-hour').show();
@@ -179,6 +186,7 @@ CRM.$(function(){
       break;
     case "hourly":
       CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-month').hide();
       CRM.$('#advSchedule-weekday').hide();
       CRM.$('#advSchedule-day').hide();
       CRM.$('#advSchedule-hour').hide();
@@ -186,6 +194,7 @@ CRM.$(function(){
       break;
     case "weekly":
       CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-month').hide();
       CRM.$('#advSchedule-weekday').show();
       CRM.$('#advSchedule-day').hide();
       CRM.$('#advSchedule-hour').show();
@@ -193,12 +202,20 @@ CRM.$(function(){
       break;
     case "monthly":
       CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-month').hide();
       CRM.$('#advSchedule-weekday').hide();
       CRM.$('#advSchedule-day').show();
       CRM.$('#advSchedule-hour').show();
       CRM.$('#advSchedule-min').show();
       break;
     case "yearly":
+      CRM.$('#advSchedule').show();
+      CRM.$('#advSchedule-month').show();
+      CRM.$('#advSchedule-weekday').hide();
+      CRM.$('#advSchedule-day').show();
+      CRM.$('#advSchedule-hour').show();
+      CRM.$('#advSchedule-min').show();
+      break;
     case "always":
       CRM.$('#advSchedule').hide();
       break;
