@@ -70,6 +70,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.run_permissions.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Run Permissions{/ts}", {literal}{"id":"id-run-permissions","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.run_permissions.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <h3>{ts}Actions{/ts}</h3>
   {foreach from=$action_list item=action key=action_id}
   <div class="crm-accordion-wrapper crm-sqltask-{$action_id} collapsed">

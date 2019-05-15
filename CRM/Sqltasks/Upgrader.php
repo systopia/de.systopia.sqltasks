@@ -73,4 +73,26 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
     return TRUE;
   }
+
+  /**
+   * Update to version 0.8
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0080() {
+    $this->ctx->log->info('Updating "SQL Tasks" adding run permissions...');
+
+    // add column: last_runtime
+    $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'run_permissions';");
+    if (!$column_exists) {
+      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `run_permissions` varchar(256) COMMENT 'permissions required to run';");
+    }
+
+    // update rebuild log tables
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
+
+    return TRUE;
+  }
 }
