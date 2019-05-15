@@ -413,14 +413,18 @@ class CRM_Sqltasks_Task {
    */
   public function addGeneratedFile($title, $filename, $path, $mime_type, $download_link = TRUE, $attachment = FALSE) {
     // create the file object
+    $config = CRM_Core_Config::singleton();
+    $base_name = basename($path);
+    $newPath = $config->customFileUploadDir . $base_name;
+    copy($path, $newPath);
     $file = civicrm_api3('File', 'create', array(
-        'uri'           => $path,
+        'uri'           => $base_name,
         'mime_type'     => $mime_type,
         'description'   => $title,
     ));
 
     // add file entry
-    self::$files[] = [
+    $file_entry = [
         'title'         => $title,
         'filename'      => $filename,
         'path'          => $path,
@@ -429,8 +433,10 @@ class CRM_Sqltasks_Task {
         'offer_link'    => $download_link,
         'as_attachment' => $attachment,
         'file_id'       => $file['id'],
-        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$path}"),
+        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}"),
     ];
+    self::$files[] = $file_entry;
+    $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
   }
 
 
