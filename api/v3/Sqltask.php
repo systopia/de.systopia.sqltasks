@@ -22,10 +22,15 @@ function civicrm_api3_sqltask_execute($params) {
   if (!empty($params['task_id'])) {
     $task = CRM_Sqltasks_Task::getTask($params['task_id']);
     if ($task->allowedToRun()) {
+      $timestamp = microtime(TRUE);
       $result = $task->execute();
-      return civicrm_api3_create_success($result);
+      return civicrm_api3_create_success([
+          "log"     => $result,
+          "files"   => CRM_Sqltasks_Task::getAllFiles(),
+          'runtime' => microtime(TRUE) - $timestamp,
+      ]);
     } else {
-      return civicrm_api3_create_error("Insuficcient permissions to run task [{$params['task_id']}].");
+      return civicrm_api3_create_error("Insufficient permissions to run task [{$params['task_id']}].");
     }
   }
 
