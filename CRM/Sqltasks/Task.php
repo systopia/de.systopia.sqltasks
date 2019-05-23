@@ -437,7 +437,7 @@ class CRM_Sqltasks_Task {
         'offer_link'    => $download_link,
         'as_attachment' => $attachment,
         'file_id'       => $file['id'],
-        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}"),
+        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}", TRUE),
     ];
     self::$files[] = $file_entry;
     $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
