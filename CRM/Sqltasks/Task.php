@@ -516,7 +516,7 @@ class CRM_Sqltasks_Task {
     $last_execution = strtotime($this->getAttribute('last_execution'));
     // if never ran, we need any day to compare
     if (empty($last_execution)) {
-      $last_execution = '1970-01-01 00:00:00';
+      $last_execution = strtotime('1970-01-01 00:00:00');
     }
     $scheduled = $this->getAttribute('scheduled');
 
@@ -563,35 +563,35 @@ class CRM_Sqltasks_Task {
       case 'hourly':
         $thisMin = date('YmdHi', strtotime($now));
         $thisHour = date('YmdH', strtotime($now));
-        $lastHour = date('YmdH', strtotime($last_execution));
+        $lastHour = date('YmdH', $last_execution);
 
         return (($thisMin >= $thisHour . $scheduled_minute) && ($thisHour > $lastHour));
 
       case 'daily':
         $thisHour = date('YmdHi', strtotime($now));
         $thisDay = date('Ymd', strtotime($now));
-        $lastDay = date('Ymd', strtotime($last_execution));
+        $lastDay = date('Ymd', $last_execution);
 
         return (($thisHour >= $thisDay . $scheduled_hour . $scheduled_minute) && ($thisDay > $lastDay));
 
       case 'weekly':
         $thisWeekday = date('oWNHi', strtotime($now));
         $thisWeek = date('oW', strtotime($now));
-        $lastWeek = date('oW', strtotime($last_execution));
+        $lastWeek = date('oW', $last_execution);
 
         return (($thisWeekday >= $thisWeek . $scheduled_weekday . $scheduled_hour . $scheduled_minute) && ($thisWeek > $lastWeek));
 
       case 'monthly':
         $thisDay = date('YmdHi', strtotime($now));
         $thisMonth = date('Ym', strtotime($now));
-        $lastMonth = date('Ym', strtotime($last_execution));
+        $lastMonth = date('Ym', $last_execution);
 
         return (($thisDay >= $thisMonth . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisMonth > $lastMonth));
 
       case 'yearly':
         $thisDay = date('YmdHi', strtotime($now));
         $thisYear = date('Y', strtotime($now));
-        $lastYear = date('Y', strtotime($last_execution));
+        $lastYear = date('Y', $last_execution);
 
         return (($thisDay >= $thisYear . $scheduled_month . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisYear > $lastYear));
 
