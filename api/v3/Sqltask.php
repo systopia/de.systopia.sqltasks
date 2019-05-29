@@ -41,7 +41,7 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',
-    );
+  );
 }
 
 
@@ -49,18 +49,26 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
  * Sqltask.sort API specification (optional)
  * This is used for documentation and validation.
  *
- * @param array $spec description of fields supported by this API call
+ * @param array $params description of fields supported by this API call
  * @return void
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_sqltask_sort_spec(&$params) {
 
   $params['data'] = array(
-      'name'         => 'data',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_STRING,
-      'title'        => 'Task order/weight data ',
-      'description'  => 'Resort tasks and save them to database.',
+    'name'         => 'data',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'New taskorder/weight data ',
+    'description'  => 'New taskorder for resorting and saving to database.',
+  );
+
+  $params['task_screen_order'] = array(
+    'name'         => 'task_screen_order',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Old taskorder/weight data ',
+    'description'  => 'Screen taskorder for comparing with new taskorder.',
   );
 }
 
@@ -78,25 +86,50 @@ function _civicrm_api3_sqltask_sort_spec(&$params) {
 function civicrm_api3_sqltask_sort($params) {
 
   try {
+    $tasksorderNew = $params['data'];
+    $taskScreenOrder = $params['task_screen_order'];
 
-    $tasksOrder = $params['data'];
-
-    foreach($tasksOrder as $key => $task) {
-
+    // create new taskorder array for comparison with old taskorder array
+    foreach ($taskScreenOrder as $key => $task) {
       $task = explode('_', $task);
-      $weight = ($key*10) + 10;
-
-      $query = "UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2";
-      $sqlParams = array(
-          1 => array($weight, 'String'),
-          2 => array($task[0], 'Integer'));
-      CRM_Core_DAO::executeQuery($query, $sqlParams);
-
+      $taskScreenOrder[$key] = $task[0];
     }
 
-    return civicrm_api3_create_success(array(True));
+    // fetch the task sorting from database
+    $query = "SELECT id FROM civicrm_sqltasks ORDER BY weight;";
+    $result = CRM_Core_DAO::executeQuery($query);
+    $tasksorderDatabase = [];
 
-  } catch (Exception $e) {
+    while ($result->fetch()) {
+      $tasksorderDatabase[] = $result->id;
+    }
+
+    // create new taskorder array for comparison with old taskorder array
+    foreach ($tasksorderNew as $key => $task) {
+      $task = explode('_', $task);
+      $tasksorderNew[$key] = $task[0];
+    }
+
+    // check the difference between taskorder array from database and the taskorder array from the screen
+    $checkArray = array_intersect_assoc($taskScreenOrder, $tasksorderDatabase);
+
+    if (count($checkArray) != count($taskScreenOrder)) {
+      return civicrm_api3_create_error('Task order was modified');
+    }
+
+    foreach ($tasksorderNew as $key => $task) {
+      $weight = ($key * 10) + 10;
+      $query = "UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2";
+      $sqlParams = array(
+        1 => array($weight, 'String'),
+        2 => array($task[0], 'Integer'));
+
+      CRM_Core_DAO::executeQuery($query, $sqlParams);
+    }
+
+    return civicrm_api3_create_success(array(TRUE));
+  }
+  catch (Exception $e) {
     return civicrm_api3_create_error($e->getMessage());
   }
 }
