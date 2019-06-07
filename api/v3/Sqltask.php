@@ -96,7 +96,7 @@ function civicrm_api3_sqltask_sort($params) {
     }
 
     // fetch the task sorting from database
-    $query = "SELECT id FROM civicrm_sqltasks ORDER BY weight;";
+    $query = "SELECT id FROM civicrm_sqltasks ORDER BY weight ASC, id ASC";
     $result = CRM_Core_DAO::executeQuery($query);
     $tasksorderDatabase = [];
 
@@ -111,9 +111,7 @@ function civicrm_api3_sqltask_sort($params) {
     }
 
     // check the difference between taskorder array from database and the taskorder array from the screen
-    $checkArray = array_intersect_assoc($taskScreenOrder, $tasksorderDatabase);
-
-    if (count($checkArray) != count($taskScreenOrder)) {
+    if ($taskScreenOrder != $tasksorderDatabase) {
       return civicrm_api3_create_error('Task order was modified');
     }
 
