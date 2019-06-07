@@ -120,7 +120,7 @@ function civicrm_api3_sqltask_sort($params) {
       $query = "UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2";
       $sqlParams = array(
         1 => array($weight, 'String'),
-        2 => array($task[0], 'Integer'));
+        2 => array($task, 'Integer'));
 
       CRM_Core_DAO::executeQuery($query, $sqlParams);
     }
