@@ -526,6 +526,13 @@ class CRM_Sqltasks_Task {
       return TRUE;
     }
 
+    if (!empty($this->config['scheduled_month'])) {
+      $scheduled_month = str_pad($this->config['scheduled_month'], 2, '0', STR_PAD_LEFT);
+    }
+    else {
+      // January
+      $scheduled_month = '01';
+    }
     if (!empty($this->config['scheduled_weekday'])) {
       $scheduled_weekday = $this->config['scheduled_weekday'];
     }
@@ -533,7 +540,7 @@ class CRM_Sqltasks_Task {
       $scheduled_weekday = '1';
     }
     if (!empty($this->config['scheduled_day'])) {
-      $scheduled_day = str_pad($this->config['scheduled_day'], 2, '0', STR_PAD_LEFT);;
+      $scheduled_day = str_pad($this->config['scheduled_day'], 2, '0', STR_PAD_LEFT);
     }
     else {
       $scheduled_day = '01';
@@ -552,51 +559,49 @@ class CRM_Sqltasks_Task {
     }
 
     $now = CRM_Utils_Date::currentDBDate();
+    // last time the task was executed, with minute resolution
+    $lastFormattedDate = date('YmdHi', $last_execution);
+    // current date with minute resolution
+    $currentFormattedDate = date('YmdHi', strtotime($now));
+    // current execution slot date according to the scheduler settings.
+    // it's set based on the current time and scheduler settings
+    // examples (assuming now = June 11th, 2019 13:00:
+    // | frequency | month | day | hour | minute | $currentScheduledDate |
+    // | hourly    |       |     |      |     30 | 201906111330          |
+    // | daily     |       |     |   14 |     30 | 201906111430          |
+    // | weekly    |       | Wed |   14 |     30 | 201924314-30          |
+    // | monthly   |       |  12 |   14 |     30 | 201906121430          |
+    // | annually  |   Jul |  13 |   14 |     30 | 201907131430          |
+    $currentScheduledDate = NULL;
     switch ($scheduled) {
-      case 'always':
-        return TRUE;
-
-      // not fully implemented for Yearly
-      case 'Yearly':
-        return TRUE;
-
       case 'hourly':
-        $thisMin = date('YmdHi', strtotime($now));
-        $thisHour = date('YmdH', strtotime($now));
-        $lastHour = date('YmdH', $last_execution);
-
-        return (($thisMin >= $thisHour . $scheduled_minute) && ($thisHour > $lastHour));
+        $currentScheduledDate = date('YmdH', strtotime($now)) . $scheduled_minute;
+        break;
 
       case 'daily':
-        $thisHour = date('YmdHi', strtotime($now));
-        $thisDay = date('Ymd', strtotime($now));
-        $lastDay = date('Ymd', $last_execution);
-
-        return (($thisHour >= $thisDay . $scheduled_hour . $scheduled_minute) && ($thisDay > $lastDay));
+        $currentScheduledDate = date('Ymd', strtotime($now)) . $scheduled_hour . $scheduled_minute;
+        break;
 
       case 'weekly':
-        $thisWeekday = date('oWNHi', strtotime($now));
-        $thisWeek = date('oW', strtotime($now));
-        $lastWeek = date('oW', $last_execution);
-
-        return (($thisWeekday >= $thisWeek . $scheduled_weekday . $scheduled_hour . $scheduled_minute) && ($thisWeek > $lastWeek));
+        $currentFormattedDate = date('oWNHi', strtotime($now));
+        $lastFormattedDate = date('oWNHi', $last_execution);
+        $currentScheduledDate = date('oW', strtotime($now)) . $scheduled_weekday . $scheduled_hour . $scheduled_minute;
+        break;
 
       case 'monthly':
-        $thisDay = date('YmdHi', strtotime($now));
-        $thisMonth = date('Ym', strtotime($now));
-        $lastMonth = date('Ym', $last_execution);
-
-        return (($thisDay >= $thisMonth . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisMonth > $lastMonth));
+        $currentScheduledDate = date('Ym', strtotime($now)) . $scheduled_day . $scheduled_hour . $scheduled_minute;
+        break;
 
       case 'yearly':
-        $thisDay = date('YmdHi', strtotime($now));
-        $thisYear = date('Y', strtotime($now));
-        $lastYear = date('Y', $last_execution);
-
-        return (($thisDay >= $thisYear . $scheduled_month . $scheduled_day . $scheduled_hour . $scheduled_minute) && ($thisYear > $lastYear));
+        $currentScheduledDate = date('Y', strtotime($now)) . $scheduled_month . $scheduled_day . $scheduled_hour . $scheduled_minute;
+        break;
 
     }
-    return FALSE;
+    // checks:
+    // - is the current date after or on the next execution date (i.e. is it due?)
+    // AND
+    // - was the last execution before the next execution date (i.e. was the task already executed?)
+    return $currentFormattedDate >= $currentScheduledDate && $lastFormattedDate < $currentScheduledDate;
   }
 
   /**
