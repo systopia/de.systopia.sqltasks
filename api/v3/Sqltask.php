@@ -18,12 +18,13 @@
  */
 function civicrm_api3_sqltask_execute($params) {
 
+  $exec_params = ['log_to_file' => $params['log_to_file']];
   // If task_id given run only this one task
   if (!empty($params['task_id'])) {
     $task = CRM_Sqltasks_Task::getTask($params['task_id']);
     if ($task->allowedToRun()) {
       $timestamp = microtime(TRUE);
-      $result = $task->execute();
+      $result = $task->execute($exec_params);
       return civicrm_api3_create_success([
           "log"     => $result,
           "files"   => CRM_Sqltasks_Task::getAllFiles(),
@@ -36,7 +37,11 @@ function civicrm_api3_sqltask_execute($params) {
 
   // DEFAULT MODE:
   //   run all enabled tasks according to schedule
-  $results = CRM_Sqltasks_Task::runDispatcher();
+  $results = CRM_Sqltasks_Task::runDispatcher($exec_params);
+  if (!empty($params['log_to_file'])) {
+    // don't return logs if we're logging to file, return count instead
+    $results = count($results);
+  }
   return civicrm_api3_create_success($results);
 }
 
@@ -51,8 +56,15 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',
   );
+  $params['log_to_file'] = array(
+    'name'         => 'log_to_file',
+    'api.required' => 0,
+    'api.default'  => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Log to a file?',
+    'description'  => 'Log task output to a file instead of returning it in the API results?',
+  );
 }
-
 
 /**
  * Sqltask.sort API specification (optional)
@@ -127,9 +139,10 @@ function civicrm_api3_sqltask_sort($params) {
     foreach ($tasksorderNew as $key => $task) {
       $weight = ($key * 10) + 10;
       $query = "UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2";
-      $sqlParams = array(
-        1 => array($weight, 'String'),
-        2 => array($task, 'Integer'));
+      $sqlParams = [
+        1 => [$weight, 'String'],
+        2 => [$task, 'Integer'],
+      ];
 
       CRM_Core_DAO::executeQuery($query, $sqlParams);
     }
