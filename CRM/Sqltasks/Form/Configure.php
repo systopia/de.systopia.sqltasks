@@ -110,6 +110,45 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       TRUE
     );
 
+    $weekdays = array(
+      1 => E::ts("Monday"),
+      2 => E::ts("Tuesday"),
+      3 => E::ts("Wednesday"),
+      4 => E::ts("Thursday"),
+      5 => E::ts("Friday"),
+      6 => E::ts("Saturday"),
+      7 => E::ts("Sunday"),
+    );
+    $months = array(
+      1 => E::ts("January"),
+      2 => E::ts("February"),
+      3 => E::ts("March"),
+      4 => E::ts("April"),
+      5 => E::ts("May"),
+      6 => E::ts("June"),
+      7 => E::ts("July"),
+      8 => E::ts("August"),
+      9 => E::ts("September"),
+      10 => E::ts("October"),
+      11 => E::ts("November"),
+      12 => E::ts("December")
+    );
+    $days = array();
+    foreach (range(1, 31) as $day) {
+      $days[$day] = $day;
+    }
+    foreach (range(0, 23) as $hour) {
+      $hours[$hour] = str_pad($hour, 2, '0', STR_PAD_LEFT);
+    }
+    foreach (range(0, 59) as $minute) {
+      $minutes[$minute] = str_pad($minute, 2, '0', STR_PAD_LEFT);
+    }
+    $this->add('select', 'scheduled_month', E::ts('Month'), $months);
+    $this->add('select', 'scheduled_weekday', E::ts('Weekday'), $weekdays);
+    $this->add('select', 'scheduled_day', E::ts('Day'), $days);
+    $this->add('select', 'scheduled_hour', E::ts('Hour'), $hours);
+    $this->add('select', 'scheduled_minute', E::ts('Minute'), $minutes);
+
     $this->add(
       'checkbox',
       'parallel_exec',
