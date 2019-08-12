@@ -152,7 +152,23 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
     'operator'   => 'OR',
     'separator'  => 0,
   ));
+  _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', array(
+      'label'      => E::ts('My Tasks'),
+      'name'       => 'sqltasks_mytasks',
+      'url'        => 'civicrm/sqltasks/mytasks',
+      'permission' => 'access CiviCRM',
+      'operator'   => 'OR',
+      'separator'  => 0,
+  ));
   _sqltasks_civix_navigationMenu($menu);
+}
+
+/**
+ * alterAPIPermissions() hook allows you to change the permissions checked when doing API 3 calls.
+ */
+function sqltasks_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  // remark: permission check is on a task level
+  $permissions['sqltask']['execute'] = array('access CiviCRM');
 }
 
 /**

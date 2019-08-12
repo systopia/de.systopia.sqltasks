@@ -61,7 +61,7 @@ var task_id = {$task_id};
 {literal}
 CRM.api3('Sqltask', 'execute', {"task_id": task_id})
   .done(function(result) {
-    var log = result.values;
+    var log = result.values.log;
     var log_html = "<p><ul>";
     for (var i = 0; i < log.length; i++) {
       log_html += "<li>" + log[i] + "</li>";

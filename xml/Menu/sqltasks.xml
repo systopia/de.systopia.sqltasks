@@ -27,4 +27,10 @@
     <title>ConfigImport</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/sqltasks/mytasks</path>
+    <page_callback>CRM_Sqltasks_Page_Mytasks</page_callback>
+    <title>Mytasks</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

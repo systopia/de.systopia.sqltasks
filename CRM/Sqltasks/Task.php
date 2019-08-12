@@ -32,6 +32,7 @@ class CRM_Sqltasks_Task {
     'last_execution'  => 'Date',
     'last_runtime'    => 'Integer',
     'parallel_exec'   => 'Integer',
+    'run_permissions' => 'String',
     'main_sql'        => 'String',
     'post_sql'        => 'String');
 
@@ -169,7 +170,7 @@ class CRM_Sqltasks_Task {
    * Store this task (create or update)
    */
   public function store() {
-    // sort out paramters
+    // sort out parameters
     $params = array();
     $fields = array();
     $index  = 1;
@@ -379,6 +380,8 @@ class CRM_Sqltasks_Task {
 
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
+   *
+   * @return CRM_Sqltasks_Task task
    */
   public static function getTask($tid) {
     $tid = (int) $tid;
@@ -397,6 +400,7 @@ class CRM_Sqltasks_Task {
     unset($config['enabled']);
     unset($config['weight']);
     unset($config['last_execution']);
+    unset($config['last_runtime']);
     $config['config'] = $this->config;
     return json_encode($config, JSON_PRETTY_PRINT);
   }
@@ -467,7 +471,7 @@ class CRM_Sqltasks_Task {
       // NORMAL DISPATCH
       $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->shouldRun()) {
+        if ($task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute();
         }
       }
@@ -476,13 +480,33 @@ class CRM_Sqltasks_Task {
       // PARALLEL DISPATCH: only run tasks flagged as parallel
       $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->shouldRun()) {
+        if ($task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute();
         }
       }
     }
 
     return $results;
+  }
+
+  /**
+   * Check if the current user has enough permissions to run the task
+   */
+  public function allowedToRun() {
+    // get permissions
+    $run_permissions = $this->getAttribute('run_permissions');
+    if (empty($run_permissions)) {
+      $run_permissions = ['administer CiviCRM'];
+    } else {
+      $run_permissions = explode(',', $run_permissions);
+    }
+
+    // check if the user has at least one of them
+    $is_allowed = CRM_Core_Permission::check([$run_permissions]);
+    if (!$is_allowed) {
+      $this->log("User does not have enough permissions to run task [{$this->getID()}]");
+    }
+    return $is_allowed;
   }
 
   /**
