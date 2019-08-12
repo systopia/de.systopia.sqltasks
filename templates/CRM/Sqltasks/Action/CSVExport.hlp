@@ -25,6 +25,10 @@
   <p>{ts domain="de.systopia.sqltasks"}<strong>Caution!</strong> The data will be sent unencrypted. Please do not use this option if the resulting files contains sensitive data.{/ts}</p>
 {/htxt}
 
+{htxt id='id-csv-downloadURL'}
+  <p>{ts domain="de.systopia.sqltasks"}Do not attach csv file in the email, include {literal}<code>{sqltasks.downloadURL}</code>{/literal} token in your template, and it will be replaced by an URL to click and download the file through CiviCRM authentication{/ts}</p>
+{/htxt}
+
 {htxt id='id-csv-filename'}
   <p>{ts domain="de.systopia.sqltasks"}The file name of the resulting CSV file.{/ts}</p>
   <p>{ts domain="de.systopia.sqltasks"}You can use the token {literal}<code>{xxx}</code>{/literal}, which will be replaced by a current date string. The format (i.e. the xxx) is defined <a href="https://secure.php.net/manual/en/function.date.php#refsect1-function.date-parameters">here</a>. An example would be <code>{literal}{Y-m-d}{/literal}</code>.{/ts}</p>

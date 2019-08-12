@@ -94,6 +94,15 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     );
 
     $this->add(
+        'select',
+        'run_permissions',
+        E::ts('Run Permissions'),
+        CRM_Core_Permission::basicPermissions(TRUE),
+        FALSE,
+        ['class' => 'crm-select2 huge', 'multiple' => 'multiple']
+    );
+
+    $this->add(
       'select',
       'scheduled',
       E::ts('Execution'),
@@ -180,6 +189,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $current_values['category'] = $this->task->getAttribute('category');
     $current_values['scheduled'] = $this->task->getAttribute('scheduled');
     $current_values['parallel_exec'] = $this->task->getAttribute('parallel_exec');
+    $current_values['run_permissions'] = explode(',', $this->task->getAttribute('run_permissions'));
     $current_values['main_sql'] = $this->task->getAttribute('main_sql');
     $current_values['post_sql'] = $this->task->getAttribute('post_sql');
 
@@ -204,15 +214,12 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     if (isset($data['qfKey']))                unset($data['qfKey']);
     if (isset($data['entryURL']))             unset($data['entryURL']);
     if (isset($data['tid']))                  unset($data['tid']);
+    if (is_array($data['run_permissions']))   $data['run_permissions'] = implode(',', $data['run_permissions']);
 
     // write to DB
     $task_id = CRM_Utils_Array::value('tid', $values);
     $task = new CRM_Sqltasks_Task($task_id, $data);
     $task->store();
-
-    // CRM_Core_Session::setStatus(E::ts('You picked color "%1"', array(
-    //   1 => $options[$values['favorite_color']],
-    // )));
 
     parent::postProcess();
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/sqltasks/manage'));

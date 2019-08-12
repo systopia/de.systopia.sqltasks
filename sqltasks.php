@@ -152,5 +152,51 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
     'operator'   => 'OR',
     'separator'  => 0,
   ));
+  _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', array(
+      'label'      => E::ts('My Tasks'),
+      'name'       => 'sqltasks_mytasks',
+      'url'        => 'civicrm/sqltasks/mytasks',
+      'permission' => 'access CiviCRM',
+      'operator'   => 'OR',
+      'separator'  => 0,
+  ));
   _sqltasks_civix_navigationMenu($menu);
+}
+
+/**
+ * alterAPIPermissions() hook allows you to change the permissions checked when doing API 3 calls.
+ */
+function sqltasks_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  // remark: permission check is on a task level
+  $permissions['sqltask']['execute'] = array('access CiviCRM');
+}
+
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens/
+ */
+function sqltasks_civicrm_tokens(&$tokens) {
+  $tokens['sqltasks'] = array(
+    'sqltasks.downloadURL'   => E::ts("SQL Tasks: generated file download link"),
+    'sqltasks.downloadTitle' => E::ts("SQL Tasks: generated file name"),
+  );
+}
+
+/**
+ * Implements hook_civicrm_tokenValues().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
+ */
+function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
+  $files     = CRM_Sqltasks_Task::getAllFiles();
+  $last_file = CRM_Sqltasks_Task::getLastFile();
+  foreach ($cids as $cid) {
+    $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
+    $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
+    foreach ($files as $index => $file) {
+      $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
+      $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
+    }
+  }
 }

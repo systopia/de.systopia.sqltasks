@@ -32,6 +32,7 @@ class CRM_Sqltasks_Task {
     'last_execution'  => 'Date',
     'last_runtime'    => 'Integer',
     'parallel_exec'   => 'Integer',
+    'run_permissions' => 'String',
     'main_sql'        => 'String',
     'post_sql'        => 'String');
 
@@ -42,14 +43,17 @@ class CRM_Sqltasks_Task {
   protected $error_count;
   protected $log_messages;
 
+  /** @var array generated, sregistered files */
+  protected static $files = [];
+
   /**
    * Constructor
    */
-  public function __construct($task_id, $data = array()) {
+  public function __construct($task_id, $data = []) {
     $this->task_id      = $task_id;
-    $this->attributes   = array();
-    $this->config       = array();
-    $this->log_messages = array();
+    $this->attributes   = [];
+    $this->config       = [];
+    $this->log_messages = [];
     $this->status       = 'init';
     $this->error_count  = 0;
 
@@ -115,10 +119,11 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * clear log
+   * clear log and files
    */
-  public function resetLog() {
-    $this->log_messages = array();
+  public function reset() {
+    $this->log_messages = [];
+    self::$files = [];
   }
 
   /**
@@ -165,7 +170,7 @@ class CRM_Sqltasks_Task {
    * Store this task (create or update)
    */
   public function store() {
-    // sort out paramters
+    // sort out parameters
     $params = array();
     $fields = array();
     $index  = 1;
@@ -219,7 +224,7 @@ class CRM_Sqltasks_Task {
   public function execute() {
     $this->status = 'running';
     $this->error_count = 0;
-    $this->resetLog();
+    $this->reset();
     $task_timestamp = microtime(TRUE) * 1000;
 
     // 0. mark task as started
@@ -333,21 +338,21 @@ class CRM_Sqltasks_Task {
    * Get a list of all tasks
    */
   public static function getAllTasks() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
   }
 
   /**
    * Get a list of tasks ready for execution
    */
   public static function getExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
   }
 
   /**
    * Get a list of tasks ready for execution
    */
   public static function getParallelExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC, id ASC');
   }
 
   /**
@@ -375,6 +380,8 @@ class CRM_Sqltasks_Task {
 
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
+   *
+   * @return CRM_Sqltasks_Task task
    */
   public static function getTask($tid) {
     $tid = (int) $tid;
@@ -393,8 +400,47 @@ class CRM_Sqltasks_Task {
     unset($config['enabled']);
     unset($config['weight']);
     unset($config['last_execution']);
+    unset($config['last_runtime']);
     $config['config'] = $this->config;
     return json_encode($config, JSON_PRETTY_PRINT);
+  }
+
+  /**
+   * Register a file this action has generated, and that's ready for download
+   *
+   * @param $title          string meaningful title
+   * @param $filename       string file name
+   * @param $path           string file path
+   * @param $mime_type      string mime type
+   * @param $download_link  boolean should the file be offered as a download link, in UI and as success mail token
+   * @param $attachment     boolean should the file be attached to the success mail
+   */
+  public function addGeneratedFile($title, $filename, $path, $mime_type, $download_link = TRUE, $attachment = FALSE) {
+    // create the file object
+    $config = CRM_Core_Config::singleton();
+    $base_name = basename($path);
+    $newPath = $config->customFileUploadDir . $base_name;
+    copy($path, $newPath);
+    $file = civicrm_api3('File', 'create', array(
+        'uri'           => $base_name,
+        'mime_type'     => $mime_type,
+        'description'   => $title,
+    ));
+
+    // add file entry
+    $file_entry = [
+        'title'         => $title,
+        'filename'      => $filename,
+        'path'          => $path,
+        'mime_type'     => $mime_type,
+        'task_id'       => $this->getID(),
+        'offer_link'    => $download_link,
+        'as_attachment' => $attachment,
+        'file_id'       => $file['id'],
+        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}"),
+    ];
+    self::$files[] = $file_entry;
+    $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
   }
 
 
@@ -425,7 +471,7 @@ class CRM_Sqltasks_Task {
       // NORMAL DISPATCH
       $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->shouldRun()) {
+        if ($task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute();
         }
       }
@@ -434,13 +480,33 @@ class CRM_Sqltasks_Task {
       // PARALLEL DISPATCH: only run tasks flagged as parallel
       $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->shouldRun()) {
+        if ($task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute();
         }
       }
     }
 
     return $results;
+  }
+
+  /**
+   * Check if the current user has enough permissions to run the task
+   */
+  public function allowedToRun() {
+    // get permissions
+    $run_permissions = $this->getAttribute('run_permissions');
+    if (empty($run_permissions)) {
+      $run_permissions = ['administer CiviCRM'];
+    } else {
+      $run_permissions = explode(',', $run_permissions);
+    }
+
+    // check if the user has at least one of them
+    $is_allowed = CRM_Core_Permission::check([$run_permissions]);
+    if (!$is_allowed) {
+      $this->log("User does not have enough permissions to run task [{$this->getID()}]");
+    }
+    return $is_allowed;
   }
 
   /**
@@ -583,5 +649,23 @@ class CRM_Sqltasks_Task {
     // 3) calculate next date based on last exec date
 
     return 'TODO';
+  }
+
+  /**
+   * Get the list of all files that have been registered by the task
+   *
+   * @return array list of file metadata
+   */
+  public static function getAllFiles() {
+    return self::$files;
+  }
+
+  /**
+   * Get the last registered file
+   *
+   * @return null|array file metadata
+   */
+  public static function getLastFile() {
+    return end(self::$files);
   }
 }

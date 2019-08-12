@@ -24,10 +24,16 @@ abstract class CRM_Sqltasks_Action {
 
   protected static $_campaign_list = NULL;
 
+  /** @var CRM_Sqltasks_Task */
   protected $task = NULL;
   protected $config = NULL;
   protected $has_executed = TRUE;
 
+  /**
+   * CRM_Sqltasks_Action constructor.
+   *
+   * @param $task CRM_Sqltasks_Task task
+   */
   public function __construct($task) {
     $this->task = $task;
     $this->config = $task->getConfiguration();
@@ -125,8 +131,6 @@ abstract class CRM_Sqltasks_Action {
   public function checkConfiguration() {
     // nothing to to
   }
-
-
 
   /**
    * Build the configuration UI
