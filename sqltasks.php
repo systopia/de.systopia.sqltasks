@@ -154,3 +154,33 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
   ));
   _sqltasks_civix_navigationMenu($menu);
 }
+
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens/
+ */
+function sqltasks_civicrm_tokens(&$tokens) {
+  $tokens['sqltasks'] = array(
+    'sqltasks.downloadURL'   => E::ts("SQL Tasks: generated file download link"),
+    'sqltasks.downloadTitle' => E::ts("SQL Tasks: generated file name"),
+  );
+}
+
+/**
+ * Implements hook_civicrm_tokenValues().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
+ */
+function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
+  $files     = CRM_Sqltasks_Task::getAllFiles();
+  $last_file = CRM_Sqltasks_Task::getLastFile();
+  foreach ($cids as $cid) {
+    $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
+    $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
+    foreach ($files as $index => $file) {
+      $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
+      $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
+    }
+  }
+}

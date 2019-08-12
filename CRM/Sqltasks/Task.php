@@ -42,14 +42,17 @@ class CRM_Sqltasks_Task {
   protected $error_count;
   protected $log_messages;
 
+  /** @var array generated, sregistered files */
+  protected static $files = [];
+
   /**
    * Constructor
    */
-  public function __construct($task_id, $data = array()) {
+  public function __construct($task_id, $data = []) {
     $this->task_id      = $task_id;
-    $this->attributes   = array();
-    $this->config       = array();
-    $this->log_messages = array();
+    $this->attributes   = [];
+    $this->config       = [];
+    $this->log_messages = [];
     $this->status       = 'init';
     $this->error_count  = 0;
 
@@ -115,10 +118,11 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * clear log
+   * clear log and files
    */
-  public function resetLog() {
-    $this->log_messages = array();
+  public function reset() {
+    $this->log_messages = [];
+    self::$files = [];
   }
 
   /**
@@ -219,7 +223,7 @@ class CRM_Sqltasks_Task {
   public function execute() {
     $this->status = 'running';
     $this->error_count = 0;
-    $this->resetLog();
+    $this->reset();
     $task_timestamp = microtime(TRUE) * 1000;
 
     // 0. mark task as started
@@ -397,6 +401,44 @@ class CRM_Sqltasks_Task {
     return json_encode($config, JSON_PRETTY_PRINT);
   }
 
+  /**
+   * Register a file this action has generated, and that's ready for download
+   *
+   * @param $title          string meaningful title
+   * @param $filename       string file name
+   * @param $path           string file path
+   * @param $mime_type      string mime type
+   * @param $download_link  boolean should the file be offered as a download link, in UI and as success mail token
+   * @param $attachment     boolean should the file be attached to the success mail
+   */
+  public function addGeneratedFile($title, $filename, $path, $mime_type, $download_link = TRUE, $attachment = FALSE) {
+    // create the file object
+    $config = CRM_Core_Config::singleton();
+    $base_name = basename($path);
+    $newPath = $config->customFileUploadDir . $base_name;
+    copy($path, $newPath);
+    $file = civicrm_api3('File', 'create', array(
+        'uri'           => $base_name,
+        'mime_type'     => $mime_type,
+        'description'   => $title,
+    ));
+
+    // add file entry
+    $file_entry = [
+        'title'         => $title,
+        'filename'      => $filename,
+        'path'          => $path,
+        'mime_type'     => $mime_type,
+        'task_id'       => $this->getID(),
+        'offer_link'    => $download_link,
+        'as_attachment' => $attachment,
+        'file_id'       => $file['id'],
+        'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}"),
+    ];
+    self::$files[] = $file_entry;
+    $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
+  }
+
 
 
   //  +---------------------------------+
@@ -538,5 +580,23 @@ class CRM_Sqltasks_Task {
     // 3) calculate next date based on last exec date
 
     return 'TODO';
+  }
+
+  /**
+   * Get the list of all files that have been registered by the task
+   *
+   * @return array list of file metadata
+   */
+  public static function getAllFiles() {
+    return self::$files;
+  }
+
+  /**
+   * Get the last registered file
+   *
+   * @return null|array file metadata
+   */
+  public static function getLastFile() {
+    return end(self::$files);
   }
 }

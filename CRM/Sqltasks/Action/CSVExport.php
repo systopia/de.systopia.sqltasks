@@ -106,6 +106,12 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     );
 
     $form->add(
+      'checkbox',
+      $this->getID() . '_downloadURL',
+      E::ts('Send URL to download file instead of attachment')
+    );
+
+    $form->add(
       'select',
       $this->getID() . '_email_template',
       E::ts('Email Template'),
@@ -240,7 +246,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $file_path = $this->getConfigValue('path');
     $file_path = trim($file_path);
     if(empty($file_path)){
-      $file_path = CRM_Core_Config::singleton()->uploadDir;
+      $file_path = CRM_Core_Config::singleton()->customFileUploadDir;
     }
     while (DIRECTORY_SEPARATOR == substr($file_path, strlen($file_path) - 1)) {
       $file_path = substr($file_path, 0, strlen($file_path) - 1);
@@ -364,8 +370,19 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $zip->addFile($filepath, $filename);
       $zip->close();
       $filepath = $zipfile;
+      $filename .= '.zip';
       $this->log("Zipped file into '{$filepath}'");
     }
+
+    // store/register the generated file file
+    $config_offer_link = $this->getConfigValue('downloadURL');
+    $mime_type = $this->getConfigValue('zip') ? 'application/zip' : 'text/csv';
+    $this->task->addGeneratedFile(
+        E::ts("%1 CSV Export", [1 => $this->getName()]),
+        $filename,
+        $filepath,
+        $mime_type,
+        $config_offer_link);
 
     // 2) EMAIL
     $config_email = $this->getConfigValue('email');
@@ -375,18 +392,24 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
       $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-      $attachment  = array('fullPath'  => $filepath,
-                           'mime_type' => $this->getConfigValue('zip') ? 'application/zip' : 'text/csv',
-                           'cleanName' => basename($filepath));
+
       // and send the template via email
       $email = array(
-        'id'              => $this->getConfigValue('email_template'),
-        // 'to_name'         => $this->getConfigValue('email'),
-        'to_email'        => $this->getConfigValue('email'),
-        'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$emailDomain}",
-        'attachments'     => array($attachment),
+          'id'        => $this->getConfigValue('email_template'),
+          'to_email'  => $this->getConfigValue('email'),
+          'from'      => "SQL Tasks <{$domainEmailAddress}>",
+          'reply_to'  => "do-not-reply@{$emailDomain}",
+          'contactId' => CRM_Core_Session::getLoggedInContactID() // sluc: if contactId param is empty, it won't get into hook_civicrm_tokenValues()
         );
+
+      // add file as attachment or setup URL token
+      if(!$config_offer_link){
+        $attachment = array('fullPath'  => $filepath,
+                            'mime_type' => $mime_type,
+                            'cleanName' => basename($filepath));
+        $email['attachments'] = [$attachment];
+      }
+
       civicrm_api3('MessageTemplate', 'send', $email);
       $this->log("Sent file to '{$email_list}'");
     }
