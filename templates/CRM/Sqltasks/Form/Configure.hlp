@@ -36,3 +36,7 @@
 {htxt id='id-configure-post'}
   <p>{ts domain="de.systopia.sqltasks"}It's considered good practice to clean up any helper tables that you created with the main script. This way you can make sure that you don't leave any dependencies behind.{/ts}</p>
 {/htxt}
+
+{htxt id='id-configure-exectime'}
+  <p>{ts domain="de.systopia.sqltasks"}Set the exact <i>Weekday / Day / Hour / Minute</i> when the job will be executed, on the first cron call after this datetime.{/ts}</p>
+{/htxt}

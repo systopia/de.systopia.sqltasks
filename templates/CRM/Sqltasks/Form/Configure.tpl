@@ -64,40 +64,36 @@
     <div class="clear"></div>
   </div>
 
+
   <div id="advSchedule">
     <div id="advSchedule-month" class="crm-section">
-      <div class="label">{$form.scheduled_month.label}</div>
+      <div class="label">{$form.scheduled_month.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
       <div class="content">{$form.scheduled_month.html}</div>
       <div class="clear"></div>
     </div>
 
     <div id="advSchedule-weekday" class="crm-section">
-      <div class="label">{$form.scheduled_weekday.label}</div>
+      <div class="label">{$form.scheduled_weekday.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
       <div class="content">{$form.scheduled_weekday.html}</div>
       <div class="clear"></div>
     </div>
 
     <div id="advSchedule-day" class="crm-section">
-      <div class="label">{$form.scheduled_day.label}</div>
+      <div class="label">{$form.scheduled_day.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
       <div class="content">{$form.scheduled_day.html}</div>
       <div class="clear"></div>
     </div>
 
     <div id="advSchedule-hour" class="crm-section">
-      <div class="label">{$form.scheduled_hour.label}</div>
+      <div class="label">{$form.scheduled_hour.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
       <div class="content">{$form.scheduled_hour.html}</div>
       <div class="clear"></div>
     </div>
 
     <div id="advSchedule-minute" class="crm-section">
-      <div class="label">{$form.scheduled_minute.label}</div>
+      <div class="label">{$form.scheduled_minute.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
       <div class="content">{$form.scheduled_minute.html}</div>
       <div class="clear"></div>
-    </div>
-
-    <div class="description" class="crm-section">
-      {ts}Set the exact <i>Weekday / Day / Hour / Minute</i> when the job will be executed, on the first cron call after this datetime.{/ts}
-      <br />
     </div>
   </div>
 
