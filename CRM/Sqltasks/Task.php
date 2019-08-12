@@ -338,21 +338,21 @@ class CRM_Sqltasks_Task {
    * Get a list of all tasks
    */
   public static function getAllTasks() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
   }
 
   /**
    * Get a list of tasks ready for execution
    */
   public static function getExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
   }
 
   /**
    * Get a list of tasks ready for execution
    */
   public static function getParallelExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC, id ASC');
   }
 
   /**
