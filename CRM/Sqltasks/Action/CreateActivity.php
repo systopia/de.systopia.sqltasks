@@ -242,7 +242,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
           FROM `{$contact_table}`
           WHERE contact_id IS NOT NULL {$excludeSql});");
 
-      if (class_exists('CRM_Segmentation_Logic')) {
+      if (CRM_Sqltasks_Utils::isSegmentationInstalled()) {
         CRM_Segmentation_Logic::addSegmentForMassActivity($activity['id'], $this->getConfigValue('campaign_id'));
       }
     }
@@ -392,7 +392,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       $link->activity_id    = (int) $activity->id;
       $link->record_type_id = 3;
       $link->save();
-      if (class_exists('CRM_Segmentation_Logic')) {
+      if (CRM_Sqltasks_Utils::isSegmentationInstalled()) {
         CRM_Segmentation_Logic::addSegmentForActivityContact(
           $link->activity_id, $link->contact_id
         );
@@ -433,4 +433,5 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     return date('YmdHis', strtotime($string));
   }
+
 }
