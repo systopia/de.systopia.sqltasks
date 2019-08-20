@@ -35,53 +35,6 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
   }
 
   /**
-   * Update to version 0.7.5
-   *
-   * @return TRUE on success
-   * @throws Exception
-   */
-  public function upgrade_0075() {
-    $tasks = CRM_Sqltasks_Task::getAllTasks();
-    foreach ($tasks as $task) {
-      $scheduled = $task->getAttribute('scheduled');
-      $scheduled_vars = array();
-      switch ($scheduled) {
-        case 'hourly':
-          $scheduled_vars = array('', '', '', '', '0');
-          break;
-        case 'daily':
-          $scheduled_vars = array('', '', '', '0', '0');
-          break;
-        case 'weekly':
-          $scheduled_vars = array('', '1', '', '0', '0');
-          break;
-        case 'monthly':
-          $scheduled_vars = array('', '', '1', '0', '0');
-          break;
-        case 'yearly':
-          $scheduled_vars = array('1', '', '1', '0', '0');
-          break;
-        case 'always':
-        default:
-          $scheduled_vars = array('', '', '', '', '');
-          break;
-      }
-      list($scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute) = $scheduled_vars;
-
-      $config = $task->getConfiguration();
-      $config['scheduled_month'] = $scheduled_month;
-      $config['scheduled_weekday'] = $scheduled_weekday;
-      $config['scheduled_day'] = $scheduled_day;
-      $config['scheduled_hour'] = $scheduled_hour;
-      $config['scheduled_minute'] = $scheduled_minute;
-      $task->setConfiguration($config);
-      $task->store();
-    }
-
-    return TRUE;
-  }
-
-  /**
    * Update to version 0.5
    *
    * @return TRUE on success
@@ -139,6 +92,53 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     // update rebuild log tables
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
+
+    return TRUE;
+  }
+
+  /**
+   * Update to version 0.7.5
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0082() {
+    $tasks = CRM_Sqltasks_Task::getAllTasks();
+    foreach ($tasks as $task) {
+      $scheduled = $task->getAttribute('scheduled');
+      $scheduled_vars = array();
+      switch ($scheduled) {
+        case 'hourly':
+          $scheduled_vars = array('', '', '', '', '0');
+          break;
+        case 'daily':
+          $scheduled_vars = array('', '', '', '0', '0');
+          break;
+        case 'weekly':
+          $scheduled_vars = array('', '1', '', '0', '0');
+          break;
+        case 'monthly':
+          $scheduled_vars = array('', '', '1', '0', '0');
+          break;
+        case 'yearly':
+          $scheduled_vars = array('1', '', '1', '0', '0');
+          break;
+        case 'always':
+        default:
+          $scheduled_vars = array('', '', '', '', '');
+          break;
+      }
+      list($scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute) = $scheduled_vars;
+
+      $config = $task->getConfiguration();
+      $config['scheduled_month']   = CRM_Utils_Array::value('scheduled_month',   $config, $scheduled_month);
+      $config['scheduled_weekday'] = CRM_Utils_Array::value('scheduled_weekday', $config, $scheduled_weekday);
+      $config['scheduled_day']     = CRM_Utils_Array::value('scheduled_day',     $config, $scheduled_day);
+      $config['scheduled_hour']    = CRM_Utils_Array::value('scheduled_hour',    $config, $scheduled_hour);
+      $config['scheduled_minute']  = CRM_Utils_Array::value('scheduled_minute',  $config, $scheduled_minute);
+      $task->setConfiguration($config);
+      $task->store();
+    }
 
     return TRUE;
   }
