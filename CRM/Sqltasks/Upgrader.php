@@ -127,7 +127,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0080() {
+  public function upgrade_0081() {
     $this->ctx->log->info('Updating "SQL Tasks" adding run permissions...');
 
     // add column: last_runtime
