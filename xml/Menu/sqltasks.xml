@@ -33,4 +33,18 @@
     <title>Mytasks</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/civirule/form/settings</path>
+    <page_callback>CRM_CivirulesActions_Form_Settings</page_callback>
+    <title>Civirules Action Setting</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civirule/form/action/sqltask</path>
+    <page_callback>CRM_CivirulesActions_Form_SQLTask</page_callback>
+    <title>Set sql task</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>

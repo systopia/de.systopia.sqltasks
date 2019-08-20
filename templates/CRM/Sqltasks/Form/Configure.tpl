@@ -109,6 +109,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.input_required.label}</div>
+    <div class="content">{$form.input_required.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <h3>{ts}Actions{/ts}</h3>
   {foreach from=$action_list item=action key=action_id}
   <div class="crm-accordion-wrapper crm-sqltask-{$action_id} collapsed">

@@ -34,7 +34,9 @@ class CRM_Sqltasks_Task {
     'parallel_exec'   => 'Integer',
     'run_permissions' => 'String',
     'main_sql'        => 'String',
-    'post_sql'        => 'String');
+    'post_sql'        => 'String',
+    'input_required'  => 'Integer',
+    );
 
   protected $task_id;
   protected $attributes;
@@ -249,8 +251,13 @@ class CRM_Sqltasks_Task {
       CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
 
+    $main_sql = $this->getAttribute('main_sql');
+    if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
+      $main_sql = "SET @input = '{$params['input_val']}'; \n\r {$main_sql}";
+    }
+
     // 1. run the main SQL
-    $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
+    $this->executeSQLScript($main_sql, "Main SQL");
 
     // 2. run the actions
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
