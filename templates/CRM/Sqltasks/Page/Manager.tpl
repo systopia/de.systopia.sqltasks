@@ -114,7 +114,7 @@
         <span class="btn-slide crm-hover-button">{ts}Actions{/ts}
           <ul class="panel">
             <li>
-              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button sqltasks-job-run" title="{ts}Run the task manually{/ts}">{ts}Run Now{/ts}</a>
+              <a href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id"}" class="action-item crm-hover-button sqltasks-job-run" title="{ts}Run the task manually{/ts}" data-inputrequired="{$task.input_required}">{ts}Run Now{/ts}</a>
             </li>
             <li>
               <a href="{crmURL p='civicrm/sqltasks/configure' q="reset=1&tid=$task_id"}" class="action-item crm-hover-button small-popup" title="{ts}Configure{/ts}">{ts}Configure{/ts}</a>
@@ -158,11 +158,44 @@ window.history.replaceState("", "", "{$baseurl}");
 {literal}
 CRM.$('.sqltasks-job-run').click(function(e) {
   e.preventDefault();
+  var html = '';
+  var inputrequired = CRM.$(this).data('inputrequired');
+
+  if (inputrequired) {
+    html =  '<form action="#" method="post">' +
+              '<div class="crm-block crm-form-block">' +
+                '<div class="crm-section">' +
+                  '<div class="label">' +
+                    '<label for="input_val_label">' +
+                      '{/literal}{ts}Enter the value that will be passed to the @input variable{/ts}{literal} ' +
+                      '<span class="crm-marker" title="{/literal}{ts}This field is required.{/ts}{literal}">*</span>' +
+                    '</label>' +
+                  '</div>' +
+                  '<div class="content">' +
+                    '<input name="input_val" type="text" id="input_val" class="huge crm-form-text required">' +
+                  '</div>' +
+                  '<div class="clear"></div>' +
+                '</div>' +
+              '</div>' +
+            '</form>' ;
+  }
   var href = CRM.$(this).attr('href');
   CRM.confirm({
-    message: {/literal}'{ts}Are you sure you want to run this task?{/ts}'{literal}
+    width: 600,
+    message: {/literal}'{ts}Are you sure you want to run this task?{/ts}'{literal} + html
   }).on('crmConfirm:yes', function() {
-    window.location.href = href;
+    if (inputrequired) {
+      var input_val = CRM.$('#input_val').val();
+      if (input_val.length < 1) {
+        CRM.alert({/literal}'{ts}Entered value that will be passed to the @input variable is empty{/ts}'{literal}, {/literal}'{ts}Warning{/ts}'{literal});
+      }
+      else {
+        window.location.href = href + '&input_val=' + input_val;
+      }
+    }
+    else {
+      window.location.href = href + '&input_val=0';
+    }
   });
 });
 {/literal}

@@ -66,6 +66,7 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       'last_executed'  => $this->renderDate($task->getAttribute('last_execution')),
       'last_runtime'   => $this->renderRuntime($task->getAttribute('last_runtime')),
       'parallel_exec'  => $task->getAttribute('parallel_exec'),
+      'input_required' => $task->getAttribute('input_required'),
       'next_execution' => 'TODO', //$this->renderDate($task->getNextExecutionTime()),
       'enabled'        => $task->getAttribute('enabled'),
       );

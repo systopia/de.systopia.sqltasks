@@ -180,4 +180,40 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
     return TRUE;
   }
+
+  /**
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0080() {
+    $this->ctx->log->info('Applying update');
+
+    $table_exists = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE 'civirule_action';");
+    if ($table_exists) {
+      CRM_Core_DAO::executeQuery(
+        "INSERT INTO civirule_action (name, label, class_name, is_active)
+            VALUES('add_sql_task', 'Add SQL Task', 'CRM_CivirulesActions_SQLTask', 1)"
+      );
+    }
+
+    return TRUE;
+  }
+
+  /**
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0081() {
+    $this->ctx->log->info('Applying update');
+
+    // add column: input_required
+    $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'input_required';");
+    if (!$column_exists) {
+      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `input_required` tinyint COMMENT 'should have a mandatory form field?';");
+    }
+
+    return TRUE;
+  }
 }

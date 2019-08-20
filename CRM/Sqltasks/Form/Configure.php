@@ -155,6 +155,11 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       E::ts('Allow parallel execution')
     );
 
+    $this->add(
+      'checkbox',
+      'input_required',
+      E::ts('Require user input')
+    );
 
     // BUILD ACTIONS
     $action_list = array();
@@ -190,6 +195,7 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $current_values['scheduled'] = $this->task->getAttribute('scheduled');
     $current_values['parallel_exec'] = $this->task->getAttribute('parallel_exec');
     $current_values['run_permissions'] = explode(',', $this->task->getAttribute('run_permissions'));
+    $current_values['input_required'] = $this->task->getAttribute('input_required');
     $current_values['main_sql'] = $this->task->getAttribute('main_sql');
     $current_values['post_sql'] = $this->task->getAttribute('post_sql');
 
