@@ -165,10 +165,19 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     $this->ctx->log->info("Adding 'text/csv' as acceptable download mime type...");
     $mime_type_setting = Civi::settings()->get('requestableMimeTypes');
     $mime_type_list = explode(',', $mime_type_setting);
+    $mime_type_list_changed = FALSE;
     if (!in_array('text/csv', $mime_type_list)) {
       $mime_type_list[] = 'text/csv';
+      $mime_type_list_changed = TRUE;
+    }
+    if (!in_array('application/zip', $mime_type_list)) {
+      $mime_type_list[] = 'application/zip';
+      $mime_type_list_changed = TRUE;
+    }
+    if ($mime_type_list_changed) {
       Civi::settings()->set('requestableMimeTypes', implode(',', $mime_type_list));
     }
+
     return TRUE;
   }
 }
