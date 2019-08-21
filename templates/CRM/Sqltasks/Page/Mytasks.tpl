@@ -55,7 +55,7 @@ cj("a.sqltask-mytask-run").click(function(e) {
                 log_text += "<li>" + result.values.log[index] + "</li>";
             }
             log_text += "</ul>";
-            CRM.alert(log_text, "{/literal}{ts domain="de.systopia.mysqltasks"}Task Executed{/ts}{literal}", "info");
+            CRM.alert(log_text, "{/literal}{ts domain="de.systopia.sqltasks"}Task Executed{/ts}{literal}", "info");
 
             // update downloads
             cj(e.target).closest("tr.sqltask-mytask").find("td.sqltask-mytask-downloads").children().remove();
