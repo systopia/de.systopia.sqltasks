@@ -1,0 +1,1281 @@
+# Copyright CiviCRM LLC (c) 2004-2015
+# This file is distributed under the same license as the CiviCRM package.
+# If you contribute heavily to a translation and deem your work copyrightable,
+# make sure you license it to CiviCRM LLC under Academic Free License 3.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: de.systopia.sqltasks\n"
+"POT-Creation-Date: 2019-08-21 11:39+0200\n"
+"Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: \n"
+"X-Generator: Poedit 2.0.6\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de_DE\n"
+
+#: CRM/Sqltasks/Action/APICall.php
+msgid "API Call"
+msgstr "API Call"
+
+#: CRM/Sqltasks/Action/APICall.php CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "Data Table"
+msgstr "Datentabelle"
+
+#: CRM/Sqltasks/Action/APICall.php templates/CRM/Sqltasks/Action/APICall.tpl
+msgid "Entity"
+msgstr ""
+
+#: CRM/Sqltasks/Action/APICall.php templates/CRM/Sqltasks/Action/APICall.tpl
+msgid "Action"
+msgstr "Aktion"
+
+#: CRM/Sqltasks/Action/APICall.php
+msgid "Parameters"
+msgstr "Parameter"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "CSV Export"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Export Table"
+msgstr "Export-Tabelle"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "File Encoding"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Delimiter"
+msgstr "Trennzeichen"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Other delimiter"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CSVExport.php templates/CRM/Sqltasks/Action/APICall.tpl
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+msgid "Columns"
+msgstr "Spalten"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "ZIP File"
+msgstr "ZIP Datei"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/SegmentationExport.php
+msgid "File Name"
+msgstr "Dateiname"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/SegmentationExport.php
+msgid "File Path"
+msgstr "Dateipfad"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/ResultHandler.php
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Email to"
+msgstr "E-Mail an"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Send URL to download file instead of attachment"
+msgstr "Download-Link statt Anhang senden"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/ResultHandler.php
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Email Template"
+msgstr "E-Mail Vorlage"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Upload to"
+msgstr "Hochladen nach"
+
+#: CRM/Sqltasks/Action/CSVExport.php CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Discard empty file?"
+msgstr "Leere Datei verwerfen"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Semicolon (;)"
+msgstr "Semikolon (;)"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Comma (,)"
+msgstr "Komma (,)"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "Vertical bar (|)"
+msgstr "Balken (|)"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "other"
+msgstr "anderes"
+
+#: CRM/Sqltasks/Action/CSVExport.php
+msgid "%1 CSV Export"
+msgstr ""
+
+#: CRM/Sqltasks/Action/ContactSet.php
+msgid "Contact Table (<code>contact_id</code>)"
+msgstr "Kontakt Tabelle (<code>contact_id</code>)"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Create Activity"
+msgstr "Aktivität Erzeugen"
+
+#: CRM/Sqltasks/Action/CreateActivity.php CRM/Sqltasks/Action/SyncGroup.php
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Use API (slow)"
+msgstr "API verwenden (langsan)"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Individual Activities"
+msgstr "Einzelaktivitäten"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Activity Type"
+msgstr "Aktivitättyp"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Status"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Subject"
+msgstr "Text"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Details"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Campaign"
+msgstr "Kamapgne"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Source Contact"
+msgstr "Von Kontakt"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Assigned To"
+msgstr "Zugewiesen an"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Activity Medium"
+msgstr "Medium"
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Source Record ID"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Priority"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Engagement Index"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Location"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Duration"
+msgstr ""
+
+#: CRM/Sqltasks/Action/CreateActivity.php
+msgid "Control Group - %1"
+msgstr ""
+
+#: CRM/Sqltasks/Action/ResultHandler.php
+msgid "Execute always"
+msgstr ""
+
+#: CRM/Sqltasks/Action/ResultHandler.php
+msgid "User Error Table"
+msgstr ""
+
+#: CRM/Sqltasks/Action/ResultHandler.php
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid "Drop Error Table"
+msgstr ""
+
+#: CRM/Sqltasks/Action/ResultHandler.php
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid "Attach Log"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "Assign to Campaign (Segmentation)"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Segment"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "Clear before assignment"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Segment from data table"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Change Campaign Status"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Segment Order"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "Segment Order Table"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "[<i>from data table</i>: <code>segment_name</code>]"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "don't change status"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "(re)set to 'planned'"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "(re)start with fixed segment order"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationAssign.php
+msgid "(re)start with segment order from table"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Segmentation Export"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Segments"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Exporter"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Assignment not before"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Assignment not after"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SegmentationExport.php
+msgid "Current Assignment"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncGroup.php
+msgid "Synchronise Group"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Synchronise Tag"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Choose Entity"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Contacts"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Activities"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Cases"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Attachments"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Memberships"
+msgstr ""
+
+#: CRM/Sqltasks/Action/SyncTag.php
+msgid "Contributions"
+msgstr ""
+
+#: CRM/Sqltasks/Action.php
+msgid "- none -"
+msgstr ""
+
+#: CRM/Sqltasks/Action.php
+msgid "Success Handler"
+msgstr ""
+
+#: CRM/Sqltasks/Action.php
+msgid "Error Handler"
+msgstr ""
+
+#: CRM/Sqltasks/Config.php
+msgid "Run SQL Tasks"
+msgstr ""
+
+#: CRM/Sqltasks/Config.php
+msgid "Triggers the SQL Task dispatcher, see: civicrm/sqltasks/manage"
+msgstr ""
+
+#: CRM/Sqltasks/Config.php
+msgid "Unexpected run frequency: %1"
+msgstr ""
+
+#: CRM/Sqltasks/Config.php CRM/Sqltasks/Form/ConfigImport.php
+msgid "Error"
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Import '%1' Configuration"
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Configuration file to be imported:"
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Import"
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Configuration imported successfully."
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Update Complete"
+msgstr ""
+
+#: CRM/Sqltasks/Form/ConfigImport.php
+msgid "Invalid config file."
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Configure SQL Task '%1'"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Create new SQL Task"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Name"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Form/Configure.tpl
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Description"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Form/Configure.tpl
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Category"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Main Script (SQL)"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Cleanup Script (SQL)"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Run Permissions"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Execution"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Monday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Tuesday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Wednesday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Thursday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Friday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Saturday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Sunday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "January"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "February"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "March"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "April"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "May"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "June"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "July"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "August"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "September"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "October"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "November"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "December"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Month"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Weekday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Day"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Hour"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Minute"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Allow parallel execution"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Save"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Create"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Manager.php
+msgid "SQL Task Manager"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Manager.php
+msgid "never"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Manager.php
+msgid "ERROR"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Manager.php
+msgid "n/a"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Mytasks.php
+msgid "Available SQL Tasks"
+msgstr ""
+
+#: CRM/Sqltasks/Page/Runner.php
+msgid "Running SQL task '%1'"
+msgstr ""
+
+#: CRM/Sqltasks/Task.php
+msgid "always"
+msgstr ""
+
+#: CRM/Sqltasks/Task.php
+msgid "every hour"
+msgstr "stündlich"
+
+#: CRM/Sqltasks/Task.php
+msgid "every day (after midnight)"
+msgstr "täglich (nach Mitternacht)"
+
+#: CRM/Sqltasks/Task.php
+msgid "every week"
+msgstr "wöchentlich"
+
+#: CRM/Sqltasks/Task.php
+msgid "every month"
+msgstr "monatlich"
+
+#: CRM/Sqltasks/Task.php
+msgid "annually"
+msgstr "jährlich"
+
+#: CRM/Sqltasks/Task.php
+msgid "(currently triggered hourly)"
+msgstr "SQL Task Manager"
+
+#: CRM/Sqltasks/Task.php
+msgid "(currently triggered daily)"
+msgstr ""
+
+#: CRM/Sqltasks/Task.php
+msgid "(warning: dispatcher currently disabled)"
+msgstr ""
+
+#: CRM/Sqltasks/Upgrader/Base.php
+msgid "Upgrade %1 to revision %2"
+msgstr ""
+
+#: sqltasks.php
+msgid "Manage SQL Tasks"
+msgstr "SQL Tasks Verwalten"
+
+#: sqltasks.php
+msgid "My Tasks"
+msgstr "Meine SQL Tasks"
+
+#: sqltasks.php
+msgid "SQL Tasks: generated file download link"
+msgstr ""
+
+#: sqltasks.php
+msgid "SQL Tasks: generated file name"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid "This table is the data source for you API calls."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid ""
+"This action will call the CiviCRM API3 for <strong><i>every</i></strong> row "
+"in this table."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid "Select the <strong>entity</strong> for you API3 call."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid ""
+"If you don't know what this means you might want to have a look at the <a "
+"href=\"%1\" target=\"_blank\">API Explorer</a>."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid "Select the <strong>action</strong> for you API3 call."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid ""
+"Here you can define the parameters for you API3 call. Every line in this "
+"text field assigns one parameter with either a constant or a column value "
+"from the table specified above (or a mix)"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+msgid "The format is very simple:"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+msgid "&nbsp;&nbsp;<code>[Parameter Name]=[Value]</code>, e.g."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.hlp
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+msgid "Each line that doesn't follow this format will be ignored."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.tpl
+msgid "Data Source"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/APICall.tpl
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+#: templates/CRM/Sqltasks/Action/CreateActivity.tpl
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Help"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+msgid ""
+"Here you have to define the columns you want to see in your CSV file. Every "
+"line in this text field represents one column, which then is mapped to one "
+"column in the SQL table that is being exported."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+msgid "<code>[CSV Column Name]=[SQL Column]</code>, e.g."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+msgid "<code>My supernice contact ID=contact_id</code>"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"You can specify a comma separated list of email addresses that the resulting "
+"file will be sent to."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"<strong>Caution!</strong> The data will be sent unencrypted. Please do not "
+"use this option if the resulting files contains sensitive data."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "The file name of the resulting CSV file."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"This defines the path about where the resulting file is stored. If you leave "
+"it empty, a default path will be used."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"Define the target SFTP path to upload your file to. The format is "
+"<code>sftp://user:password@host/path</code>, e.g. <code>sftp://"
+"reports:123456@www.reports-server.de/civic-reports</code>"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"<strong>Caution!</strong> These credentials will be stored in the CiviCRM "
+"database unencrypted. Please don't use sensitive accounts for uploading "
+"files."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+msgid "Filename"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+msgid "Path"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid "Email"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+msgid "DownloadURL"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CSVExport.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+msgid "SFTP Upload"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"You can use any string as processed by PHP's <code>strtotime</code> "
+"function, see <a href=\"https://secure.php.net/manual/en/datetime.formats.php"
+"\">HERE</a>."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "Examples:"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "<code>now</code>"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "<code>now + 2 days</code>"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "<code>tomorrow</code>"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid "The default is <code>now</code>."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+msgid ""
+"These tokens will be filled with data from the contact table, if "
+"<code>column_name</code> is set in the the contact table referenced above."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.hlp
+msgid ""
+"You can enter a comma-separated list of contact IDs to assign the activities "
+"to all of them."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.tpl
+msgid "Tokens"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.tpl
+#: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
+msgid "Timestamp Options"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.tpl
+msgid "Assignees"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/CreateActivity.tpl
+msgid "minutes"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+msgid ""
+"This action will be triggered if the execution of the task has reported "
+"errors, or has failed completely."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid "Error Table"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"Specify a comma separated list of email addresses that the resulting file "
+"will be sent to."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"If you check this, the success handler will be always be executed unless "
+"there was an error. Otherwise it will only be sent if any of the tasks have "
+"actually \"done something\"."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"Selecting this option will attach the log file of the execution to the email."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"If you enter a table here, and it has a column called <code>error_message</"
+"code>, the listed errors will count as errors just as any other execution "
+"error."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"You should make sure to use the same table for the success and error "
+"handler, otherwise there might be inconsistencies."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"Since the success/error handlers will be executed <i>after</i> cleanup, the "
+"table used here can not be removed by the cleanup script. Use the "
+"<code>drop</code> option below."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/ResultHandler.hlp
+msgid ""
+"If you select this, the user error table (or view) will be dropped after "
+"this task finishes."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"Select the DB table to yield your contacts or memberships. Therefore table "
+"has to feature a <code>contact_id</code> or <code>membership_id</code> "
+"column. Should both exist, the <code>membership_id</code> takes preference "
+"and memberships are assigned."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"Contacts or memberships will be assigned to this segment. If the segment "
+"doesn't exist yet, it will be created."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"Caution: this option will clear the campaign before assigning new contacts. "
+"That means all previous assignments will be removed - regardless of the "
+"campaign's status."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"If this option is activated, the segment the contacts or memberships will be "
+"assigned to will be taken from the table column <code>segment_name</code>. "
+"This column has to exist and cannot be empty."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid "In this case the segment name entered above is ignored."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"Do you want to update the campaign's status after your assignment? You have "
+"four options:"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid "\"don't change status\": Don't touch anything here"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"\"(re)set to 'planned'\": Set the status to 'planned', regardless of the "
+"previous state"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"\"(re)start with fixed segment order\": Start the campaign, even if it was "
+"already started. For this we need a segment order, which can be entered in "
+"the text field below."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"\"(re)start with segment order from table\": Same as the last one, but "
+"taking the segment order from a DB table."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"Here you can provide a segment hierarchy by listing the segment names in the "
+"right order. One segment name per line, no separator charactes like ','. "
+"Make sure the names are spelled correctly."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid "The table referenced here needs to feature the following two columns:"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"<code>segment_name</code>: The name of the segment (as in "
+"<code>civicrm_segmentation_index</code>). Will be created if it doesn't "
+"exist."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.hlp
+msgid ""
+"<code>segment_weight</code>: A numeric weight value of the segment, lower "
+"value means higher ranking."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Data table"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Clear Campaign"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationAssign.tpl
+msgid "Segment Order Table?"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SegmentationExport.hlp
+msgid ""
+"If yo select this, the date frame will be automatically set to the time used "
+"by the 'Assign to Campaign' task above."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid ""
+"This action will be triggered after the <strong>successful</strong> "
+"execution of the task."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
+msgid "Execute Always"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/ConfigImport.tpl
+msgid ""
+"This allows you to import configurations (<code>.sqltask</code> files) that "
+"you have previously exported. It will not update metadata like name, last "
+"run, enabled, or execution order."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/ConfigImport.tpl
+msgid ""
+"<strong>Caution!</strong> Please review the task configuration after import, "
+"especially if imported from another environment."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/ConfigImport.tpl
+msgid ""
+"The configuration file only contains the IDs of certain entities (e.g. "
+"actvity types, templates, campaigns, etc.), and those can vary from system "
+"to system."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"Describing comprehensively what your task does is essential for anyone to "
+"understand whether it's safe to run or disable it. That includes yourself in "
+"six months, when you will have forgotten all about this."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"This is merely for documentation purposes, you can pick any name you want."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"If you enable this flag, this task will be executed even if other tasks are "
+"still running."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"It does <i>not</i> mean, that this task itself will be executed in multiple "
+"instances at the same time."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"This is the main script. You can use it to create a helper table or view to "
+"drive the actions listed below. Of course you could also use this script to "
+"perform the required changes right in the DB, but this is usually "
+"discouraged as it bypasses CiviCRM logic."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"You can paste and run <i>any</i> complete SQL script in here. <strong>But "
+"beware</strong>: with great power comes great responsibility!"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"We recommend developing complex SQL scripts in an external editor, and "
+"simply copy/pasting it here."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"It's considered good practice to clean up any helper tables that you created "
+"with the main script. This way you can make sure that you don't leave any "
+"dependencies behind."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"Set the exact <i>Weekday / Day / Hour / Minute</i> when the job will be "
+"executed, on the first cron call after this datetime."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Basic Information"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Queries"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Main Script"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Clean Up"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Specific Execution Time"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Parallel Execution"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Actions"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"<strong>Caution!</strong> Be aware that these tasks can execute arbitrary "
+"SQL statements, which <i>can potentially destroy your database</i>. Only use "
+"this if you really know what you're doing, and always keep a backup of your "
+"database before experimenting."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Delete Plugin \"%1\""
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"You are about to delete plugin \"%1\" [%2]. You should consider simply "
+"disabling it, since all data will be lost."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "This is the list of currently configured tasks."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"It looks like you're new here. This is the control center for all you SQL "
+"based scheduled tasks, but there is no task configured yet."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"You might want to <a href=\"%1\">ADD A NEW ONE</a>. Check out our <a href="
+"\"%2\" target=\"_blank\">REPOSITORY</a> for examples to get you started."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"The dispatcher is run <strong>every day</strong> after midnight. This is "
+"effectively the maximum frequency these taks are being executed with."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"The dispatcher is run <strong>every hour</strong> on the hour. This is "
+"effectively the maximum frequency these taks are being executed with."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"The dispatcher (and therefore all active tasks) will be triggered "
+"<strong>with every cron-run</strong>. Ask your administrator how often that "
+"is, in order to know the effective maximum frequency these taks are being "
+"executed with."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid ""
+"The dispatcher is currently <strong>disabled</strong>, none of the tasks "
+"will be executed automatically."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "ID"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Enabled?"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Schedule"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Last Execution"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Last Runtime"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Selection Order"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Yes"
+msgstr "Ja"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "No"
+msgstr "Nein"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "(parallel)"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Run the task manually"
+msgstr "Manuell Ausführen"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Run Now"
+msgstr "Jetzt Ausführen"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Configure"
+msgstr "Konfigurieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Disable for scheduled execution"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Disable"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Enable for scheduled execution"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Enable"
+msgstr "Aktivieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Delete Task"
+msgstr "Task Löschen"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Export Configuration"
+msgstr "Konfiguration Exportieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Export Config"
+msgstr "Konfiguration Exportieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Import Configuration"
+msgstr "Konfiguration Importieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Import Config"
+msgstr "Konfiguration Importieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Are you sure you want to run this task?"
+msgstr "Sind Sie sicher dass Sie diesen Task ausführen möchten?"
+
+#: templates/CRM/Sqltasks/Page/Mytasks.tpl
+msgid "%1 seconds"
+msgstr "%1 Sekunden"
+
+#: templates/CRM/Sqltasks/Page/Mytasks.tpl
+msgid "RUN %1"
+msgstr "%1 Ausführen"
+
+#: templates/CRM/Sqltasks/Page/Mytasks.tpl
+msgid "RUN"
+msgstr "Ausführen"
+
+#: templates/CRM/Sqltasks/Page/Mytasks.tpl
+msgid "Task Executed"
+msgstr "Task Ausgeführt"
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid ""
+"Page reload or browser back/forward navigation detected. This will not run "
+"the task again any more, to prevent accidental execution."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid ""
+"Please use the \"run again\" button below, if you want to execute this task "
+"<i>again</i>."
+msgstr ""
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid "Executing..."
+msgstr "Ausführung..."
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid "Back to Manager"
+msgstr "Zurück zum Manager"
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid "Run again"
+msgstr "Erneut Ausführen"
+
+#: templates/CRM/Sqltasks/Page/Runner.tpl
+msgid "Configure task"
+msgstr "Task Konfigurieren"
