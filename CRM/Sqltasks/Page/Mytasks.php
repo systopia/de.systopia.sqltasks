@@ -31,7 +31,10 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
     $all_tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($all_tasks as $task) {
       /** @var $task CRM_Sqltasks_Task */
-      if ($task->allowedToRun()) {
+
+      // only list tasks that have permissions set
+      $run_permissions = $task->getAttribute('run_permissions');
+      if (!empty($run_permissions) && $task->allowedToRun()) {
         $allowed_tasks[$task->getID()] = [
             'id'           => $task->getID(),
             'name'         => $task->getAttribute('name'),
