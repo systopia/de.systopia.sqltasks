@@ -142,4 +142,16 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
     return TRUE;
   }
+
+  /**
+   * Rebuild menu when done
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0083() {
+    $this->ctx->log->info('Clear template cache and rebuild menu...');
+    CRM_Core_Invoke::rebuildMenuAndCaches();
+    return TRUE;
+  }
 }
