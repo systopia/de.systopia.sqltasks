@@ -154,4 +154,21 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     CRM_Core_Invoke::rebuildMenuAndCaches();
     return TRUE;
   }
+
+  /**
+   * Make sure CSV is an acceptable mime type
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_0084() {
+    $this->ctx->log->info("Adding 'text/csv' as acceptable download mime type...");
+    $mime_type_setting = Civi::settings()->get('requestableMimeTypes');
+    $mime_type_list = explode(',', $mime_type_setting);
+    if (!in_array('text/csv', $mime_type_list)) {
+      $mime_type_list[] = 'text/csv';
+      Civi::settings()->set('requestableMimeTypes', implode(',', $mime_type_list));
+    }
+    return TRUE;
+  }
 }
