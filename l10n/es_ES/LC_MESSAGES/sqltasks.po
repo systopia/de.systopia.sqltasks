@@ -5,16 +5,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sqltasks\n"
-"POT-Creation-Date: 2019-05-23 16:46+0200\n"
+"POT-Creation-Date: 2019-08-21 11:39+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: \n"
-"X-Generator: Poedit 1.8.7.1\n"
-"Last-Translator: \n"
+"X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: es\n"
 
 #: CRM/Sqltasks/Action/APICall.php
 msgid "API Call"
@@ -414,6 +414,102 @@ msgstr ""
 
 #: CRM/Sqltasks/Form/Configure.php templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Execution"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Monday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Tuesday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Wednesday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Thursday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Friday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Saturday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Sunday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "January"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "February"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "March"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "April"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "May"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "June"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "July"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "August"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "September"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "October"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "November"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "December"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Month"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Weekday"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Day"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Hour"
+msgstr ""
+
+#: CRM/Sqltasks/Form/Configure.php
+msgid "Minute"
 msgstr ""
 
 #: CRM/Sqltasks/Form/Configure.php
@@ -952,6 +1048,12 @@ msgid ""
 "dependencies behind."
 msgstr ""
 
+#: templates/CRM/Sqltasks/Form/Configure.hlp
+msgid ""
+"Set the exact <i>Weekday / Day / Hour / Minute</i> when the job will be "
+"executed, on the first cron call after this datetime."
+msgstr ""
+
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Basic Information"
 msgstr ""
@@ -966,6 +1068,10 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Clean Up"
+msgstr ""
+
+#: templates/CRM/Sqltasks/Form/Configure.tpl
+msgid "Specific Execution Time"
 msgstr ""
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
@@ -1146,10 +1252,6 @@ msgstr "EJECUTAR"
 msgid "Task Executed"
 msgstr ""
 
-#: templates/CRM/Sqltasks/Page/Mytasks.tpl
-msgid "DOWNLOAD"
-msgstr "DESCARGAR"
-
 #: templates/CRM/Sqltasks/Page/Runner.tpl
 msgid ""
 "Page reload or browser back/forward navigation detected. This will not run "
@@ -1177,3 +1279,6 @@ msgstr ""
 #: templates/CRM/Sqltasks/Page/Runner.tpl
 msgid "Configure task"
 msgstr ""
+
+#~ msgid "DOWNLOAD"
+#~ msgstr "DESCARGAR"
