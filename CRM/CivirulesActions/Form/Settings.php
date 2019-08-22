@@ -14,14 +14,14 @@ class CRM_CivirulesActions_Form_Settings extends CRM_Core_Form {
 
     if ($tableExists) {
       $addSqlTaskExists = CRM_Core_DAO::singleValueQuery(
-        "SELECT COUNT(id) FROM `civirule_action` WHERE name = 'add_sql_task'"
+        "SELECT COUNT(id) FROM `civirule_action` WHERE name = 'run_sql_task'"
       );
 
       if ($addSqlTaskExists) {
-        $this->assign('message', E::ts('You have already had "Add SQL Task" in database'));
+        $this->assign('message', E::ts('You have already had "Run SQL Task" in database'));
       }
       else {
-        $this->assign('message', E::ts('Please click "Save" button to add "Add SQL Task" to database'));
+        $this->assign('message', E::ts('Please click "Save" button to add "Run SQL Task" to database'));
 
         $saveButton = [
           [
@@ -60,7 +60,7 @@ class CRM_CivirulesActions_Form_Settings extends CRM_Core_Form {
   public function postProcess() {
     CRM_Core_DAO::executeQuery(
       "INSERT INTO civirule_action (name, label, class_name, is_active)
-        VALUES('add_sql_task', 'Add SQL Task', 'CRM_CivirulesActions_SQLTask', 1)"
+        VALUES('run_sql_task', 'Run SQL Task', 'CRM_CivirulesActions_SQLTask', 1)"
     );
   }
 }

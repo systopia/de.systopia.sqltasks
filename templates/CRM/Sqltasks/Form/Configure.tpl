@@ -64,7 +64,6 @@
     <div class="clear"></div>
   </div>
 
-
   <div id="advSchedule">
     <div id="advSchedule-month" class="crm-section">
       <div class="label">{$form.scheduled_month.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}Specific Execution Time{/ts}", {literal}{"id":"id-configure-exectime","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
@@ -110,7 +109,7 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.input_required.label}</div>
+    <div class="label">{$form.input_required.label} <a onclick='CRM.help("{ts domain="de.systopia.sqltasks"}User Input{/ts}", {literal}{"id":"id-user-input","file":"CRM\/Sqltasks\/Form\/Configure"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.sqltasks"}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.input_required.html}</div>
     <div class="clear"></div>
   </div>
