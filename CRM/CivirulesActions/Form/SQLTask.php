@@ -20,7 +20,7 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
       $options = [];
 
       foreach ($sqlTasks as $id => $sqlTask) {
-        $options[$sqlTask->getID()] = $sqlTask->getAttribute('name');
+        $options[$sqlTask->getID()] = '[' . $sqlTask->getID() . '] ' . $sqlTask->getAttribute('name');
       }
 
       return $options;
@@ -44,6 +44,24 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
         ['type' => 'next', 'name' => ts('Save'), 'isDefault' => TRUE],
         ['type' => 'cancel', 'name' => ts('Cancel')],
       ]);
+    }
+
+    /**
+     * Overridden parent method to set default values
+     *
+     * @return array $defaultValues
+     * @access public
+     */
+    public function setDefaultValues() {
+      $defaultValues = parent::setDefaultValues();
+
+      $data = unserialize($this->ruleAction->action_params);
+
+      if (!empty($data['sqltask_id'])) {
+        $defaultValues['sqltask_id'] = $data['sqltask_id'];
+      }
+
+      return $defaultValues;
     }
 
     /**

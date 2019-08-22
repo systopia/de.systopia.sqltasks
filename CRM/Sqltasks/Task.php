@@ -253,8 +253,9 @@ class CRM_Sqltasks_Task {
 
     $main_sql = $this->getAttribute('main_sql');
     if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
-      $main_sql = "SET @input = '{$params['input_val']}'; \n\r {$main_sql}";
-    }
+      $input_val = CRM_Core_DAO::escapeString($params['input_val']);
+      $main_sql = "SET @input = '{$input_val}'; \r\n {$main_sql}";
+    };
 
     // 1. run the main SQL
     $this->executeSQLScript($main_sql, "Main SQL");

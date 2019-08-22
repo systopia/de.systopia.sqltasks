@@ -41,7 +41,7 @@ div.task-results {
 <a class="button" href="{crmURL p='civicrm/sqltasks/manage'}" title="{ts}Back to Manager{/ts}">
   {ts}Back to Manager{/ts}
 </a>
-<a class="button" href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id&input_val=$input_val"}" title="{ts}Run again{/ts}">
+<a class="button" href="{crmURL p='civicrm/sqltasks/run' q="tid=$task_id&input_val=$input_val_urlencoded"}" title="{ts}Run again{/ts}">
   {ts}Run again{/ts}
 </a>
 <a class="button" href="{crmURL p='civicrm/sqltasks/configure' q="tid=$task_id"}" title="{ts}Configure task{/ts}">

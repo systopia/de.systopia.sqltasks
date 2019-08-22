@@ -50,13 +50,15 @@ if (class_exists('CRM_Civirules_Action')) {
 
       $params = $this->getActionParameters();
 
-      $sqlTask = CRM_Sqltasks_Task::getTask($params['sqltask_id']);
-      $sqlTask->setAttribute('main_sql', "SET @input = '{$json}'; \n\r {$sqlTask->getAttribute('main_sql')}");
-      $sqlTask->execute();
+      try {
+        civicrm_api3('Sqltask', 'execute', [
+          'task_id' => $params['sqltask_id'],
+          'input_val' => $json,
+        ]);
+      } catch (CiviCRM_API3_Exception $e) {}
     }
 
     /**
-     *
      * @return string
      * @access public
      */

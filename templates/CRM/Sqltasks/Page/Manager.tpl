@@ -190,7 +190,7 @@ CRM.$('.sqltasks-job-run').click(function(e) {
         CRM.alert({/literal}'{ts}Entered value that will be passed to the @input variable is empty{/ts}'{literal}, {/literal}'{ts}Warning{/ts}'{literal});
       }
       else {
-        window.location.href = href + '&input_val=' + input_val;
+        window.location.href = href + '&input_val=' + encodeURIComponent(input_val);
       }
     }
     else {
