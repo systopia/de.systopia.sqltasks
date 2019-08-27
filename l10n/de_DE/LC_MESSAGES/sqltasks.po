@@ -514,15 +514,15 @@ msgstr ""
 
 #: CRM/Sqltasks/Form/Configure.php
 msgid "Allow parallel execution"
-msgstr ""
+msgstr "Parallele Ausführung ermöglichen"
 
 #: CRM/Sqltasks/Form/Configure.php
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: CRM/Sqltasks/Form/Configure.php
 msgid "Create"
-msgstr ""
+msgstr "Erstellen"
 
 #: CRM/Sqltasks/Page/Manager.php
 msgid "SQL Task Manager"
@@ -530,27 +530,27 @@ msgstr ""
 
 #: CRM/Sqltasks/Page/Manager.php
 msgid "never"
-msgstr ""
+msgstr "nie"
 
 #: CRM/Sqltasks/Page/Manager.php
 msgid "ERROR"
-msgstr ""
+msgstr "FEHLER"
 
 #: CRM/Sqltasks/Page/Manager.php
 msgid "n/a"
-msgstr ""
+msgstr "-"
 
 #: CRM/Sqltasks/Page/Mytasks.php
 msgid "Available SQL Tasks"
-msgstr ""
+msgstr "Für Sie verfügebare SQL Tasks"
 
 #: CRM/Sqltasks/Page/Runner.php
 msgid "Running SQL task '%1'"
-msgstr ""
+msgstr "Ausführung SQL Task '%1'"
 
 #: CRM/Sqltasks/Task.php
 msgid "always"
-msgstr ""
+msgstr "immer"
 
 #: CRM/Sqltasks/Task.php
 msgid "every hour"
@@ -578,11 +578,11 @@ msgstr "SQL Task Manager"
 
 #: CRM/Sqltasks/Task.php
 msgid "(currently triggered daily)"
-msgstr ""
+msgstr "(aktuell täglich)"
 
 #: CRM/Sqltasks/Task.php
 msgid "(warning: dispatcher currently disabled)"
-msgstr ""
+msgstr "(Achtung! Geplanter Job deaktiviert)"
 
 #: CRM/Sqltasks/Upgrader/Base.php
 msgid "Upgrade %1 to revision %2"
@@ -662,7 +662,7 @@ msgstr ""
 #: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: templates/CRM/Sqltasks/Action/CSVExport.hlp
 msgid ""
@@ -724,23 +724,23 @@ msgstr ""
 #: templates/CRM/Sqltasks/Action/CSVExport.tpl
 #: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
 msgid "Filename"
-msgstr ""
+msgstr "Dateiname"
 
 #: templates/CRM/Sqltasks/Action/CSVExport.tpl
 #: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: templates/CRM/Sqltasks/Action/CSVExport.tpl
 #: templates/CRM/Sqltasks/Action/ErrorHandler.tpl
 #: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
 #: templates/CRM/Sqltasks/Action/SuccessHandler.tpl
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: templates/CRM/Sqltasks/Action/CSVExport.tpl
 msgid "DownloadURL"
-msgstr ""
+msgstr "Download Link"
 
 #: templates/CRM/Sqltasks/Action/CSVExport.tpl
 #: templates/CRM/Sqltasks/Action/SegmentationExport.tpl
@@ -1056,7 +1056,7 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Basic Information"
-msgstr ""
+msgstr "Allgemeine Informationen"
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Queries"
@@ -1064,11 +1064,11 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Main Script"
-msgstr ""
+msgstr "Hauptskript"
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Clean Up"
-msgstr ""
+msgstr "Nachlauf-/Aufräumskript"
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Specific Execution Time"
@@ -1076,12 +1076,12 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 msgid "Parallel Execution"
-msgstr ""
+msgstr "Parallele Ausführung"
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: templates/CRM/Sqltasks/Form/Configure.tpl
 #: templates/CRM/Sqltasks/Page/Manager.tpl
@@ -1150,7 +1150,7 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Enabled?"
-msgstr ""
+msgstr "Aktiv?"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Schedule"
@@ -1158,15 +1158,15 @@ msgstr ""
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Last Execution"
-msgstr ""
+msgstr "Letzte Ausführung"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Last Runtime"
-msgstr ""
+msgstr "Letzte Laufzeit"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Selection Order"
-msgstr ""
+msgstr "Reihenfolge"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Yes"
@@ -1194,19 +1194,19 @@ msgstr "Konfigurieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Disable for scheduled execution"
-msgstr ""
+msgstr "Turnusmäßige Ausführung aktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Disable"
-msgstr ""
+msgstr "Aktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Enable for scheduled execution"
-msgstr ""
+msgstr "Turnusmäßige Ausführung deaktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Enable"
-msgstr "Aktivieren"
+msgstr "Deaktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Delete Task"
