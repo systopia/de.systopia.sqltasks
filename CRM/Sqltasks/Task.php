@@ -219,6 +219,9 @@ class CRM_Sqltasks_Task {
     // error_log("STORE QUERY: " . $sql);
     // error_log("STORE PARAM: " . json_encode($params));
     CRM_Core_DAO::executeQuery($sql, $params);
+    if (empty($this->task_id)) {
+      $this->task_id = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
+    }
   }
 
 
