@@ -40,6 +40,11 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
         ['' => E::ts('-- please select --')] + $this->getSQLTasks(),
         TRUE
       );
+      $this->add(
+        'checkbox',
+        'log_to_file',
+        E::ts('Log task results?')
+      );
       $this->addButtons([
         ['type' => 'next', 'name' => ts('Save'), 'isDefault' => TRUE],
         ['type' => 'cancel', 'name' => ts('Cancel')],
@@ -61,6 +66,10 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
         $defaultValues['sqltask_id'] = $data['sqltask_id'];
       }
 
+      if (!empty($data['log_to_file'])) {
+        $defaultValues['log_to_file'] = $data['log_to_file'];
+      }
+
       return $defaultValues;
     }
 
@@ -70,7 +79,10 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
      * @access public
      */
     public function postProcess() {
-      $this->ruleAction->action_params = serialize(['sqltask_id' => $this->_submitValues['sqltask_id']]);
+      $this->ruleAction->action_params = serialize([
+        'sqltask_id' => $this->_submitValues['sqltask_id'],
+        'log_to_file' => !empty($this->_submitValues['log_to_file']),
+      ]);
       $this->ruleAction->save();
 
       parent::postProcess();

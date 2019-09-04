@@ -5,6 +5,11 @@
         <div class="content">{$form.sqltask_id.html}</div>
         <div class="clear"></div>
     </div>
+    <div class="crm-section">
+        <div class="label">{$form.log_to_file.label}</div>
+        <div class="content">{$form.log_to_file.html}</div>
+        <div class="clear"></div>
+    </div>
 </div>
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}

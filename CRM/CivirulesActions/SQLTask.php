@@ -54,6 +54,7 @@ if (class_exists('CRM_Civirules_Action')) {
         civicrm_api3('Sqltask', 'execute', [
           'task_id' => $params['sqltask_id'],
           'input_val' => $json,
+          'log_to_file' => !empty($params['log_to_file']),
         ]);
       } catch (CiviCRM_API3_Exception $e) {}
     }
