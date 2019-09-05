@@ -193,6 +193,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    */
   protected function getExportTable() {
     $table_name = $this->getConfigValue('table');
+    $this->resolveTableToken($table_name);
     return trim($table_name);
   }
 

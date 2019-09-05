@@ -28,6 +28,7 @@ abstract class CRM_Sqltasks_Action {
   protected $task = NULL;
   protected $config = NULL;
   protected $has_executed = TRUE;
+  protected $context = [];
 
   /**
    * CRM_Sqltasks_Action constructor.
@@ -279,6 +280,24 @@ abstract class CRM_Sqltasks_Action {
    */
   public function hasExecuted() {
     return $this->has_executed;
+  }
+
+  /**
+   * Set execution context
+   *
+   * @param array $context
+   */
+  public function setContext(array $context) {
+    $this->context = $context;
+  }
+
+  /**
+   * Replace all tokens in the string with data from the context
+   *
+   * @param $string
+   */
+  public function resolveTableToken(&$string) {
+    $string = str_replace('{random}', $this->context['random'], $string);
   }
 
 }

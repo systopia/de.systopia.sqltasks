@@ -82,6 +82,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   protected function getDataTable() {
     $table_name = $this->getConfigValue('table');
+    $this->resolveTableToken($table_name);
     return trim($table_name);
   }
 
