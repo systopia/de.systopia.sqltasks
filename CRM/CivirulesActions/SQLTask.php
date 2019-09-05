@@ -65,9 +65,12 @@ if (class_exists('CRM_Civirules_Action')) {
      */
     public function userFriendlyConditionParams() {
       $params = $this->getActionParameters();
+      if (!empty($params['sqltask_id'])) {
+        return CRM_Sqltasks_Task::getTask($params['sqltask_id'])
+          ->getAttribute('name');
+      }
 
-      return CRM_Sqltasks_Task::getTask($params['sqltask_id'])
-        ->getAttribute('name');
+      return '';
     }
   }
 }

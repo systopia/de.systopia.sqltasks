@@ -16,7 +16,7 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
      * @access protected
      */
     protected function getSQLTasks() {
-      $sqlTasks = CRM_Sqltasks_Task::getExecutionTaskList();
+      $sqlTasks = CRM_Sqltasks_Task::getAllTasks();
       $options = [];
 
       foreach ($sqlTasks as $id => $sqlTask) {
@@ -37,8 +37,9 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
         'select',
         'sqltask_id',
         E::ts('SQL Task'),
-        ['' => E::ts('-- please select --')] + $this->getSQLTasks(),
-        TRUE
+        ['' => E::ts('- select -')] + $this->getSQLTasks(),
+        TRUE,
+        ['class' => 'crm-select2 huge']
       );
       $this->add(
         'checkbox',
