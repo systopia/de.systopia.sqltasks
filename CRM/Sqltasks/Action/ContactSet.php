@@ -39,6 +39,7 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
    */
   public function getContactTable() {
     $table_name = $this->getConfigValue('contact_table');
+    $this->resolveTableToken($table_name);
     return trim($table_name);
   }
 

@@ -311,6 +311,8 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       return NULL;
     }
 
+    $this->resolveTableToken($error_table);
+
     // make sure the table exists
     $error_table = trim($error_table);
     $existing_table = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '{$error_table}';");
