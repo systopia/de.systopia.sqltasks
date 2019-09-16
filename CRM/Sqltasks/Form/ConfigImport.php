@@ -67,13 +67,12 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
    * process uploaded file
    */
   public function postProcess() {
-    $values = $this->exportValues();
-
     // update configuration
     $config_file = $_FILES['config_file'];
     $raw_data = file_get_contents($config_file['tmp_name']);
     $data = json_decode($raw_data, TRUE);
     if ($data) {
+      $data = CRM_Sqltasks_Config_Format::toLatest($data);
       foreach ($data as $key => $value) {
         if ($key == 'config') {
           $this->task->setConfiguration($value);

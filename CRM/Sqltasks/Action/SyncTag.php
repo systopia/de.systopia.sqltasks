@@ -37,6 +37,15 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 500;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {
@@ -46,7 +55,9 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       'select',
       $this->getID() . '_tag_id',
       E::ts('Synchronise Tag'),
-      $this->getEligibleTags()
+      $this->getEligibleTags(),
+      FALSE,
+      ['class' => 'crm-select2 huge']
     );
 
     $form->add(
@@ -168,7 +179,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       'option.limit' => 0,
       'return'       => 'id,name'))['values'];
     foreach ($tag_query as $tag) {
-      $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, "Tag {$tag['id']}");
+      $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, 'Tag') . ' [' . $tag['id'] . ']';
     }
     return $tag_list;
   }

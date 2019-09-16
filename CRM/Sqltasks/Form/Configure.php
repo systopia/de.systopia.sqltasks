@@ -35,9 +35,11 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       throw new Exception("Invalid task id (tid) given.", 1);
     } elseif ($task_id) {
       $this->task = CRM_Sqltasks_Task::getTask($task_id);
+      $actions = CRM_Sqltasks_Action::getTaskActions($this->task);
       CRM_Utils_System::setTitle(E::ts("Configure SQL Task '%1'", array(1 => $this->task->getAttribute('name'))));
     } else {
       $this->task = new CRM_Sqltasks_Task($task_id);
+      $actions = CRM_Sqltasks_Action::getTemplateActions($this->task);
       CRM_Utils_System::setTitle(E::ts("Create new SQL Task"));
     }
 
@@ -70,26 +72,6 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
       'category',
       E::ts('Category'),
       array('class' => 'huge', 'maxlength' => '64'),
-      FALSE
-    );
-
-    $this->add(
-      'textarea',
-      'main_sql',
-      E::ts('Main Script (SQL)'),
-      array('rows' => 8,
-            'style' => 'font-family: monospace, monospace !important; width: 95%; min-width: 240px',
-      ),
-      FALSE
-    );
-
-    $this->add(
-      'textarea',
-      'post_sql',
-      E::ts('Cleanup Script (SQL)'),
-      array('rows' => 8,
-            'style' => 'font-family: monospace, monospace !important; width: 95%; min-width: 240px',
-      ),
       FALSE
     );
 
@@ -163,7 +145,6 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
 
     // BUILD ACTIONS
     $action_list = array();
-    $actions = CRM_Sqltasks_Action::getAllActions($this->task);
     foreach ($actions as $action) {
       $action->buildForm($this);
       $action_list[$action->getID()] = array(
@@ -196,13 +177,33 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
     $current_values['parallel_exec'] = $this->task->getAttribute('parallel_exec');
     $current_values['run_permissions'] = explode(',', $this->task->getAttribute('run_permissions'));
     $current_values['input_required'] = $this->task->getAttribute('input_required');
-    $current_values['main_sql'] = $this->task->getAttribute('main_sql');
-    $current_values['post_sql'] = $this->task->getAttribute('post_sql');
 
     $configuration = $this->task->getConfiguration();
-    foreach ($configuration as $key => $value) {
-      $current_values[$key] = $value;
+
+    $scheduleDetails = [
+      'scheduled_month', 'scheduled_weekday', 'scheduled_day', 'scheduled_hour',
+      'scheduled_minute'
+    ];
+    foreach ($scheduleDetails as $key) {
+      if (!empty($configuration[$key])) {
+        $current_values[$key] = $configuration[$key];
+      }
     }
+
+    if (!empty($configuration['actions'])) {
+      foreach ($configuration['actions'] as $actionConfig) {
+        $action = CRM_Sqltasks_Action::getActionInstance($actionConfig, $this->task);
+        foreach ($actionConfig as $key => $value) {
+          $current_values[$action->getID() . '_' . $key] = $value;
+        }
+      }
+    }
+    else {
+      // enable "Run SQL Script" and "Run Cleanup SQL Script" by default
+      $current_values['sql_enabled'] = 1;
+      $current_values['post_sql_enabled'] = 1;
+    }
+
     return $current_values;
   }
 
@@ -213,15 +214,53 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
 
-    // clean out some stuff
-    $data = $values;
-    if (isset($data['_qf_Configure_submit'])) unset($data['_qf_Configure_submit']);
-    if (isset($data['_qf_default']))          unset($data['_qf_default']);
-    if (isset($data['qfKey']))                unset($data['qfKey']);
-    if (isset($data['entryURL']))             unset($data['entryURL']);
-    if (isset($data['tid']))                  unset($data['tid']);
-    if (is_array($data['run_permissions']))   $data['run_permissions'] = implode(',', $data['run_permissions']);
+    $data = [];
+    $mainElements = [
+      'name', 'description', 'category', 'scheduled', 'parallel_exec',
+      'input_required', 'scheduled_month', 'scheduled_weekday', 'scheduled_day',
+      'scheduled_hour', 'scheduled_minute',
+    ];
 
+    foreach ($mainElements as $element) {
+      if (!empty($values[$element])) {
+        $data[$element] = $values[$element];
+      }
+    }
+
+    if (!empty($values['run_permissions']) && is_array($values['run_permissions'])) {
+      $data['run_permissions'] = implode(',', $values['run_permissions']);
+    }
+
+    $prefixToTypeList = [
+      'sql'                 => 'CRM_Sqltasks_Action_RunSQL',
+      'segmentation_assign' => 'CRM_Sqltasks_Action_SegmentationAssign',
+      'activity'            => 'CRM_Sqltasks_Action_CreateActivity',
+      'api'                 => 'CRM_Sqltasks_Action_APICall',
+      'csv'                 => 'CRM_Sqltasks_Action_CSVExport',
+      'tag'                 => 'CRM_Sqltasks_Action_SyncTag',
+      'group'               => 'CRM_Sqltasks_Action_SyncGroup',
+      'segmentation_export' => 'CRM_Sqltasks_Action_SegmentationExport',
+      'task'                => 'CRM_Sqltasks_Action_CallTask',
+      'post_sql'            => 'CRM_Sqltasks_Action_PostSQL',
+      'success'             => 'CRM_Sqltasks_Action_SuccessHandler',
+      'error'               => 'CRM_Sqltasks_Action_ErrorHandler',
+    ];
+
+    foreach ($prefixToTypeList as $prefix => $type) {
+      if (!$type::isSupported()) {
+        // don't create actions that are not supported
+        continue;
+      }
+      $action = ['type' => $type];
+      // iterate over all form elements and copy those starting with the prefix
+      foreach ($values as $key => $value) {
+        if (strpos($key, $prefix . '_') === 0) {
+          $itemName = str_replace($prefix . '_', '', $key);
+          $action[$itemName] = $value;
+        }
+      }
+      $data['actions'][] = $action;
+    }
     // write to DB
     $task_id = CRM_Utils_Array::value('tid', $values);
     $task = new CRM_Sqltasks_Task($task_id, $data);

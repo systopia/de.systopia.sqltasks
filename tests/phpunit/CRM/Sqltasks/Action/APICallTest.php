@@ -9,14 +9,28 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
   public function testAPICall() {
     $data = [
-      'main_sql'       => "DROP TABLE IF EXISTS tmp_test_action_apicall;
-                           CREATE TABLE tmp_test_action_apicall AS " . self::TEST_CONTACT_SQL,
-      'post_sql'       => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
-      'api_enabled'    => '1',
-      'api_table'      => 'tmp_test_action_apicall',
-      'api_entity'     => 'Phone',
-      'api_action'     => 'create',
-      'api_parameters' => "contact_id={contact_id}\r\nphone=1800testAPICall",
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_apicall;
+                        CREATE TABLE tmp_test_action_apicall AS " . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'       => 'CRM_Sqltasks_Action_APICall',
+          'enabled'    => TRUE,
+          'table'      => 'tmp_test_action_apicall',
+          'entity'     => 'Phone',
+          'action'     => 'create',
+          'parameters' => "contact_id={contact_id}\r\nphone=1800testAPICall",
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
+        ],
+      ]
     ];
     $this->createAndExecuteTask($data);
 
@@ -35,16 +49,30 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       'email'        => 'jane.doe@example.com',
     ])['id'];
     $data = [
-      'main_sql'       => "DROP TABLE IF EXISTS tmp_test_action_apicall;
-                           CREATE TABLE tmp_test_action_apicall (contact_id INT(10), exclude BOOL, phone varchar(255));
-                           INSERT INTO tmp_test_action_apicall SELECT contact_id, 0 as exclude, '1800testInclude' as phone FROM civicrm_email WHERE email='john.doe@example.com';
-                           INSERT INTO tmp_test_action_apicall SELECT contact_id, 1 as exclude, '1800testExclude' as phone FROM civicrm_email WHERE email='jane.doe@example.com'",
-      'post_sql'       => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
-      'api_enabled'    => '1',
-      'api_table'      => 'tmp_test_action_apicall',
-      'api_entity'     => 'Phone',
-      'api_action'     => 'create',
-      'api_parameters' => "contact_id={contact_id}\r\nphone={phone}",
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_apicall;
+                        CREATE TABLE tmp_test_action_apicall (contact_id INT(10), exclude BOOL, phone varchar(255));
+                        INSERT INTO tmp_test_action_apicall SELECT contact_id, 0 as exclude, '1800testInclude' as phone FROM civicrm_email WHERE email='john.doe@example.com';
+                        INSERT INTO tmp_test_action_apicall SELECT contact_id, 1 as exclude, '1800testExclude' as phone FROM civicrm_email WHERE email='jane.doe@example.com'",
+        ],
+        [
+          'type'       => 'CRM_Sqltasks_Action_APICall',
+          'enabled'    => TRUE,
+          'table'      => 'tmp_test_action_apicall',
+          'entity'     => 'Phone',
+          'action'     => 'create',
+          'parameters' => "contact_id={contact_id}\r\nphone={phone}",
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
+        ],
+      ],
     ];
     $this->createAndExecuteTask($data);
 

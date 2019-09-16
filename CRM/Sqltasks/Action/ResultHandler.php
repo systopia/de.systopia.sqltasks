@@ -22,13 +22,13 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *  'error'   will be triggered if an error occurs during execution
  *
  */
-class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
+abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
 
   protected $id;
   protected $name;
 
-  public function __construct($task, $id, $name) {
-    parent::__construct($task);
+  public function __construct(CRM_Sqltasks_Task $task, array $config, $id, $name) {
+    parent::__construct($task, $config);
     $this->id   = $id;
     $this->name = $name;
   }
@@ -142,13 +142,6 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * generic execute implementation
-   */
-  public function execute() {
-    // nothing to do here
-  }
-
-  /**
    * Should the success handler run?
    */
   public function shouldSuccessHandlerRun($actions) {
@@ -197,13 +190,13 @@ class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
-  public function executeResultHandler($actions) {
+  public function execute() {
     // check if we need to be executed
     $should_run = FALSE;
     if ($this->id == 'success') {
-      $should_run = $this->shouldSuccessHandlerRun($actions);
+      $should_run = $this->shouldSuccessHandlerRun($this->context['actions']);
     } elseif ($this->id == 'error') {
-      $should_run = $this->shouldErrorHandlerRun($actions);
+      $should_run = $this->shouldErrorHandlerRun($this->context['actions']);
     }
     if (!$should_run) {
       $this->log("Skipping Success Handler, actions didn't do anything");

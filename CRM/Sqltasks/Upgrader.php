@@ -205,4 +205,24 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
     return TRUE;
   }
+
+  /**
+   * Upgrade task configuration format
+   *
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0100() {
+    $this->ctx->log->info('Upgrading task configuration to latest format');
+    foreach (CRM_Sqltasks_Task::getAllTasks() as $task) {
+      $task->setConfiguration(
+        CRM_Sqltasks_Config_Format::toLatest(
+          json_decode($task->exportConfiguration(), TRUE)
+        )['config'],
+        TRUE
+      );
+    }
+    return TRUE;
+  }
+
 }

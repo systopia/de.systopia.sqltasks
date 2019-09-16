@@ -37,6 +37,15 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 400;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {
@@ -53,7 +62,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_encoding',
       E::ts('File Encoding'),
-      $this->getEncodingOptions()
+      $this->getEncodingOptions(),
+      FALSE,
+      ['class' => 'crm-select2 huge']
     );
 
     $form->add(
@@ -115,7 +126,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_email_template',
       E::ts('Email Template'),
-      $this->getAllTemplates()
+      $this->getAllTemplates(),
+      FALSE,
+      ['class' => 'crm-select2 huge']
     );
 
     $form->add(

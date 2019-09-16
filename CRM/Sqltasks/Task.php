@@ -22,7 +22,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Task {
 
-  protected static $main_attributes = array(
+  protected static $main_attributes = [
     'name'            => 'String',
     'description'     => 'String',
     'category'        => 'String',
@@ -33,10 +33,12 @@ class CRM_Sqltasks_Task {
     'last_runtime'    => 'Integer',
     'parallel_exec'   => 'Integer',
     'run_permissions' => 'String',
+    // REMOVED - DO NOT USE
     'main_sql'        => 'String',
+    // REMOVED - DO NOT USE
     'post_sql'        => 'String',
     'input_required'  => 'Integer',
-    );
+  ];
 
   protected $task_id;
   protected $attributes;
@@ -65,12 +67,14 @@ class CRM_Sqltasks_Task {
       $this->attributes[$attribute_name] = CRM_Utils_Array::value($attribute_name, $data);
     }
 
-    // everything else goes into $this->config
+    // everything else is passed to setConfiguration()
+    $config = [];
     foreach ($data as $attribute_name => $value) {
       if (!isset(self::$main_attributes[$attribute_name])) {
-        $this->config[$attribute_name] = $value;
+        $config[$attribute_name] = $value;
       }
     }
+    $this->setConfiguration($config);
   }
 
   /**
@@ -109,8 +113,25 @@ class CRM_Sqltasks_Task {
 
   /**
    * set entire configuration
+   *
+   * @param $config
+   * @param bool $writeTrough
+   *
+   * @return mixed
    */
-  public function setConfiguration($config) {
+  public function setConfiguration($config, $writeTrough = FALSE) {
+    $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
+    if ($writeTrough && $this->task_id) {
+      CRM_Core_DAO::executeQuery(
+        "UPDATE `civicrm_sqltasks`
+         SET `config` = %1
+         WHERE id = %2",
+        [
+          1 => [json_encode($config), 'String'],
+          2 => [$this->task_id, 'Integer'],
+        ]
+      );
+    }
     return $this->config = $config;
   }
 
@@ -174,6 +195,15 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get all task attributes
+   *
+   * @return array
+   */
+  public function getAttributes() {
+    return $this->attributes;
+  }
+
+  /**
    * Store this task (create or update)
    */
   public function store() {
@@ -192,6 +222,10 @@ class CRM_Sqltasks_Task {
         $fields[$attribute_name] = "NULL";
       } else {
         $fields[$attribute_name] = "%{$index}";
+        if (is_bool($value)) {
+          // need to convert bools to int for DAO
+          $value = (int) $value;
+        }
         $params[$index] = array($value, $attribute_type);
         $index += 1;
       }
@@ -218,8 +252,6 @@ class CRM_Sqltasks_Task {
       $values_sql  = implode(',', $values);
       $sql = "INSERT INTO `civicrm_sqltasks` ({$columns_sql}) VALUES ({$values_sql});";
     }
-    // error_log("STORE QUERY: " . $sql);
-    // error_log("STORE PARAM: " . json_encode($params));
     CRM_Core_DAO::executeQuery($sql, $params);
     if (empty($this->task_id)) {
       $this->task_id = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
@@ -251,30 +283,18 @@ class CRM_Sqltasks_Task {
       CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
 
-    $random_value = CRM_Utils_String::createRandom(16, CRM_Utils_String::ALPHANUMERIC);
-
-    $main_sql = $this->getAttribute('main_sql');
-    $this->resolveSQLScriptToken($main_sql, $random_value);
-
-    if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
-      $input_val = CRM_Core_DAO::escapeString($params['input_val']);
-      $main_sql = "SET @input = '{$input_val}'; \r\n {$main_sql}";
-    };
-
-    // 1. run the main SQL
-    $this->executeSQLScript($main_sql, "Main SQL");
-
-    // 2. run the actions
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
+    $context = [
+      'actions' => $actions,
+      'random'  => CRM_Utils_String::createRandom(16, CRM_Utils_String::ALPHANUMERIC),
+    ];
+    if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
+      $context['input_val'] = $params['input_val'];
+    }
     foreach ($actions as $action) {
-      $action->setContext(['random' => $random_value]);
-
-      if ($action->isResultHandler()) {
-        continue; // result handlers will only be executed at the end
-      }
-
       $action_name = $action->getName();
       $timestamp = microtime(TRUE);
+      $action->setContext($context);
 
       // check action configuration
       try {
@@ -296,26 +316,12 @@ class CRM_Sqltasks_Task {
       }
     }
 
-    $post_sql = $this->getAttribute('post_sql');
-    $this->resolveSQLScriptToken($post_sql, $random_value);
-
-    // 3. run the post SQL
-    $this->executeSQLScript($post_sql, "Post SQL");
-
-    // 4. update/close the task
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
     if ($this->error_count) {
       $this->status = 'error';
     } else {
       $this->status = 'success';
-    }
-
-    // 5. run result handlers
-    foreach ($actions as $action) {
-      if ($action->isResultHandler()) {
-        $action->executeResultHandler($actions);
-      }
     }
 
     return $this->log_messages;
@@ -368,6 +374,8 @@ class CRM_Sqltasks_Task {
 
   /**
    * Get a list of all tasks
+   *
+   * @return CRM_Sqltasks_Task[]
    */
   public static function getAllTasks() {
     return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
@@ -389,6 +397,8 @@ class CRM_Sqltasks_Task {
 
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
+   *
+   * @return CRM_Sqltasks_Task[]
    */
   public static function getTasks($sql_query) {
     $tasks = array();
@@ -640,14 +650,14 @@ class CRM_Sqltasks_Task {
    * get the option for scheduling (simple version)
    */
   public static function getSchedulingOptions() {
-    $frequencies = array(
+    $frequencies = [
       'always'  => E::ts('always'),
       'hourly'  => E::ts('every hour'),
       'daily'   => E::ts('every day (after midnight)'),
       'weekly'  => E::ts('every week'),
       'monthly' => E::ts('every month'),
       'yearly'  => E::ts('annually'),
-      );
+    ];
 
     // get scheduler information
     $config = CRM_Sqltasks_Config::singleton();
@@ -706,13 +716,4 @@ class CRM_Sqltasks_Task {
     return end(self::$files);
   }
 
-  /**
-   * Replace all tokens in the string with data from the value
-   *
-   * @param $string
-   * @param $value
-   */
-  protected function resolveSQLScriptToken(&$string, $value) {
-    $string = str_replace('{random}', $value, $string);
-  }
 }

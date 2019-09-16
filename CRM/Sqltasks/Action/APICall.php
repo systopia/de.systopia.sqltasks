@@ -39,6 +39,15 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 300;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {

@@ -9,19 +9,33 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
 
   public function testCreateActivity() {
     $data = [
-      'main_sql'                    => "DROP TABLE IF EXISTS tmp_test_action_createactivity;
-                                        CREATE TABLE tmp_test_action_createactivity AS " . self::TEST_CONTACT_SQL,
-      'post_sql'                    => 'DROP TABLE IF EXISTS tmp_test_action_createactivity',
-      'activity_enabled'            => '1',
-      'activity_contact_table'      => 'tmp_test_action_createactivity',
-      'activity_activity_type_id'   => '3',
-      'activity_status_id'          => '2',
-      'activity_subject'            => 'testCreateActivity',
-      'activity_details'            => '',
-      'activity_activity_date_time' => '',
-      'activity_campaign_id'        => '0',
-      'activity_source_contact_id'  => '1',
-      'activity_assigned_to'        => '',
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_createactivity;
+                        CREATE TABLE tmp_test_action_createactivity AS " . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'               => 'CRM_Sqltasks_Action_CreateActivity',
+          'enabled'            => TRUE,
+          'contact_table'      => 'tmp_test_action_createactivity',
+          'activity_type_id'   => '3',
+          'status_id'          => '2',
+          'subject'            => 'testCreateActivity',
+          'details'            => '',
+          'activity_date_time' => '',
+          'campaign_id'        => '0',
+          'source_contact_id'  => '1',
+          'assigned_to'        => '',
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_createactivity',
+        ],
+      ],
     ];
     $this->createAndExecuteTask($data);
 

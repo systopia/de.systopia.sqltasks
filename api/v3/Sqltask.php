@@ -23,8 +23,8 @@ function civicrm_api3_sqltask_execute($params) {
     'input_val' => $params['input_val'],
   ];
   // If task_id given run only this one task
-  if (!empty($params['task_id'])) {
-    $task = CRM_Sqltasks_Task::getTask($params['task_id']);
+  if (!empty($params['id'])) {
+    $task = CRM_Sqltasks_Task::getTask($params['id']);
     if ($task->allowedToRun()) {
       $timestamp = microtime(TRUE);
       $result = $task->execute($exec_params);
@@ -52,9 +52,10 @@ function civicrm_api3_sqltask_execute($params) {
  * SQL Task Execution
  */
 function _civicrm_api3_sqltask_execute_spec(&$params) {
-  $params['task_id'] = array(
-    'name'         => 'task_id',
+  $params['id'] = array(
+    'name'         => 'id',
     'api.required' => 0,
+    'api.aliases'  => ['task_id'],
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',
@@ -155,4 +156,178 @@ function civicrm_api3_sqltask_sort($params) {
   catch (Exception $e) {
     return civicrm_api3_create_error($e->getMessage());
   }
+}
+
+/**
+ * Create or update a task
+ *
+ * @param $params
+ *
+ * @return array
+ * @throws \Exception
+ */
+function civicrm_api3_sqltask_create(&$params) {
+  if (!is_array($params['config'])) {
+    return civicrm_api3_create_error('Parameter "config" must be an array');
+  }
+
+  $taskParamNames = [
+    'name', 'description', 'category', 'scheduled', 'parallel_exec',
+    'input_required'
+  ];
+  $taskParams = [];
+  foreach ($taskParamNames as $name) {
+    if (array_key_exists($name, $params)) {
+      $taskParams[$name] = $params[$name];
+    }
+  }
+
+  if (empty($params['id'])) {
+    $newParams = $taskParams;
+    if (array_key_exists('config', $params)) {
+      $newParams += $params['config'];
+    }
+    $task = new CRM_Sqltasks_Task($params['id'], $newParams);
+    $task->store();
+  } else {
+    $task = CRM_Sqltasks_Task::getTask($params['id']);
+    foreach ($taskParams as $name => $value) {
+      $task->setAttribute($name, $value, TRUE);
+    }
+    if (array_key_exists('config', $params)) {
+      $task->setConfiguration($params['config'], TRUE);
+    }
+  }
+  $result = $task->getAttributes();
+  $result['config'] = $task->getConfiguration();
+  $result['id'] = $task->getID();
+  return civicrm_api3_create_success($result);
+}
+
+function _civicrm_api3_sqltask_create_spec(&$params) {
+  $params['id'] = [
+    'name'         => 'id',
+    'api.required' => 0,
+    'api.aliases'  => ['task_id'],
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Task ID',
+    'description'  => 'Unique task ID',
+  ];
+
+  $params['name'] = [
+    'name'         => 'name',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Name',
+  ];
+
+  $params['description'] = [
+    'name'         => 'description',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Description',
+  ];
+
+  $params['category'] = [
+    'name'         => 'category',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Category',
+  ];
+
+  $params['weight'] = [
+    'name'         => 'weight',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Weight',
+    'description'  => 'Determines the order in which tasks are executed (lower is executed earlier)'
+  ];
+
+  $params['scheduled'] = [
+    'name'         => 'scheduled',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Schedule',
+    'description'  => 'Frequency at which the task should be executed by cron',
+    'options'      => [
+      'always'  => 'always',
+      'hourly'  => 'hourly',
+      'daily'   => 'daily',
+      'weekly'  => 'weekly',
+      'monthly' => 'monthly',
+      'yearly'  => 'yearly',
+    ],
+  ];
+
+  $params['parallel_exec'] = [
+    'name'         => 'parallel_exec',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Allow parallel execution?',
+    'description'  => 'Whether to allow multiple instances of this task to run at the same time',
+  ];
+
+  $params['input_required'] = [
+    'name'         => 'input_required',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Require user input?',
+    'description'  => 'Whether this task requires user input prior to execution',
+  ];
+
+  $params['enabled'] = [
+    'name'         => 'enabled',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Enable task?',
+    'description'  => 'Whether to enable task execution by cron according to schedule',
+  ];
+
+  $params['config'] = [
+    'name'         => 'config',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_TEXT,
+    'title'        => 'Configuration',
+    'description'  => 'Task configuration, including actions, as an array',
+  ];
+}
+
+/**
+ * Get task
+ *
+ * @param $params
+ *
+ * @return array
+ */
+function civicrm_api3_sqltask_get(&$params) {
+  $task = CRM_Sqltasks_Task::getTask($params['id']);
+  $result = $task->getAttributes();
+  $result['config'] = $task->getConfiguration();
+  $result['id'] = $task->getID();
+  return civicrm_api3_create_success($result);
+}
+
+function _civicrm_api3_sqltask_get_spec(&$params) {
+  $params['id'] = [
+    'name' => 'id',
+    'api.required' => 1,
+    'api.aliases' => ['task_id'],
+    'type' => CRM_Utils_Type::T_INT,
+    'title' => 'Task ID',
+    'description' => 'Unique task ID',
+  ];
+}
+
+/**
+ * Get all supported task actions
+ *
+ * @param $params
+ *
+ * @return array
+ * @throws \ReflectionException
+ */
+function civicrm_api3_sqltask_gettaskactions(&$params) {
+  $actions = CRM_Sqltasks_Action::getAllActions();
+
+  return civicrm_api3_create_success($actions);
 }

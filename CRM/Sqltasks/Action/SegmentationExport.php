@@ -38,6 +38,15 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 700;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {
@@ -446,4 +455,9 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       }
     }
   }
+
+  public static function isSupported() {
+    return CRM_Sqltasks_Utils::isSegmentationInstalled();
+  }
+
 }

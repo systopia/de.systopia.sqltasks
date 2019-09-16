@@ -36,6 +36,15 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 800;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {
@@ -95,7 +104,11 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
         continue;
       }
       // all good: execute!
-      $task->execute();
+      $logs = $task->execute();
+      // log results from child task
+      foreach ($logs as $log) {
+        $this->log($log);
+      }
       $this->log("Executed task '" . $task->getAttribute('name') . "' [" . $task->getID() . ']');
     }
   }

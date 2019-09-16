@@ -37,6 +37,15 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
   }
 
   /**
+   * Get default template order
+   *
+   * @return int
+   */
+  public function getDefaultOrder() {
+    return 200;
+  }
+
+  /**
    * Build the configuration UI
    */
   public function buildForm(&$form) {
@@ -58,7 +67,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'select',
       $this->getID() . '_activity_type_id',
       E::ts('Activity Type'),
-      $this->getOptions('activity_type')
+      $this->getOptions('activity_type'),
+      FALSE,
+      ['class' => 'crm-select2 huge']
     );
 
     $form->add(
