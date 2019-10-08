@@ -756,7 +756,7 @@ class CRM_Sqltasks_Task {
     } else {
       $data['short_desc'] = $data['description'];
     }
-    
+
     return $data;
   }
 
