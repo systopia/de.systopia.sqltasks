@@ -1,0 +1,45 @@
+<div class="crm-accordion-wrapper crm-sqltask-group relativePosition collapsed"><label class="input-checkbox"><input
+            ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.model['enabled']" type="checkbox"
+            id="group_enabled">&nbsp;Synchronise Group</label>
+    <div class="crm-accordion-header accordion-header-custom active"><a ng-click="removeItemFromArray(ctrl.index)"
+            class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}</a></div>
+    <div class="crm-accordion-body" style="background-color: #fff">
+        <div class="sql-tasks">
+            <div class="crm-section">
+                <div class="label"><label for="group_contact_table">Contact Table&nbsp;<span class="crm-marker"
+                            ng-if="ctrl.model['enabled']"
+                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span>
+                        (<code>contact_id</code>)</label>
+                </div>
+                <div class="content"><input ng-required="ctrl.model['enabled']"
+                        ng-model="ctrl.model['group_contact_table']"
+                        style="font-family: monospace, monospace !important" name="group_contact_table" type="text"
+                        id="group_contact_table" class="crm-form-text"></div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="crm-section">
+                <div class="label"><label for="group_group_id">Synchronise Group&nbsp;<span class="crm-marker"
+                            ng-if="ctrl.model['enabled']"
+                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
+                </div>
+                <div class="content">
+                    <select ng-model="ctrl.model['group_group_id']" ng-required="ctrl.model['enabled']"
+                        name="group_group_id" id="group_group_id" title="Synchronise Group">
+                        <option value="">- none -</option>
+                        <option value="1">Administrators [1]</option>
+                    </select>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="crm-section">
+                <div class="label"><label for="group_use_api">Use API (slow)</label></div>
+                <div class="content"><input ng-model="ctrl.model['group_use_api']" id="group_use_api"
+                        name="group_use_api" type="checkbox" value="1" class="crm-form-checkbox"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+</div>

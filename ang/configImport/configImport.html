@@ -1,0 +1,27 @@
+<div id="help">
+    {{ts('This allows you to import configurations')}} (<code>{{ts('.sqltask')}}</code> {{ts('files) that you
+    have previously exported. It will not update metadata like name, last run, enabled, or execution order.')}}
+</div>
+
+<br />
+<div class="crm-section">
+    <div class="label"><label for="config_file">Configuration file to be imported:</label></div>
+    <div class="content"><input name="config_file" type="file" on-read-file="showContent($fileContent)" id="config_file" class="crm-form-file"></div>
+    <div class="clear"></div>
+</div>
+<br />
+
+<div id="help">
+    <strong>{{ts('Caution!')}}</strong> {{ts('Please review the task configuration after import,
+    especially if imported from another environment.')}}
+    {{ts('The configuration file only contains the IDs of certain entities (e.g. actvity
+    types, templates, campaigns, etc.), and those can vary from system to system.')}}
+</div>
+
+<div class="crm-submit-buttons">
+    <span class="crm-button crm-button-type-submit crm-button_qf_ConfigImport_submit crm-i-button" ng-click="onImportPress()">
+        <i class="crm-i fa-check"></i>
+        <input class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_ConfigImport_submit"
+            value="Import" type="submit" id="_qf_ConfigImport_submit-bottom">
+    </span>
+</div>

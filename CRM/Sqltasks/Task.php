@@ -396,6 +396,20 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get a list of all SQL Task categories
+   */
+  public static function getTaskCategoryList() {
+    $categories = [];
+    $categoryDAO = CRM_Core_DAO::executeQuery("SELECT DISTINCT(category) AS category FROM `civicrm_sqltasks`;");
+
+    while ($categoryDAO->fetch()) {
+      $categories[] = $categoryDAO->category;
+    }
+
+    return $categories;
+  }
+
+  /**
    * Load a list of tasks based on the data yielded by the given SQL query
    *
    * @return CRM_Sqltasks_Task[]
@@ -714,6 +728,88 @@ class CRM_Sqltasks_Task {
    */
   public static function getLastFile() {
     return end(self::$files);
+  }
+
+  /**
+   * Returns prepared task
+   *
+   * @return array
+   */
+  public function getPreparedTask() {
+    $data = [
+      'id'             => $this->getID(),
+      'name'           => $this->getAttribute('name'),
+      'description'    => $this->getAttribute('description'),
+      'category'       => $this->getAttribute('category'),
+      'schedule_label' => $this->prepareSchedule($this->getAttribute('scheduled')),
+      'schedule'       => $this->getAttribute('scheduled'),
+      'last_executed'  => $this->prepareDate($this->getAttribute('last_execution')),
+      'last_runtime'   => $this->prepareRuntime($this->getAttribute('last_runtime')),
+      'parallel_exec'  => $this->getAttribute('parallel_exec'),
+      'input_required' => $this->getAttribute('input_required'),
+      'next_execution' => 'TODO',
+      'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
+      'config'         => $this->getConfiguration(),
+    ];
+    if (strlen($data['description']) > 64) {
+      $data['short_desc'] = substr($data['description'], 0, 64) . '...';
+    } else {
+      $data['short_desc'] = $data['description'];
+    }
+    
+    return $data;
+  }
+
+  /**
+   * Prepares a date
+   *
+   * @param $string
+   *
+   * @return false|string
+   */
+  protected function prepareDate($string) {
+    if (empty($string)) {
+      return E::ts('never');
+    } else {
+      return date('Y-m-d H:i:s', strtotime($string));
+    }
+  }
+
+  /**
+   * Prepares a scheduling option
+   *
+   * @param $string
+   *
+   * @return mixed|string
+   */
+  protected function prepareSchedule($string) {
+    $options = CRM_Sqltasks_Task::getSchedulingOptions();
+    if (isset($options[$string])) {
+      return $options[$string];
+    } else {
+      return E::ts('ERROR');
+    }
+  }
+
+  /**
+   * Prepares an integer microtime value
+   *
+   * @param $value
+   *
+   * @return mixed|string
+   */
+  protected function prepareRuntime($value) {
+    if (!$value) {
+      return E::ts('n/a');
+    } elseif ($value > (1000 * 60)) {
+      // render values > 1 minute as min:second
+      $minutes = $value / (1000 * 60);
+      $seconds = ($value % (1000 * 60)) / 1000;
+      return sprintf("%d:%02d min", $minutes, $seconds);
+    } else {
+      // render values < 1 minute as 0.000 seconds
+      return sprintf("%d.%03ds", ($value/1000), ($value%1000));
+    }
   }
 
 }

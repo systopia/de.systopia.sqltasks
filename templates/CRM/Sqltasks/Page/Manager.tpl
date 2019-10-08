@@ -101,7 +101,7 @@
       <td>{$task.name}</td>
       <td><div title="{$task.description|escape}">{$task.short_desc|escape}</div></td>
       <td>{if $task.enabled}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
-      <td>{$task.schedule}{if $task.parallel_exec}<br/><strong>{ts}(parallel){/ts}{/if}</td>
+      <td>{$task.schedule_label}{if $task.parallel_exec}<br/><strong>{ts}(parallel){/ts}{/if}</td>
       <td>{$task.last_executed}</td>
       <td>{$task.last_runtime}</td>
       <td>

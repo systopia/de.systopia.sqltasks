@@ -1,0 +1,149 @@
+<div id="help">
+    <div ng-switch on="tasks.length > 0">
+        <div ng-switch-when="true">
+            {{ts('This is the list of currently configured tasks.', {'domain' : 'de.systopia.sqltasks'})}}
+        </div>
+        <div ng-switch-default>
+            {{ts('It looks like you\'re new here. This is the control center for all you SQL based scheduled tasks, but there is no task configured yet.', {'domain' : 'de.systopia.sqltasks'})}}
+        </div>
+    </div>
+    <div>
+        {{ts('You might want to')}} <a href="javascript:;" ng-click="onConfigurePress(0)">{{ts('ADD A NEW
+            ONE')}}</a>. {{ts('Check out
+        our')}} <a href="https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md"
+            target="_blank">{{ts('REPOSITORY')}}</a> {{ts('for examples to get you
+        started.')}}</a>
+    </div>
+</div>
+<br />
+<div id="help">
+    <div ng-switch on="dispatcher_frequency">
+        <div ng-switch-when="Daily">
+            {{ts('The dispatcher is run')}}
+            <strong>{{ts('every day')}}</strong>
+            {{ts('after midnight. This is
+                            effectively the maximum frequency these taks are being executed with.')}}
+    </div>
+    <div ng-switch-when="Hourly">
+        {{ts('The dispatcher is run')}} <strong>{{ts('every hour')}}</strong> {{ts('on the hour. This is
+                    effectively
+                    the maximum frequency these taks are being executed with.')}}
+    </div>
+    <div ng-switch-when="Always">
+        {{ts('he dispatcher (and therefore all active tasks) will be triggered')}}
+        <strong>{{ts('with
+                        every cron-run')}}</strong>. {{ts('Ask your administrator how often that is, in order to know the effective
+                    maximum
+                    frequency these taks are being executed with.')}}
+    </div>
+    <div ng-switch-default>
+        {{ts('The dispatcher is currently')}} <strong>{{ts('disabled')}}</strong>, {{ts('none of the tasks
+                    will be
+                    executed automatically.')}}
+    </div>
+</div>
+</div>
+<br />
+
+<table class="display" id="option11">
+    <thead>
+        <tr>
+            <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('Category')}}
+            </th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('ID')}}</th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('Name')}}
+            </th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">
+                {{ts('Description')}}</th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('Enabled?')}}
+            </th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('Schedule')}}
+            </th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">
+                {{ts('Last Execution')}}</th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">
+                {{ts('Last Runtime')}}</th>
+            <th class="sorting_disabled" rowspan="1" colspan="1">
+                {{ts('Selection Order')}}</th>
+            <th class="sorting_disabled" rowspan="1" colspan="1"></th>
+            <th class="sorting_disabled" rowspan="1" colspan="1"></th>
+        </tr>
+    </thead>
+    <tbody ui-sortable="sortableOptions" id="sortable-tasks" class="ui-sortable" ng-model="tasks">
+        <tr ng-repeat="task in tasks" id="{{task.id}}"
+            ng-class="{disabled : !getNumberFromString(task.enabled), 'odd-row': $odd, 'even-row': $even}">
+            <td>{{task.category}}</div>
+            </td>
+            <td>[{{task.id}}]</td>
+            <td>{{task.name}}</td>
+            <td>
+                <div title="{{task.description}}">{{task.short_desc}}</div>
+            </td>
+            <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
+            <td>{{task.schedule_label}}<br /><span ng-if="task.parallel_exec"><strong>{{ts('(parallel)')}}</span></td>
+            <td>{{task.last_executed}}</td>
+            <td>{{task.last_runtime}}</td>
+            <td>
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'top')"><img
+                        src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top"
+                        alt="{{ts('Move to top')}}" class="order-icon"></a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'up')"><img
+                        src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}"
+                        alt="Move up one row" class="order-icon"></a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'down')"><img
+                        src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;"
+                        title="{{ts('Move down one row')}}" alt="Move down one row" class="order-icon"></a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'bottom')"><img
+                        src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}"
+                        alt="Move to bottom" class="order-icon"></a>
+            </td>
+            <td>
+                <span class="btn-slide crm-hover-button">
+                    {{ts('Actions', {'domain' : 'de.systopia.sqltasks'})}}
+                    <ul class="panel">
+                        <li>
+                            <a class="action-item crm-hover-button sqltasks-job-run" href="javascript:;"  title="{{ts('Confirm')}}" crm-confirm="{resizable: true, width: '40%', height: '40%', open: deleteDialogue}"
+                            on-yes="confirmDeleteTask(task.id)">{{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" ng-click="onConfigurePress(task.id)"
+                                class="action-item crm-hover-button small-popup"
+                                title="{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                        <li>
+                            <a ng-if="getNumberFromString(task.enabled)" ng-click="onToggleEnablePress(task.id, 0)"
+                                class="action-item crm-hover-button small-popup"
+                                title="{{ts('Disable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Disable', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                            <a ng-if="!getNumberFromString(task.enabled)" ng-click="onToggleEnablePress(task.id, 1)"
+                                class="action-item crm-hover-button small-popup"
+                                title="{{ts('Enable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Enable', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                        <li>
+                            <a ng-click="onDeletePress(task.id)" class="action-item crm-hover-button small-popup"
+                                title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                        <li>
+                            <a href="/civicrm/sqltasks/manage?export={{task.id}}"
+                                class="action-item crm-hover-button small-popup"
+                                title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Export Config', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" ng-click="onImportPress(task.id)"
+                                class="action-item crm-hover-button small-popup"
+                                title="{{ts('Import Configuration', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Import Config', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                        </li>
+                    </ul>
+                </span>
+            </td>
+            <td class="handle-drag" style="cursor: move;">
+                <div>&#8693;</div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<div id="help">
+    <strong>{{ts('Caution!')}}</strong> {{ts('Be aware that these tasks can execute arbitrary SQL statements, which')}}
+    <i>{{ts('can potentially destroy your database')}}</i>.
+    {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}
+</div>

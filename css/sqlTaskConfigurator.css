@@ -1,0 +1,34 @@
+#add-action-btn {
+  margin-left: 3%;
+}
+
+#select-add-action {
+  display: flex;
+  align-items: center;
+}
+
+.header-delete-btn {
+  color:#F5F6F1 !important; 
+  float: right;
+}
+
+.relativePosition {
+  position: relative;
+}
+
+.accordion-header-custom::before, .accordion-header-custom::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.input-checkbox {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  position: absolute;
+  left: 20px;
+  top: 5px;
+  color: white;
+  cursor: pointer;
+}

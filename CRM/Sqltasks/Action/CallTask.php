@@ -113,7 +113,6 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
     }
   }
 
-
   /**
    * Get a list of all SQL Tasks
    */
@@ -136,11 +135,13 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
    * Get a list of all SQL Task categories
    */
   protected function getTaskCategoryList() {
-    $category_options = array();
-    $category_query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(category) AS category FROM `civicrm_sqltasks`;");
-    while ($category_query->fetch()) {
-      $category_options[$category_query->category] = $category_query->category;
+    $categoryOptions = [];
+    $categories = CRM_Sqltasks_Task::getTaskCategoryList();
+
+    foreach ($categories as $category) {
+      $categoryOptions[$category] = $category;
     }
-    return $category_options;
+
+    return $categoryOptions;
   }
 }
