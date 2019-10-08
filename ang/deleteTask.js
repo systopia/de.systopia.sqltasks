@@ -38,11 +38,11 @@
               ts("Deleting task"),
               "success"
             );
-            $location.path("/sqltasks/manage");
           } else {
             CRM.alert(ts("Error deleting task"), ts("Deleting task"), "error");
           }
         });
+        $location.path("/sqltasks/manage");
       };
 
       $scope.onBackPress = function() {

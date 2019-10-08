@@ -27,11 +27,13 @@ function civicrm_api3_sqltask_create($params) {
     return civicrm_api3_create_error('Config must be array type.');
   }
 
-  $requiredConfigFields = ['scheduled_month', 'scheduled_weekday', 'scheduled_day', 'actions'];
-  $configNotExistFields = [];
-  foreach ($requiredConfigFields as $field) {
-    if (!isset($params['config'][$field])) {
-      $configNotExistFields[] = $field;
+  if (isset($params['config'])) {
+    $requiredConfigFields = ['scheduled_month', 'scheduled_weekday', 'scheduled_day', 'actions'];
+    $configNotExistFields = [];
+    foreach ($requiredConfigFields as $field) {
+      if (!isset($params['config'][$field])) {
+        $configNotExistFields[] = $field;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 <div class="crm-accordion-wrapper crm-sqltask-sql collapsed relativePosition">
-    <label class="input-checkbox"><input  ng-model="ctrl.model['enabled']" id='sql_enabled' type="checkbox">&nbsp;Run SQL
+    <label class="input-checkbox"><input ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.model['enabled']" id='sql_enabled' type="checkbox">&nbsp;Run SQL
         Script</label>
     <div class="crm-accordion-header accordion-header-custom active"><a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
@@ -7,11 +7,11 @@
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
             <div class="crm-section">
-                <div class="label"><label for="sql_script">SQL Script&nbsp;<span class="crm-marker" ng-if="ctrl.model['enabled']"
+                <div class="label"><label for="sql_script">SQL Script&nbsp;<span class="crm-marker" ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                         onclick='CRM.help("SQL Script", {"id" :"id-sql-script" ,"file":"CRM\/Sqltasks\/Action\/RunSQL"}); return false;'
                         href="javascript:;" title="Help" class="helpicon"></a></div>
-                <div class="content"><textarea rows="8" ng-required="ctrl.model['enabled']"
+                <div class="content"><textarea rows="8" ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
                         style="font-family: monospace !important; width: 95%; min-width: 240px" name="sql_script"
                         id="sql_script" class="crm-form-textarea" ng-model="ctrl.model['sql_script']"></textarea></div>
                 <div class="clear"></div>

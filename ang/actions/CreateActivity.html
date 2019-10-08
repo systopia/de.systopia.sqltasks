@@ -1,5 +1,5 @@
 <div class="crm-accordion-wrapper crm-sqltask-activity collapsed relativePosition"><label class="input-checkbox"><input
-            ng-model="ctrl.model['enabled']"  type="checkbox"
+            ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox"
             id="activity_enabled">&nbsp;Create Activity</label>
     <div class="crm-accordion-header active accordion-header-custom"><a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
@@ -8,13 +8,13 @@
         <div class="sql-tasks">
             <div class="crm-section">
                 <div class="label"><label for="activity_contact_table">Contact Table&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span>
                         (<code>contact_id</code>)</label>
                 </div>
                 <div class="content"><input style="font-family: monospace, monospace !important"
                         name="activity_contact_table" type="text" id="activity_contact_table" class="crm-form-text"
-                        ng-model="ctrl.model['activity_contact_table']" ng-required="ctrl.model['enabled']">
+                        ng-model="ctrl.model['activity_contact_table']" ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
                 </div>
                 <div class="clear"></div>
             </div>
@@ -39,12 +39,12 @@
 
             <div class="crm-section">
                 <div class="label"><label for="activity_activity_type_id">Activity Type&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
                 <div class="content">
                     <select ng-model="ctrl.model['activity_activity_type_id']" name="activity_activity_type_id"
-                        ng-required="ctrl.model['enabled']" id="activity_activity_type_id" title="Activity Type">
+                        ng-required="getBooleanFromNumber(ctrl.model['enabled'])" id="activity_activity_type_id" title="Activity Type">
                         <option value="">- none -</option>
                         <option value="1">Meeting</option>
                         <option value="2">Phone Call</option>
@@ -107,11 +107,11 @@
 
             <div class="crm-section">
                 <div class="label"><label for="activity_status_id">Status&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
                 <div class="content"><select ng-model="ctrl.model['activity_status_id']" name="activity_status_id"
-                        id="activity_status_id" class="crm-form-select" ng-required="ctrl.model['enabled']">
+                        id="activity_status_id" class="crm-form-select" ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
                         <option value="">- none -</option>
                         <option value="1">Scheduled</option>
                         <option value="2">Completed</option>
@@ -127,13 +127,13 @@
 
             <div class="crm-section">
                 <div class="label"><label for="activity_subject">Subject&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                         onclick='CRM.help("Tokens", {"id":"id-activity-tokens","file":"CRM\/Sqltasks\/Action\/CreateActivity"}); return false;'
                         href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
                 <div class="content"><input class="huge crm-form-text" ng-model="ctrl.model['activity_subject']"
                         style="font-family: monospace, monospace !important" name="activity_subject" type="text"
-                        id="activity_subject" ng-required="ctrl.model['enabled']"></div>
+                        id="activity_subject" ng-required="getBooleanFromNumber(ctrl.model['enabled'])"></div>
                 <div class="clear"></div>
             </div>
 
@@ -172,7 +172,7 @@
 
             <div class="crm-section">
                 <div class="label"><label for="activity_source_contact_id">Source Contact&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
                 <div class="content">
@@ -180,7 +180,7 @@
                         data-select-params="[]" data-api-params="" data-api-entity="contact"
                         name="activity_source_contact_id" type="text" value="" id="activity_source_contact_id"
                         tabindex="-1" title="Source Contact" ng-model="ctrl.model['activity_source_contact_id']"
-                        ng-required="ctrl.model['enabled']">
+                        ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
                 </div>
                 <div class="clear"></div>
             </div>

@@ -1,5 +1,5 @@
 <div class="crm-accordion-wrapper crm-sqltask-api relativePosition collapsed">
-        <label class="input-checkbox"><input ng-model="ctrl.model['enabled']" type="checkbox" id="api_enabled">&nbsp;API
+        <label class="input-checkbox"><input ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="api_enabled">&nbsp;API
                 Call</label>
         <div class="crm-accordion-header active accordion-header-custom">
                 <a ng-click="removeItemFromArray(ctrl.index)" class="header-delete-btn" href="javascript:;"><i
@@ -9,12 +9,12 @@
                 <div class="sql-tasks">
                         <div class="crm-section">
                                 <div class="label"><label for="api_table">Data Table&nbsp;<span class="crm-marker"
-                                                        ng-if="ctrl.model['enabled']"
+                                                        ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                                                         title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                                                 onclick='CRM.help("Data Source", {"id":"id-api-data","file":"CRM\/Sqltasks\/Action\/APICall"}); return false;'
                                                 href="javascript:;" title="Help" class="helpicon">&nbsp;</a>
                                 </div>
-                                <div class="content"><input ng-required="ctrl.model['enabled']"
+                                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
                                                 style="font-family: monospace, monospace !important" name="api_table"
                                                 type="text" id="api_table" class="crm-form-text"
                                                 ng-model="ctrl.model['api_table']"></div>
@@ -23,12 +23,12 @@
 
                         <div class="crm-section">
                                 <div class="label"><label for="api_entity">Entity&nbsp;<span class="crm-marker"
-                                                        ng-if="ctrl.model['enabled']"
+                                                        ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                                                         title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                                                 href="javascript:;"
                                                 onclick='CRM.help("Entity", {"id":"id-api-entity","file":"CRM\/Sqltasks\/Action\/APICall"}); return false;'
                                                 title="Help" class="helpicon">&nbsp;</a></div>
-                                <div class="content"><input ng-required="ctrl.model['enabled']"
+                                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
                                                 style="font-family: monospace, monospace !important" name="api_entity"
                                                 type="text" id="api_entity" class="crm-form-text"
                                                 ng-model="ctrl.model[' api_entity']">
@@ -38,12 +38,12 @@
 
                         <div class="crm-section">
                                 <div class="label"><label for="api_action">Action&nbsp;<span class="crm-marker"
-                                                        ng-if="ctrl.model['enabled']"
+                                                        ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                                                         title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                                                 href="javascript:;"
                                                 onclick='CRM.help("Action", {"id":"id-api-action","file":"CRM\/Sqltasks\/Action\/APICall"}); return false;'
                                                 title="Help" class="helpicon">&nbsp;</a></div>
-                                <div class="content"><input ng-required="ctrl.model['enabled']"
+                                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
                                                 style="font-family: monospace, monospace !important" name="api_action"
                                                 type="text" id="api_action" class="crm-form-text"
                                                 ng-model="ctrl.model['api_action']"></div>

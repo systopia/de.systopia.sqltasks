@@ -1,5 +1,5 @@
 <div class="crm-accordion-wrapper crm-sqltask-success relativePosition collapsed"><label class="input-checkbox"><input
-                         ng-model="ctrl.model['enabled']" type="checkbox"
+                        ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox"
                         id="success_enabled">&nbsp;Success
                 Handler</label>
         <div class="crm-accordion-header accordion-header-custom active"><a ng-click="removeItemFromArray(ctrl.index)"
@@ -34,24 +34,27 @@
 
                         <div class="crm-section">
                                 <div class="label"><label for="success_email">Email to&nbsp;<span class="crm-marker"
-                                                        ng-if="ctrl.model['enabled']"
+                                                        ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                                                         title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                                                 onclick='CRM.help("Email", {"id":"id-handler-email","file":"CRM\/Sqltasks\/Action\/ResultHandler"}); return false;'
                                                 href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
                                 <div class="content"><input ng-model="ctrl.model['success_email']"
-                                                ng-required="ctrl.model['enabled']" class="huge crm-form-text"
-                                                name="success_email" type="text" id="success_email"></div>
+                                                ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
+                                                class="huge crm-form-text" name="success_email" type="text"
+                                                id="success_email"></div>
                                 <div class="clear"></div>
                         </div>
 
                         <div class="crm-section">
                                 <div class="label"><label for="success_email_template">Email Template&nbsp;<span
-                                                        class="crm-marker" ng-if="ctrl.model['enabled']"
+                                                        class="crm-marker"
+                                                        ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                                                         title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                                 </div>
                                 <div class="content"><select ng-model="ctrl.model['success_email_template']"
-                                                ng-required="ctrl.model['enabled']" name="success_email_template"
-                                                id="success_email_template" class="crm-form-select">
+                                                ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
+                                                name="success_email_template" id="success_email_template"
+                                                class="crm-form-select">
                                                 <option value="1">Cases - Send Copy of an Activity</option>
                                                 <option value="2">Cases - Send Copy of an Activity</option>
                                                 <option value="3">Contributions - Duplicate Organization Alert</option>

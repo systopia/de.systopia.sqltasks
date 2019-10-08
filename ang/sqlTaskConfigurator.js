@@ -26,7 +26,7 @@
       $scope.ts = CRM.ts();
 
       $scope.taskOptions = {
-        schedule: ""
+        scheduled: ""
       };
       $scope.config = {
         actions: []
@@ -136,14 +136,6 @@
             var task = Object.assign({}, result.values);
             delete task["config"];
             $scope.config = result.values.config;
-            if (
-              result.values.run_permissions &&
-              result.values.run_permissions.length
-            ) {
-              $scope.taskOptions.run_permissions = result.values.run_permissions.join(
-                ","
-              );
-            }
             delete $scope.config.version;
             $scope.selectedAction = result.values.config.actions[0].type;
             $scope.taskOptions = task;
@@ -164,7 +156,7 @@
         $scope.schedulingOptions = result.values[0];
         var defaultOption = Object.keys(result.values[0])[0];
         if (defaultOption === "always" && !Number(taskId)) {
-          $scope.taskOptions.schedule = defaultOption;
+          $scope.taskOptions.scheduled = defaultOption;
           $scope.config = Object.assign($scope.config, {
             scheduled_month: 1,
             scheduled_weekday: 1,
@@ -180,14 +172,6 @@
           Object.assign(preparedData, { id: taskId });
         }
         Object.assign(preparedData, $scope.taskOptions);
-        if (
-          preparedData.run_permissions &&
-          preparedData.run_permissions.length
-        ) {
-          preparedData.run_permissions = preparedData.run_permissions.split(
-            ","
-          );
-        }
 
         preparedData.config = $scope.config;
         
@@ -209,10 +193,10 @@
             } else {
               message = "Task successfully created";
             }
-            $location.path("/sqltasks/manage");
           }
           CRM.alert(message, title, type);
         });
+        $location.path("/sqltasks/manage");
       };
 
       $scope.addAction = function(actionName) {
@@ -255,19 +239,22 @@
       };
 
       $scope.shouldShowTimeFieldsByName = function(fieldName) {
+        if (!$scope.taskOptions.scheduled) {
+          return false;
+        }
         switch (fieldName) {
           case "minute":
-            return $scope.taskOptions.schedule !== "always";
+            return $scope.taskOptions.scheduled !== "always";
           case "hour":
-            return !["always", "hourly"].includes($scope.taskOptions.schedule);
+            return !["always", "hourly"].includes($scope.taskOptions.scheduled);
           case "day":
             return !["always", "hourly", "daily"].includes(
-              $scope.taskOptions.schedule
+              $scope.taskOptions.scheduled
             );
           case "weekday":
-            return $scope.taskOptions.schedule === "weekly";
+            return $scope.taskOptions.scheduled === "weekly";
           case "month":
-            return $scope.taskOptions.schedule === "yearly";
+            return $scope.taskOptions.scheduled === "yearly";
           default:
             return false;
         }
@@ -280,6 +267,10 @@
 
   function format(item) {
     return item.text;
+  }
+
+  function getBooleanFromNumber(number) {
+    return !!Number(number);
   }
 
   angular.module(moduleName).directive("runSql", function() {
@@ -295,6 +286,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -312,6 +304,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -337,6 +330,7 @@
             .crmSelect2();
         });
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -362,6 +356,7 @@
             .crmSelect2();
         });
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -384,6 +379,7 @@
             .crmSelect2();
         });
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -406,6 +402,7 @@
             .crmSelect2();
         });
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -423,6 +420,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
         CRM.api3("Sqltask", "gettaskcategories").done(function(result) {
           var categoriesData = Object.keys(result.values[0]).map(key => {
             var category = result.values[0][key];
@@ -474,6 +472,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -491,6 +490,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });
@@ -508,6 +508,7 @@
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
       }
     };
   });

@@ -1,5 +1,5 @@
 <div class="crm-accordion-wrapper crm-sqltask-csv relativePosition collapsed"><label class="input-checkbox"><input
-            ng-model="ctrl.model['enabled']"   type="checkbox" id="csv_enabled">&nbsp;CSV
+            ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="csv_enabled">&nbsp;CSV
         Export</label>
     <div class="crm-accordion-header accordion-header-custom active"> <a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
@@ -7,10 +7,10 @@
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
             <div class="crm-section">
-                <div class="label"><label>Export Table&nbsp;<span class="crm-marker" ng-if="ctrl.model['enabled']"
+                <div class="label"><label>Export Table&nbsp;<span class="crm-marker" ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
-                <div class="content"><input ng-required="ctrl.model['enabled']"
+                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
                         style="font-family: monospace, monospace !important" name="csv_table" type="text" id="csv_table"
                         class="crm-form-text" ng-model="ctrl.model['api_parameters']"></div>
                 <div class="clear"></div>
@@ -18,12 +18,12 @@
 
             <div class="crm-section">
                 <div class="label"><label for="csv_encoding">File Encoding&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
                 <div class="content">
                     <select name="csv_encoding" id="csv_encoding" title="File Encoding"
-                        ng-required="ctrl.model['enabled']" ng-model="ctrl.model['csv_encoding']">
+                        ng-required="getBooleanFromNumber(ctrl.model['enabled'])" ng-model="ctrl.model['csv_encoding']">
                         <option value="">- none -</option>
                         <option value="pass">pass</option>
                         <option value="auto">auto</option>
@@ -119,11 +119,11 @@
 
             <div class="crm-section">
                 <div class="label"><label for="csv_delimiter">Delimiter&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
                 </div>
                 <div class="content"><select name="csv_delimiter" id="csv_delimiter" class="crm-form-select"
-                        ng-model="ctrl.model['csv_delimiter']" ng-required="ctrl.model['enabled']">
+                        ng-model="ctrl.model['csv_delimiter']" ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
                         <option value=";">Semicolon (;)</option>
                         <option value=",">Comma (,)</option>
                         <option value="|">Vertical bar (|)</option>
@@ -142,11 +142,11 @@
 
             <div class="crm-section">
                 <div class="label"><label for="csv_headers">Columns&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                         onclick='CRM.help("Columns", {"id":"id-csv-columns","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
                         href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><textarea ng-required="ctrl.model['enabled']" rows="8" cols="40"
+                <div class="content"><textarea ng-required="getBooleanFromNumber(ctrl.model['enabled'])" rows="8" cols="40"
                         style="font-family: monospace, monospace !important" name="csv_headers" id="csv_headers"
                         class="crm-form-textarea" ng-model="ctrl.model['csv_headers']"></textarea></div>
                 <div class="clear"></div>
@@ -169,11 +169,11 @@
 
             <div class="crm-section">
                 <div class="label"><label for="csv_filename">File Name&nbsp;<span class="crm-marker"
-                            ng-if="ctrl.model['enabled']"
+                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
                             title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
                         onclick='CRM.help("Filename", {"id":"id-csv-filename","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
                         href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-required="ctrl.model['enabled']" class="huge crm-form-text"
+                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])" class="huge crm-form-text"
                         style="font-family: monospace, monospace !important" name="csv_filename" type="text"
                         id="csv_filename" ng-model="ctrl.model['csv_filename']">
                 </div>

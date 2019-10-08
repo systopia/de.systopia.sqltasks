@@ -743,6 +743,8 @@ class CRM_Sqltasks_Task {
       'category'       => $this->getAttribute('category'),
       'schedule_label' => $this->prepareSchedule($this->getAttribute('scheduled')),
       'schedule'       => $this->getAttribute('scheduled'),
+      'scheduled'      => $this->getAttribute('scheduled'),
+      'run_permissions'=> $this->getAttribute('run_permissions'),
       'last_executed'  => $this->prepareDate($this->getAttribute('last_execution')),
       'last_runtime'   => $this->prepareRuntime($this->getAttribute('last_runtime')),
       'parallel_exec'  => $this->getAttribute('parallel_exec'),
@@ -756,7 +758,6 @@ class CRM_Sqltasks_Task {
     } else {
       $data['short_desc'] = $data['description'];
     }
-
     return $data;
   }
 
