@@ -1,302 +1,68 @@
 <div class="crm-accordion-wrapper crm-sqltask-csv relativePosition collapsed"><label class="input-checkbox"><input
-            ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="csv_enabled">&nbsp;CSV
-        Export</label>
+            ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="csv_enabled">&nbsp;{{ts('CSV
+        Export')}}</label>
     <div class="crm-accordion-header accordion-header-custom active"> <a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}</a></div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
-            <div class="crm-section">
-                <div class="label"><label>Export Table&nbsp;<span class="crm-marker" ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
-                </div>
-                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
-                        style="font-family: monospace, monospace !important" name="csv_table" type="text" id="csv_table"
-                        class="crm-form-text" ng-model="ctrl.model['api_parameters']"></div>
-                <div class="clear"></div>
-            </div>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_encoding">File Encoding&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
-                </div>
-                <div class="content">
-                    <select name="csv_encoding" id="csv_encoding" title="File Encoding"
-                        ng-required="getBooleanFromNumber(ctrl.model['enabled'])" ng-model="ctrl.model['csv_encoding']">
-                        <option value="">- none -</option>
-                        <option value="pass">pass</option>
-                        <option value="auto">auto</option>
-                        <option value="wchar">wchar</option>
-                        <option value="byte2be">byte2be</option>
-                        <option value="byte2le">byte2le</option>
-                        <option value="byte4be">byte4be</option>
-                        <option value="byte4le">byte4le</option>
-                        <option value="BASE64">BASE64</option>
-                        <option value="UUENCODE">UUENCODE</option>
-                        <option value="HTML-ENTITIES">HTML-ENTITIES</option>
-                        <option value="Quoted-Printable">Quoted-Printable</option>
-                        <option value="7bit">7bit</option>
-                        <option value="8bit">8bit</option>
-                        <option value="UCS-4">UCS-4</option>
-                        <option value="UCS-4BE">UCS-4BE</option>
-                        <option value="UCS-4LE">UCS-4LE</option>
-                        <option value="UCS-2">UCS-2</option>
-                        <option value="UCS-2BE">UCS-2BE</option>
-                        <option value="UCS-2LE">UCS-2LE</option>
-                        <option value="UTF-32">UTF-32</option>
-                        <option value="UTF-32BE">UTF-32BE</option>
-                        <option value="UTF-32LE">UTF-32LE</option>
-                        <option value="UTF-16">UTF-16</option>
-                        <option value="UTF-16BE">UTF-16BE</option>
-                        <option value="UTF-16LE">UTF-16LE</option>
-                        <option value="UTF-8">UTF-8</option>
-                        <option value="UTF-7">UTF-7</option>
-                        <option value="UTF7-IMAP">UTF7-IMAP</option>
-                        <option value="ASCII">ASCII</option>
-                        <option value="EUC-JP">EUC-JP</option>
-                        <option value="SJIS">SJIS</option>
-                        <option value="eucJP-win">eucJP-win</option>
-                        <option value="EUC-JP-2004">EUC-JP-2004</option>
-                        <option value="SJIS-win">SJIS-win</option>
-                        <option value="SJIS-Mobile#DOCOMO">SJIS-Mobile#DOCOMO</option>
-                        <option value="SJIS-Mobile#KDDI">SJIS-Mobile#KDDI</option>
-                        <option value="SJIS-Mobile#SOFTBANK">SJIS-Mobile#SOFTBANK</option>
-                        <option value="SJIS-mac">SJIS-mac</option>
-                        <option value="SJIS-2004">SJIS-2004</option>
-                        <option value="UTF-8-Mobile#DOCOMO">UTF-8-Mobile#DOCOMO</option>
-                        <option value="UTF-8-Mobile#KDDI-A">UTF-8-Mobile#KDDI-A</option>
-                        <option value="UTF-8-Mobile#KDDI-B">UTF-8-Mobile#KDDI-B</option>
-                        <option value="UTF-8-Mobile#SOFTBANK">UTF-8-Mobile#SOFTBANK</option>
-                        <option value="CP932">CP932</option>
-                        <option value="CP51932">CP51932</option>
-                        <option value="JIS">JIS</option>
-                        <option value="ISO-2022-JP">ISO-2022-JP</option>
-                        <option value="ISO-2022-JP-MS">ISO-2022-JP-MS</option>
-                        <option value="GB18030">GB18030</option>
-                        <option value="Windows-1252">Windows-1252</option>
-                        <option value="Windows-1254">Windows-1254</option>
-                        <option value="ISO-8859-1">ISO-8859-1</option>
-                        <option value="ISO-8859-2">ISO-8859-2</option>
-                        <option value="ISO-8859-3">ISO-8859-3</option>
-                        <option value="ISO-8859-4">ISO-8859-4</option>
-                        <option value="ISO-8859-5">ISO-8859-5</option>
-                        <option value="ISO-8859-6">ISO-8859-6</option>
-                        <option value="ISO-8859-7">ISO-8859-7</option>
-                        <option value="ISO-8859-8">ISO-8859-8</option>
-                        <option value="ISO-8859-9">ISO-8859-9</option>
-                        <option value="ISO-8859-10">ISO-8859-10</option>
-                        <option value="ISO-8859-13">ISO-8859-13</option>
-                        <option value="ISO-8859-14">ISO-8859-14</option>
-                        <option value="ISO-8859-15">ISO-8859-15</option>
-                        <option value="ISO-8859-16">ISO-8859-16</option>
-                        <option value="EUC-CN">EUC-CN</option>
-                        <option value="CP936">CP936</option>
-                        <option value="HZ">HZ</option>
-                        <option value="EUC-TW">EUC-TW</option>
-                        <option value="BIG-5">BIG-5</option>
-                        <option value="CP950">CP950</option>
-                        <option value="EUC-KR">EUC-KR</option>
-                        <option value="UHC">UHC</option>
-                        <option value="ISO-2022-KR">ISO-2022-KR</option>
-                        <option value="Windows-1251">Windows-1251</option>
-                        <option value="CP866">CP866</option>
-                        <option value="KOI8-R">KOI8-R</option>
-                        <option value="KOI8-U">KOI8-U</option>
-                        <option value="ArmSCII-8">ArmSCII-8</option>
-                        <option value="CP850">CP850</option>
-                        <option value="JIS-ms">JIS-ms</option>
-                        <option value="ISO-2022-JP-2004">ISO-2022-JP-2004</option>
-                        <option value="ISO-2022-JP-MOBILE#KDDI">ISO-2022-JP-MOBILE#KDDI</option>
-                        <option value="CP50220">CP50220</option>
-                        <option value="CP50220raw">CP50220raw</option>
-                        <option value="CP50221">CP50221</option>
-                        <option value="CP50222">CP50222</option>
-                    </select>
-                </div>
-                <div class="clear"></div>
-            </div>
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['api_parameters']"
+                fieldlabel="ts('Export Table')" fieldid="'api_parameters'"></text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_delimiter">Delimiter&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
-                </div>
-                <div class="content"><select name="csv_delimiter" id="csv_delimiter" class="crm-form-select"
-                        ng-model="ctrl.model['csv_delimiter']" ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
-                        <option value=";">Semicolon (;)</option>
-                        <option value=",">Comma (,)</option>
-                        <option value="|">Vertical bar (|)</option>
-                        <option value="">other</option>
-                    </select></div>
-                <div class="clear"></div>
-            </div>
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                model="ctrl.model['csv_encoding']" fieldlabel="ts('File Encoding')"
+                fieldid="'csv_encoding_' + ctrl.index" optionsArray="encodingData">
+            </ordinary-select2>
 
-            <div class="crm-section" id="section-delimiter-other" style="display: none;">
-                <div class="label"><label for="csv_delimiter_other">Other delimiter</label></div>
-                <div class="content"><input style="width: 50px; font-family: monospace, monospace !important"
-                        name="csv_delimiter_other" type="text" id="csv_delimiter_other" class="crm-form-text"
-                        ng-model="ctrl.model['csv_delimiter_other']"></div>
-                <div class="clear"></div>
-            </div>
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                model="ctrl.model['csv_delimiter']" fieldlabel="ts('Delimiter')" fieldid="csv_delimiter"
+                optionsArray="delimiterData">
+            </ordinary-select>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_headers">Columns&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
-                        onclick='CRM.help("Columns", {"id":"id-csv-columns","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><textarea ng-required="getBooleanFromNumber(ctrl.model['enabled'])" rows="8" cols="40"
-                        style="font-family: monospace, monospace !important" name="csv_headers" id="csv_headers"
-                        class="crm-form-textarea" ng-model="ctrl.model['csv_headers']"></textarea></div>
-                <div class="clear"></div>
-            </div>
+            <text-input ng-if="ctrl.model['csv_delimiter'] === 'other'" model="ctrl.model['csv_delimiter_other']"
+                fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other'"></text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_discard_empty">Discard empty file?</label></div>
-                <div class="content"><input id="csv_discard_empty" name="csv_discard_empty" type="checkbox" value="1"
-                        class="crm-form-checkbox" ng-model="ctrl.model['csv_discard_empty']"></div>
-                <div class="clear"></div>
-            </div>
+            <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['csv_headers']"
+                fieldlabel="ts('Columns')"
+                helpaction='onInfoPress("Columns", "id-csv-columns", "CRM\/Sqltasks\/Action\/CSVExport")'
+                showHelpIcon=true fieldid="'csv_headers'" rowsnumber='8' columnsnumber='40'></text-area>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_zip">ZIP File</label></div>
-                <div class="content"><input id="csv_zip" name="csv_zip" type="checkbox" value="1"
-                        class="crm-form-checkbox" ng-model="ctrl.model['csv_zip']">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <check-box model="ctrl.model['csv_discard_empty']" fieldlabel="ts('Discard empty file?')"
+                fieldid="'csv_discard_empty'"></check-box>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_filename">File Name&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
-                        onclick='CRM.help("Filename", {"id":"id-csv-filename","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])" class="huge crm-form-text"
-                        style="font-family: monospace, monospace !important" name="csv_filename" type="text"
-                        id="csv_filename" ng-model="ctrl.model['csv_filename']">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <check-box model="ctrl.model['csv_zip']" fieldlabel="ts('ZIP File')" fieldid="'csv_zip'">
+            </check-box>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_path">File Path</label>&nbsp;<a
-                        onclick='CRM.help("Path", {"id":"id-csv-path","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input class="huge crm-form-text"
-                        style="font-family: monospace, monospace !important" name="csv_path" type="text" id="csv_path"
-                        ng-model="ctrl.model['csv_path']">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['csv_filename']"
+                fieldlabel="ts('File Name')" fieldid="'csv_filename'"
+                helpaction='onInfoPress("Filename", "id-csv-filename", "CRM\/Sqltasks\/Action\/CSVExport")'
+                showHelpIcon=true>
+            </text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_email">Email to</label>&nbsp;<a
-                        onclick='CRM.help("Email", {"id":"id-csv-email","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input class="huge crm-form-text" name="csv_email" type="text" id="csv_email"
-                        ng-model="ctrl.model['csv_email']">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <text-input model="ctrl.model['csv_path']" fieldlabel="ts('File Path')" fieldid="'csv_path'"
+                helpaction='onInfoPress("Path", "id-csv-path", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
+            </text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_downloadURL">Send URL to download file instead of
-                        attachment</label>&nbsp;<a
-                        onclick='CRM.help("DownloadURL", {"id":"id-csv-downloadURL","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input id="csv_downloadURL" ng-model="ctrl.model['csv_downloadURL']"
-                        name="csv_downloadURL" type="checkbox" value="1" class="crm-form-checkbox"></div>
-                <div class="clear"></div>
-            </div>
+            <text-input model="ctrl.model['csv_email']" fieldlabel="ts('Email to')" fieldid="'csv_email'"
+                helpaction='onInfoPress("Email", "id-csv-email", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
+            </text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_email_template">Email Template</label></div>
-                <div class="content">
-                    <select name="csv_email_template" id="csv_email_template"
-                        ng-model="ctrl.model['csv_email_template']" title="Email Template">
-                        <option value="1">Cases - Send Copy of an Activity</option>
-                        <option value="2">Cases - Send Copy of an Activity</option>
-                        <option value="3">Contributions - Duplicate Organization Alert</option>
-                        <option value="4">Contributions - Duplicate Organization Alert</option>
-                        <option value="5">Contributions - Receipt (off-line)</option>
-                        <option value="6">Contributions - Receipt (off-line)</option>
-                        <option value="7">Contributions - Receipt (on-line)</option>
-                        <option value="8">Contributions - Receipt (on-line)</option>
-                        <option value="9">Contributions - Invoice</option>
-                        <option value="10">Contributions - Invoice</option>
-                        <option value="11">Contributions - Recurring Start and End Notification</option>
-                        <option value="12">Contributions - Recurring Start and End Notification</option>
-                        <option value="13">Contributions - Recurring Cancellation Notification</option>
-                        <option value="14">Contributions - Recurring Cancellation Notification</option>
-                        <option value="15">Contributions - Recurring Billing Updates</option>
-                        <option value="16">Contributions - Recurring Billing Updates</option>
-                        <option value="17">Contributions - Recurring Updates</option>
-                        <option value="18">Contributions - Recurring Updates</option>
-                        <option value="19">Personal Campaign Pages - Admin Notification</option>
-                        <option value="20">Personal Campaign Pages - Admin Notification</option>
-                        <option value="21">Personal Campaign Pages - Supporter Status Change Notification</option>
-                        <option value="22">Personal Campaign Pages - Supporter Status Change Notification</option>
-                        <option value="23">Personal Campaign Pages - Supporter Welcome</option>
-                        <option value="24">Personal Campaign Pages - Supporter Welcome</option>
-                        <option value="25">Personal Campaign Pages - Owner Notification</option>
-                        <option value="26">Personal Campaign Pages - Owner Notification</option>
-                        <option value="27">Additional Payment Receipt or Refund Notification</option>
-                        <option value="28">Additional Payment Receipt or Refund Notification</option>
-                        <option value="29">Events - Registration Confirmation and Receipt (off-line)</option>
-                        <option value="30">Events - Registration Confirmation and Receipt (off-line)</option>
-                        <option value="31">Events - Registration Confirmation and Receipt (on-line)</option>
-                        <option value="32">Events - Registration Confirmation and Receipt (on-line)</option>
-                        <option value="33">Events - Receipt only</option>
-                        <option value="34">Events - Receipt only</option>
-                        <option value="35">Events - Registration Cancellation Notice</option>
-                        <option value="36">Events - Registration Cancellation Notice</option>
-                        <option value="37">Events - Registration Confirmation Invite</option>
-                        <option value="38">Events - Registration Confirmation Invite</option>
-                        <option value="39">Events - Pending Registration Expiration Notice</option>
-                        <option value="40">Events - Pending Registration Expiration Notice</option>
-                        <option value="41">Events - Registration Transferred Notice</option>
-                        <option value="42">Events - Registration Transferred Notice</option>
-                        <option value="43">Tell-a-Friend Email</option>
-                        <option value="44">Tell-a-Friend Email</option>
-                        <option value="45">Memberships - Signup and Renewal Receipts (off-line)</option>
-                        <option value="46">Memberships - Signup and Renewal Receipts (off-line)</option>
-                        <option value="47">Memberships - Receipt (on-line)</option>
-                        <option value="48">Memberships - Receipt (on-line)</option>
-                        <option value="49">Memberships - Auto-renew Cancellation Notification</option>
-                        <option value="50">Memberships - Auto-renew Cancellation Notification</option>
-                        <option value="51">Memberships - Auto-renew Billing Updates</option>
-                        <option value="52">Memberships - Auto-renew Billing Updates</option>
-                        <option value="53">Test-drive - Receipt Header</option>
-                        <option value="54">Test-drive - Receipt Header</option>
-                        <option value="55">Pledges - Acknowledgement</option>
-                        <option value="56">Pledges - Acknowledgement</option>
-                        <option value="57">Pledges - Payment Reminder</option>
-                        <option value="58">Pledges - Payment Reminder</option>
-                        <option value="59">Profiles - Admin Notification</option>
-                        <option value="60">Profiles - Admin Notification</option>
-                        <option value="61">Petition - signature added</option>
-                        <option value="62">Petition - signature added</option>
-                        <option value="63">Petition - need verification</option>
-                        <option value="64">Petition - need verification</option>
-                        <option value="65">Sample CiviMail Newsletter Template</option>
-                        <option value="66">Sample Responsive Design Newsletter - Single Column Template</option>
-                        <option value="67">Sample Responsive Design Newsletter - Two Column Template</option>
-                    </select>
-                </div>
-                <div class="clear"></div>
-            </div>
+            <check-box model="ctrl.model['csv_downloadURL']"
+                fieldlabel="ts('Send URL to download file instead of attachment')" fieldid="'csv_downloadURL'"
+                helpaction='onInfoPress("DownloadURL", "id-csv-downloadURL", "CRM\/Sqltasks\/Action\/CSVExport")'
+                showHelpIcon=true>
+            </check-box>
 
-            <div class="crm-section">
-                <div class="label"><label for="csv_upload">Upload to</label>&nbsp;<a
-                        onclick='CRM.help("SFTP Upload", {"id":"id-csv-sftp","file":"CRM\/Sqltasks\/Action\/CSVExport"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-model="ctrl.model['csv_upload']" class="huge crm-form-text"
-                        style="font-family: monospace, monospace !important" name="csv_upload" type="text"
-                        id="csv_upload"></div>
-                <div class="clear"></div>
-            </div>
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                model="ctrl.model['csv_email_template']" fieldlabel="ts('Email Template')"
+                fieldid="'csv_email_template'" optionsArray="templateOptions">
+            </ordinary-select>
+
+            <text-input model="ctrl.model['csv_upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload'"
+                helpaction='onInfoPress("SFTP Upload", "id-csv-sftp", "CRM\/Sqltasks\/Action\/CSVExport")'
+                showHelpIcon=true>
+            </text-input>
 
         </div>
     </div>

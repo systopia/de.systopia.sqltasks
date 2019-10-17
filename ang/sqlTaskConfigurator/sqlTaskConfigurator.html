@@ -41,8 +41,8 @@
                     <span class="crm-marker" title="This field is required.">*</span>
 
                 </label></div>
-            <div class="content"><select name="scheduled" id="scheduled" ng-change="onSchedulingOptionChange()" class="crm-form-select required"
-                    ng-model="taskOptions.scheduled">
+            <div class="content"><select name="scheduled" id="scheduled" ng-change="onSchedulingOptionChange()"
+                    class="crm-form-select required" ng-model="taskOptions.scheduled">
                     <option ng-repeat="(attribute, value) in schedulingOptions" value="{{attribute}}">{{value}}</option>
                 </select></div>
             <div class="clear"></div>
@@ -243,30 +243,25 @@
             <div class="label"><label for="parallel_exec">{{ts('Allow parallel execution')}}</label>&nbsp;<a
                     onclick='CRM.help("Parallel Execution", {"id":"id-configure-parallel","file":"CRM\/Sqltasks\/Form\/Configure"}); return false;'
                     href="javascript:;" title="{{ts('Help')}}" class="helpicon">&nbsp;</a></div>
-            <div class="content"><input ng-true-value="'1'" ng-false-value="'0'" ng-model="taskOptions.parallel_exec" id="parallel_exec" name="parallel_exec"
-                    type="checkbox" class="crm-form-checkbox"></div>
+            <div class="content"><input ng-true-value="'1'" ng-false-value="'0'" ng-model="taskOptions.parallel_exec"
+                    id="parallel_exec" name="parallel_exec" type="checkbox" class="crm-form-checkbox"></div>
             <div class="clear"></div>
         </div>
 
-        <div class="crm-section">
-            <div class="label"><label for="run_permissions">Run Permissions</label>&nbsp;<a
-                    onclick='CRM.help("Run Permissions", {"id":"id-run-permissions","file":"CRM\/Sqltasks\/Form\/Configure"}); return false;'
-                    href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-            <div class="content">
-                <input id="run_permissions" class="huge config-param" ng-model="taskOptions.run_permissions">
-            </div>
-            <div class="clear"></div>
-        </div>
+        <multiple-select2 model="taskOptions.run_permissions" fieldlabel="ts('Run Permissions')"
+            fieldid="'run_permissions' + ctrl.index" optionsArray="permissionsData"
+            helpaction='onInfoPress("Run Permissions", "id-run-permissions", "CRM\/Sqltasks\/Form\/Configure")'
+            showHelpIcon=true>
+        </multiple-select2>
 
         <div class="crm-section">
             <div class="label"><label for="input_required">{{ts('Require user input')}}</label> <a
                     onclick='CRM.help("User Input", {"id":"id-user-input","file":"CRM\/Sqltasks\/Form\/Configure"}); return false;'
                     href="javascript:;" title="{{ts('Help')}}" class="helpicon">&nbsp;</a></div>
-            <div class="content"><input ng-true-value="'1'" ng-false-value="'0'" ng-model="taskOptions.input_required" id="input_required" name="input_required"
-                    type="checkbox" class="crm-form-checkbox"></div>
+            <div class="content"><input ng-true-value="'1'" ng-false-value="'0'" ng-model="taskOptions.input_required"
+                    id="input_required" name="input_required" type="checkbox" class="crm-form-checkbox"></div>
             <div class="clear"></div>
         </div>
-
         <h3>{{ts('Actions')}}</h3>
         <div class="spacer"></div>
 

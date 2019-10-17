@@ -1,31 +1,27 @@
 <div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed"><label class="input-checkbox"><input
-             ng-model="ctrl.model['enabled']" type="checkbox"
-            id="task_enabled">&nbsp;Run SQL
-        Task(s)</label>
+            ng-model="ctrl.model['enabled']" type="checkbox" ng-true-value="'1'" ng-false-value="'0'" id="task_enabled">&nbsp;{{ts('Run SQL
+        Task(s)')}}</label>
     <div class="crm-accordion-header accordion-header-custom active"><a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}</a></div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
-            <div class="crm-section">
-                <div class="label"><label for="task_tasks">SQL Tasks</label>&nbsp;<a
-                        onclick='CRM.help("Tasks", {"id":"id-task-tasks","file":"CRM\/Sqltasks\/Action\/CallTask"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content">
-                    <input id="task_tasks" class="huge config-param" ng-model="ctrl.model['task_tasks']">
-                </div>
-                <div class="clear"></div>
-            </div>
 
-            <div class="crm-section">
-                <div class="label"><label for="task_categories">SQL Task Categories</label>&nbsp;<a
-                        onclick='CRM.help("Categories", {"id":"id-task-categories","file":"CRM\/Sqltasks\/Action\/CallTask"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content">
-                    <input id="task_categories" class="huge config-param" ng-model="ctrl.model['task_categories']">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <multiple-select2
+                isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['task_categories']) && !isDataExists(ctrl.model['task_categories'])"
+                model="ctrl.model['task_tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + ctrl.index"
+                optionsArray="tasksData"
+                helpaction='onInfoPress("Tasks", "id-task-tasks", "CRM\/Sqltasks\/Action\/CallTask")' showHelpIcon=true>
+            </multiple-select2>
+
+            <multiple-select2
+                isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['task_categories']) && !isDataExists(ctrl.model['task_categories'])"
+                model="ctrl.model['task_categories']" fieldlabel="ts('SQL Task Categories')"
+                fieldid="'task_categories_' + ctrl.index" optionsArray="categoriesData"
+                helpaction='onInfoPress("Categories", "id-task-categories", "CRM\/Sqltasks\/Action\/CallTask")'
+                showHelpIcon=true>
+            </multiple-select2>
+
         </div>
     </div>
 </div>

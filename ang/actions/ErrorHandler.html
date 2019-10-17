@@ -1,135 +1,42 @@
 <div class="crm-accordion-wrapper crm-sqltask-error relativePosition collapsed"><label class="input-checkbox"><input
             ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox"
-            id="error_enabled">&nbsp;Error
-        Handler</label>
+            id="error_enabled">&nbsp;{{ts('Error
+        Handler')}}</label>
     <div class="crm-accordion-header accordion-header-custom active"><a ng-click="removeItemFromArray(ctrl.index)"
             class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}</a></div>
     <div class="crm-accordion-body" style="background-color: #fff">
         <div class="sql-tasks">
             <div id="help" style="margin-left: 5px; margin-right: 5px;">
-                This action will be triggered if the execution of the task has reported errors, or has failed
-                completely. </div>
+                {{ts('This action will be triggered if the execution of the task has reported errors, or has failed
+                completely.')}}</div>
 
-            <div class="crm-section">
-                <div class="label"><label for="error_table">User Error Table</label>&nbsp;<a
-                        onclick='CRM.help("Error Table", {"id":"id-handler-error-table","file":"CRM\/Sqltasks\/Action\/ResultHandler"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-model="ctrl.model['error_table']"
-                        style="font-family: monospace, monospace !important" name="error_table" type="text"
-                        id="error_table" class="crm-form-text"></div>
-                <div class="clear"></div>
-            </div>
+            <text-input model="ctrl.model['error_table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'"
+                helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'
+                showHelpIcon=true>
+            </text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="error_drop_table">Drop Error Table</label>&nbsp;<a
-                        onclick='CRM.help("Drop Error Table", {"id":"id-handler-error-table-drop","file":"CRM\/Sqltasks\/Action\/ResultHandler"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-model="ctrl.model['error_drop_table']" id="error_drop_table"
-                        name="error_drop_table" type="checkbox" value="1" class="crm-form-checkbox"></div>
-                <div class="clear"></div>
-            </div>
+            <check-box model="ctrl.model['error_drop_table']" fieldlabel="ts('Drop Error Table')"
+                fieldid="'error_drop_table'"
+                helpaction='onInfoPress("Drop Error Table", "id-handler-error-table-drop", "CRM\/Sqltasks\/Action\/ResultHandler")'
+                showHelpIcon=true>
+            </check-box>
 
-            <div class="crm-section">
-                <div class="label"><label for="error_email">Email to&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
-                        onclick='CRM.help("Email", {"id":"id-handler-email","file":"CRM\/Sqltasks\/Action\/ResultHandler"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-required="getBooleanFromNumber(ctrl.model['enabled'])"
-                        ng-model="ctrl.model['error_email']" class="huge crm-form-text" name="error_email" type="text"
-                        id="error_email">
-                </div>
-                <div class="clear"></div>
-            </div>
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['error_email']"
+                fieldlabel="ts('Email to')" fieldid="'error_email'"
+                helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'
+                showHelpIcon=true>
+            </text-input>
 
-            <div class="crm-section">
-                <div class="label"><label for="error_email_template">Email Template&nbsp;<span class="crm-marker"
-                            ng-if="getBooleanFromNumber(ctrl.model['enabled'])"
-                            title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
-                </div>
-                <div class="content"><select ng-model="ctrl.model['error_email_template']" name="error_email_template"
-                        id="error_email_template" class="crm-form-select"
-                        ng-required="getBooleanFromNumber(ctrl.model['enabled'])">
-                        <option value="1">Cases - Send Copy of an Activity</option>
-                        <option value="2">Cases - Send Copy of an Activity</option>
-                        <option value="3">Contributions - Duplicate Organization Alert</option>
-                        <option value="4">Contributions - Duplicate Organization Alert</option>
-                        <option value="5">Contributions - Receipt (off-line)</option>
-                        <option value="6">Contributions - Receipt (off-line)</option>
-                        <option value="7">Contributions - Receipt (on-line)</option>
-                        <option value="8">Contributions - Receipt (on-line)</option>
-                        <option value="9">Contributions - Invoice</option>
-                        <option value="10">Contributions - Invoice</option>
-                        <option value="11">Contributions - Recurring Start and End Notification</option>
-                        <option value="12">Contributions - Recurring Start and End Notification</option>
-                        <option value="13">Contributions - Recurring Cancellation Notification</option>
-                        <option value="14">Contributions - Recurring Cancellation Notification</option>
-                        <option value="15">Contributions - Recurring Billing Updates</option>
-                        <option value="16">Contributions - Recurring Billing Updates</option>
-                        <option value="17">Contributions - Recurring Updates</option>
-                        <option value="18">Contributions - Recurring Updates</option>
-                        <option value="19">Personal Campaign Pages - Admin Notification</option>
-                        <option value="20">Personal Campaign Pages - Admin Notification</option>
-                        <option value="21">Personal Campaign Pages - Supporter Status Change Notification</option>
-                        <option value="22">Personal Campaign Pages - Supporter Status Change Notification</option>
-                        <option value="23">Personal Campaign Pages - Supporter Welcome</option>
-                        <option value="24">Personal Campaign Pages - Supporter Welcome</option>
-                        <option value="25">Personal Campaign Pages - Owner Notification</option>
-                        <option value="26">Personal Campaign Pages - Owner Notification</option>
-                        <option value="27">Additional Payment Receipt or Refund Notification</option>
-                        <option value="28">Additional Payment Receipt or Refund Notification</option>
-                        <option value="29">Events - Registration Confirmation and Receipt (off-line)</option>
-                        <option value="30">Events - Registration Confirmation and Receipt (off-line)</option>
-                        <option value="31">Events - Registration Confirmation and Receipt (on-line)</option>
-                        <option value="32">Events - Registration Confirmation and Receipt (on-line)</option>
-                        <option value="33">Events - Receipt only</option>
-                        <option value="34">Events - Receipt only</option>
-                        <option value="35">Events - Registration Cancellation Notice</option>
-                        <option value="36">Events - Registration Cancellation Notice</option>
-                        <option value="37">Events - Registration Confirmation Invite</option>
-                        <option value="38">Events - Registration Confirmation Invite</option>
-                        <option value="39">Events - Pending Registration Expiration Notice</option>
-                        <option value="40">Events - Pending Registration Expiration Notice</option>
-                        <option value="41">Events - Registration Transferred Notice</option>
-                        <option value="42">Events - Registration Transferred Notice</option>
-                        <option value="43">Tell-a-Friend Email</option>
-                        <option value="44">Tell-a-Friend Email</option>
-                        <option value="45">Memberships - Signup and Renewal Receipts (off-line)</option>
-                        <option value="46">Memberships - Signup and Renewal Receipts (off-line)</option>
-                        <option value="47">Memberships - Receipt (on-line)</option>
-                        <option value="48">Memberships - Receipt (on-line)</option>
-                        <option value="49">Memberships - Auto-renew Cancellation Notification</option>
-                        <option value="50">Memberships - Auto-renew Cancellation Notification</option>
-                        <option value="51">Memberships - Auto-renew Billing Updates</option>
-                        <option value="52">Memberships - Auto-renew Billing Updates</option>
-                        <option value="53">Test-drive - Receipt Header</option>
-                        <option value="54">Test-drive - Receipt Header</option>
-                        <option value="55">Pledges - Acknowledgement</option>
-                        <option value="56">Pledges - Acknowledgement</option>
-                        <option value="57">Pledges - Payment Reminder</option>
-                        <option value="58">Pledges - Payment Reminder</option>
-                        <option value="59">Profiles - Admin Notification</option>
-                        <option value="60">Profiles - Admin Notification</option>
-                        <option value="61">Petition - signature added</option>
-                        <option value="62">Petition - signature added</option>
-                        <option value="63">Petition - need verification</option>
-                        <option value="64">Petition - need verification</option>
-                        <option value="65">Sample CiviMail Newsletter Template</option>
-                        <option value="66">Sample Responsive Design Newsletter - Single Column Template</option>
-                        <option value="67">Sample Responsive Design Newsletter - Two Column Template</option>
-                    </select></div>
-                <div class="clear"></div>
-            </div>
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                model="ctrl.model['error_email_template']" fieldlabel="ts('Email Template')"
+                fieldid="'error_email_template'" optionsArray="templateOptions">
+            </ordinary-select>
 
-            <div class="crm-section">
-                <div class="label"><label for="error_attach_log">Attach Log</label>&nbsp;<a
-                        onclick='CRM.help("Attach Log", {"id":"id-handler-attach-log","file":"CRM\/Sqltasks\/Action\/ResultHandler"}); return false;'
-                        href="javascript:;" title="Help" class="helpicon">&nbsp;</a></div>
-                <div class="content"><input ng-model="ctrl.model['error_attach_log']" id="error_attach_log"
-                        name="error_attach_log" type="checkbox" value="1" class="crm-form-checkbox"></div>
-                <div class="clear"></div>
-            </div>
+            <check-box model="ctrl.model['error_attach_log']" fieldlabel="ts('Attach Log')" fieldid="'error_attach_log'"
+                helpaction='onInfoPress("Attach Log", "id-handler-attach-log", "CRM\/Sqltasks\/Action\/ResultHandler")'
+                showHelpIcon=true>
+            </check-box>
         </div>
     </div>
 </div>

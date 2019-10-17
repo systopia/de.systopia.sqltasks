@@ -1,0 +1,13 @@
+<div class="crm-section">
+    <div class="label"><label for="activity_contact_table">{{fieldLabel}}&nbsp;<span class="crm-marker"
+                ng-if="isRequired"
+                title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span>
+        </label>&nbsp;<a ng-click="helpAction()" ng-if="showHelpIcon" href="javascript:;" title="Help"
+            class="helpicon"></a>
+    </div>
+    <div class="content"><input style="font-family: monospace, monospace !important" name="{{fieldId}}" type="text"
+            id="{{fieldId}}" class="crm-form-text" ng-model="componentModel" ng-required="isRequired"><span
+            ng-if="fieldId==='activity_duration'" class="description">&nbsp;{{ts('minutes')}}</span>
+    </div>
+    <div class="clear"></div>
+</div>

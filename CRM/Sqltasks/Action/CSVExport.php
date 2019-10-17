@@ -62,7 +62,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_encoding',
       E::ts('File Encoding'),
-      $this->getEncodingOptions(),
+      static::getEncodingOptions(),
       FALSE,
       ['class' => 'crm-select2 huge']
     );
@@ -71,7 +71,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_delimiter',
       E::ts('Delimiter'),
-      $this->getDelimiterOptions()
+      static::getDelimiterOptions()
     );
 
     $form->add(
@@ -148,7 +148,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   /**
    * get all possible delimiters
    */
-  protected function getDelimiterOptions() {
+  public static function getDelimiterOptions() {
     return array(
       ';' => E::ts('Semicolon (;)'),
       ',' => E::ts('Comma (,)'),
@@ -173,9 +173,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get all possible encodings
+   * Get all possible encodings
    */
-  protected function getEncodingOptions() {
+  public static function getEncodingOptions() {
     $encodings = array();
     $mb_list = mb_list_encodings();
     foreach ($mb_list as $mb_encoding) {

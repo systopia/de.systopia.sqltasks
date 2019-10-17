@@ -14,6 +14,7 @@ return [
   'partials' => [
     0 => 'ang/sqlTaskConfigurator',
     1 => 'ang/actions',
+    2 => 'ang/inputs',
   ],
   'settings' => [],
 ];

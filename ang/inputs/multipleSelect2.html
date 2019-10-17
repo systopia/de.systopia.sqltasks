@@ -1,0 +1,11 @@
+<div class="crm-section">
+    <div class="label"><label for="{{fieldId}}">{{fieldLabel}}&nbsp;<span class="crm-marker" ng-if="isRequired"
+                title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>&nbsp;<a
+            ng-click="helpAction()" ng-if="showHelpIcon" href="javascript:;" title="Help" class="helpicon"></a>
+    </div>
+    <div class="content"><select ng-model="componentModel" multiple name="{{fieldId}}" id="{{fieldId}}"
+            class="crm-form-select pixelInput" ng-required="isRequired">
+            <option ng-repeat="option in optionsArray" value="{{option.value}}">{{option.name}}</option>
+        </select></div>
+    <div class="clear"></div>
+</div>

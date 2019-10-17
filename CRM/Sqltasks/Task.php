@@ -753,11 +753,13 @@ class CRM_Sqltasks_Task {
       'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
       'config'         => $this->getConfiguration(),
     ];
+
     if (strlen($data['description']) > 64) {
       $data['short_desc'] = substr($data['description'], 0, 64) . '...';
     } else {
       $data['short_desc'] = $data['description'];
     }
+
     return $data;
   }
 

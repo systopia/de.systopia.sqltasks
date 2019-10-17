@@ -7,7 +7,7 @@
  *
  * @return array
  */
-function civicrm_api3_sqltask_getexecutiontasks($params) {
+function civicrm_api3_sqltaskfield_getexecutiontasks($params) {
   $taskOptions = [];
   $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
 

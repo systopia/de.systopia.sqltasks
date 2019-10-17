@@ -64,7 +64,7 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       'select',
       $this->getID() . '_entity_table',
       E::ts('Choose Entity'),
-      $this->getEligibleEntities()
+      static::getEligibleEntities()
     );
 
     $form->add(
@@ -185,9 +185,9 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
   }
 
   /**
-   * get a list of eligible groups
+   * Get a list of eligible groups
    */
-  protected function getEligibleEntities() {
+  public static function getEligibleEntities() {
     return array(
       'civicrm_contact'      => E::ts("Contacts"),
       'civicrm_activity'     => E::ts("Activities"),

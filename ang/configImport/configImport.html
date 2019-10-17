@@ -5,8 +5,9 @@
 
 <br />
 <div class="crm-section">
-    <div class="label"><label for="config_file">Configuration file to be imported:</label></div>
-    <div class="content"><input name="config_file" type="file" on-read-file="showContent($fileContent)" id="config_file" class="crm-form-file"></div>
+    <div class="label"><label for="config_file">{{ts('Configuration file to be imported:')}}</label></div>
+    <div class="content"><input name="config_file" type="file" on-read-file="showContent($fileContent)" id="config_file"
+            class="crm-form-file"></div>
     <div class="clear"></div>
 </div>
 <br />
@@ -19,7 +20,8 @@
 </div>
 
 <div class="crm-submit-buttons">
-    <span class="crm-button crm-button-type-submit crm-button_qf_ConfigImport_submit crm-i-button" ng-click="onImportPress()">
+    <span class="crm-button crm-button-type-submit crm-button_qf_ConfigImport_submit crm-i-button"
+        ng-click="onImportPress()">
         <i class="crm-i fa-check"></i>
         <input class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_ConfigImport_submit"
             value="Import" type="submit" id="_qf_ConfigImport_submit-bottom">

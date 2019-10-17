@@ -8,7 +8,7 @@
 }
 
 .header-delete-btn {
-  color:#F5F6F1 !important; 
+  color: #f5f6f1 !important;
   float: right;
 }
 
@@ -16,8 +16,9 @@
   position: relative;
 }
 
-.accordion-header-custom::before, .accordion-header-custom::after {
-  content: '';
+.accordion-header-custom::before,
+.accordion-header-custom::after {
+  content: "";
   display: block;
   clear: both;
 }
@@ -31,4 +32,12 @@
   top: 5px;
   color: white;
   cursor: pointer;
+}
+
+select.pixelInput {
+  display: block !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  border: none !important;
 }
