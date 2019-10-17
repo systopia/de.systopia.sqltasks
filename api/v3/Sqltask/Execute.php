@@ -68,4 +68,3 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
     'description'  => 'Log task output to a file instead of returning it in the API results?',
   );
 }
-
