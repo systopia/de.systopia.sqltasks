@@ -14,6 +14,13 @@ function civicrm_api3_sqltask_create($params) {
     'input_required','enabled', 'weight'
   ];
 
+  $booleanParams = ['parallel_exec', 'input_required', 'enabled'];
+  foreach ($booleanParams as $booleanParam) {
+    if (array_key_exists($booleanParam, $params) && !($params[$booleanParam] == '1' || $params[$booleanParam] == '0')) {
+      return civicrm_api3_create_error('Field \'' . $booleanParam . '\' must be \'0\' or \'1\'.');
+    }
+  }
+
   $taskParams = [];
 
   foreach ($taskParamNames as $name) {

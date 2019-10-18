@@ -49,6 +49,14 @@
         });
       }
 
+      CRM.$(function($) {
+        setTimeout(function() {
+          $('body').on('click', ".input-checkbox", function(e) {
+            e.stopPropagation();
+          });
+        }, 1500);
+      });
+
       CRM.api3("Sqltaskfield", "getrunpermissions").done(function(result) {
         permissionsData = [];
         Object.keys(result.values[0]).map(key => {
@@ -157,6 +165,9 @@
         var defaultOption = Object.keys(result.values[0])[0];
         if (defaultOption === "always" && !Number(taskId)) {
           $scope.taskOptions.scheduled = defaultOption;
+          $scope.taskOptions.enabled = 0;
+          $scope.taskOptions.parallel_exec = 0;
+          $scope.taskOptions.input_required = 0;
           $scope.config = Object.assign($scope.config, {
             scheduled_month: 1,
             scheduled_weekday: 1,

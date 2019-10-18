@@ -8,8 +8,8 @@
 }
 
 .header-delete-btn {
-  color: #f5f6f1 !important;
-  float: right;
+  cursor: pointer !important;
+  margin-left: auto;
 }
 
 .relativePosition {
@@ -23,21 +23,25 @@
   clear: both;
 }
 
-.input-checkbox {
-  display: flex !important;
-  flex-wrap: wrap;
-  align-items: center;
-  position: absolute;
-  left: 20px;
-  top: 5px;
-  color: white;
-  cursor: pointer;
-}
-
 select.pixelInput {
   display: block !important;
   width: 1px !important;
   height: 1px !important;
   padding: 0 !important;
   border: none !important;
+}
+
+.input-checkbox {
+  cursor: pointer !important;
+}
+
+.action-label {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.action-label:after {
+  display: none;
 }

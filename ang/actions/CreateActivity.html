@@ -1,9 +1,9 @@
-<div class="crm-accordion-wrapper crm-sqltask-activity collapsed relativePosition"><label class="input-checkbox"><input
-            ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox"
-            id="activity_enabled">&nbsp;{{ts('Create Activity')}}</label>
-    <div class="crm-accordion-header active accordion-header-custom"><a ng-click="removeItemFromArray(ctrl.index)"
-            class="header-delete-btn" href="javascript:;"><i class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</a></div>
+<div class="crm-accordion-wrapper crm-sqltask-activity collapsed relativePosition">
+    <div class="crm-accordion-header active accordion-header-custom action-label"><label class="input-checkbox"><input
+            ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
+            type="checkbox" id="activity_enabled">&nbsp;{{ts('Create Activity')}}</label><label class="header-delete-btn"
+            ng-click="removeItemFromArray(ctrl.index)"><i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}</label></div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
