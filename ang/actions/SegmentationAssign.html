@@ -1,0 +1,59 @@
+<div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
+    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
+                ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
+                ng-false-value="'0'" id="task_enabled">&nbsp;{{ts('Assign to Campaign (Segmentation)')}}</label><label
+            class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
+                class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-body" style="display: none; background-color: #fff">
+        <div class="sql-tasks">
+
+            <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')"
+                fieldid="'segmentation_assign_table'" showHelpIcon=true
+                helpaction='onInfoPress("Data table", "id-segmentation-assign-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </text-input>
+
+            <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
+                fieldid="'segmentation_assign_campaign_id' + ctrl.index" optionsArray="campaignData">
+            </ordinary-select2>
+
+
+            <check-box model="ctrl.model['clear']" fieldlabel="ts('Clear before assignment')"
+                fieldid="'segmentation_assign_clear'" showHelpIcon=true
+                helpaction='onInfoPress("Clear Campaign", "id-segmentation-assign-clear", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </check-box>
+
+            <text-input model="ctrl.model['segment_name']" fieldlabel="ts('Segment')"
+                fieldid="'segmentation_assign_segment_name'" showHelpIcon=true
+                disabled="getBooleanFromNumber(ctrl.model['segment_from_table'])"
+                helpaction='onInfoPress("Segment", "id-segmentation-assign-segment-name", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </text-input>
+
+            <check-box model="ctrl.model['segment_from_table']"
+                fieldlabel="ts('Segment from data table')" fieldid="'segmentation_assign_segment_from_table'"
+                showHelpIcon=true
+                helpaction='onInfoPress("Clear Campaign", "id-segmentation-assign-clear", "CRM\/Sqltasks\/Action\/SegmentationAssign")'
+                checkbox-change="checkboxChange(value)">
+            </check-box>
+
+            <ordinary-select2 model="ctrl.model['start']" fieldlabel="ts('Change Campaign Status')"
+                fieldid="'segmentation_assign_start' + ctrl.index" showHelpIcon=true optionsArray="statusesData" select-change="statusChanged(value)"
+                helpaction='onInfoPress("Change Campaign Status", "id-segmentation-assign-start", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </ordinary-select2>
+
+            <text-area ng-if="ctrl.model['start'] == 'restart'"
+                model="ctrl.model['segment_order']" fieldlabel="ts('Segment Order')"
+                fieldid="'segmentation_assign_segment_order'" rowsnumber='4'
+                helpaction='onInfoPress("Segment Order", "id-segmentation-assign-segment-order", "CRM\/Sqltasks\/Action\/CreateActivity")'
+                showHelpIcon=true></text-area>
+
+            <text-input ng-if="ctrl.model['start'] == 'restart_t'"
+                model="ctrl.model['segment_order_table']" fieldlabel="ts('Segment Order Table')"
+                fieldid="'segmentation_assign_segment_order_table'" showHelpIcon=true
+                helpaction='onInfoPress("Segment Order Table?", "id-segmentation-assign-segment-order-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </text-input>
+
+
+        </div>
+    </div>
+</div>

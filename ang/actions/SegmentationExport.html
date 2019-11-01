@@ -1,0 +1,73 @@
+<div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
+    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
+                ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
+                ng-false-value="'0'" id="task_enabled">&nbsp;{{ts('Segmentation Export')}}</label><label
+            class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
+                class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-body" style="display: none; background-color: #fff">
+        <div class="sql-tasks">
+
+            <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
+                fieldid="'segmentation_export_campaign_id' + ctrl.index" optionsArray="campaignData"
+                select-change="statusChanged(value, fieldId)"
+                field-id-to-change="'segmentation_export_segments' + ctrl.index">
+            </ordinary-select2>
+
+
+            <multiple-select2 model="ctrl.model['segments']" fieldlabel="ts('Segments')"
+                fieldid="'segmentation_export_segments' + ctrl.index" optionsArray="segmentationData">
+            </multiple-select2>
+
+            <text-input model="ctrl.model['date_from']" fieldlabel="ts('Assignment not before')"
+                fieldid="'segmentation_export_date_from'" showHelpIcon=true
+                disabled="getBooleanFromNumber(ctrl.model['date_current'])"
+                helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-datetime", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </text-input>
+
+            <text-input model="ctrl.model['date_to']" fieldlabel="ts('Assignment not after')"
+                fieldid="'segmentation_export_date_to'" showHelpIcon=true
+                disabled="getBooleanFromNumber(ctrl.model['date_current'])"
+                helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-datetime", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </text-input>
+
+            <check-box model="ctrl.model['date_current']" fieldlabel="ts('Current Assignment')"
+                fieldid="'segmentation_export_date_current'" showHelpIcon=true checkbox-change="checkboxChange(value)"
+                helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-current", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </check-box>
+
+            <check-box model="ctrl.model['discard_empty']" fieldlabel="ts('Discard empty file?')"
+                fieldid="'segmentation_export_discard_empty'">
+            </check-box>
+
+            <multiple-select2 model="ctrl.model['exporter']" fieldlabel="ts('Exporter')"
+                fieldid="'segmentation_export_exporter' + ctrl.index" optionsArray="exporterData">
+            </multiple-select2>
+
+            <text-input model="ctrl.model['filename']" fieldlabel="ts('File Name')"
+                fieldid="'segmentation_export_filename'" showHelpIcon=true
+                helpaction='onInfoPress("Filename", "id-segmentation-export-filename", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </text-input>
+
+            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'segmentation_export_path'"
+                showHelpIcon=true
+                helpaction='onInfoPress("Path", "id-segmentation-export-path", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </text-input>
+
+            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'segmentation_export_email'"
+                showHelpIcon=true
+                helpaction='onInfoPress("Email", "id-segmentation-export-email", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
+            </text-input>
+
+            <ordinary-select2 model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
+                fieldid="'segmentation_export_email_template'" optionsArray="templateOptions">
+            </ordinary-select2>
+
+            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'segmentation_export_upload'"
+                showHelpIcon=true
+                helpaction='onInfoPress("SFTP Upload", "id-segmentation-export-sftp", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
+            </text-input>
+
+        </div>
+    </div>
+</div>

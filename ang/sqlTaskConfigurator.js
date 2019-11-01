@@ -31,8 +31,62 @@
       $scope.config = {
         actions: []
       };
+      $scope.taskId = taskId;
 
       $scope.onInfoPress = onInfoPress;
+      $scope.getBooleanFromNumber = getBooleanFromNumber;
+
+      $scope.$on("$viewContentLoaded", function() {
+        setTimeout(function() {
+          openCheckedActions();
+        }, 1500);
+
+        var form = document.querySelector("#sql-task-form");
+        var triggerButton = document.querySelector(
+          "#_qf_Configure_submit-bottom"
+        );
+
+        triggerButton.onclick = function() {
+          openCheckedActions();
+          setTimeout(function() {
+            if (form.reportValidity()) {
+              var preparedData = {};
+              if (taskId) {
+                Object.assign(preparedData, { id: taskId });
+              }
+              Object.assign(preparedData, $scope.taskOptions);
+
+              preparedData.config = $scope.config;
+
+              CRM.api3("Sqltask", "create", preparedData).done(function(
+                result
+              ) {
+                if (result.is_error) {
+                  type = "error";
+                  title = "Error";
+                  if (Number(taskId)) {
+                    message = "Error updating task";
+                  } else {
+                    message = "Error creating task";
+                  }
+                } else {
+                  type = "alert";
+                  title = "Update Complete";
+                  message = "Configuration imported successfully.";
+                  if (Number(taskId)) {
+                    message = "Task successfully updated";
+                  } else {
+                    message = "Task successfully created";
+                  }
+                }
+                CRM.alert(message, title, type);
+              });
+              $location.path("/sqltasks/manage");
+              $scope.$apply();
+            }
+          }, 500);
+        };
+      });
 
       if (taskId) {
         CRM.api3("Sqltask", "get", {
@@ -51,7 +105,7 @@
 
       CRM.$(function($) {
         setTimeout(function() {
-          $('body').on('click', ".input-checkbox", function(e) {
+          $("body").on("click", ".input-checkbox", function(e) {
             e.stopPropagation();
           });
         }, 1500);
@@ -177,39 +231,6 @@
         $scope.$apply();
       });
 
-      $scope.onFormSubmit = function() {
-        var preparedData = {};
-        if (taskId) {
-          Object.assign(preparedData, { id: taskId });
-        }
-        Object.assign(preparedData, $scope.taskOptions);
-
-        preparedData.config = $scope.config;
-
-        CRM.api3("Sqltask", "create", preparedData).done(function(result) {
-          if (result.is_error) {
-            type = "error";
-            title = "Error";
-            if (Number(taskId)) {
-              message = "Error updating task";
-            } else {
-              message = "Error creating task";
-            }
-          } else {
-            type = "alert";
-            title = "Update Complete";
-            message = "Configuration imported successfully.";
-            if (Number(taskId)) {
-              message = "Task successfully updated";
-            } else {
-              message = "Task successfully created";
-            }
-          }
-          CRM.alert(message, title, type);
-        });
-        $location.path("/sqltasks/manage");
-      };
-
       $scope.addAction = function(actionName) {
         var array = $scope.config.actions;
         for (let index = array.length - 1; index >= 0; index--) {
@@ -219,7 +240,14 @@
             return;
           }
         }
-        $scope.config.actions.push({ type: actionName });
+        if (
+          actionName === "CRM_Sqltasks_Action_RunSQL" ||
+          actionName === "CRM_Sqltasks_Action_PostSQL"
+        ) {
+          $scope.config.actions.push({ type: actionName, enabled: "1" });
+        } else {
+          $scope.config.actions.push({ type: actionName });
+        }
       };
 
       $scope.formNameFromType = function(type) {
@@ -244,6 +272,10 @@
             return ts("Success Handler");
           case "CRM_Sqltasks_Action_ErrorHandler":
             return ts("Error Handler");
+          case "CRM_Sqltasks_Action_SegmentationAssign":
+            return ts("Assign to Campaign (Segmentation)");
+          case "CRM_Sqltasks_Action_SegmentationExport":
+            return ts("Segmentation Export");
           default:
             return "";
         }
@@ -259,6 +291,23 @@
           });
           $scope.templateOptions = templateOptions;
         }
+      });
+
+      CRM.api3("Campaign", "get", {
+        sequential: 1,
+        return: ["id", "title"],
+        is_active: 1,
+        options: { limit: 0, sort: "title ASC" }
+      }).done(function(result) {
+        if (!result.is_error) {
+          result.values.map(type => {
+            campaignData.push({
+              value: type.id,
+              name: type.title
+            });
+          });
+        }
+        $scope.campaignData = campaignData;
       });
 
       $scope.shouldShowTimeFieldsByName = function(fieldName) {
@@ -285,6 +334,7 @@
     });
 
   var templateOptions = [];
+  var campaignData = [];
 
   function removeItemFromArray(index) {
     this.$parent.config.actions.splice(index, 1);
@@ -292,6 +342,23 @@
 
   function getBooleanFromNumber(number) {
     return !!Number(number);
+  }
+
+  function openCheckedActions() {
+    CRM.$(function($) {
+      var inputArray = $('[id*="enabled"]');
+      $(inputArray).each(function() {
+        if ($(this).is(":checked")) {
+          var parent = $(this).closest(".crm-accordion-wrapper");
+          if ($(parent).is(".collapsed")) {
+            $(parent).removeClass("collapsed");
+            $(parent)
+              .find(".crm-accordion-body")
+              .css("display", "block");
+          }
+        }
+      });
+    });
   }
 
   angular.module(moduleName).directive("runSql", function() {
@@ -350,6 +417,7 @@
       bindToController: true,
       controllerAs: "ctrl",
       controller: function($scope) {
+        $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
         CRM.api3("OptionValue", "get", {
           sequential: 1,
@@ -387,25 +455,6 @@
             });
           }
           $scope.statusData = statusData;
-          $scope.$apply();
-        });
-
-        CRM.api3("Campaign", "get", {
-          sequential: 1,
-          return: ["id", "title"],
-          is_active: 1,
-          options: { limit: 0, sort: "title ASC" }
-        }).done(function(result) {
-          var campaignData = [];
-          if (!result.is_error) {
-            result.values.map(type => {
-              campaignData.push({
-                value: type.value,
-                name: type.label
-              });
-            });
-          }
-          $scope.campaignData = campaignData;
           $scope.$apply();
         });
 
@@ -493,7 +542,7 @@
         $scope.templateOptions = templateOptions;
         $scope.onInfoPress = onInfoPress;
         CRM.api3("Sqltaskfield", "getfileencoding").done(function(result) {
-          encodingData = [];
+          var encodingData = [];
           Object.keys(result.values[0]).map(key => {
             var entity = result.values[0][key];
             if (key) {
@@ -506,6 +555,7 @@
           $scope.encodingData = encodingData;
           $scope.$apply();
         });
+
         CRM.api3("Sqltaskfield", "getdelimiter").done(function(result) {
           delimiterData = [];
           Object.keys(result.values[0]).map(key => {
@@ -546,7 +596,7 @@
           is_enabled: 1,
           options: { limit: 0 }
         }).done(function(result) {
-          tagsData = [];
+          var tagsData = [];
           result.values.map(tag => {
             tagsData.push({
               value: tag.id,
@@ -556,7 +606,7 @@
           $scope.tagsData = tagsData;
         });
         CRM.api3("Sqltaskfield", "getsynctagentities").done(function(result) {
-          entityData = [];
+          var entityData = [];
           Object.keys(result.values[0]).map(key => {
             var entity = result.values[0][key];
             if (key) {
@@ -594,7 +644,7 @@
           is_active: 1,
           options: { limit: 0 }
         }).done(function(result) {
-          groupData = [];
+          var groupData = [];
           result.values.map(group => {
             groupData.push({
               value: group.id,
@@ -732,6 +782,152 @@
     };
   });
 
+  angular.module(moduleName).directive("segmentationAssign", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/SegmentationAssign.html",
+      scope: {
+        model: "=",
+        index: "<"
+      },
+      bindToController: true,
+      controllerAs: "ctrl",
+      controller: function($scope) {
+        $scope.campaignData = campaignData;
+        $scope.ts = CRM.ts();
+        $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
+        $scope.onInfoPress = onInfoPress;
+
+        $scope.checkboxChange = function(value) {
+          if (value == "1") {
+            this.ctrl.model.segment_name = "";
+          }
+        };
+
+        $scope.statusChanged = function() {
+          this.ctrl.model.segment_order_table = "";
+          this.ctrl.model.segment_order = "";
+        };
+
+        var statusesData = [];
+
+        CRM.api3("Sqltaskfield", "get_campaign_statuses").done(function(
+          result
+        ) {
+          statusesData = [];
+          Object.keys(result.values[0]).map(key => {
+            var status = result.values[0][key];
+            if (key) {
+              statusesData.push({
+                value: key,
+                name: status
+              });
+            }
+          });
+          $scope.statusesData = statusesData;
+          $scope.$apply();
+        });
+      }
+    };
+  });
+
+  angular.module(moduleName).directive("segmentationExport", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/SegmentationExport.html",
+      scope: {
+        model: "=",
+        index: "<"
+      },
+      bindToController: true,
+      controllerAs: "ctrl",
+      controller: function($scope) {
+        $scope.templateOptions = templateOptions;
+        $scope.campaignData = campaignData;
+        $scope.ts = CRM.ts();
+        $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
+        $scope.onInfoPress = onInfoPress;
+
+        $scope.checkboxChange = function(value) {
+          if (value == "1") {
+            this.ctrl.model.date_from = "";
+            this.ctrl.model.date_to = "";
+          }
+        };
+
+        if (
+          $scope.ctrl.model &&
+          getBooleanFromNumber($scope.ctrl.model.campaign_id)
+        ) {
+          CRM.api3("Segmentation", "segmentlist", {
+            campaign_id: $scope.ctrl.model.campaign_id
+          }).done(function(result) {
+            var segmentationData = [];
+            Object.keys(result.values).map(key => {
+              var entity = result.values[key];
+              if (key) {
+                segmentationData.push({
+                  value: key,
+                  name: entity
+                });
+              }
+            });
+            $scope.segmentationData = segmentationData;
+            $scope.$apply();
+          });
+        }
+
+        $scope.statusChanged = function(value, fieldId) {
+          CRM.$(function($) {
+            $scope.ctrl.model.segments = "";
+            setTimeout(() => {
+              $("#" + fieldId)
+                .css("width", "25em")
+                .select2();
+            }, 0);
+          });
+          if (getBooleanFromNumber(value)) {
+            CRM.api3("Segmentation", "segmentlist", {
+              campaign_id: value
+            }).done(function(result) {
+              var segmentationData = [];
+              Object.keys(result.values).map(key => {
+                var entity = result.values[key];
+                if (key) {
+                  segmentationData.push({
+                    value: key,
+                    name: entity
+                  });
+                }
+              });
+              $scope.segmentationData = segmentationData;
+              $scope.$apply();
+            });
+          }
+        };
+
+        CRM.api3("Sqltaskfield", "get_segmentation_exporter").done(function(
+          result
+        ) {
+          exporterData = [];
+          Object.keys(result.values[0]).map(key => {
+            var entity = result.values[0][key];
+            if (key) {
+              exporterData.push({
+                value: key,
+                name: entity
+              });
+            }
+          });
+          $scope.exporterData = exporterData;
+          $scope.$apply();
+        });
+      }
+    };
+  });
+
   // Components
   angular.module(moduleName).directive("textArea", function() {
     return {
@@ -765,7 +961,16 @@
         fieldLabel: "<fieldlabel",
         fieldId: "<fieldid",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        isDisabled: "<disabled"
+      },
+      controller: function($scope) {
+        $scope.isDisabled = angular.isDefined($scope.isDisabled)
+          ? $scope.isDisabled
+          : false;
+        $scope.componentModel = angular.isDefined($scope.isDisabled)
+          ? $scope.componentModel
+          : "";
       }
     };
   });
@@ -780,7 +985,8 @@
         fieldLabel: "<fieldlabel",
         fieldId: "<fieldid",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        checkboxChange: "&"
       }
     };
   });
@@ -812,7 +1018,9 @@
         fieldId: "<fieldid",
         optionsArray: "<optionsarray",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        selectChange: "&",
+        fieldIdToChange: "<"
       },
       controller: function($scope) {
         CRM.$(function($) {

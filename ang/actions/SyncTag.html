@@ -8,19 +8,19 @@
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_contact_table']"
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['contact_table']"
                 fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table'"></text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_tag_id']"
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['id']"
                 fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData">
             </ordinary-select2>
 
             <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['tag_entity_table']" fieldlabel="ts('Choose Entity')"
+                model="ctrl.model['entity_table']" fieldlabel="ts('Choose Entity')"
                 fieldid="'tag_entity_table' + ctrl.index" optionsArray="entityData">
             </ordinary-select>
 
-            <check-box model="ctrl.model['tag_use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api'">
+            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api'">
             </check-box>
         </div>
     </div>

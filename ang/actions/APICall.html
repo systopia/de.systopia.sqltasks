@@ -10,24 +10,24 @@
                 <div class="sql-tasks">
 
                         <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['api_table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
+                                model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
                                 showHelpIcon=true
                                 helpaction='onInfoPress("Data Source", "id-api-data", "CRM\/Sqltasks\/Action\/APICall")'>
                         </text-input>
 
                         <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['api_entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
+                                model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
                                 showHelpIcon=true
                                 helpaction='onInfoPress("Entity", "id-api-entity", "CRM\/Sqltasks\/Action\/APICall")'>
                         </text-input>
 
                         <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['api_action']" fieldlabel="ts('Action')" fieldid="'api_action'"
+                                model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action'"
                                 showHelpIcon=true
                                 helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
                         </text-input>
 
-                        <text-input model="ctrl.model['api_parameters']" fieldlabel="ts('Parameters')"
+                        <text-input model="ctrl.model['parameters']" fieldlabel="ts('Parameters')"
                                 fieldid="'api_parameters'" showHelpIcon=true
                                 helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'>
                         </text-input>

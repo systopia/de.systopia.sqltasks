@@ -18,13 +18,16 @@
   angular
     .module(moduleName)
     .controller("sqlTaskManagerCtrl", function($scope, $location) {
-      $scope.tasks = getAllTasks();
       $scope.ts = CRM.ts();
       $scope.dispatcher_frequency = getCurrentDispatcherFrequency();
       $scope.resourceBaseUrl = CRM.config.resourceBase;
 
       $scope.onConfigurePress = function(taskId) {
         $location.path("/sqltasks/configure/" + taskId);
+      };
+
+      $scope.initTable = function() {
+        $scope.tasks = getAllTasks();
       };
 
       $scope.sortableOptions = {
@@ -90,9 +93,15 @@
         }
       };
 
+      $scope.getBooleanFromNumber = getBooleanFromNumber;
+
       $scope.onImportPress = function(itemId) {
         $location.path("/sqltasks/import/" + itemId);
       };
+
+      function getBooleanFromNumber(number) {
+        return !!Number(number);
+      }
 
       function swapElementsByAction(action, initialArray, index) {
         var array = initialArray.slice();

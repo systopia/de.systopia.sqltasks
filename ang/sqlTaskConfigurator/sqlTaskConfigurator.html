@@ -1,4 +1,4 @@
-<form ng-submit="onFormSubmit()">
+<form id="sql-task-form">
     <div class="sql-tasks">
         <h3>{{ts('Basic Information')}}</h3>
         <div class="spacer"></div>
@@ -286,6 +286,9 @@
                     <div ng-switch-when="CRM_Sqltasks_Action_RunSQL">
                         <run-sql model='action' index='$index'></run-sql>
                     </div>
+                    <div ng-switch-when="CRM_Sqltasks_Action_SegmentationAssign">
+                        <segmentation-assign model='action' index='$index'></segmentation-assign>
+                    </div>
                     <div ng-switch-when="CRM_Sqltasks_Action_CreateActivity">
                         <create-activity model='action' index='$index'></create-activity>
                     </div>
@@ -300,6 +303,9 @@
                     </div>
                     <div ng-switch-when="CRM_Sqltasks_Action_SyncGroup">
                         <sync-group model='action' index='$index'></sync-group>
+                    </div>
+                    <div ng-switch-when="CRM_Sqltasks_Action_SegmentationExport">
+                        <segmentation-export model='action' index='$index'></segmentation-export>
                     </div>
                     <div ng-switch-when="CRM_Sqltasks_Action_CallTask">
                         <call-task model='action' index='$index'></call-task>
@@ -326,6 +332,6 @@
         {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}
     </div>
 
-    <button class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_Configure_submit" type="submit"
-        id="_qf_Configure_submit-bottom">Create</button>
+    <button class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_Configure_submit" type="button"
+        id="_qf_Configure_submit-bottom">{{getBooleanFromNumber(taskId) ? ts('Save') : ts('Create')}}</button>
 </form>

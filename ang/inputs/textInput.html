@@ -5,7 +5,7 @@
         </label>&nbsp;<a ng-click="helpAction()" ng-if="showHelpIcon" href="javascript:;" title="Help"
             class="helpicon"></a>
     </div>
-    <div class="content"><input style="font-family: monospace, monospace !important" name="{{fieldId}}" type="text"
+    <div class="content"><input ng-disabled="isDisabled" style="font-family: monospace, monospace !important" name="{{fieldId}}" type="text"
             id="{{fieldId}}" class="crm-form-text" ng-model="componentModel" ng-required="isRequired"><span
             ng-if="fieldId==='activity_duration'" class="description">&nbsp;{{ts('minutes')}}</span>
     </div>

@@ -11,29 +11,29 @@
                 {{ts('This action will be triggered if the execution of the task has reported errors, or has failed
                 completely.')}}</div>
 
-            <text-input model="ctrl.model['error_table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'"
+            <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'"
                 helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </text-input>
 
-            <check-box model="ctrl.model['error_drop_table']" fieldlabel="ts('Drop Error Table')"
+            <check-box model="ctrl.model['drop_table']" fieldlabel="ts('Drop Error Table')"
                 fieldid="'error_drop_table'"
                 helpaction='onInfoPress("Drop Error Table", "id-handler-error-table-drop", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </check-box>
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['error_email']"
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['email']"
                 fieldlabel="ts('Email to')" fieldid="'error_email'"
                 helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </text-input>
 
             <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['error_email_template']" fieldlabel="ts('Email Template')"
-                fieldid="'error_email_template'" optionsArray="templateOptions">
+                model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
+                fieldid="'email_template'" optionsArray="templateOptions">
             </ordinary-select>
 
-            <check-box model="ctrl.model['error_attach_log']" fieldlabel="ts('Attach Log')" fieldid="'error_attach_log'"
+            <check-box model="ctrl.model['attach_log']" fieldlabel="ts('Attach Log')" fieldid="'error_attach_log'"
                 helpaction='onInfoPress("Attach Log", "id-handler-attach-log", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </check-box>

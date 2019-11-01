@@ -29,7 +29,7 @@ function civicrm_api3_sqltaskfield_getexecutiontasks($params) {
  * @return void
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
-function _civicrm_api3_sqltask_getexecutiontasks_spec(&$params) {
+function _civicrm_api3_sqltaskfield_getexecutiontasks_spec(&$params) {
   $params['current_task_id'] = [
     'name'         => 'current_task_id',
     'api.required' => 0,

@@ -9,15 +9,15 @@
         <div class="sql-tasks">
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['group_contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
+                model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
                 fieldid="'group_contact_table'"></text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['group_group_id']" fieldlabel="ts('Synchronise Group')"
+                model="ctrl.model['id']" fieldlabel="ts('Synchronise Group')"
                 fieldid="'group_group_id' + ctrl.index" optionsArray="groupData">
             </ordinary-select2>
 
-            <check-box model="ctrl.model['group_use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'group_use_api'">
+            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'group_use_api'">
             </check-box>
 
         </div>

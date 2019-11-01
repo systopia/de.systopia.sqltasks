@@ -45,7 +45,7 @@
 </div>
 <br />
 
-<table class="display" id="option11">
+<table class="display" id="option11" ng-init="initTable()">
     <thead>
         <tr>
             <th class="sorting_disabled" rowspan="1" colspan="1">{{ts('Category')}}
@@ -80,7 +80,7 @@
                 <div title="{{task.description}}">{{task.short_desc}}</div>
             </td>
             <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
-            <td>{{task.schedule_label}}<br /><span ng-if="task.parallel_exec"><strong>{{ts('(parallel)')}}</span></td>
+            <td>{{task.schedule_label}}<br /><span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</span></td>
             <td>{{task.last_executed}}</td>
             <td>{{task.last_runtime}}</td>
             <td>

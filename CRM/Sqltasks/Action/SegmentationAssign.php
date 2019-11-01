@@ -96,7 +96,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       'select',
       $this->getID() . '_start',
       E::ts('Change Campaign Status'),
-      $this->getCampaignStatusOptions(),
+      static::getCampaignStatusOptions(),
       FALSE,
       array('class' => 'crm-select2 huge')
     );
@@ -409,7 +409,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
   /**
    * get the campaign status options
    */
-  protected function getCampaignStatusOptions() {
+  public static function getCampaignStatusOptions() {
     return array(
       'leave'     => E::ts("don't change status"),
       'planned'   => E::ts("(re)set to 'planned'"),
