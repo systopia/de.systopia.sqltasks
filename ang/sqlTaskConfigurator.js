@@ -29,7 +29,12 @@
         scheduled: ""
       };
       $scope.config = {
-        actions: []
+        actions: [],
+        scheduled_month: "1",
+        scheduled_weekday: "1",
+        scheduled_day: "1",
+        scheduled_hour: "0",
+        scheduled_minute: "0"
       };
       $scope.taskId = taskId;
 
@@ -126,19 +131,19 @@
         Object.keys($scope.config).forEach(element => {
           switch (element) {
             case "scheduled_month":
-              $scope.config[element] = 1;
+              $scope.config[element] = "1";
               break;
             case "scheduled_weekday":
-              $scope.config[element] = 1;
+              $scope.config[element] = "1";
               break;
             case "scheduled_day":
-              $scope.config[element] = 1;
+              $scope.config[element] = "1";
               break;
             case "scheduled_hour":
-              $scope.config[element] = 0;
+              $scope.config[element] = "0";
               break;
             case "scheduled_minute":
-              $scope.config[element] = 0;
+              $scope.config[element] = "0";
               break;
             default:
               break;
