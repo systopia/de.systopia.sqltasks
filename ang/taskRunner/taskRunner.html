@@ -1,17 +1,17 @@
 <div>
     <div>
         <ul>
-            <li ng-repeat="log in resultLogs">{{log}}</li>
+            <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
         </ul>
     </div>
     <br />
-    <a class="button" href="javascript:;" title="{{ts('Back to Manager')}}" ng-click='backToManager()'>
+    <a class="button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
         {{ts('Back to Manager')}}
     </a>
-    <a class="button" href="javascript:;" ng-click='runTaskAgain()' title="{{ts('Run again')}}">
+    <a class="button" href="javascript:;" ng-click='runTask()' title="{{ts('Run again')}}">
         {{ts('Run again')}}
     </a>
-    <a class="button" href="javascript:;" ng-click='configureTask()' title="{{ts('Configure task')}}">
+    <a class="button" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
         {{ts('Configure task')}}
     </a>
 </div>

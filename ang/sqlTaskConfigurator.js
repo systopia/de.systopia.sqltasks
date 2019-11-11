@@ -70,24 +70,25 @@
                   type = "error";
                   title = "Error";
                   if (Number(taskId)) {
-                    message = "Error updating task";
+                    message = "Error while updating task";
                   } else {
-                    message = "Error creating task";
+                    message = "Error while creating task";
                   }
                 } else {
-                  type = "alert";
-                  title = "Update Complete";
+                  type = "success";
+                  title = "Task updated";
                   message = "Configuration imported successfully.";
                   if (Number(taskId)) {
                     message = "Task successfully updated";
                   } else {
                     message = "Task successfully created";
                   }
+                  $location.path("/sqltasks/manage");
+                  $scope.$apply();
                 }
                 CRM.alert(message, title, type);
               });
-              $location.path("/sqltasks/manage");
-              $scope.$apply();
+
             }
           }, 500);
         };

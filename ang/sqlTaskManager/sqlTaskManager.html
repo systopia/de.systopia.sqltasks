@@ -8,8 +8,7 @@
         </div>
     </div>
     <div>
-        {{ts('You might want to')}} <a href="javascript:;" ng-click="onConfigurePress(0)">{{ts('ADD A NEW
-            ONE')}}</a>. {{ts('Check out
+        {{ts('You might want to')}} <a ng-href="#/sqltasks/configure/0">{{ts('ADD A NEW ONE')}}</a>. {{ts('Check out
         our')}} <a href="https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md"
             target="_blank">{{ts('REPOSITORY')}}</a> {{ts('for examples to get you
         started.')}}</a>
@@ -106,7 +105,7 @@
                             on-yes="confirmDeleteTask(task.id)">{{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>
                         <li>
-                            <a href="javascript:;" ng-click="onConfigurePress(task.id)"
+                            <a ng-href="#/sqltasks/configure/{{task.id}}"
                                 class="action-item crm-hover-button small-popup"
                                 title="{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>
@@ -123,12 +122,12 @@
                                 title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>
                         <li>
-                            <a href="/civicrm/sqltasks/manage?export={{task.id}}"
+                            <a ng-href="/civicrm/sqltasks/manage?export={{task.id}}"
                                 class="action-item crm-hover-button small-popup"
                                 title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Export Config', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>
                         <li>
-                            <a href="javascript:;" ng-click="onImportPress(task.id)"
+                            <a ng-href="#/sqltasks/import/{{task.id}}"
                                 class="action-item crm-hover-button small-popup"
                                 title="{{ts('Import Configuration', {'domain' : 'de.systopia.sqltasks'})}}">{{ts('Import Config', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>

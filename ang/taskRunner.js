@@ -23,27 +23,26 @@
   angular
     .module(moduleName)
     .controller("taskRunnerCtrl", function($scope, $location, taskId) {
+      $scope.taskId = taskId;
       $scope.ts = CRM.ts();
-      runTaskAgain();
+      runTask();
 
-      $scope.configureTask = function() {
-        $location.path("/sqltasks/configure/" + taskId);
-      };
+      $scope.runTask = runTask;
 
-      $scope.backToManager = function() {
-        $location.path("/sqltasks/manage");
-      };
-
-      $scope.runTaskAgain = runTaskAgain;
-
-      function runTaskAgain() {
-        CRM.alert("Task executed again", "Task execution", 'info');
+      function runTask() {
+        $scope.resultLogs = [];
+        CRM.alert("Task execution has started", "Task execution", 'info');
         CRM.api3("Sqltask", "execute", {
           task_id: taskId,
           input_val: 0
         }).done(function(result) {
           $scope.resultLogs = result.values.log;
           $scope.$apply();
+          CRM.alert("Task execution completed", "Task execution", 'success');
+        }).fail(function() {
+          $scope.resultLogs = ["An unknown error occurred during task execution. Please check your server logs for details before proceeding."];
+          $scope.$apply();
+          CRM.alert("Task failed to execute", "Task execution", 'error');
         });
       }
     });

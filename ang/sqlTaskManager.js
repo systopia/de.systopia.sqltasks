@@ -22,10 +22,6 @@
       $scope.dispatcher_frequency = getCurrentDispatcherFrequency();
       $scope.resourceBaseUrl = CRM.config.resourceBase;
 
-      $scope.onConfigurePress = function(taskId) {
-        $location.path("/sqltasks/configure/" + taskId);
-      };
-
       $scope.initTable = function() {
         $scope.tasks = getAllTasks();
       };
@@ -94,10 +90,6 @@
       };
 
       $scope.getBooleanFromNumber = getBooleanFromNumber;
-
-      $scope.onImportPress = function(itemId) {
-        $location.path("/sqltasks/import/" + itemId);
-      };
 
       function getBooleanFromNumber(number) {
         return !!Number(number);
