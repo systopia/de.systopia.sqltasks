@@ -66,6 +66,7 @@ class CRM_Sqltasks_Task {
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
       $this->attributes[$attribute_name] = CRM_Utils_Array::value($attribute_name, $data);
     }
+    $this->setDefaultAttributes();
 
     // everything else is passed to setConfiguration()
     $config = [];
@@ -75,6 +76,21 @@ class CRM_Sqltasks_Task {
       }
     }
     $this->setConfiguration($config);
+  }
+
+  /**
+   * Set default values for some attributes
+   */
+  private function setDefaultAttributes() {
+    $defaults = [
+      'parallel_exec'  => 0,
+      'input_required' => 0,
+    ];
+    foreach ($defaults as $attribute => $value) {
+      if (empty($this->attributes[$attribute])) {
+        $this->attributes[$attribute] = $value;
+      }
+    }
   }
 
   /**
