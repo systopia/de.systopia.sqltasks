@@ -103,6 +103,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    * @throws Exception
    */
   public function upgrade_0082() {
+    // input_required was added in 0.9, but we need it here to support direct
+    // upgrades from < 0.8.2 to >= 0.9 as CRM_Sqltasks_Task::store() relies
+    // on the column being present.
+    $this->addInputRequired();
     $tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($tasks as $task) {
       $scheduled = $task->getAttribute('scheduled');
@@ -182,19 +186,24 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
   }
 
   /**
+   * Add input_required column if it doesn't exist
+   */
+  private function addInputRequired() {
+    // add column: input_required
+    $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'input_required';");
+    if (!$column_exists) {
+      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `input_required` tinyint COMMENT 'should this task require user input?';");
+    }
+  }
+
+  /**
    *
    * @return TRUE on success
    * @throws Exception
    */
   public function upgrade_0090() {
     $this->ctx->log->info('Applying update');
-
-    // add column: input_required
-    $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'input_required';");
-    if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `input_required` tinyint COMMENT 'should this task require user input?';");
-    }
-
+    $this->addInputRequired();
     $table_exists = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE 'civirule_action';");
     if ($table_exists) {
       CRM_Core_DAO::executeQuery(
@@ -213,6 +222,11 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0100() {
+    $this->ctx->log->info('Adding default values for parallel_exec, input_required');
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `parallel_exec` = 0 WHERE `parallel_exec` IS NULL");
+    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `parallel_exec` `parallel_exec` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'should this task be executed in parallel?'");
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `input_required` = 0 WHERE `input_required` IS NULL");
+    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `input_required` `input_required` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'should have a mandatory form field?'");
     $this->ctx->log->info('Upgrading task configuration to latest format');
     foreach (CRM_Sqltasks_Task::getAllTasks() as $task) {
       $task->setConfiguration(
