@@ -91,7 +91,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
     if (!empty($categories)) {
       $escaped_categories = array();
       foreach ($categories as $category) {
-        $escaped_categories[] = "'" . mysql_escape_string($category) . "'";
+        $escaped_categories[] = "'" . CRM_Core_DAO::escapeString($category) . "'";
       }
       $or_clauses[] = '`category` IN (' . implode(',', $escaped_categories) . ')';
     }
