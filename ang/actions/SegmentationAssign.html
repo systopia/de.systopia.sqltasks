@@ -8,7 +8,7 @@
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
-            <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')"
+            <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')" sizelength="60"
                 fieldid="'segmentation_assign_table'" showHelpIcon=true
                 helpaction='onInfoPress("Data table", "id-segmentation-assign-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
@@ -49,7 +49,7 @@
 
             <text-input ng-if="ctrl.model['start'] == 'restart_t'"
                 model="ctrl.model['segment_order_table']" fieldlabel="ts('Segment Order Table')"
-                fieldid="'segmentation_assign_segment_order_table'" showHelpIcon=true
+                fieldid="'segmentation_assign_segment_order_table'" showHelpIcon=true sizelength="60"
                 helpaction='onInfoPress("Segment Order Table?", "id-segmentation-assign-segment-order-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
 

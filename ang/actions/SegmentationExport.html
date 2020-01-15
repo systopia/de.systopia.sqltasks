@@ -44,13 +44,13 @@
                 fieldid="'segmentation_export_exporter' + ctrl.index" optionsArray="exporterData">
             </multiple-select2>
 
-            <text-input model="ctrl.model['filename']" fieldlabel="ts('File Name')"
+            <text-input model="ctrl.model['filename']" fieldlabel="ts('File Name')" sizelength="60"
                 fieldid="'segmentation_export_filename'" showHelpIcon=true
                 helpaction='onInfoPress("Filename", "id-segmentation-export-filename", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
             <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'segmentation_export_path'"
-                showHelpIcon=true
+                showHelpIcon=true sizelength="60"
                 helpaction='onInfoPress("Path", "id-segmentation-export-path", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
@@ -64,7 +64,7 @@
             </ordinary-select2>
 
             <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'segmentation_export_upload'"
-                showHelpIcon=true
+                showHelpIcon=true sizelength="60"
                 helpaction='onInfoPress("SFTP Upload", "id-segmentation-export-sftp", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
 

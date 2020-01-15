@@ -9,7 +9,7 @@
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
-                fieldid="'activity_contact_table'"></text-input>
+                fieldid="'activity_contact_table'" sizelength="60" ></text-input>
 
             <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')"
                 fieldid="'activity_use_api'"></check-box>
@@ -32,7 +32,7 @@
             </ordinary-select>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['subject']"
-                fieldlabel="ts('Subject')" fieldid="'activity_subject'"
+                fieldlabel="ts('Subject')" fieldid="'activity_subject'" sizelength="60"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true></text-input>
 

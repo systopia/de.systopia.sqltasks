@@ -9,7 +9,7 @@
         <div class="sql-tasks">
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['parameters']"
-                fieldlabel="ts('Export Table')" fieldid="'api_parameters'"></text-input>
+                fieldlabel="ts('Export Table')" fieldid="'api_parameters'" sizelength="60" ></text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')"
@@ -36,12 +36,12 @@
             </check-box>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['filename']"
-                fieldlabel="ts('File Name')" fieldid="'csv_filename'"
+                fieldlabel="ts('File Name')" fieldid="'csv_filename'" sizelength="60"
                 helpaction='onInfoPress("Filename", "id-csv-filename", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true>
             </text-input>
 
-            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'csv_path'"
+            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'csv_path'" sizelength="60"
                 helpaction='onInfoPress("Path", "id-csv-path", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
             </text-input>
 
@@ -60,7 +60,7 @@
                 fieldid="'csv_email_template'" optionsArray="templateOptions">
             </ordinary-select>
 
-            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload'"
+            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload'" sizelength="60"
                 helpaction='onInfoPress("SFTP Upload", "id-csv-sftp", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true>
             </text-input>

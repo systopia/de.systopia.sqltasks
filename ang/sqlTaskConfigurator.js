@@ -968,6 +968,7 @@
         fieldId: "<fieldid",
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
+        sizeLength: "<sizelength",
         isDisabled: "<disabled"
       },
       controller: function($scope) {
@@ -977,6 +978,9 @@
         $scope.componentModel = angular.isDefined($scope.isDisabled)
           ? $scope.componentModel
           : "";
+        $scope.sizeLength = angular.isDefined($scope.sizeLength)
+          ? $scope.sizeLength
+          : 32;
       }
     };
   });
