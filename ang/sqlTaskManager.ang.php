@@ -8,7 +8,9 @@ return [
     [
       0 => 'ang/sqlTaskManager.js',
     ],
-  'css' => [],
+  'css' => [
+    0 => 'css/sqlTaskManager.css',
+  ],
   'partials' => [
     0 => 'ang/sqlTaskManager',
   ],
