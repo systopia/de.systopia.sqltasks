@@ -45,3 +45,25 @@ select.pixelInput {
 .action-label:after {
   display: none;
 }
+
+.sql-task-preloader-wrap {
+  display: none;
+}
+
+.sql-task-preloader-wrap .crm-container {
+  position: relative;
+  height: 100px;
+}
+
+.sql-task-preloader-message {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.sql-tasks-actions-block.loading .sql-tasks-actions-wrap, .sql-tasks-execution-block.loading .sql-tasks-execution-wrap {
+  display: none;
+}
+
+.sql-tasks-actions-block.loading .sql-task-preloader-wrap, .sql-tasks-execution-block.loading .sql-task-preloader-wrap {
+  display: block;
+}

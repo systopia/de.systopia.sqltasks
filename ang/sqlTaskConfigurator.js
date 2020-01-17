@@ -24,7 +24,15 @@
     .module(moduleName)
     .controller("sqlTaskConfiguratorCtrl", function($scope, $location, taskId) {
       $scope.ts = CRM.ts();
-
+      $scope.executionBlock = {
+        'isLoaded' : false,
+        'currentLoadedComponents' : 0,
+        'componentsNumber' : 2,
+      };
+      $scope.handleBlockLoading = handleBlockLoading;
+      $scope.isExecutionBlockLoaded = function() {
+        return $scope.executionBlock.isLoaded;
+      };
       $scope.taskOptions = {
         scheduled: ""
       };
@@ -126,6 +134,7 @@
           });
         });
         $scope.permissionsData = permissionsData;
+        $scope.executionBlock = $scope.handleBlockLoading($scope.executionBlock);
       });
 
       $scope.onSchedulingOptionChange = function(params) {
@@ -234,6 +243,7 @@
             scheduled_day: 1
           });
         }
+        $scope.executionBlock = $scope.handleBlockLoading($scope.executionBlock);
         $scope.$apply();
       });
 
@@ -364,6 +374,7 @@
           }
         }
       });
+      $('#sqlTasksActionsBlock').removeClass('loading');
     });
   }
 
@@ -746,6 +757,15 @@
       file: file
     });
     return false;
+  }
+
+  function handleBlockLoading(block) {
+    block.currentLoadedComponents = block.currentLoadedComponents  + 1;
+    if (block.currentLoadedComponents >= block.componentsNumber) {
+      block.isLoaded = true;
+    }
+
+    return block;
   }
 
   angular.module(moduleName).directive("successHandler", function() {
