@@ -29,20 +29,23 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
    * build FORM
    */
   public function buildQuickForm() {
-
     // get the ID
     $task_id = CRM_Utils_Request::retrieve('tid', 'Integer');
-    if (!is_numeric($task_id)) {
+
+    if ($task_id == 0) {
+      $this->task = new CRM_Sqltasks_Task($task_id, ['name' => "NEW TASK"]);
+      CRM_Utils_System::setTitle(E::ts("Import new SQL-Task from a file"));
+
+    } else if (is_numeric($task_id)) {
+      $this->task = CRM_Sqltasks_Task::getTask($task_id);
+      if (!$this->task) {
+        throw new Exception("Invalid task id (tid) given.", 1);
+      }
+      CRM_Utils_System::setTitle(E::ts("Import '%1' Configuration", array(1 => $this->task->getAttribute('name'))));
+
+    } else {
       throw new Exception("Invalid task id (tid) given.", 1);
     }
-
-    $this->task = CRM_Sqltasks_Task::getTask($task_id);
-    if (!$this->task) {
-      throw new Exception("Invalid task id (tid) given.", 1);
-    }
-
-    // set title
-    CRM_Utils_System::setTitle(E::ts("Import '%1' Configuration", array(1 => $this->task->getAttribute('name'))));
 
     // add some hidden attributes
     $this->add('hidden', 'tid', $task_id);
@@ -72,14 +75,20 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
 
-    // update configuration
+    // load data
     $config_file = $_FILES['config_file'];
     $raw_data = file_get_contents($config_file['tmp_name']);
-    $data = json_decode($raw_data, TRUE);
 
+    // set name for new tasks
+    if (empty($values['tid'])) {
+
+      $this->task->setAttribute('name', explode('.', $config_file['name'])[0]);
+    }
+
+    // parse data
+    $data = json_decode($raw_data, TRUE);
     if ($data) {
       // OLD FILE FORMAT
-
       foreach ($data as $key => $value) {
         if ($key == 'config') {
           $this->task->setConfiguration($value);
