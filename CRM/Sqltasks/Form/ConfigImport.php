@@ -81,7 +81,6 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
 
     // set name for new tasks
     if (empty($values['tid'])) {
-
       $this->task->setAttribute('name', explode('.', $config_file['name'])[0]);
     }
 
@@ -97,7 +96,8 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
         }
       }
       $this->task->store();
-      CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Update Complete'));
+      CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Import Complete'), 'info');
+      CRM_Core_Session::setStatus(E::ts('Always double-check an imported configuration before executing it!'), E::ts('Warning'), 'warn');
 
     } else {
       // check for the new file format:
@@ -130,7 +130,8 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
           $this->task->setAttribute('main_sql', $main_sql);
           $this->task->setAttribute('post_sql', $post_sql);
           $this->task->store();
-          CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Update Complete'));
+          CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Import Complete'), 'info');
+          CRM_Core_Session::setStatus(E::ts('Always double-check an imported configuration before executing it!'), E::ts('Warning'), 'warn');
         }
 
 
