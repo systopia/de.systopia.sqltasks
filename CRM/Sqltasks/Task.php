@@ -411,13 +411,29 @@ class CRM_Sqltasks_Task {
   public function exportConfiguration() {
     // copy the attributes
     $config = $this->attributes;
-    unset($config['name']);
-    unset($config['enabled']);
-    unset($config['weight']);
-    unset($config['last_execution']);
-    unset($config['last_runtime']);
     $config['config'] = $this->config;
-    return json_encode($config, JSON_PRETTY_PRINT);
+
+    // remove some stuff
+    unset($config['name'], $config['enabled'], $config['weight'], $config['last_execution'], $config['last_runtime']);
+
+    // extract sqls
+    $main_sql = $config['main_sql'];
+    $post_sql = $config['post_sql'];
+    unset($config['main_sql'], $config['post_sql']);
+
+    // new file format:
+    // ---- HEADER
+    // [config]
+    // ---- MAIN SQL
+    // [SQL]
+    // ---- POST SQL
+    // [SQL]
+    return CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER
+         . json_encode($config, JSON_PRETTY_PRINT)
+         . CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER
+         . $main_sql
+         . CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER
+         . $post_sql;
   }
 
   /**

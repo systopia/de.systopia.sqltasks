@@ -20,6 +20,11 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Config {
 
+  const SQLTASK_FILE_FORMAT_FILE_HEADER = "SQLTASK #### CONFIG #################\n";
+  const SQLTASK_FILE_FORMAT_MAIN_HEADER = "\n############ MAIN SQL ###############\n";
+  const SQLTASK_FILE_FORMAT_POST_HEADER = "\n############ POST SQL ###############\n";
+
+
   private static $singleton = NULL;
 
   protected $jobs = NULL;

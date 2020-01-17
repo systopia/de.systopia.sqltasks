@@ -22,6 +22,9 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
 
+  /** @var CRM_Sqltasks_Task */
+  protected $task = NULL;
+
   /**
    * build FORM
    */
@@ -73,7 +76,10 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
     $config_file = $_FILES['config_file'];
     $raw_data = file_get_contents($config_file['tmp_name']);
     $data = json_decode($raw_data, TRUE);
+
     if ($data) {
+      // OLD FILE FORMAT
+
       foreach ($data as $key => $value) {
         if ($key == 'config') {
           $this->task->setConfiguration($value);
@@ -83,8 +89,46 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
       }
       $this->task->store();
       CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Update Complete'));
+
     } else {
-      CRM_Core_Session::setStatus(E::ts('Invalid config file.'), E::ts('Error'), 'error');
+      // check for the new file format:
+      if (   substr($raw_data, 0, strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER)) == CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER
+          && strstr($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER)
+          && strstr($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER)) {
+
+        // NEW FILE FORMAT
+        $start_main = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER);
+        $start_post = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER);
+        $len_header = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER);
+        $len_main   = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER);
+        $len_post   = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER);
+
+        $config   = substr($raw_data, $len_header, ($start_main - $len_header));
+        $main_sql = substr($raw_data, ($start_main + $len_main), ($start_post - $start_main - $len_main));
+        $post_sql = substr($raw_data, ($start_post + $len_post));
+
+        $data = json_decode($config, TRUE);
+        if (!$data) {
+          CRM_Core_Session::setStatus(E::ts('Bad config data.'), E::ts('Error'), 'error');
+        } else {
+          foreach ($data as $key => $value) {
+            if ($key == 'config') {
+              $this->task->setConfiguration($value);
+            } else {
+              $this->task->setAttribute($key, $value);
+            }
+          }
+          $this->task->setAttribute('main_sql', $main_sql);
+          $this->task->setAttribute('post_sql', $post_sql);
+          $this->task->store();
+          CRM_Core_Session::setStatus(E::ts('Configuration imported successfully.'), E::ts('Update Complete'));
+        }
+
+
+      } else {
+        // BAD FILE FORMAT
+        CRM_Core_Session::setStatus(E::ts('Invalid config file.'), E::ts('Error'), 'error');
+      }
     }
 
     parent::postProcess();
