@@ -71,9 +71,7 @@
 
               preparedData.config = $scope.config;
 
-              CRM.api3("Sqltask", "create", preparedData).done(function(
-                result
-              ) {
+              CRM.api3("Sqltask", "create", preparedData).done(function(result) {
                 if (result.is_error) {
                   type = "error";
                   title = "Error";
@@ -714,7 +712,7 @@
           $scope.$apply();
         });
 
-        CRM.api3("Sqltask", "getexecutiontasks").done(function(result) {
+        CRM.api3("Sqltaskfield", "getexecutiontasks").done(function(result) {
           tasksData = [];
           if (!result.is_error) {
             Object.keys(result.values[0]).map(key => {
