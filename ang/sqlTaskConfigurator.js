@@ -619,6 +619,7 @@
             });
           });
           $scope.tagsData = tagsData;
+          $scope.$apply();
         });
         CRM.api3("Sqltaskfield", "getsynctagentities").done(function(result) {
           var entityData = [];
