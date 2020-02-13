@@ -22,7 +22,7 @@
             <div class="spacer"></div>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['type_id']" fieldlabel="ts('Activity Type')"
+                model="ctrl.model['type_id']" fieldlabel="ts('Activity Type')" isdataloaded="isDataLoadedForOrdinarySelect2('activity_activity_type_id_' + ctrl.index)"
                 fieldid="'activity_activity_type_id_' + ctrl.index" optionsArray="activityTypeData">
             </ordinary-select2>
 

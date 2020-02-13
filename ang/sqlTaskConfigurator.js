@@ -432,6 +432,13 @@
       bindToController: true,
       controllerAs: "ctrl",
       controller: function($scope) {
+        $scope.ordinarySelect2LoadDataStatus = [];
+        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
+          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
+        };
+        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
+          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+        };
         $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
         CRM.api3("OptionValue", "get", {
@@ -450,6 +457,7 @@
               });
             });
           }
+          $scope.setDataLoadedForOrdinarySelect2('activity_activity_type_id_' + $scope.ctrl.index);
           $scope.activityTypeData = activityTypeData;
           $scope.$apply();
         });
@@ -1045,6 +1053,7 @@
         componentModel: "=model",
         fieldLabel: "<fieldlabel",
         fieldId: "<fieldid",
+        isDataLoaded: "<isdataloaded",
         optionsArray: "<optionsarray",
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
@@ -1052,13 +1061,14 @@
         fieldIdToChange: "<"
       },
       controller: function($scope) {
-        CRM.$(function($) {
-          setTimeout(function() {
-            $("#" + $scope.fieldId)
-              .css("width", "25em")
-              .select2();
-          }, 1500);
-        });
+        if ($scope.isDataLoaded == false) {
+          var timerId = setInterval(function() {
+            if ($scope.isDataLoaded) {
+              $("#" + $scope.fieldId).css("width", "25em").select2();
+              clearInterval(timerId);
+            }
+          }, 300);
+        }
       }
     };
   });
