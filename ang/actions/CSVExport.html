@@ -1,10 +1,16 @@
 <div class="crm-accordion-wrapper crm-sqltask-csv relativePosition collapsed">
-    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
-                ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
-                type="checkbox" id="csv_enabled">&nbsp;{{ts('CSV
-        Export')}}</label><label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-header accordion-header-custom active action-label">
+        <label class="input-checkbox">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
+                   type="checkbox" id="csv_enabled">
+            &nbsp;
+            {{ts('CSV Export')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
@@ -12,7 +18,7 @@
                 fieldlabel="ts('Export Table')" fieldid="'api_parameters'" sizelength="60" ></text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')"
+                model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')" isdataloaded="isDataLoadedForOrdinarySelect2('csv_encoding_' + ctrl.index)"
                 fieldid="'csv_encoding_' + ctrl.index" optionsArray="encodingData">
             </ordinary-select2>
 
