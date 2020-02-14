@@ -1061,13 +1061,21 @@
         fieldIdToChange: "<"
       },
       controller: function($scope) {
-        if ($scope.isDataLoaded == false) {
+        if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
           var timerId = setInterval(function() {
             if ($scope.isDataLoaded) {
               $("#" + $scope.fieldId).css("width", "25em").select2();
               clearInterval(timerId);
             }
           }, 300);
+        } else {
+          CRM.$(function($) {
+            setTimeout(function() {
+              $("#" + $scope.fieldId)
+                .css("width", "25em")
+                .select2();
+            }, 1500);
+          });
         }
       }
     };
