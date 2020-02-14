@@ -668,6 +668,13 @@
       bindToController: true,
       controllerAs: "ctrl",
       controller: function($scope) {
+        $scope.ordinarySelect2LoadDataStatus = [];
+        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
+          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
+        };
+        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
+          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+        };
         $scope.ts = CRM.ts();
 
         CRM.api3("Group", "get", {
@@ -684,6 +691,7 @@
             });
           });
           $scope.groupData = groupData;
+          $scope.setDataLoadedForOrdinarySelect2('group_group_id' + $scope.ctrl.index);
           $scope.$apply();
         });
         $scope.removeItemFromArray = removeItemFromArray;
