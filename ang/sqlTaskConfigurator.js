@@ -876,6 +876,13 @@
       bindToController: true,
       controllerAs: "ctrl",
       controller: function($scope) {
+        $scope.ordinarySelect2LoadDataStatus = [];
+        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
+          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
+        };
+        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
+          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+        };
         $scope.templateOptions = templateOptions;
         $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
@@ -955,6 +962,7 @@
             }
           });
           $scope.exporterData = exporterData;
+          $scope.setDataLoadedForOrdinarySelect2('segmentation_export_exporter' + $scope.ctrl.index);
           $scope.$apply();
         });
       }
@@ -1089,19 +1097,29 @@
         isRequired: "<isrequired",
         componentModel: "=model",
         fieldLabel: "<fieldlabel",
+        isDataLoaded: "<isdataloaded",
         fieldId: "<fieldid",
         optionsArray: "<optionsarray",
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon"
       },
       controller: function($scope) {
-        CRM.$(function($) {
-          setTimeout(function() {
-            $("#" + $scope.fieldId)
-              .css("width", "25em")
-              .select2();
-          }, 1500);
-        });
+        if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
+          var timerId = setInterval(function() {
+            if ($scope.isDataLoaded) {
+              $("#" + $scope.fieldId).css("width", "25em").select2();
+              clearInterval(timerId);
+            }
+          }, 300);
+        } else {
+          CRM.$(function($) {
+            setTimeout(function() {
+              $("#" + $scope.fieldId)
+                .css("width", "25em")
+                .select2();
+            }, 1500);
+          });
+        }
       }
     };
   });

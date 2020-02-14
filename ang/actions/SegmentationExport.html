@@ -40,7 +40,7 @@
                 fieldid="'segmentation_export_discard_empty'">
             </check-box>
 
-            <multiple-select2 model="ctrl.model['exporter']" fieldlabel="ts('Exporter')"
+            <multiple-select2 model="ctrl.model['exporter']" fieldlabel="ts('Exporter')" isdataloaded="isDataLoadedForOrdinarySelect2('segmentation_export_exporter' + ctrl.index)"
                 fieldid="'segmentation_export_exporter' + ctrl.index" optionsArray="exporterData">
             </multiple-select2>
 
