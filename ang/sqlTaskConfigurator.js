@@ -695,6 +695,13 @@
       bindToController: true,
       controllerAs: "ctrl",
       controller: function($scope) {
+        $scope.ordinarySelect2LoadDataStatus = [];
+        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
+          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
+        };
+        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
+          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+        };
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
@@ -718,6 +725,7 @@
             }
           });
           $scope.categoriesData = categoriesData;
+          $scope.setDataLoadedForOrdinarySelect2('task_categories_' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -732,6 +740,7 @@
               });
             });
             $scope.tasksData = tasksData;
+            $scope.setDataLoadedForOrdinarySelect2('task_tasks_' + $scope.ctrl.index);
             $scope.$apply();
           }
         });

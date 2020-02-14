@@ -16,7 +16,7 @@
             <multiple-select2
                 isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['categories']) && !isDataExists(ctrl.model['tasks'])"
                 model="ctrl.model['tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + ctrl.index"
-                optionsArray="tasksData"
+                optionsArray="tasksData" isdataloaded="isDataLoadedForOrdinarySelect2('task_tasks_' + ctrl.index)"
                 helpaction='onInfoPress("Tasks", "id-task-tasks", "CRM\/Sqltasks\/Action\/CallTask")' showHelpIcon=true>
             </multiple-select2>
             <multiple-select2
@@ -24,7 +24,8 @@
                 model="ctrl.model['categories']" fieldlabel="ts('SQL Task Categories')"
                 fieldid="'task_categories_' + ctrl.index" optionsArray="categoriesData"
                 helpaction='onInfoPress("Categories", "id-task-categories", "CRM\/Sqltasks\/Action\/CallTask")'
-                showHelpIcon=true>
+                showHelpIcon=true isdataloaded="isDataLoadedForOrdinarySelect2('task_categories_' + ctrl.index)"
+            >
             </multiple-select2>
         </div>
     </div>
