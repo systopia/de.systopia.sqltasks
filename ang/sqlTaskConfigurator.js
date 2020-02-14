@@ -897,10 +897,7 @@
           }
         };
 
-        if (
-          $scope.ctrl.model &&
-          getBooleanFromNumber($scope.ctrl.model.campaign_id)
-        ) {
+        if ($scope.ctrl.model && getBooleanFromNumber($scope.ctrl.model.campaign_id)) {
           CRM.api3("Segmentation", "segmentlist", {
             campaign_id: $scope.ctrl.model.campaign_id
           }).done(function(result) {
@@ -915,6 +912,7 @@
               }
             });
             $scope.segmentationData = segmentationData;
+            $scope.setDataLoadedForOrdinarySelect2('segmentation_export_segments' + $scope.ctrl.index);
             $scope.$apply();
           });
         }
@@ -948,9 +946,7 @@
           }
         };
 
-        CRM.api3("Sqltaskfield", "get_segmentation_exporter").done(function(
-          result
-        ) {
+        CRM.api3("Sqltaskfield", "get_segmentation_exporter").done(function(result) {
           exporterData = [];
           Object.keys(result.values[0]).map(key => {
             var entity = result.values[0][key];

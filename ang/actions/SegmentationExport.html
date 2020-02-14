@@ -14,8 +14,7 @@
                 field-id-to-change="'segmentation_export_segments' + ctrl.index">
             </ordinary-select2>
 
-
-            <multiple-select2 model="ctrl.model['segments']" fieldlabel="ts('Segments')"
+            <multiple-select2 model="ctrl.model['segments']" fieldlabel="ts('Segments')" isdataloaded="isDataLoadedForOrdinarySelect2('segmentation_export_segments' + ctrl.index)"
                 fieldid="'segmentation_export_segments' + ctrl.index" optionsArray="segmentationData">
             </multiple-select2>
 
