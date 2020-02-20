@@ -101,14 +101,15 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
 
     } else {
       // check for the new file format:
-      if (   substr($raw_data, 0, strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER)) == CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER
+      if (   preg_match(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER_PREG, $raw_data, $match)
           && strstr($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER)
           && strstr($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER)) {
 
         // NEW FILE FORMAT
+        $version    = $match['version'];
         $start_main = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER);
         $start_post = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER);
-        $len_header = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER);
+        $len_header = strlen($match[0]);
         $len_main   = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER);
         $len_post   = strlen(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER);
 
