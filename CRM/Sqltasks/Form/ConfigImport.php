@@ -107,6 +107,10 @@ class CRM_Sqltasks_Form_ConfigImport extends CRM_Core_Form {
 
         // NEW FILE FORMAT
         $version    = $match['version'];
+        if (version_compare(CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_VERSION, $version, '<')) {
+          throw new Exception(E::ts("File version %1 cannot be imported. Extension version is %2.", [
+              1 => $version, 2 => CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_VERSION]));
+        }
         $start_main = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER);
         $start_post = strpos($raw_data, CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER);
         $len_header = strlen($match[0]);
