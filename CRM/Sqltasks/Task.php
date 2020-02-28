@@ -417,8 +417,8 @@ class CRM_Sqltasks_Task {
     unset($config['name'], $config['enabled'], $config['weight'], $config['last_execution'], $config['last_runtime']);
 
     // extract sqls
-    $main_sql = $config['main_sql'];
-    $post_sql = $config['post_sql'];
+    $main_sql = html_entity_decode($config['main_sql']);
+    $post_sql = html_entity_decode($config['post_sql']);
     unset($config['main_sql'], $config['post_sql']);
 
     // new file format:
