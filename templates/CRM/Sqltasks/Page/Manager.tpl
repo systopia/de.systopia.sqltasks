@@ -34,10 +34,10 @@
 
 {* DELETION CONFIRMATION PAGE *}
 {if $delete}
-  <h3>{ts 1=$delete.name}Delete Plugin "%1"{/ts}</h3>
+  <h3>{ts 1=$delete.name}Delete SQL Task "%1"{/ts}</h3>
   <div>
     <p>
-      {ts 1=$delete.name 2=$delete.id}You are about to delete plugin "%1" [%2]. You should consider simply disabling it, since all data will be lost.{/ts}
+      {ts 1=$delete.name 2=$delete.id}You are about to delete task "%1" [%2]. Consider exporting the configuration first, if you don't want to lose it.{/ts}
     </p>
     {assign var=plugin_id value=$delete.id}
     <a class="button" href="{crmURL p="civicrm/sqltasks/manage" q="reset=1&confirmed=1&delete=$plugin_id"}">
