@@ -67,3 +67,7 @@ select.pixelInput {
 .sql-tasks-actions-block.loading .sql-task-preloader-wrap, .sql-tasks-execution-block.loading .sql-task-preloader-wrap {
   display: block;
 }
+
+.sql-tasks {
+  background-color: white;
+}
