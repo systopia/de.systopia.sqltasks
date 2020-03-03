@@ -1,11 +1,18 @@
 <div class="crm-section">
-    <div class="label"><label for="{{fieldId}}">{{fieldLabel}}&nbsp;<span class="crm-marker" ng-if="isRequired"
-                title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
+    <div class="label">
+        <label for="{{fieldId}}">
+            <span>{{fieldLabel}}</span>
+            &nbsp;
+            <span class="crm-marker" ng-if="isRequired"
+                  title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span>
+        </label>
     </div>
-    <div class="content"><select ng-model="componentModel" name="{{fieldId}}" id="{{fieldId}}" class="crm-form-select"
-            ng-required="isRequired">
+    <div class="content">
+        <select ng-model="componentModel" name="{{fieldId}}" id="{{fieldId}}" class="crm-form-select"
+                ng-required="isRequired">
             <option value="">-- none --</option>
             <option ng-repeat="option in optionsArray" value="{{option.value}}">{{option.name}}</option>
-        </select></div>
+        </select>
+    </div>
     <div class="clear"></div>
 </div>

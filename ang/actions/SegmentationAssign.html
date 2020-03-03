@@ -1,22 +1,27 @@
 <div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
-    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
-                ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
-                ng-false-value="'0'" id="task_enabled">&nbsp;{{ts('Assign to Campaign (Segmentation)')}}</label><label
-            class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-header accordion-header-custom active action-label">
+        <label class="input-checkbox">]
+        <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
+                ng-false-value="'0'" id="task_enabled">
+          &nbsp;
+          {{ts('Assign to Campaign (Segmentation)')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
             <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')" sizelength="60"
-                fieldid="'segmentation_assign_table'" showHelpIcon=true
+                fieldid="'segmentation_assign_table'" showHelpIcon=true isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 helpaction='onInfoPress("Data table", "id-segmentation-assign-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
 
             <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
                 fieldid="'segmentation_assign_campaign_id' + ctrl.index" optionsArray="campaignData">
             </ordinary-select2>
-
 
             <check-box model="ctrl.model['clear']" fieldlabel="ts('Clear before assignment')"
                 fieldid="'segmentation_assign_clear'" showHelpIcon=true
@@ -52,7 +57,6 @@
                 fieldid="'segmentation_assign_segment_order_table'" showHelpIcon=true sizelength="60"
                 helpaction='onInfoPress("Segment Order Table?", "id-segmentation-assign-segment-order-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
-
 
         </div>
     </div>

@@ -4,13 +4,15 @@
         <p ng-if="taskData">
             {{ts('You are about to delete plugin')}} "{{taskData.name}}" [{{taskData.id}}]. {{ts('You should consider simply
             disabling it, since all data
-            will be lost.')}} </p>
+            will be lost.')}}
+        </p>
         <p ng-if="!taskData">
             {{ts("Task doesn't exist or not created.")}}
         </p>
         <a class="button" href="javascript:;" ng-if="taskData" ng-click="onTaskDelete()">
             <span>
-                <div class="icon ui-icon-trash css_left"></div>{{ts('Delete')}}
+                <span class="icon ui-icon-trash css_left"></span>
+                <span>{{ts('Delete')}}</span>
             </span>
         </a>
         <a class="button" href="javascript:;" ng-click="onBackPress()">

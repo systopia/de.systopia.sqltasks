@@ -1,10 +1,16 @@
 <div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
-    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
-                ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
-                ng-false-value="'0'" id="task_enabled">&nbsp;{{ts('Segmentation Export')}}</label><label
-            class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-header accordion-header-custom active action-label">
+        <label class="input-checkbox">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
+                ng-false-value="'0'" id="task_enabled">
+                &nbsp;
+                {{ts('Segmentation Export')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 

@@ -1,38 +1,41 @@
 <div class="crm-accordion-wrapper crm-sqltask-api relativePosition collapsed">
-        <div class="crm-accordion-header active accordion-header-custom action-label"><label
-                        class="input-checkbox"><input style="cursor: pointer;" ng-model="ctrl.model['enabled']"
-                                ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="api_enabled">&nbsp;{{ts('API
-                Call')}}</label>
-                <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                                class="crm-i fa-trash header-delete"></i> {{ts('Delete')}}</label>
+    <div class="crm-accordion-header active accordion-header-custom action-label">
+        <label class="input-checkbox">
+            <input style="cursor: pointer;" ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="api_enabled">
+            &nbsp;
+            {{ts('API Call')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
+    <div class="crm-accordion-body" style="display: none; background-color: #fff">
+        <div class="sql-tasks">
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                    model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
+                    sizelength="60"
+                    showHelpIcon=true
+                    helpaction='onInfoPress("Data Source", "id-api-data", "CRM\/Sqltasks\/Action\/APICall")'>
+            </text-input>
+
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                    model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
+                    showHelpIcon=true
+                    helpaction='onInfoPress("Entity", "id-api-entity", "CRM\/Sqltasks\/Action\/APICall")'>
+            </text-input>
+
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                    model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action'"
+                    showHelpIcon=true
+                    helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
+            </text-input>
+
+            <text-area isrequired="getBooleanFromNumber(ctrl.model['parameters'])" model="ctrl.model['script']"
+                       fieldlabel="ts('Parameters')" fieldid="'api_parameters'" rowsnumber='8'
+                       helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'
+                       showHelpIcon=true>
+            </text-area>
         </div>
-        <div class="crm-accordion-body" style="display: none; background-color: #fff">
-                <div class="sql-tasks">
-
-                        <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
-                                sizelength="60"
-                                showHelpIcon=true
-                                helpaction='onInfoPress("Data Source", "id-api-data", "CRM\/Sqltasks\/Action\/APICall")'>
-                        </text-input>
-
-                        <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
-                                showHelpIcon=true
-                                helpaction='onInfoPress("Entity", "id-api-entity", "CRM\/Sqltasks\/Action\/APICall")'>
-                        </text-input>
-
-                        <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action'"
-                                showHelpIcon=true
-                                helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
-                        </text-input>
-
-                        <text-area isrequired="getBooleanFromNumber(ctrl.model['parameters'])" model="ctrl.model['script']"
-                                   fieldlabel="ts('Parameters')" fieldid="'api_parameters'" rowsnumber='8'
-                                   helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'
-                                   showHelpIcon=true>
-                        </text-area>
-                </div>
-        </div>
+    </div>
 </div>

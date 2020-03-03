@@ -79,29 +79,33 @@
                 <div title="{{task.description}}">{{task.short_desc}}</div>
             </td>
             <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
-            <td>{{task.schedule_label}}<br /><span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</span></td>
+            <td>
+                {{task.schedule_label}}
+                <br />
+                <span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</strong></span>
+            </td>
             <td>{{task.last_executed}}</td>
             <td>{{task.last_runtime}}</td>
             <td>
-                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'top')"><img
-                        src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top"
-                        alt="{{ts('Move to top')}}" class="order-icon"></a>&nbsp;
-                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'up')"><img
-                        src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}"
-                        alt="Move up one row" class="order-icon"></a>&nbsp;
-                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'down')"><img
-                        src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;"
-                        title="{{ts('Move down one row')}}" alt="Move down one row" class="order-icon"></a>&nbsp;
-                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'bottom')"><img
-                        src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}"
-                        alt="Move to bottom" class="order-icon"></a>
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'top')">
+                    <img src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top" alt="{{ts('Move to top')}}" class="order-icon">
+                </a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'up')">
+                    <img src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}" alt="Move up one row" class="order-icon">
+                </a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'down')">
+                    <img src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;" title="{{ts('Move down one row')}}" alt="Move down one row" class="order-icon">
+                </a>&nbsp;
+                <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'bottom')">
+                    <img src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}" alt="Move to bottom" class="order-icon">
+                </a>
             </td>
             <td>
                 <span class="btn-slide crm-hover-button">
                     {{ts('Actions', {'domain' : 'de.systopia.sqltasks'})}}
                     <ul class="panel">
                         <li>
-                            <a class="action-item crm-hover-button sqltasks-job-run" href="javascript:;"  title="{{ts('Confirm')}}" crm-confirm="{resizable: true, width: '40%', height: '40%', open: deleteDialogue}"
+                            <a class="action-item crm-hover-button sqltasks-job-run" href="javascript:;" title="{{ts('Confirm')}}" crm-confirm="{resizable: true, width: '40%', height: '40%', open: deleteDialogue}"
                             on-yes="confirmDeleteTask(task.id)">{{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}</a>
                         </li>
                         <li>

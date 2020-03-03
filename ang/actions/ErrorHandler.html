@@ -1,15 +1,21 @@
 <div class="crm-accordion-wrapper crm-sqltask-error relativePosition collapsed">
-    <div class="crm-accordion-header accordion-header-custom active action-label"><label class="input-checkbox"><input
-                ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
-                type="checkbox" id="error_enabled">&nbsp;{{ts('Error
-        Handler')}}</label><label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-header accordion-header-custom active action-label">
+        <label class="input-checkbox">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
+                type="checkbox" id="error_enabled">
+            &nbsp;
+            {{ts('Error Handler')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
             <div id="help" style="margin-left: 5px; margin-right: 5px;">
-                {{ts('This action will be triggered if the execution of the task has reported errors, or has failed
-                completely.')}}</div>
+                {{ts('This action will be triggered if the execution of the task has reported errors, or has failed completely.')}}
+            </div>
 
             <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'" sizelength="60"
                 helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'

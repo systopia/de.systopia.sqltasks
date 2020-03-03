@@ -1,9 +1,16 @@
 <div class="crm-section">
-    <div class="label"><label for="{{fieldId}}">{{fieldLabel}}&nbsp;<span class="crm-marker" ng-if="isRequired"
-                title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">*</span></label>
+    <div class="label">
+        <label for="{{fieldId}}">
+            <span>{{fieldLabel}}</span>
+            &nbsp;
+            <span class="crm-marker" ng-if="isRequired" title="{{ts('This field is required.', {'domain' : 'de.systopia.sqltasks'})}}">
+                *
+            </span>
+        </label>
     </div>
-    <div class="content"><input ng-model="componentModel" placeholder="- none -" data-select-params='{{dataParams}}'
-            data-api-entity="contact" name="{{fieldId}}" type="text" value="" id="{{fieldId}}" />
+    <div class="content">
+        <input ng-model="componentModel" placeholder="- none -" data-select-params='{{dataParams}}' ng-required="isRequired"
+               data-api-entity="contact" name="{{fieldId}}" type="text" value="" id="{{fieldId}}" />
     </div>
     <div class="clear"></div>
 </div>

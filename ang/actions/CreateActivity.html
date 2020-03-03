@@ -1,21 +1,31 @@
 <div class="crm-accordion-wrapper crm-sqltask-activity collapsed relativePosition">
-    <div class="crm-accordion-header active accordion-header-custom action-label"><label class="input-checkbox"><input
-            ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
-            type="checkbox" id="activity_enabled">&nbsp;{{ts('Create Activity')}}</label><label class="header-delete-btn"
-            ng-click="removeItemFromArray(ctrl.index)"><i class="crm-i fa-trash header-delete"></i>
-            {{ts('Delete')}}</label></div>
+    <div class="crm-accordion-header active accordion-header-custom action-label">
+        <label class="input-checkbox">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
+            type="checkbox" id="activity_enabled">
+            &nbsp;
+            {{ts('Create Activity')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
     <div class="crm-accordion-body" style="display: none; background-color: #fff">
         <div class="sql-tasks">
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
-                fieldid="'activity_contact_table'" sizelength="60" ></text-input>
+                fieldid="'activity_contact_table'" sizelength="60" >
+            </text-input>
 
             <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')"
-                fieldid="'activity_use_api'"></check-box>
+                fieldid="'activity_use_api'">
+            </check-box>
 
             <check-box model="ctrl.model['individual']" fieldlabel="ts('Individual Activities')"
-                fieldid="'activity_individual'"></check-box>
+                fieldid="'activity_individual'">
+            </check-box>
 
             <hr>
 
@@ -34,28 +44,34 @@
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['subject']"
                 fieldlabel="ts('Subject')" fieldid="'activity_subject'" sizelength="60"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
-                showHelpIcon=true></text-input>
+                showHelpIcon=true>
+            </text-input>
 
             <text-area model="ctrl.model['details']" fieldlabel="ts('Details')" fieldid="'activity_details'"
                 rowsnumber='4'
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
-                showHelpIcon=true></text-area>
+                showHelpIcon=true>
+            </text-area>
 
             <text-input model="ctrl.model['date_time']" fieldlabel="ts('Timestamp')"
                 fieldid="'activity_activity_date_time'"
                 helpaction='onInfoPress("Timestamp Options", "id-activity-datetime", "CRM\/Sqltasks\/Action\/CreateActivity")'
-                showHelpIcon=true></text-input>
+                showHelpIcon=true>
+            </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select2
                 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
                 fieldid="'activity_campaign_id_' + ctrl.index" optionsArray="campaignData">
             </ordinary-select2>
 
             <select-entityref model="ctrl.model['source_contact_id']" fieldlabel="ts('Source Contact')"
-                fieldid="'activity_source_contact_id'"></select-entityref>
+                isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                fieldid="'activity_source_contact_id'">
+            </select-entityref>
 
             <select-entityref dataparams='{"multiple":true}' model="ctrl.model['assigned_to']"
-                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to'"></select-entityref>
+                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to'">
+            </select-entityref>
 
             <text-input model="ctrl.model['source_record_id']" fieldlabel="ts('Source Record ID')"
                 fieldid="'activity_source_record_id'"
@@ -63,12 +79,12 @@
                 showHelpIcon=true>
             </text-input>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select
                 model="ctrl.model['medium_id']" fieldlabel="ts('Activity Medium')"
                 fieldid="'activity_medium_id'" optionsArray="mediumData">
             </ordinary-select>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select
                 model="ctrl.model['engagement_level']" fieldlabel="ts('Engagement Index')"
                 fieldid="'activity_engagement_level'" optionsArray="engagementIndexData">
             </ordinary-select>
@@ -85,7 +101,7 @@
                 showHelpIcon=true>
             </text-input>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select
                 model="ctrl.model['priority_id']" fieldlabel="ts('Priority')" fieldid="'activity_priority_id'"
                 optionsArray="priorityData">
             </ordinary-select>

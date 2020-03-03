@@ -15,7 +15,8 @@
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" sizelength="60"
                 model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
-                fieldid="'group_contact_table'"></text-input>
+                fieldid="'group_contact_table'">
+            </text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 model="ctrl.model['id']" fieldlabel="ts('Synchronise Group')" isdataloaded="isDataLoadedForOrdinarySelect2('group_group_id' + ctrl.index)"

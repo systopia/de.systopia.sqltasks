@@ -1,46 +1,53 @@
 <div class="crm-accordion-wrapper crm-sqltask-success relativePosition collapsed">
-        <div class="crm-accordion-header accordion-header-custom active action-label"><label
-                        class="input-checkbox"><input ng-model="ctrl.model['enabled']" style="cursor: pointer;"
-                                ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="success_enabled">&nbsp;{{ts('Success
-                Handler')}}</label><label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)"><i
-                                class="crm-i fa-trash header-delete"></i>
-                        {{ts('Delete')}}</label></div>
-        <div class="crm-accordion-body" style="display: none; background-color: #fff">
-                <div class="sql-tasks">
-                        <div id="help" style="margin-left: 5px; margin-right: 5px;">
-                                {{ts('This action will be triggered after the')}} <strong>{{ts('successful')}}</strong> {{ts('execution of the
-                                task.')}}</div>
+    <div class="crm-accordion-header accordion-header-custom active action-label">
+        <label class="input-checkbox">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="success_enabled">
+            &nbsp;
+            {{ts('Success Handler')}}
+        </label>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+            <i class="crm-i fa-trash header-delete"></i>
+            {{ts('Delete')}}
+        </label>
+    </div>
+    <div class="crm-accordion-body" style="display: none; background-color: #fff">
+        <div class="sql-tasks">
+            <div id="help" style="margin-left: 5px; margin-right: 5px;">
+                {{ts('This action will be triggered after the')}}
+                <strong>{{ts('successful')}}</strong>
+                {{ts('execution of the task.')}}
+            </div>
 
-                        <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')"
-                                fieldid="'success_table'" showHelpIcon=true sizelength="60"
-                                helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'>
-                        </text-input>
+            <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')"
+                        fieldid="'success_table'" showHelpIcon=true sizelength="60"
+                        helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'>
+            </text-input>
 
-                        <check-box model="ctrl.model['drop_table']" fieldlabel="ts('Drop Error Table')"
-                                fieldid="'success_drop_table'" showHelpIcon=true
-                                helpaction='onInfoPress("Drop Error Table", "id-handler-error-table-drop", "CRM\/Sqltasks\/Action\/ResultHandler")'>
-                        </check-box>
+            <check-box model="ctrl.model['drop_table']" fieldlabel="ts('Drop Error Table')"
+                       fieldid="'success_drop_table'" showHelpIcon=true
+                       helpaction='onInfoPress("Drop Error Table", "id-handler-error-table-drop", "CRM\/Sqltasks\/Action\/ResultHandler")'>
+            </check-box>
 
-                        <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['email']" fieldlabel="ts('Email to')"
-                                fieldid="'success_email'" showHelpIcon=true
-                                helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'>
-                        </text-input>
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                        model="ctrl.model['email']" fieldlabel="ts('Email to')"
+                        fieldid="'success_email'" showHelpIcon=true
+                        helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'>
+            </text-input>
 
-                        <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                                model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
-                                fieldid="'success_email_template'" optionsArray="templateOptions">
-                        </ordinary-select>
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+                             model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
+                             fieldid="'success_email_template'" optionsArray="templateOptions">
+            </ordinary-select>
 
-                        <check-box model="ctrl.model['always']" fieldlabel="ts('Execute always')"
-                                fieldid="'success_always'" showHelpIcon=true
-                                helpaction='onInfoPress("Execute Always", "id-handler-always", "CRM\/Sqltasks\/Action\/ResultHandler")'>
-                        </check-box>
+            <check-box model="ctrl.model['always']" fieldlabel="ts('Execute always')"
+                       fieldid="'success_always'" showHelpIcon=true
+                       helpaction='onInfoPress("Execute Always", "id-handler-always", "CRM\/Sqltasks\/Action\/ResultHandler")'>
+            </check-box>
 
-                        <check-box model="ctrl.model['attach_log']" fieldlabel="ts('Attach Log')"
-                                fieldid="'success_attach_log'" showHelpIcon=true
-                                helpaction='onInfoPress("Attach Log", "id-handler-attach-log", "CRM\/Sqltasks\/Action\/ResultHandler")'>
-                        </check-box>
-                </div>
+            <check-box model="ctrl.model['attach_log']" fieldlabel="ts('Attach Log')"
+                       fieldid="'success_attach_log'" showHelpIcon=true
+                       helpaction='onInfoPress("Attach Log", "id-handler-attach-log", "CRM\/Sqltasks\/Action\/ResultHandler")'>
+            </check-box>
         </div>
+    </div>
 </div>
