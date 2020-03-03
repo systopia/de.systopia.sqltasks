@@ -1016,7 +1016,7 @@
       controller: function($scope) {
         $scope.columnsNumber = angular.isDefined($scope.columnsNumber)
           ? $scope.columnsNumber
-          : 80;
+          : 74;
       }
     };
   });
