@@ -7,6 +7,7 @@
                 *
             </span>
         </label>
+        <a ng-click="helpAction()" ng-if="showHelpIcon" href="javascript:;" title="Help" class="helpicon"></a>
     </div>
     <div class="content">
         <input ng-model="componentModel" placeholder="- none -" data-select-params='{{dataParams}}' ng-required="isRequired"

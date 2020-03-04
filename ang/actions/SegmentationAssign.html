@@ -49,8 +49,9 @@
             <text-area ng-if="ctrl.model['start'] == 'restart'"
                 model="ctrl.model['segment_order']" fieldlabel="ts('Segment Order')"
                 fieldid="'segmentation_assign_segment_order'" rowsnumber='4'
-                helpaction='onInfoPress("Segment Order", "id-segmentation-assign-segment-order", "CRM\/Sqltasks\/Action\/CreateActivity")'
-                showHelpIcon=true></text-area>
+                helpaction='onInfoPress("Segment Order", "id-segmentation-assign-segment-order", "CRM\/Sqltasks\/Action\/SegmentationAssign")'
+                showHelpIcon=true>
+            </text-area>
 
             <text-input ng-if="ctrl.model['start'] == 'restart_t'"
                 model="ctrl.model['segment_order_table']" fieldlabel="ts('Segment Order Table')"

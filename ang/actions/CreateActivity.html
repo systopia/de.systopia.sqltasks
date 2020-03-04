@@ -70,7 +70,9 @@
             </select-entityref>
 
             <select-entityref dataparams='{"multiple":true}' model="ctrl.model['assigned_to']"
-                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to'">
+                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to'"
+                helpaction='onInfoPress("Assignees", "id-activity-assignees", "CRM\/Sqltasks\/Action\/CreateActivity")'
+                showHelpIcon=true>
             </select-entityref>
 
             <text-input model="ctrl.model['source_record_id']" fieldlabel="ts('Source Record ID')"

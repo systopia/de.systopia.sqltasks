@@ -44,3 +44,7 @@
 {htxt id='id-user-input'}
   <p>{ts domain="de.systopia.sqltasks"}If you enable this flag, execution of this task requires an input value. The value may be entered manually by the user before execution, or it could be provided programmatically via the API or e.g. by the CiviRules action integration. The input value will be provided as an SQL variable called <strong>@input</strong> within the main script.{/ts}</p>
 {/htxt}
+
+{htxt id='id-run-permissions'}
+  <p>{ts domain="de.systopia.sqltasks"}List of permissions which will be checked before task is ran.{/ts}</p>
+{/htxt}
