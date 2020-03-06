@@ -35,7 +35,7 @@ function civicrm_api3_sqltask_create($params) {
   }
 
   if (isset($params['config'])) {
-    $requiredConfigFields = ['scheduled_month', 'scheduled_weekday', 'scheduled_day', 'actions'];
+    $requiredConfigFields = ['actions'];
     $configNotExistFields = [];
     foreach ($requiredConfigFields as $field) {
       if (!isset($params['config'][$field])) {
