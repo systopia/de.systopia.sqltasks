@@ -14,8 +14,9 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['parameters']"
-                fieldlabel="ts('Export Table')" fieldid="'api_parameters'" sizelength="60" ></text-input>
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['table']"
+                fieldlabel="ts('Export Table')" fieldid="'export_table_parameters'" sizelength="60" >
+            </text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')" isdataloaded="isDataLoadedForOrdinarySelect2('csv_encoding_' + ctrl.index)"
