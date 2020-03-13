@@ -25,7 +25,11 @@
     .controller("taskRunnerCtrl", function($scope, $location, taskId) {
       $scope.taskId = taskId;
       $scope.ts = CRM.ts();
-      runTask();
+
+      if (window.waitSqlTaskId === taskId) {
+        window.waitSqlTaskId = null;
+        runTask();
+      }
 
       $scope.runTask = runTask;
 

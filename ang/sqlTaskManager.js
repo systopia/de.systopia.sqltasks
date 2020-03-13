@@ -60,6 +60,7 @@
       };
 
       $scope.confirmDeleteTask = function(taskId) {
+        window.waitSqlTaskId = taskId;
         $location.path("/sqltasks/run/" + taskId);
       };
 
