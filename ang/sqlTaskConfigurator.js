@@ -1095,22 +1095,23 @@
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
         selectChange: "&",
+        inputMaxWidth: "<inputmaxwidth",
         fieldIdToChange: "<"
       },
       controller: function($scope) {
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "25em";
+
         if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
           var timerId = setInterval(function() {
             if ($scope.isDataLoaded) {
-              $("#" + $scope.fieldId).css("width", "25em").select2();
+              $("#" + $scope.fieldId).css("width", '100%').css("max-width", $scope.inputMaxWidth).select2();
               clearInterval(timerId);
             }
           }, 300);
         } else {
           CRM.$(function($) {
             setTimeout(function() {
-              $("#" + $scope.fieldId)
-                .css("width", "25em")
-                .select2();
+              $("#" + $scope.fieldId).css("width", '100%').css("max-width", $scope.inputMaxWidth).select2();
             }, 1500);
           });
         }
