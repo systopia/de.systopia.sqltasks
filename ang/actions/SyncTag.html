@@ -14,15 +14,15 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['contact_table']" sizelength="60"
-                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table'">
+                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table'" inputMaxWidth="'500px'">
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['id']" inputMaxWidth="'500px;'"
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['id']" inputMaxWidth="'500px'"
                 fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData"
                 isdataloaded="isDataLoadedForOrdinarySelect2('tag_tag_id_' + ctrl.index)">
             </ordinary-select2>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
                 model="ctrl.model['entity_table']" fieldlabel="ts('Choose Entity')"
                 fieldid="'tag_entity_table' + ctrl.index" optionsArray="entityData">
             </ordinary-select>

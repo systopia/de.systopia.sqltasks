@@ -14,12 +14,12 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
 
-            <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')" sizelength="60"
+            <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')" sizelength="60" inputMaxWidth="'500px'"
                 fieldid="'segmentation_assign_table'" showHelpIcon=true isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                 helpaction='onInfoPress("Data table", "id-segmentation-assign-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
 
-            <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
+            <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')" inputMaxWidth="'300px'"
                 fieldid="'segmentation_assign_campaign_id' + ctrl.index" optionsArray="campaignData">
             </ordinary-select2>
 
@@ -29,7 +29,7 @@
             </check-box>
 
             <text-input model="ctrl.model['segment_name']" fieldlabel="ts('Segment')"
-                fieldid="'segmentation_assign_segment_name'" showHelpIcon=true
+                fieldid="'segmentation_assign_segment_name'" showHelpIcon=true inputMaxWidth="'300px'"
                 disabled="getBooleanFromNumber(ctrl.model['segment_from_table'])"
                 helpaction='onInfoPress("Segment", "id-segmentation-assign-segment-name", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </text-input>
@@ -41,19 +41,19 @@
                 checkbox-change="checkboxChange(value)">
             </check-box>
 
-            <ordinary-select2 model="ctrl.model['start']" fieldlabel="ts('Change Campaign Status')"
+            <ordinary-select2 model="ctrl.model['start']" fieldlabel="ts('Change Campaign Status')" inputMaxWidth="'300px'"
                 fieldid="'segmentation_assign_start' + ctrl.index" showHelpIcon=true optionsArray="statusesData" select-change="statusChanged(value)"
                 helpaction='onInfoPress("Change Campaign Status", "id-segmentation-assign-start", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>
             </ordinary-select2>
 
             <text-area ng-if="ctrl.model['start'] == 'restart'"
                 model="ctrl.model['segment_order']" fieldlabel="ts('Segment Order')"
-                fieldid="'segmentation_assign_segment_order'" rowsnumber='4'
+                fieldid="'segmentation_assign_segment_order'" rowsnumber='4' inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Segment Order", "id-segmentation-assign-segment-order", "CRM\/Sqltasks\/Action\/SegmentationAssign")'
                 showHelpIcon=true>
             </text-area>
 
-            <text-input ng-if="ctrl.model['start'] == 'restart_t'"
+            <text-input ng-if="ctrl.model['start'] == 'restart_t'" inputMaxWidth="'500px'"
                 model="ctrl.model['segment_order_table']" fieldlabel="ts('Segment Order Table')"
                 fieldid="'segmentation_assign_segment_order_table'" showHelpIcon=true sizelength="60"
                 helpaction='onInfoPress("Segment Order Table?", "id-segmentation-assign-segment-order-table", "CRM\/Sqltasks\/Action\/SegmentationAssign")'>

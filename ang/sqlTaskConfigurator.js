@@ -953,9 +953,16 @@
         $scope.statusChanged = function(value, fieldId) {
           CRM.$(function($) {
             $scope.ctrl.model.segments = "";
+            var inputStyles =  {
+              'width' : '100%',
+              'max-width' : '300px',
+              'font-family' : 'monospace, monospace !important',
+              'box-sizing' : 'border-box',
+              'height' : '28px'
+            };
             setTimeout(() => {
               $("#" + fieldId)
-                .css("width", "25em")
+                .css(inputStyles)
                 .select2();
             }, 0);
           });
@@ -1011,12 +1018,18 @@
         rowsNumber: "<rowsnumber",
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
-        columnsNumber: "<columnsnumber"
+        columnsNumber: "<columnsnumber",
+        inputMaxWidth: "<inputmaxwidth",
       },
       controller: function($scope) {
-        $scope.columnsNumber = angular.isDefined($scope.columnsNumber)
-          ? $scope.columnsNumber
-          : 74;
+        $scope.columnsNumber = angular.isDefined($scope.columnsNumber) ? $scope.columnsNumber : 74;
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        $scope.textAreaStyles = {
+          'width' : '100%',
+          'max-width' : $scope.inputMaxWidth,
+          'font-family' : 'monospace, monospace !important',
+          'box-sizing' : 'border-box',
+        };
       }
     };
   });
@@ -1033,18 +1046,21 @@
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
         sizeLength: "<sizelength",
-        isDisabled: "<disabled"
+        isDisabled: "<disabled",
+        inputMaxWidth: "<inputmaxwidth",
       },
       controller: function($scope) {
-        $scope.isDisabled = angular.isDefined($scope.isDisabled)
-          ? $scope.isDisabled
-          : false;
-        $scope.componentModel = angular.isDefined($scope.isDisabled)
-          ? $scope.componentModel
-          : "";
-        $scope.sizeLength = angular.isDefined($scope.sizeLength)
-          ? $scope.sizeLength
-          : 32;
+        $scope.isDisabled = angular.isDefined($scope.isDisabled) ? $scope.isDisabled : false;
+        $scope.componentModel = angular.isDefined($scope.isDisabled) ? $scope.componentModel : "";
+        $scope.sizeLength = angular.isDefined($scope.sizeLength) ? $scope.sizeLength : 32;
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        $scope.inputStyle =  {
+          'width' : '100%',
+          'max-width' : $scope.inputMaxWidth,
+          'font-family' : 'monospace, monospace !important',
+          'box-sizing' : 'border-box',
+          'height' : '28px'
+        };
       }
     };
   });
@@ -1076,7 +1092,17 @@
         fieldId: "<fieldid",
         optionsArray: "<optionsarray",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        inputMaxWidth: "<inputmaxwidth",
+      },
+      controller: function($scope) {
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        $scope.selectStyle = {
+          'width' : '100%',
+          'max-width' : $scope.inputMaxWidth,
+          'box-sizing' : 'border-box',
+          'height' : '28px'
+        };
       }
     };
   });
@@ -1099,19 +1125,25 @@
         fieldIdToChange: "<"
       },
       controller: function($scope) {
-        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "25em";
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        var selectStyles = {
+          'width' : "100%",
+          'max-width' : $scope.inputMaxWidth,
+          'box-sizing' : 'border-box',
+          'height' : '28px'
+        };
 
         if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
           var timerId = setInterval(function() {
             if ($scope.isDataLoaded) {
-              $("#" + $scope.fieldId).css("width", '100%').css("max-width", $scope.inputMaxWidth).select2();
+              $("#" + $scope.fieldId).css(selectStyles).select2();
               clearInterval(timerId);
             }
           }, 300);
         } else {
           CRM.$(function($) {
             setTimeout(function() {
-              $("#" + $scope.fieldId).css("width", '100%').css("max-width", $scope.inputMaxWidth).select2();
+              $("#" + $scope.fieldId).css(selectStyles).select2();
             }, 1500);
           });
         }
@@ -1131,22 +1163,28 @@
         fieldId: "<fieldid",
         optionsArray: "<optionsarray",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        inputMaxWidth: "<inputmaxwidth",
       },
       controller: function($scope) {
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        var selectStyles = {
+          'width' : "100%",
+          'max-width' : $scope.inputMaxWidth,
+          'box-sizing' : 'border-box',
+          'height' : '28px'
+        };
         if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
           var timerId = setInterval(function() {
             if ($scope.isDataLoaded) {
-              $("#" + $scope.fieldId).css("width", "25em").select2();
+              $("#" + $scope.fieldId).css(selectStyles).select2();
               clearInterval(timerId);
             }
           }, 300);
         } else {
           CRM.$(function($) {
             setTimeout(function() {
-              $("#" + $scope.fieldId)
-                .css("width", "25em")
-                .select2();
+              $("#" + $scope.fieldId).css(selectStyles).select2();
             }, 1500);
           });
         }
@@ -1165,17 +1203,21 @@
         fieldId: "<fieldid",
         dataParams: "<dataparams",
         helpAction: "&helpaction",
-        showHelpIcon: "<showhelpicon"
+        showHelpIcon: "<showhelpicon",
+        inputMaxWidth: "<inputmaxwidth",
       },
       controller: function($scope) {
-        $scope.dataParams = angular.isDefined($scope.dataParams)
-          ? $scope.dataParams
-          : [];
+        $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
+        var selectStyles = {
+          'width' : "100%",
+          'max-width' : $scope.inputMaxWidth,
+          'box-sizing' : 'border-box',
+          'height' : '28px'
+        };
+        $scope.dataParams = angular.isDefined($scope.dataParams) ? $scope.dataParams : [];
         CRM.$(function($) {
           setTimeout(function() {
-            $("#" + $scope.fieldId)
-              .css("width", "25em")
-              .crmEntityRef();
+            $("#" + $scope.fieldId).css(selectStyles).crmEntityRef();
           }, 0);
         });
       }

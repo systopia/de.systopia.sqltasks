@@ -14,25 +14,27 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['table']"
+            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['table']" inputMaxWidth="'500px'"
                 fieldlabel="ts('Export Table')" fieldid="'export_table_parameters'" sizelength="60" >
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
                 model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')" isdataloaded="isDataLoadedForOrdinarySelect2('csv_encoding_' + ctrl.index)"
                 fieldid="'csv_encoding_' + ctrl.index" optionsArray="encodingData">
             </ordinary-select2>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
                 model="ctrl.model['delimiter']" fieldlabel="ts('Delimiter')" fieldid="csv_delimiter"
                 optionsArray="delimiterData">
             </ordinary-select>
 
             <text-input ng-if="ctrl.model['delimiter'] === 'other'" model="ctrl.model['delimiter_other']"
-                fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other'"></text-input>
+                        inputMaxWidth="'300px'"
+                        fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other'">
+            </text-input>
 
             <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['headers']"
-                fieldlabel="ts('Columns')"
+                fieldlabel="ts('Columns')" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Columns", "id-csv-columns", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true fieldid="'csv_headers'" rowsnumber='8' columnsnumber='40'></text-area>
 
@@ -43,16 +45,18 @@
             </check-box>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['filename']"
-                fieldlabel="ts('File Name')" fieldid="'csv_filename'" sizelength="60"
+                fieldlabel="ts('File Name')" fieldid="'csv_filename'" sizelength="60" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Filename", "id-csv-filename", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true>
             </text-input>
 
-            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'csv_path'" sizelength="60"
-                helpaction='onInfoPress("Path", "id-csv-path", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
+            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')"
+                        fieldid="'csv_path'" sizelength="60" inputMaxWidth="'500px'"
+                        helpaction='onInfoPress("Path", "id-csv-path", "CRM\/Sqltasks\/Action\/CSVExport")'
+                        showHelpIcon=true>
             </text-input>
 
-            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'csv_email'"
+            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'csv_email'" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Email", "id-csv-email", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
             </text-input>
 
@@ -68,7 +72,7 @@
             </ordinary-select>
 
             <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload'" sizelength="60"
-                helpaction='onInfoPress("SFTP Upload", "id-csv-sftp", "CRM\/Sqltasks\/Action\/CSVExport")'
+                helpaction='onInfoPress("SFTP Upload", "id-csv-sftp", "CRM\/Sqltasks\/Action\/CSVExport")' inputMaxWidth="'500px'"
                 showHelpIcon=true>
             </text-input>
 

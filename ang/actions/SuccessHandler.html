@@ -19,7 +19,7 @@
             </div>
 
             <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')"
-                        fieldid="'success_table'" showHelpIcon=true sizelength="60"
+                        fieldid="'success_table'" showHelpIcon=true sizelength="60" inputMaxWidth="'500px'"
                         helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'>
             </text-input>
 
@@ -30,11 +30,11 @@
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                         model="ctrl.model['email']" fieldlabel="ts('Email to')"
-                        fieldid="'success_email'" showHelpIcon=true
+                        fieldid="'success_email'" showHelpIcon=true inputMaxWidth="'300px'"
                         helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'>
             </text-input>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
                              model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
                              fieldid="'success_email_template'" optionsArray="templateOptions">
             </ordinary-select>

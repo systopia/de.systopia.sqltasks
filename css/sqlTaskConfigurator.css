@@ -67,3 +67,25 @@ select.pixelInput {
 .sql-tasks-actions-block.loading .sql-task-preloader-wrap, .sql-tasks-execution-block.loading .sql-task-preloader-wrap {
   display: block;
 }
+
+.crm-container .sql-tasks .sql-tasks-actions-wrap .crm-section #select-add-action > select,
+.crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > input#name,
+.crm-container .sql-tasks .sql-tasks-execution-wrap .crm-section .content > div#select2-container,
+.crm-container .sql-tasks .sql-tasks-execution-wrap .crm-section .content > select#scheduled,
+.crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > input#category,
+.crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > textarea#description {
+  width: 100%;
+  box-sizing: border-box;
+  height: 28px;
+  max-width: 500px;
+}
+
+.crm-container .sql-tasks .sql-tasks-actions-wrap .crm-section #select-add-action > select,
+.crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > input#category,
+.crm-container .sql-tasks .sql-tasks-execution-wrap .crm-section .content > div#select2-container {
+  max-width: 300px;
+}
+
+.crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > textarea#description {
+  height: auto;
+}

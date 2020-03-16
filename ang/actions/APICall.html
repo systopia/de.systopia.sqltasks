@@ -14,25 +14,25 @@
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                     model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
-                    sizelength="60"
+                    sizelength="60" inputMaxWidth="'500px'"
                     showHelpIcon=true
                     helpaction='onInfoPress("Data Source", "id-api-data", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                     model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
-                    showHelpIcon=true
+                    showHelpIcon=true inputMaxWidth="'300px'"
                     helpaction='onInfoPress("Entity", "id-api-entity", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                     model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action'"
-                    showHelpIcon=true
+                    showHelpIcon=true inputMaxWidth="'300px'"
                     helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-area isrequired="getBooleanFromNumber(ctrl.model['parameters'])" model="ctrl.model['parameters']"
-                       fieldlabel="ts('Parameters')" fieldid="'api_call_parameters'" rowsnumber='8'
+                       fieldlabel="ts('Parameters')" fieldid="'api_call_parameters'" rowsnumber='8' inputMaxWidth="'500px'"
                        helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'
                        showHelpIcon=true>
             </text-area>

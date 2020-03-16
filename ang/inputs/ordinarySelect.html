@@ -9,7 +9,7 @@
     </div>
     <div class="content">
         <select ng-model="componentModel" name="{{fieldId}}" id="{{fieldId}}" class="crm-form-select"
-                ng-required="isRequired">
+                ng-required="isRequired" ng-style="selectStyle" >
             <option value="">-- none --</option>
             <option ng-repeat="option in optionsArray" value="{{option.value}}">{{option.name}}</option>
         </select>

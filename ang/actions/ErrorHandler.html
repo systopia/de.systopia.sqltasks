@@ -19,7 +19,7 @@
 
             <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'" sizelength="60"
                 helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'
-                showHelpIcon=true>
+                showHelpIcon=true inputMaxWidth="'500px'">
             </text-input>
 
             <check-box model="ctrl.model['drop_table']" fieldlabel="ts('Drop Error Table')"
@@ -31,10 +31,10 @@
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['email']"
                 fieldlabel="ts('Email to')" fieldid="'error_email'"
                 helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'
-                showHelpIcon=true>
+                showHelpIcon=true inputMaxWidth="'300px'">
             </text-input>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'500px'"
                 model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
                 fieldid="'email_template'" optionsArray="templateOptions">
             </ordinary-select>
