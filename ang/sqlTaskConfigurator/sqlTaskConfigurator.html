@@ -3,6 +3,15 @@
         <div class="sql-tasks">
 
             <div class="sql-tasks-basic-information-block">
+                <div class="crm-submit-buttons">
+                    <a class="button crm-button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
+                        <i class="crm-i fa-times"></i>
+                        {{ts('Back to Manager')}}
+                    </a>
+                </div>
+            </div>
+
+            <div class="sql-tasks-basic-information-block">
                 <h3>{{ts('Basic Information')}}:</h3>
                 <div class="spacer"></div>
                 <div class="crm-section">
@@ -393,6 +402,10 @@
                     type="button" id="_qf_Configure_submit-bottom">
               {{getBooleanFromNumber(taskId) ? ts('Save') : ts('Create')}}
             </button>
+            <a class="button crm-button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
+                <i class="crm-i fa-times"></i>
+                {{ts('Back to Manager')}}
+            </a>
         </div>
     </form>
 </div>
