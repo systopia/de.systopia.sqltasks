@@ -360,7 +360,7 @@
 
   function openCheckedActions() {
     CRM.$(function($) {
-      var inputArray = $('[id*="enabled"]');
+      var inputArray = $('.crm-accordion-header .input-checkbox input');
       $(inputArray).each(function() {
         if ($(this).is(":checked")) {
           var parent = $(this).closest(".crm-accordion-wrapper");
