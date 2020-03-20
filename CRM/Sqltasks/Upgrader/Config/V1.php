@@ -22,7 +22,7 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
     $newConfig['actions'][] = [
       'type'    => 'CRM_Sqltasks_Action_RunSQL',
       'script'  => $this->config['main_sql'],
-      'enabled' => TRUE,
+      'enabled' => !empty($this->config['main_sql']),
     ];
     // available config prefixes, using fixed order from V1
     $prefixToTypeList = [
@@ -62,7 +62,7 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
         $newConfig['actions'][] = [
           'type'    => 'CRM_Sqltasks_Action_PostSQL',
           'script'  => $this->config['post_sql'],
-          'enabled' => TRUE,
+          'enabled' => !empty($this->config['post_sql']),
         ];
       }
       $action = ['type' => $type];
