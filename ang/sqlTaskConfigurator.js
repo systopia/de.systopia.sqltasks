@@ -628,6 +628,7 @@
           $scope.ordinarySelect2LoadDataStatus.push(select2Id);
         };
         $scope.ts = CRM.ts();
+
         CRM.api3("Tag", "get", {
           sequential: 1,
           return: ["name", "id"],
@@ -645,6 +646,7 @@
           $scope.setDataLoadedForOrdinarySelect2('tag_tag_id_' + $scope.ctrl.index);
           $scope.$apply();
         });
+
         CRM.api3("Sqltaskfield", "getsynctagentities").done(function(result) {
           var entityData = [];
           Object.keys(result.values[0]).map(key => {
@@ -657,6 +659,7 @@
             }
           });
           $scope.entityData = entityData;
+          $scope.setDataLoadedForOrdinarySelect2('tag_entity_table' + $scope.ctrl.index);
           $scope.$apply();
         });
         $scope.removeItemFromArray = removeItemFromArray;
