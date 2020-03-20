@@ -17,7 +17,7 @@
                 fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table'" inputMaxWidth="'500px'">
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['id']" inputMaxWidth="'500px'"
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_id']" inputMaxWidth="'500px'"
                 fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData"
                 isdataloaded="isDataLoadedForOrdinarySelect2('tag_tag_id_' + ctrl.index)">
             </ordinary-select2>

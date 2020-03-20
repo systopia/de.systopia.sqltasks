@@ -69,7 +69,7 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
       // iterate over all config keys and copy those starting with the prefix
       foreach ($this->config['config'] as $key => $value) {
         if (strpos($key, $prefix . '_') === 0) {
-          $itemName = str_replace($prefix . '_', '', $key);
+          $itemName = preg_replace("/^{$prefix}_/", '', $key);
           $action[$itemName] = $value;
         }
       }
