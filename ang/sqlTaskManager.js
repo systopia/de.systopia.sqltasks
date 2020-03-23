@@ -21,10 +21,7 @@
       $scope.ts = CRM.ts();
       $scope.dispatcher_frequency = getCurrentDispatcherFrequency();
       $scope.resourceBaseUrl = CRM.config.resourceBase;
-
-      $scope.initTable = function() {
-        $scope.tasks = getAllTasks();
-      };
+      getAllTasks();
 
       $scope.sortableOptions = {
         handle: ".handle-drag",
