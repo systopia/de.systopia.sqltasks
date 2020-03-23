@@ -29,7 +29,10 @@ class CRM_Sqltasks_Config_FormatTest extends CRM_Sqltasks_AbstractTaskTest {
         "scheduled_weekday": "",
         "scheduled_day": "",
         "scheduled_hour": "0",
-        "scheduled_minute": "0"
+        "scheduled_minute": "0",
+        "tag_enabled":"1",
+        "tag_contact_table":"temp_foo",
+        "tag_tag_id":"123"
     }
   }';
 
@@ -51,6 +54,25 @@ class CRM_Sqltasks_Config_FormatTest extends CRM_Sqltasks_AbstractTaskTest {
         )['config']
       )
     );
+  }
+
+  /**
+   * Test that a missing entity_table field is added in SyncTag actions
+   *
+   * @throws \Exception
+   */
+  public function testEntityTableIsAdded() {
+    $config = CRM_Sqltasks_Config_Format::toLatest(
+      json_decode(self::SAMPLE_V1, TRUE),
+      TRUE
+    )['config'];
+    $entity_table = NULL;
+    foreach ($config['actions'] as $action) {
+      if ($action['type'] == 'CRM_Sqltasks_Action_SyncTag') {
+        $entity_table = $action['entity_table'];
+      }
+    }
+    $this->assertEquals('civicrm_contact', $entity_table);
   }
 
 }

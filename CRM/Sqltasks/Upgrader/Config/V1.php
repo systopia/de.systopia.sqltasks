@@ -73,6 +73,15 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
           $action[$itemName] = $value;
         }
       }
+
+      // special case: historically, tasks with SyncTag actions may lack the
+      // entity_table field, defaulting to "civicrm_contact" during execution.
+      // this applies the default to the stored configuration if no value is set
+      if ($prefix == 'tag') {
+        if (empty($action['entity_table'])) {
+          $action['entity_table'] = 'civicrm_contact';
+        }
+      }
       $newConfig['actions'][] = $action;
     }
 
