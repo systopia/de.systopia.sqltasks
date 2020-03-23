@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <div class="sql-tasks-execution-block" ng-class="{'loading' : !loaderService.isExecutionBlockLoaded()}" id="sqlTasksExecutionBlock">
+            <div class="sql-tasks-execution-block" ng-class="{'loading' : !isExecutionBlockLoaded()}" id="sqlTasksExecutionBlock">
                 <h3>{{ts('Execution')}}:</h3>
                 <div class="spacer"></div>
                 <div class="sql-task-preloader-wrap">
