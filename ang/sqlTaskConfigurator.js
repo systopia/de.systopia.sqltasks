@@ -20,19 +20,25 @@
     }
   ]);
 
-  angular
-    .module(moduleName)
-    .controller("sqlTaskConfiguratorCtrl", function($scope, $location, taskId) {
+  angular.module(moduleName).service('loaderService', function() {
+    this.executionBlock = {
+      'isLoaded' : false,
+      'currentLoadedComponents' : 0,
+      'componentsNumber' : 2,
+    };
+    this.updateExecutionBlock = function() {
+      this.executionBlock.currentLoadedComponents = this.executionBlock.currentLoadedComponents  + 1;
+      if (this.executionBlock.currentLoadedComponents >= this.executionBlock.componentsNumber) {
+        this.executionBlock.isLoaded = true;
+      }
+    };
+    this.isExecutionBlockLoaded = function() {
+      return this.executionBlock.isLoaded;
+    };
+  });
+
+  angular.module(moduleName).controller("sqlTaskConfiguratorCtrl", function($scope, $location, taskId, loaderService) {
       $scope.ts = CRM.ts();
-      $scope.executionBlock = {
-        'isLoaded' : false,
-        'currentLoadedComponents' : 0,
-        'componentsNumber' : 2,
-      };
-      $scope.handleBlockLoading = handleBlockLoading;
-      $scope.isExecutionBlockLoaded = function() {
-        return $scope.executionBlock.isLoaded;
-      };
       $scope.taskOptions = {
         scheduled: ""
       };
@@ -44,6 +50,7 @@
         scheduled_hour: "0",
         scheduled_minute: "0"
       };
+      $scope.loaderService = loaderService;
       $scope.taskId = taskId;
 
       $scope.onInfoPress = onInfoPress;
@@ -132,7 +139,7 @@
           });
         });
         $scope.permissionsData = permissionsData;
-        $scope.executionBlock = $scope.handleBlockLoading($scope.executionBlock);
+        loaderService.updateExecutionBlock();
       });
 
       $scope.onSchedulingOptionChange = function(params) {
@@ -241,7 +248,7 @@
             scheduled_day: 1
           });
         }
-        $scope.executionBlock = $scope.handleBlockLoading($scope.executionBlock);
+        loaderService.updateExecutionBlock();
         $scope.$apply();
       });
 
@@ -800,15 +807,6 @@
       file: file
     });
     return false;
-  }
-
-  function handleBlockLoading(block) {
-    block.currentLoadedComponents = block.currentLoadedComponents  + 1;
-    if (block.currentLoadedComponents >= block.componentsNumber) {
-      block.isLoaded = true;
-    }
-
-    return block;
   }
 
   angular.module(moduleName).directive("successHandler", function() {
