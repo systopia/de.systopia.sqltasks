@@ -199,6 +199,7 @@ class CRM_Sqltasks_Task {
   public function setAttribute($attribute_name, $value, $writeTrough = FALSE) {
     if (isset(self::$main_attributes[$attribute_name])) {
       $this->attributes[$attribute_name] = $value;
+      $this->setDefaultAttributes();
       if ($writeTrough && $this->task_id) {
         CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks`
                                     SET `{$attribute_name}` = %1
@@ -223,6 +224,7 @@ class CRM_Sqltasks_Task {
    * Store this task (create or update)
    */
   public function store() {
+    $this->setDefaultAttributes();
     // sort out parameters
     $params = array();
     $fields = array();
