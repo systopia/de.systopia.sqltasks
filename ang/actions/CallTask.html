@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
-                   ng-false-value="'0'">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
                 &nbsp;
                 {{ts('Run SQL Task(s)')}}
         </label>
@@ -16,7 +15,7 @@
             <multiple-select2
                 isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['categories']) && !isDataExists(ctrl.model['tasks'])"
                 model="ctrl.model['tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + ctrl.index" inputMaxWidth="'300px'"
-                optionsArray="tasksData" isdataloaded="isDataLoadedForOrdinarySelect2('task_tasks_' + ctrl.index)"
+                optionsArray="tasksData" isdataloaded="isDataLoaded('task_tasks_' + ctrl.index)"
                 helpaction='onInfoPress("Tasks", "id-task-tasks", "CRM\/Sqltasks\/Action\/CallTask")' showHelpIcon=true>
             </multiple-select2>
             <multiple-select2
@@ -24,7 +23,7 @@
                 model="ctrl.model['categories']" fieldlabel="ts('SQL Task Categories')"
                 fieldid="'task_categories_' + ctrl.index" optionsArray="categoriesData" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Categories", "id-task-categories", "CRM\/Sqltasks\/Action\/CallTask")'
-                showHelpIcon=true isdataloaded="isDataLoadedForOrdinarySelect2('task_categories_' + ctrl.index)">
+                showHelpIcon=true isdataloaded="isDataLoaded('task_categories_' + ctrl.index)">
             </multiple-select2>
         </div>
     </div>

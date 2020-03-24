@@ -1,7 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-api relativePosition collapsed">
     <div class="crm-accordion-header active accordion-header-custom action-label">
         <label class="input-checkbox">
-            <input style="cursor: pointer;" ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox" id="api_enabled">
+            <input style="cursor: pointer;" ng-model="ctrl.model['enabled']" ng-true-value="'1'" ng-false-value="'0'" type="checkbox">
             &nbsp;
             {{ts('API Call')}}
         </label>
@@ -13,26 +13,26 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                    model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table'"
+                    model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table' + ctrl.index"
                     sizelength="60" inputMaxWidth="'500px'"
                     showHelpIcon=true
                     helpaction='onInfoPress("Data Source", "id-api-data", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                    model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity'"
+                    model="ctrl.model['entity']" fieldlabel="ts('Entity')" fieldid="'api_entity' + ctrl.index"
                     showHelpIcon=true inputMaxWidth="'300px'"
                     helpaction='onInfoPress("Entity", "id-api-entity", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                    model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action'"
+                    model="ctrl.model['action']" fieldlabel="ts('Action')" fieldid="'api_action' + ctrl.index"
                     showHelpIcon=true inputMaxWidth="'300px'"
                     helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
             <text-area isrequired="getBooleanFromNumber(ctrl.model['parameters'])" model="ctrl.model['parameters']"
-                       fieldlabel="ts('Parameters')" fieldid="'api_call_parameters'" rowsnumber='8' inputMaxWidth="'500px'"
+                       fieldlabel="ts('Parameters')" fieldid="'api_call_parameters' + ctrl.index" rowsnumber='8' inputMaxWidth="'500px'"
                        helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'
                        showHelpIcon=true>
             </text-area>
