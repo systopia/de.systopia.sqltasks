@@ -314,18 +314,6 @@
         }
       };
 
-      CRM.api3("Sqltaskfield", "getmessagetemplates").done(function(result) {
-        if (!result.is_error) {
-          Object.keys(result.values[0]).map(key => {
-            templateOptions.push({
-              value: key,
-              name: result.values[0][key]
-            });
-          });
-          $scope.templateOptions = templateOptions;
-        }
-      });
-
       CRM.api3("Campaign", "get", {
         sequential: 1,
         return: ["id", "title"],
@@ -366,7 +354,6 @@
       };
     });
 
-  var templateOptions = [];
   var campaignData = [];
 
   function removeItemFromArray(index) {
@@ -577,19 +564,30 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.ordinarySelect2LoadDataStatus = [];
-        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
-          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
-        };
-        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
-          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
-        };
+      controller: function($scope, loaderService) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
-        $scope.templateOptions = templateOptions;
         $scope.onInfoPress = onInfoPress;
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
+
+        CRM.api3("Sqltaskfield", "getmessagetemplates").done(function(result) {
+          if (!result.is_error) {
+            var messageTemplateOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              messageTemplateOptions.push({
+                value: key,
+                name: result.values[0][key]
+              });
+            });
+            $scope.messageTemplateOptions = messageTemplateOptions;
+            loaderService.setDataLoaded('csv_email_template' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
+
         CRM.api3("Sqltaskfield", "getfileencoding").done(function(result) {
           var encodingData = [];
           Object.keys(result.values[0]).map(key => {
@@ -602,7 +600,7 @@
             }
           });
           $scope.encodingData = encodingData;
-          $scope.setDataLoadedForOrdinarySelect2('csv_encoding_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('csv_encoding_' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -622,6 +620,7 @@
             name: "other"
           });
           $scope.delimiterData = delimiterData;
+          loaderService.setDataLoaded('csv_delimiter' + $scope.ctrl.index);
           $scope.$apply();
         });
       }
@@ -861,8 +860,26 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.templateOptions = templateOptions;
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
+
+        CRM.api3("Sqltaskfield", "getmessagetemplates").done(function(result) {
+          if (!result.is_error) {
+            var messageTemplateOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              messageTemplateOptions.push({
+                value: key,
+                name: result.values[0][key]
+              });
+            });
+            $scope.messageTemplateOptions = messageTemplateOptions;
+            loaderService.setDataLoaded('email_template' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
+
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;

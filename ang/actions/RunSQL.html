@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-sql collapsed relativePosition">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-true-value="'1'" style="cursor: pointer;" ng-false-value="'0'"
-                   ng-model="ctrl.model['enabled']" id='sql_enabled' type="checkbox">
+            <input ng-true-value="'1'" style="cursor: pointer;" ng-false-value="'0'" ng-model="ctrl.model['enabled']" type="checkbox">
             &nbsp;
             {{ts('Run SQL Script')}}
         </label>
@@ -14,7 +13,7 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
             <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['script']"
-                fieldlabel="ts('SQL Script')" fieldid="'sql_script'" rowsnumber='8' inputMaxWidth="'500px'"
+                fieldlabel="ts('SQL Script')" fieldid="'sql_script' + ctrl.index" rowsnumber='8' inputMaxWidth="'500px'"
                 helpaction='onInfoPress("SQL Script", "id-sql-script", "CRM\/Sqltasks\/Action\/RunSQL")'
                 showHelpIcon=true>
             </text-area>

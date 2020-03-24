@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-error relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
-                type="checkbox" id="error_enabled">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'" type="checkbox">
             &nbsp;
             {{ts('Error Handler')}}
         </label>
@@ -17,29 +16,30 @@
                 {{ts('This action will be triggered if the execution of the task has reported errors, or has failed completely.')}}
             </div>
 
-            <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')" fieldid="'error_table'" sizelength="60"
+            <text-input model="ctrl.model['table']" fieldlabel="ts('User Error Table')" fieldid="'error_table' + ctrl.index" sizelength="60"
                 helpaction='onInfoPress("Error Table", "id-handler-error-table", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true inputMaxWidth="'500px'">
             </text-input>
 
             <check-box model="ctrl.model['drop_table']" fieldlabel="ts('Drop Error Table')"
-                fieldid="'error_drop_table'"
+                fieldid="'error_drop_table' + ctrl.index"
                 helpaction='onInfoPress("Drop Error Table", "id-handler-error-table-drop", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </check-box>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['email']"
-                fieldlabel="ts('Email to')" fieldid="'error_email'"
+                fieldlabel="ts('Email to')" fieldid="'error_email' + ctrl.index"
                 helpaction='onInfoPress("Email", "id-handler-email", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true inputMaxWidth="'300px'">
             </text-input>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'500px'"
-                model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
-                fieldid="'email_template'" optionsArray="templateOptions">
-            </ordinary-select>
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'500px'"
+                              model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
+                              fieldid="'email_template' + ctrl.index" optionsArray="messageTemplateOptions"
+                              isdataloaded="isDataLoaded('email_template' + ctrl.index)">
+            </ordinary-select2>
 
-            <check-box model="ctrl.model['attach_log']" fieldlabel="ts('Attach Log')" fieldid="'error_attach_log'"
+            <check-box model="ctrl.model['attach_log']" fieldlabel="ts('Attach Log')" fieldid="'error_attach_log' + ctrl.index"
                 helpaction='onInfoPress("Attach Log", "id-handler-attach-log", "CRM\/Sqltasks\/Action\/ResultHandler")'
                 showHelpIcon=true>
             </check-box>
