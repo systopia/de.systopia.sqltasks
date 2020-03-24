@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-activity collapsed relativePosition">
     <div class="crm-accordion-header active accordion-header-custom action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'"
-            type="checkbox" id="activity_enabled">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'" type="checkbox">
             &nbsp;
             {{ts('Create Activity')}}
         </label>
@@ -16,15 +15,15 @@
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'500px'"
                 model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
-                fieldid="'activity_contact_table'" sizelength="60" >
+                fieldid="'activity_contact_table' + ctrl.index" sizelength="60" >
             </text-input>
 
             <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')"
-                fieldid="'activity_use_api'">
+                fieldid="'activity_use_api' + ctrl.index">
             </check-box>
 
             <check-box model="ctrl.model['individual']" fieldlabel="ts('Individual Activities')"
-                fieldid="'activity_individual'">
+                fieldid="'activity_individual' + ctrl.index">
             </check-box>
 
             <hr>
@@ -32,29 +31,29 @@
             <div class="spacer"></div>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                model="ctrl.model['type_id']" fieldlabel="ts('Activity Type')" isdataloaded="isDataLoadedForOrdinarySelect2('activity_activity_type_id_' + ctrl.index)"
+                model="ctrl.model['type_id']" fieldlabel="ts('Activity Type')" isdataloaded="isDataLoaded('activity_activity_type_id_' + ctrl.index)"
                 fieldid="'activity_activity_type_id_' + ctrl.index" optionsArray="activityTypeData">
             </ordinary-select2>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                model="ctrl.model['status_id']" fieldlabel="ts('Status')" fieldid="'activity_status_id'"
-                optionsArray="statusData">
-            </ordinary-select>
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
+                model="ctrl.model['status_id']" fieldlabel="ts('Status')" fieldid="'activity_status_id' + ctrl.index"
+                optionsArray="statusData" isdataloaded="isDataLoaded('activity_status_id' + ctrl.index)" >
+            </ordinary-select2>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['subject']"
-                fieldlabel="ts('Subject')" fieldid="'activity_subject'" sizelength="60" inputMaxWidth="'500px'"
+                fieldlabel="ts('Subject')" fieldid="'activity_subject' + ctrl.index" sizelength="60" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-input>
 
-            <text-area model="ctrl.model['details']" fieldlabel="ts('Details')" fieldid="'activity_details'"
+            <text-area model="ctrl.model['details']" fieldlabel="ts('Details')" fieldid="'activity_details' + ctrl.index"
                 rowsnumber='4' inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-area>
 
             <text-input model="ctrl.model['date_time']" fieldlabel="ts('Timestamp')"
-                fieldid="'activity_activity_date_time'" inputMaxWidth="'300px'"
+                fieldid="'activity_activity_date_time' + ctrl.index" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Timestamp Options", "id-activity-datetime", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-input>
@@ -66,47 +65,49 @@
 
             <select-entityref model="ctrl.model['source_contact_id']" fieldlabel="ts('Source Contact')"
                 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                fieldid="'activity_source_contact_id'">
+                fieldid="'activity_source_contact_id' + ctrl.index">
             </select-entityref>
 
             <select-entityref dataparams='{"multiple":true}' model="ctrl.model['assigned_to']"
-                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to'" inputMaxWidth="'300px'"
+                fieldlabel="ts('Assigned To')" fieldid="'s2id_activity_assigned_to' + ctrl.index" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Assignees", "id-activity-assignees", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </select-entityref>
 
             <text-input model="ctrl.model['source_record_id']" fieldlabel="ts('Source Record ID')"
-                fieldid="'activity_source_record_id'" inputMaxWidth="'300px'"
+                fieldid="'activity_source_record_id' + ctrl.index" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-input>
 
-            <ordinary-select
+            <ordinary-select2
                 model="ctrl.model['medium_id']" fieldlabel="ts('Activity Medium')"
-                fieldid="'activity_medium_id'" optionsArray="mediumData">
-            </ordinary-select>
+                fieldid="'activity_medium_id' + ctrl.index" optionsArray="mediumData"
+                isdataloaded="isDataLoaded('activity_medium_id' + ctrl.index)" >
+            </ordinary-select2>
 
-            <ordinary-select
+            <ordinary-select2
                 model="ctrl.model['engagement_level']" fieldlabel="ts('Engagement Index')"
-                fieldid="'activity_engagement_level'" optionsArray="engagementIndexData">
-            </ordinary-select>
+                fieldid="'activity_engagement_level' + ctrl.index" optionsArray="engagementIndexData"
+                isdataloaded="isDataLoaded('activity_engagement_level' + ctrl.index)" >
+            </ordinary-select2>
 
             <text-input model="ctrl.model['location']" fieldlabel="ts('Location')"
-                fieldid="'activity_location'" inputMaxWidth="'300px'"
+                fieldid="'activity_location' + ctrl.index" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-input>
 
             <text-input model="ctrl.model['duration']" fieldlabel="ts('Duration')"
-                fieldid="'activity_duration'" inputMaxWidth="'300px'"
+                fieldid="'activity_duration' + ctrl.index" inputMaxWidth="'300px'" extraText="ts('minutes')"
                 helpaction='onInfoPress("Tokens", "id-activity-tokens", "CRM\/Sqltasks\/Action\/CreateActivity")'
                 showHelpIcon=true>
             </text-input>
 
-            <ordinary-select
-                model="ctrl.model['priority_id']" fieldlabel="ts('Priority')" fieldid="'activity_priority_id'"
-                optionsArray="priorityData">
-            </ordinary-select>
+            <ordinary-select2
+                model="ctrl.model['priority_id']" fieldlabel="ts('Priority')" fieldid="'activity_priority_id'  + ctrl.index"
+                optionsArray="priorityData" isdataloaded="isDataLoaded('activity_priority_id' + ctrl.index)" >
+            </ordinary-select2>
 
         </div>
     </div>

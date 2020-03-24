@@ -437,13 +437,9 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.ordinarySelect2LoadDataStatus = [];
-        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
-          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
-        };
-        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
-          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
         };
         $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
@@ -463,10 +459,11 @@
               });
             });
           }
-          $scope.setDataLoadedForOrdinarySelect2('activity_activity_type_id_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_activity_type_id_' + $scope.ctrl.index);
           $scope.activityTypeData = activityTypeData;
           $scope.$apply();
         });
+
         CRM.api3("OptionValue", "get", {
           sequential: 1,
           return: ["value", "label"],
@@ -484,6 +481,7 @@
             });
           }
           $scope.statusData = statusData;
+          loaderService.setDataLoaded('activity_status_id' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -504,6 +502,7 @@
             });
           }
           $scope.priorityData = priorityData;
+          loaderService.setDataLoaded('activity_priority_id' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -524,6 +523,7 @@
             });
           }
           $scope.engagementIndexData = engagementIndexData;
+          loaderService.setDataLoaded('activity_engagement_level' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -544,6 +544,7 @@
             });
           }
           $scope.mediumData = mediumData;
+          loaderService.setDataLoaded('activity_medium_id' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -1100,11 +1101,13 @@
         helpAction: "&helpaction",
         showHelpIcon: "<showhelpicon",
         sizeLength: "<sizelength",
+        extraText: "<extratext",
         isDisabled: "<disabled",
         inputMaxWidth: "<inputmaxwidth",
       },
       controller: function($scope) {
         $scope.isDisabled = angular.isDefined($scope.isDisabled) ? $scope.isDisabled : false;
+        $scope.extraText = angular.isDefined($scope.extraText) ? $scope.extraText : "";
         $scope.componentModel = angular.isDefined($scope.isDisabled) ? $scope.componentModel : "";
         $scope.sizeLength = angular.isDefined($scope.sizeLength) ? $scope.sizeLength : 32;
         $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
