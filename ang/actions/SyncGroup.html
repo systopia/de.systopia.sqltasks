@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-group relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
-                   ng-false-value="'0'" id="group_enabled">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
             &nbsp;
             {{ts('Synchronise Group')}}
         </label>
@@ -15,7 +14,7 @@
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" sizelength="60" inputMaxWidth="'500px'"
                 model="ctrl.model['contact_table']" fieldlabel="ts('Contact Table (contact_id)')"
-                fieldid="'group_contact_table'">
+                fieldid="'group_contact_table' + ctrl.index">
             </text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
@@ -23,7 +22,7 @@
                 fieldid="'group_group_id' + ctrl.index" optionsArray="groupData" inputMaxWidth="'300px'">
             </ordinary-select2>
 
-            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'group_use_api'">
+            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'group_use_api' + ctrl.index">
             </check-box>
         </div>
     </div>

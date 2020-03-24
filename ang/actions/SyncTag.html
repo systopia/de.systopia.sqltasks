@@ -1,8 +1,7 @@
 <div class="crm-accordion-wrapper crm-sqltask-tag relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'"
-                   ng-false-value="'0'" id="tag_enabled">
+            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
             &nbsp;
             {{ts('Synchronise Tag')}}
         </label>
@@ -14,7 +13,7 @@
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['contact_table']" sizelength="60"
-                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table'" inputMaxWidth="'500px'">
+                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table' + ctrl.index" inputMaxWidth="'500px'">
             </text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_id']" inputMaxWidth="'500px'"
@@ -28,7 +27,7 @@
                              isdataloaded="isDataLoaded('tag_entity_table' + ctrl.index)">>
             </ordinary-select2>
 
-            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api'">
+            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api' + ctrl.index">
             </check-box>
         </div>
     </div>
