@@ -23,6 +23,14 @@
   clear: both;
 }
 
+.content.sql-task-entity-ref-wrap input.sql-task-entity-ref-element {
+  display: block !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
 select.pixelInput {
   display: block !important;
   width: 1px !important;
