@@ -823,8 +823,26 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.templateOptions = templateOptions;
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
+
+        CRM.api3("Sqltaskfield", "getmessagetemplates").done(function(result) {
+          if (!result.is_error) {
+            var messageTemplateOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              messageTemplateOptions.push({
+                value: key,
+                name: result.values[0][key]
+              });
+            });
+            $scope.messageTemplateOptions = messageTemplateOptions;
+            loaderService.setDataLoaded('success_email_template' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
+
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
