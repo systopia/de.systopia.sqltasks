@@ -881,7 +881,10 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
         $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -915,6 +918,7 @@
             }
           });
           $scope.statusesData = statusesData;
+          loaderService.setDataLoaded('segmentation_assign_start' + $scope.ctrl.index);
           $scope.$apply();
         });
       }
