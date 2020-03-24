@@ -21,6 +21,7 @@
   ]);
 
   angular.module(moduleName).service('loaderService', function() {
+    //loader for execution block
     this.executionBlock = {
       'isLoaded' : false,
       'currentLoadedComponents' : 0,
@@ -34,6 +35,15 @@
     };
     this.isExecutionBlockLoaded = function() {
       return this.executionBlock.isLoaded;
+    };
+
+    //loader for elements
+    this.loadedElements = [];
+    this.isDataLoaded = function(elementId) {
+      return this.loadedElements.includes(elementId);
+    };
+    this.setDataLoaded = function(elementId) {
+      this.loadedElements.push(elementId);
     };
   });
 
@@ -628,13 +638,9 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.ordinarySelect2LoadDataStatus = [];
-        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
-          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
-        };
-        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
-          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
         };
         $scope.ts = CRM.ts();
 
@@ -652,7 +658,7 @@
             });
           });
           $scope.tagsData = tagsData;
-          $scope.setDataLoadedForOrdinarySelect2('tag_tag_id_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('tag_tag_id_' + $scope.ctrl.index);
           $scope.$apply();
         });
 
@@ -668,7 +674,7 @@
             }
           });
           $scope.entityData = entityData;
-          $scope.setDataLoadedForOrdinarySelect2('tag_entity_table' + $scope.ctrl.index);
+          loaderService.setDataLoaded('tag_entity_table' + $scope.ctrl.index);
           $scope.$apply();
         });
         $scope.removeItemFromArray = removeItemFromArray;

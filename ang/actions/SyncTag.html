@@ -18,14 +18,15 @@
             </text-input>
 
             <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_id']" inputMaxWidth="'500px'"
-                fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData"
-                isdataloaded="isDataLoadedForOrdinarySelect2('tag_tag_id_' + ctrl.index)">
+                              fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData"
+                              isdataloaded="isDataLoaded('tag_tag_id_' + ctrl.index)">
             </ordinary-select2>
 
-            <ordinary-select isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                model="ctrl.model['entity_table']" fieldlabel="ts('Choose Entity')"
-                fieldid="'tag_entity_table' + ctrl.index" optionsArray="entityData">
-            </ordinary-select>
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
+                             model="ctrl.model['entity_table']" fieldlabel="ts('Choose Entity')"
+                             fieldid="'tag_entity_table' + ctrl.index" optionsArray="entityData"
+                             isdataloaded="isDataLoaded('tag_entity_table' + ctrl.index)">>
+            </ordinary-select2>
 
             <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api'">
             </check-box>
