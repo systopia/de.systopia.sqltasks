@@ -931,15 +931,10 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
-        $scope.ordinarySelect2LoadDataStatus = [];
-        $scope.isDataLoadedForOrdinarySelect2 = function isDataLoadedForOrdinarySelect2(select2Id) {
-          return $scope.ordinarySelect2LoadDataStatus.includes(select2Id);
+      controller: function($scope, loaderService) {
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
         };
-        $scope.setDataLoadedForOrdinarySelect2 = function setDataLoadedForOrdinarySelect2(select2Id) {
-          $scope.ordinarySelect2LoadDataStatus.push(select2Id);
-        };
-        $scope.templateOptions = templateOptions;
         $scope.campaignData = campaignData;
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -968,10 +963,25 @@
               }
             });
             $scope.segmentationData = segmentationData;
-            $scope.setDataLoadedForOrdinarySelect2('segmentation_export_segments' + $scope.ctrl.index);
+            loaderService.setDataLoaded('segmentation_export_segments' + $scope.ctrl.index);
             $scope.$apply();
           });
         }
+
+        CRM.api3("Sqltaskfield", "getmessagetemplates").done(function(result) {
+          if (!result.is_error) {
+            var messageTemplateOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              messageTemplateOptions.push({
+                value: key,
+                name: result.values[0][key]
+              });
+            });
+            $scope.messageTemplateOptions = messageTemplateOptions;
+            loaderService.setDataLoaded('segmentation_export_email_template' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
 
         $scope.statusChanged = function(value, fieldId) {
           CRM.$(function($) {
@@ -1021,7 +1031,7 @@
             }
           });
           $scope.exporterData = exporterData;
-          $scope.setDataLoadedForOrdinarySelect2('segmentation_export_exporter' + $scope.ctrl.index);
+          loaderService.setDataLoaded('segmentation_export_exporter' + $scope.ctrl.index);
           $scope.$apply();
         });
       }

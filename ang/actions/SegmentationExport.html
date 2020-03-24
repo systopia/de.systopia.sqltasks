@@ -21,55 +21,56 @@
             </ordinary-select2>
 
             <multiple-select2 model="ctrl.model['segments']" fieldlabel="ts('Segments')" inputMaxWidth="'300px'"
-                              isdataloaded="isDataLoadedForOrdinarySelect2('segmentation_export_segments' + ctrl.index)"
+                              isdataloaded="isDataLoaded('segmentation_export_segments' + ctrl.index)"
                               fieldid="'segmentation_export_segments' + ctrl.index" optionsArray="segmentationData">
             </multiple-select2>
 
             <text-input model="ctrl.model['date_from']" fieldlabel="ts('Assignment not before')"
-                fieldid="'segmentation_export_date_from'" showHelpIcon=true inputMaxWidth="'300px'"
+                fieldid="'segmentation_export_date_from' + ctrl.index" showHelpIcon=true inputMaxWidth="'300px'"
                 disabled="getBooleanFromNumber(ctrl.model['date_current'])"
                 helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-datetime", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
             <text-input model="ctrl.model['date_to']" fieldlabel="ts('Assignment not after')"
-                fieldid="'segmentation_export_date_to'" showHelpIcon=true inputMaxWidth="'300px'"
+                fieldid="'segmentation_export_date_to' + ctrl.index" showHelpIcon=true inputMaxWidth="'300px'"
                 disabled="getBooleanFromNumber(ctrl.model['date_current'])"
                 helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-datetime", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
             <check-box model="ctrl.model['date_current']" fieldlabel="ts('Current Assignment')"
-                fieldid="'segmentation_export_date_current'" showHelpIcon=true checkbox-change="checkboxChange(value)"
+                fieldid="'segmentation_export_date_current' + ctrl.index" showHelpIcon=true checkbox-change="checkboxChange(value)"
                 helpaction='onInfoPress("Timestamp Options", "id-segmentation-export-current", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </check-box>
 
             <check-box model="ctrl.model['discard_empty']" fieldlabel="ts('Discard empty file?')"
-                fieldid="'segmentation_export_discard_empty'">
+                fieldid="'segmentation_export_discard_empty' + ctrl.index">
             </check-box>
 
-            <multiple-select2 model="ctrl.model['exporter']" fieldlabel="ts('Exporter')" isdataloaded="isDataLoadedForOrdinarySelect2('segmentation_export_exporter' + ctrl.index)"
+            <multiple-select2 model="ctrl.model['exporter']" fieldlabel="ts('Exporter')" isdataloaded="isDataLoaded('segmentation_export_exporter' + ctrl.index)"
                 fieldid="'segmentation_export_exporter' + ctrl.index" optionsArray="exporterData" inputMaxWidth="'300px'">
             </multiple-select2>
 
             <text-input model="ctrl.model['filename']" fieldlabel="ts('File Name')" sizelength="60"
-                fieldid="'segmentation_export_filename'" showHelpIcon=true inputMaxWidth="'500px'"
+                fieldid="'segmentation_export_filename' + ctrl.index" showHelpIcon=true inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Filename", "id-segmentation-export-filename", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
-            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'segmentation_export_path'"
+            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')" fieldid="'segmentation_export_path' + ctrl.index"
                 showHelpIcon=true sizelength="60" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Path", "id-segmentation-export-path", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
-            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'segmentation_export_email'"
+            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'segmentation_export_email' + ctrl.index"
                 showHelpIcon=true inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Email", "id-segmentation-export-email", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
 
             <ordinary-select2 model="ctrl.model['email_template']" fieldlabel="ts('Email Template')" inputMaxWidth="'300px'"
-                fieldid="'segmentation_export_email_template'" optionsArray="templateOptions">
+                              fieldid="'segmentation_export_email_template' + ctrl.index" optionsArray="messageTemplateOptions"
+                              isdataloaded="isDataLoaded('segmentation_export_email_template' + ctrl.index)">
             </ordinary-select2>
 
-            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'segmentation_export_upload'"
+            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'segmentation_export_upload' + ctrl.index"
                 showHelpIcon=true sizelength="60" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("SFTP Upload", "id-segmentation-export-sftp", "CRM\/Sqltasks\/Action\/SegmentationExport")'>
             </text-input>
