@@ -30,10 +30,10 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends \PHPUnit_Framework_TestCase
     parent::tearDown();
   }
 
-  protected function createAndExecuteTask(array $data) {
+  protected function createAndExecuteTask(array $data, array $params = []) {
     $task = new CRM_Sqltasks_Task(NULL, $data);
     $task->store();
-    $this->log = $task->execute();
+    $this->log = $task->execute($params);
     return $task;
   }
 

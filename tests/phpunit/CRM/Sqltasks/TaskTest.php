@@ -20,6 +20,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
   public function tearDown() {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_execute');
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_execute_post');
+    CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_input_value');
     parent::tearDown();
   }
 
@@ -183,6 +184,36 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->createAndExecuteTask($data);
     $this->assertLogContains("Error in action 'Run SQL Script'");
     $this->assertLogContains("Error in action 'Run Cleanup SQL Script'");
+  }
+
+  /**
+   * Test that input_val is accepted and forwarded to actions
+   */
+  public function testInputValue() {
+    $data = [
+      'version'        => 2,
+      'input_required' => TRUE,
+      'actions'        => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_input_value;
+                        CREATE TABLE tmp_test_input_value AS
+                        SELECT @input AS foo;',
+          'enabled' => TRUE,
+        ],
+      ],
+    ];
+    $this->createAndExecuteTask(
+      $data,
+      ['input_val' => 'expected_value']
+    );
+    $this->assertLogContains("Action 'Run SQL Script' executed in");
+    $actualValue = CRM_Core_DAO::singleValueQuery("SELECT foo FROM tmp_test_input_value");
+    $this->assertEquals(
+      'expected_value',
+      $actualValue,
+      'Table should contain the value passed via input_value'
+    );
   }
 
 }
