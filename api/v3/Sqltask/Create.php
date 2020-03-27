@@ -11,7 +11,7 @@
 function civicrm_api3_sqltask_create($params) {
   $taskParamNames = [
     'name', 'description', 'category', 'scheduled', 'parallel_exec',
-    'input_required','enabled', 'weight'
+    'input_required','enabled', 'weight', 'run_permissions'
   ];
 
   $booleanParams = ['parallel_exec', 'input_required', 'enabled'];
@@ -101,6 +101,13 @@ function _civicrm_api3_sqltask_create_spec(&$params) {
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_STRING,
     'title'        => 'Description',
+  ];
+
+  $params['run_permissions'] = [
+    'name'         => 'run_permissions',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Run permissions',
   ];
 
   $params['category'] = [
