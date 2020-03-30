@@ -1,17 +1,31 @@
-<div>
-    <div>
-        <ul>
-            <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
-        </ul>
+<div class="crm-form-block">
+  <div class="sql-task-runner-block">
+    <p>{{ts('Please use the "run again" button below, if you want to execute this task again.')}}</p>
+
+    <div ng-if="isTaskRunning">
+      <p>{{ts('Executing...')}}</p>
     </div>
-    <br />
+
+    <div ng-if="!isTaskRunning && isShowLogs">
+      <div ng-if="!isTaskReturnsEmptyLogs">
+        <p>{{ts('Logs:')}}</p>
+        <ul>
+          <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
+        </ul>
+      </div>
+      <p ng-if="isTaskReturnsEmptyLogs">{{ts('Task returns empty logs.')}}</p>
+    </div>
+  </div>
+
+  <div class="sql-task-runner-buttons crm-submit-buttons">
     <a class="button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
         {{ts('Back to Manager')}}
     </a>
-    <a class="button" href="javascript:;" ng-click='runTask()' title="{{ts('Run again')}}">
+    <button class="button" ng-disabled="isTaskRunning" ng-click='runTask()' title="{{ts('Run again')}}">
         {{ts('Run again')}}
-    </a>
+    </button>
     <a class="button" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
         {{ts('Configure task')}}
     </a>
+  </div>
 </div>

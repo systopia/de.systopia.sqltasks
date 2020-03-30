@@ -8,7 +8,9 @@ return [
     [
       0 => 'ang/taskRunner.js',
     ],
-  'css' => [],
+  'css' => [
+    0 => 'css/taskRunner.css',
+  ],
   'partials' => [
     0 => 'ang/taskRunner',
   ],
