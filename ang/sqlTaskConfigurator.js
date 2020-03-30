@@ -1227,7 +1227,6 @@
           'width' : "100%",
           'max-width' : $scope.inputMaxWidth,
           'box-sizing' : 'border-box',
-          'height' : '28px'
         };
         if (angular.isDefined($scope.isDataLoaded) && $scope.isDataLoaded == false) {
           var timerId = setInterval(function() {
