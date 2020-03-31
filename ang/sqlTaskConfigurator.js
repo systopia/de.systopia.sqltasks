@@ -89,7 +89,10 @@
               Object.assign(preparedData, $scope.taskOptions);
 
               preparedData.config = $scope.config;
-              preparedData.run_permissions = $scope.taskOptions.run_permissions.join(",");
+
+              if ($scope.taskOptions.run_permissions !== undefined) {
+                preparedData.run_permissions = $scope.taskOptions.run_permissions.join(",");
+              }
 
               CRM.api3("Sqltask", "create", preparedData).done(function(result) {
                 if (result.is_error) {
@@ -131,7 +134,12 @@
             delete task["config"];
             delete $scope.config.version;
             $scope.taskOptions = task;
-            $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
+
+            if ($scope.taskOptions.run_permissions === '') {
+              $scope.taskOptions.run_permissions = [];
+            } else {
+              $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
+            }
           }
         });
       }
