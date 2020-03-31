@@ -6,25 +6,29 @@
   angular.module(moduleName).config([
     "$routeProvider",
     function($routeProvider) {
-      $routeProvider.when("/sqltasks/run/:tid", {
+      $routeProvider.when("/sqltasks/run/:tid/:input_value?", {
         controller: "taskRunnerCtrl",
         templateUrl: "~/taskRunner/taskRunner.html",
         resolve: {
           taskId: function($route) {
             return $route.current.params.tid;
-          }
+          },
+          inputValue: function($route) {
+            return $route.current.params.input_value;
+          },
         }
       });
     }
   ]);
 
-  angular.module(moduleName).controller("taskRunnerCtrl", function($scope, $location, taskId) {
+  angular.module(moduleName).controller("taskRunnerCtrl", function($scope, $location, taskId, inputValue) {
     $scope.taskId = taskId;
     $scope.ts = CRM.ts();
     $scope.resultLogs = [];
     $scope.isTaskReturnsEmptyLogs = false;
     $scope.isShowLogs = false;
     $scope.isTaskRunning = false;
+    $scope.inputValue = inputValue;
 
     $scope.runTask = function() {
       CRM.alert("Task execution has started", "Task execution", 'info');
@@ -32,7 +36,7 @@
 
       CRM.api3("Sqltask", "execute", {
         task_id: taskId,
-        input_val: 0
+        input_val: inputValue === undefined ? 0 : inputValue,
       }).done(function(result) {
         if (result.values.log !== undefined && Array.isArray(result.values.log)) {
           $scope.resultLogs = result.values.log;

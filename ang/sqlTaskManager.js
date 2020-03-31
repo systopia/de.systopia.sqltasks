@@ -1,8 +1,6 @@
 (function(angular, $, _) {
   var moduleName = "sqlTaskManager";
-
   var moduleDependencies = ["ngRoute", "ui.sortable"];
-
   angular.module(moduleName, moduleDependencies);
 
   angular.module(moduleName).config([
@@ -47,16 +45,17 @@
         }
       };
 
-      $scope.CRM = CRM;
-
-      $scope.deleteDialog = function(e) {
-        var $dialog = $(this);
-        $dialog.html(
-          "<span>" + ts("Are you sure you want to run this task?") + "</span>"
-        );
+      $scope.confirmRunTaskWithInputVariable = function(taskId) {
+        var inputVariable = CRM.$('.sql-task-run-task-with-variable-dialog input.run-sql-task-input-variable').val();
+        if (inputVariable === undefined || inputVariable.length < 1) {
+          CRM.alert(ts("The 'variable' field is required. Please fill the input and try again."), ts("Variable field"), "warning");
+        } else {
+          window.waitSqlTaskId = taskId;
+          $location.path("/sqltasks/run/" + taskId + '/' + inputVariable);
+        }
       };
 
-      $scope.confirmDeleteTask = function(taskId) {
+      $scope.confirmRunTask = function(taskId) {
         window.waitSqlTaskId = taskId;
         $location.path("/sqltasks/run/" + taskId);
       };

@@ -1,4 +1,4 @@
-<div id="help">
+<div class="help">
     <div ng-switch on="tasks.length > 0">
         <div ng-switch-when="true">
             {{ts('This is the list of currently configured tasks.', {'domain' : 'de.systopia.sqltasks'})}}
@@ -15,7 +15,7 @@
     </div>
 </div>
 <br />
-<div id="help">
+<div class="help">
     <div ng-switch on="dispatcher_frequency">
         <div ng-switch-when="Daily">
             {{ts('The dispatcher is run')}}
@@ -105,8 +105,17 @@
                     {{ts('Actions', {'domain' : 'de.systopia.sqltasks'})}}
                     <ul class="panel">
                         <li>
-                            <a class="action-item crm-hover-button sqltasks-job-run" href="javascript:;" title="{{ts('Confirm')}}" crm-confirm="{resizable: true, width: '40%', height: '40%', open: deleteDialogue}"
-                            on-yes="confirmDeleteTask(task.id)">{{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}</a>
+                            <a ng-if="!getNumberFromString(task.input_required)"  class="action-item crm-hover-button"
+                               href="javascript:;" title="{{ts('Confirm')}}"
+                               crm-confirm="{title: ts('Run this task?'), width: '40%', message: ts('Are you sure you want to run this task?')}" on-yes="confirmRunTask(task.id)">
+                              {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
+                            </a>
+                            <a ng-if="getNumberFromString(task.input_required)"  class="action-item crm-hover-button"
+                               href="javascript:;" title="{{ts('Confirm')}}"
+                               crm-confirm="{title: ts('Run this task?'), templateUrl: '~/sqlTaskManager/dialogWithInputVariable.html', width: '40%', export: {ts:ts, foo: '3333'}}"
+                               on-yes="confirmRunTaskWithInputVariable(task.id)">
+                              {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
+                            </a>
                         </li>
                         <li>
                             <a ng-href="#/sqltasks/configure/{{task.id}}"
@@ -145,7 +154,7 @@
     </tbody>
 </table>
 <br />
-<div id="help">
+<div class="help">
     <strong>{{ts('Caution!')}}</strong> {{ts('Be aware that these tasks can execute arbitrary SQL statements, which')}}
     <i>{{ts('can potentially destroy your database')}}</i>.
     {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}

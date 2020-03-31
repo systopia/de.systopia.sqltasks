@@ -2,6 +2,14 @@
   <div class="sql-task-runner-block">
     <p>{{ts('Please use the "run again" button below, if you want to execute this task again.')}}</p>
 
+    <div ng-if="inputValue !== undefined">
+      <label>
+        <span>{{ts('Current input value:')}}</span>
+        <input type="text" disabled value="{{inputValue}}">
+      </label>
+      <p>{{ts('This value will be passed to the @input variable in task.')}}</p>
+    </div>
+
     <div ng-if="isTaskRunning">
       <p>{{ts('Executing...')}}</p>
     </div>
