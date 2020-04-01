@@ -103,9 +103,9 @@
                 </a>
             </td>
             <td>
-                <span class="btn-slide crm-hover-button">
+                <span class="btn-slide crm-hover-button" ng-click="showPanelForTaskId(task.id)">
                     {{ts('Actions', {'domain' : 'de.systopia.sqltasks'})}}
-                    <ul class="panel">
+                    <ul ng-if="taskIdWithOpenPanel == task.id" class="panel">
                         <li>
                             <a ng-if="!getNumberFromString(task.input_required)"  class="action-item crm-hover-button"
                                href="javascript:;" title="{{ts('Confirm')}}"

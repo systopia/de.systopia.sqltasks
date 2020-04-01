@@ -16,6 +16,10 @@
   angular
     .module(moduleName)
     .controller("sqlTaskManagerCtrl", function($scope, $location) {
+      $scope.taskIdWithOpenPanel = null;
+      $scope.showPanelForTaskId = function(taskId) {
+        $scope.taskIdWithOpenPanel = taskId;
+      };
       $scope.ts = CRM.ts();
       $scope.dispatcher_frequency = getCurrentDispatcherFrequency();
       $scope.resourceBaseUrl = CRM.config.resourceBase;
