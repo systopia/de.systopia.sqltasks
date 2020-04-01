@@ -117,17 +117,13 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.7
-          version: "5.7"
+          build_name: civi-5.19
+          version: "5.19"
           url: http://localhost:8081
       - run_all:
-          build_name: civi-5.13
-          version: "5.13"
+          build_name: civi-5.21
+          version: "5.21"
           url: http://localhost:8082
-      - run_all:
-          build_name: civi-5.16
-          version: "5.16"
-          url: http://localhost:8083
   build_mariadb_10_3:
     executor: civicrm
     docker:
@@ -144,17 +140,13 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.7
-          version: "5.7"
+          build_name: civi-5.19
+          version: "5.19"
           url: http://localhost:8081
       - run_all:
-          build_name: civi-5.13
-          version: "5.13"
+          build_name: civi-5.21
+          version: "5.21"
           url: http://localhost:8082
-      - run_all:
-          build_name: civi-5.16
-          version: "5.16"
-          url: http://localhost:8083
 
 workflows:
   version: 2
