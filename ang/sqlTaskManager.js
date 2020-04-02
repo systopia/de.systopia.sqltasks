@@ -21,9 +21,10 @@
         $scope.taskIdWithOpenPanel = taskId;
       };
       $scope.ts = CRM.ts();
-      $scope.dispatcher_frequency = getCurrentDispatcherFrequency();
+      $scope.dispatcher_frequency = null;
       $scope.resourceBaseUrl = CRM.config.resourceBase;
       getAllTasks();
+      getCurrentDispatcherFrequency();
 
       $scope.sortableOptions = {
         handle: ".handle-drag",
@@ -174,40 +175,39 @@
           $scope.$apply();
         });
       }
-    });
 
-  function getCurrentDispatcherFrequency() {
-    var frequency = null;
-    CRM.api3("Job", "get", {
-      sequential: 1,
-      api_entity: "Sqltask",
-      api_action: "execute",
-      is_active: 1
-    }).done(function(result) {
-      var jobs = result.values;
-      if (jobs.length > 0) {
-        array.forEach(job => {
-          switch (job.run_frequency) {
-            case "Always":
-              frequency = "Always";
-              break;
-            case "Hourly":
-              if (frequency === null || frequency === "Daily") {
-                frequency = "Hourly";
+      function getCurrentDispatcherFrequency() {
+        CRM.api3("Job", "get", {
+          sequential: 1,
+          api_entity: "Sqltask",
+          api_action: "execute",
+          is_active: 1
+        }).done(function(result) {
+          var jobs = result.values;
+          if (jobs.length > 0) {
+            jobs.forEach(job => {
+              switch (job.run_frequency) {
+                case "Always":
+                  $scope.dispatcher_frequency = "Always";
+                  break;
+                case "Hourly":
+                  if ($scope.dispatcher_frequency === null || $scope.dispatcher_frequency === "Daily") {
+                    $scope.dispatcher_frequency = "Hourly";
+                  }
+                  break;
+                case "Daily":
+                  if ($scope.dispatcher_frequency === null) {
+                    $scope.dispatcher_frequency = "Daily";
+                  }
+                  break;
+                default:
+                  console.log(`Unexpected run frequency: ${job.run_frequency}`);
+                  break;
               }
-              break;
-            case "Daily":
-              if (frequency === null) {
-                frequency = "Daily";
-              }
-              break;
-            default:
-              console.log(`Unexpected run frequency: ${job.run_frequency}`);
-              break;
+            });
+            $scope.$apply();
           }
         });
       }
     });
-    return frequency;
-  }
 })(angular, CRM.$, CRM._);
