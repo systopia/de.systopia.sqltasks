@@ -21,20 +21,6 @@ use CRM_Sqltasks_ExtensionUtil as E;
 abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
 
   /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'text',
-      $this->getID() . '_contact_table',
-      E::ts('Contact Table (<code>contact_id</code>)'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-  }
-
-  /**
    * get the table with the contact_id column
    */
   public function getContactTable() {

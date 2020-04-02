@@ -46,29 +46,6 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
   }
 
   /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'select',
-      $this->getID() . '_group_id',
-      E::ts('Synchronise Group'),
-      $this->getEligibleGroups(),
-      FALSE,
-      ['class' => 'crm-select2 huge']
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_use_api',
-      E::ts('Use API (slow)')
-    );
-  }
-
-
-  /**
    * RUN this action
    */
   public function execute() {

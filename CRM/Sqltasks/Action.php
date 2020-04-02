@@ -137,21 +137,6 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    // add the 'enabled' element
-    $form->add(
-      'checkbox',
-      $this->getID() . '_enabled',
-      $this->getName(),
-      '',
-      FALSE,
-      array('class' => 'crm-sqltask-action-enable')
-    );
-  }
-
-  /**
    * get a list of the options from the given option group
    */
   protected function getOptions($option_group_name, $empty_option = TRUE) {
@@ -169,16 +154,6 @@ abstract class CRM_Sqltasks_Action {
     }
 
     return $options;
-  }
-
-  /**
-   * get the template file for the configuration UI
-   */
-  public function getFormTemplate() {
-    // default is: same path
-    $class_name = get_class($this);
-    $tpl_name = str_replace('_', '/', $class_name) . '.tpl';
-    return $tpl_name;
   }
 
   /**

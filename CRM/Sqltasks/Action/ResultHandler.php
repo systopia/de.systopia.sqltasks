@@ -55,69 +55,6 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get the template file for the configuration UI
-   */
-  public function getFormTemplate() {
-    switch ($this->id) {
-      case 'error':
-        return 'CRM/Sqltasks/Action/ErrorHandler.tpl';
-
-      default:
-      case 'success':
-        return 'CRM/Sqltasks/Action/SuccessHandler.tpl';
-    }
-  }
-
-
-  /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    if ($this->id == 'success') {
-      $form->add(
-        'checkbox',
-        $this->getID() . '_always',
-        E::ts('Execute always')
-      );
-    }
-
-    $form->add(
-      'text',
-      $this->getID() . '_table',
-      E::ts('User Error Table'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_drop_table',
-      E::ts('Drop Error Table')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_email',
-      E::ts('Email to'),
-      array('class' => 'huge')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_email_template',
-      E::ts('Email Template'),
-      $this->getAllTemplates()
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_attach_log',
-      E::ts('Attach Log')
-    );
-  }
-
-  /**
    * get a list of eligible templates for the email
    */
   protected function getAllTemplates() {

@@ -54,24 +54,6 @@ class CRM_Sqltasks_Action_RunSQL extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'textarea',
-      $this->getID() . '_script',
-      E::ts('SQL Script'),
-      [
-        'rows'  => 8,
-        'style' => 'font-family: monospace !important; width: 95%; min-width: 240px',
-      ],
-      FALSE
-    );
-  }
-
-  /**
    * Check if this action is configured correctly
    */
   public function checkConfiguration() {

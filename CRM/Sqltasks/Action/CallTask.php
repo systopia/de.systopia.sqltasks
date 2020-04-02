@@ -45,32 +45,6 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Build the configuration UI
-   */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-        'select',
-        $this->getID() . '_tasks',
-        E::ts('SQL Tasks'),
-        $this->getTaskList(),
-        FALSE,
-        array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
-    );
-
-    $form->add(
-        'select',
-        $this->getID() . '_categories',
-        E::ts('SQL Task Categories'),
-        $this->getTaskCategoryList(),
-        FALSE,
-        array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
-    );
-  }
-
-
-  /**
    * RUN this action
    */
   public function execute() {

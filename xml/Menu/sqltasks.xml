@@ -16,18 +16,6 @@
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
   <item>
-    <path>civicrm/sqltasks/run</path>
-    <page_callback>CRM_Sqltasks_Page_Runner</page_callback>
-    <title>Runner</title>
-    <access_arguments>administer CiviCRM</access_arguments>
-  </item>
-  <item>
-    <path>civicrm/sqltasks/import</path>
-    <page_callback>CRM_Sqltasks_Form_ConfigImport</page_callback>
-    <title>ConfigImport</title>
-    <access_arguments>administer CiviCRM</access_arguments>
-  </item>
-  <item>
     <path>civicrm/sqltasks/mytasks</path>
     <page_callback>CRM_Sqltasks_Page_Mytasks</page_callback>
     <title>Mytasks</title>
