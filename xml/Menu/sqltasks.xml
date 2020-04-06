@@ -5,9 +5,12 @@
     <page_callback>CRM_Sqltasks_Page_Manager</page_callback>
     <title>SQL Task Manager</title>
     <access_arguments>administer CiviCRM</access_arguments>
-    <desc>Manage your SQL Tasks</desc>
-    <adminGroup>System Settings</adminGroup>
-    <icon>admin/small/option.png</icon>
+  </item>
+  <item>
+    <path>civicrm/sqltasks/export</path>
+    <page_callback>CRM_Sqltasks_Page_Export</page_callback>
+    <title>Export SQL Task</title>
+    <access_arguments>administer CiviCRM</access_arguments>
   </item>
   <item>
     <path>civicrm/sqltasks/configure</path>
