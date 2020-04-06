@@ -58,7 +58,8 @@
         scheduled_weekday: "1",
         scheduled_day: "1",
         scheduled_hour: "0",
-        scheduled_minute: "0"
+        scheduled_minute: "0",
+        version: 2
       };
       $scope.isExecutionBlockLoaded = function () {
         return loaderService.isExecutionBlockLoaded();
@@ -132,7 +133,6 @@
             var task = Object.assign({}, result.values);
             $scope.config = Object.assign({}, task.config);
             delete task["config"];
-            delete $scope.config.version;
             $scope.taskOptions = task;
 
             if ($scope.taskOptions.run_permissions === '') {

@@ -24,10 +24,6 @@ class CRM_Sqltasks_Config_Format {
       return 1;
     }
 
-    if (!is_int($config['version'])) {
-      throw new Exception( 'Invalid task configuration version: ' . $config['version']);
-    }
-
     return $config['version'];
   }
 
