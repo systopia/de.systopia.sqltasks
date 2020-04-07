@@ -140,6 +140,7 @@
             } else {
               $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
             }
+            $scope.$apply();
           }
         });
       }
