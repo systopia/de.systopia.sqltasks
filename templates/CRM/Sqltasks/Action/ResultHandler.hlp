@@ -1,0 +1,35 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-handler-email'}
+  <p>{ts domain="de.systopia.sqltasks"}Specify a comma separated list of email addresses that the resulting file will be sent to.{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-always'}
+  <p>{ts domain="de.systopia.sqltasks"}If you check this, the success handler will be always be executed unless there was an error. Otherwise it will only be sent if any of the tasks have actually "done something".{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-attach-log'}
+  <p>{ts domain="de.systopia.sqltasks"}Selecting this option will attach the log file of the execution to the email.{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-error-table'}
+  <p>{ts domain="de.systopia.sqltasks"}If you enter a table here, and it has a column called <code>error_message</code>, the listed errors will count as errors just as any other execution error.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}You should make sure to use the same table for the success and error handler, otherwise there might be inconsistencies.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Since the success/error handlers will be executed <i>after</i> cleanup, the table used here can not be removed by the cleanup script. Use the <code>drop</code> option below.{/ts}</p>
+{/htxt}
+
+{htxt id='id-handler-error-table-drop'}
+  <p>{ts domain="de.systopia.sqltasks"}If you select this, the user error table (or view) will be dropped after this task finishes.{/ts}</p>
+{/htxt}
