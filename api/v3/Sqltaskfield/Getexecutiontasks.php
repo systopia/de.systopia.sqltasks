@@ -8,12 +8,7 @@
  * @return array
  */
 function civicrm_api3_sqltaskfield_getexecutiontasks($params) {
-  $taskOptions = [];
-  $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
-
-  foreach ($tasks as $task) {
-    $taskOptions[$task->getID()] = "[{$task->getID()}] " . $task->getAttribute('name');
-  }
+  $taskOptions = CRM_Sqltasks_Task::getExecutionTaskListOptions();
 
   if (!empty($params['current_task_id']) && isset($taskOptions[$params['current_task_id']])) {
     unset($taskOptions[$params['current_task_id']]);

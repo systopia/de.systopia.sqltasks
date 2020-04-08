@@ -391,6 +391,19 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get a list of tasks ready for execution which prepared for select
+   */
+  public static function getExecutionTaskListOptions() {
+    $preparedTasksOptions = array();
+    $task_search = CRM_Core_DAO::executeQuery('SELECT `id`, `name` FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
+    while ($task_search->fetch()) {
+      $preparedTasksOptions[$task_search->id] = "[{$task_search->id}] " . $task_search->name;
+    }
+
+    return $preparedTasksOptions;
+  }
+
+  /**
    * Get a list of all tasks
    *
    * @return CRM_Sqltasks_Task[]
