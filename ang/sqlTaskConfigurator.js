@@ -45,9 +45,21 @@
     this.setDataLoaded = function(elementId) {
       this.loadedElements.push(elementId);
     };
+
+    this.resetData = function() {
+      this.executionBlock.isLoaded = false;
+      this.executionBlock.currentLoadedComponents = 0;
+      this.executionBlock.componentsNumber = 2;
+      this.loadedElements = [];
+    };
   });
 
   angular.module(moduleName).controller("sqlTaskConfiguratorCtrl", function($scope, $location, taskId, loaderService) {
+      $scope.isLoaded = false;
+      if (!$scope.isLoaded) {
+        loaderService.resetData();
+        $scope.isLoaded = true;
+      }
       $scope.ts = CRM.ts();
       $scope.taskOptions = {
         scheduled: ""
