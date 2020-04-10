@@ -60,7 +60,8 @@
 
             <ordinary-select2
                 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')" inputMaxWidth="'300px'"
-                fieldid="'activity_campaign_id_' + ctrl.index" optionsArray="campaignData">
+                fieldid="'activity_campaign_id_' + ctrl.index" optionsArray="campaignData"
+                isdataloaded="isDataLoaded('activity_campaign_id_' + ctrl.index)">
             </ordinary-select2>
 
             <select-entityref model="ctrl.model['source_contact_id']" fieldlabel="ts('Source Contact')"

@@ -19,7 +19,8 @@
             </text-input>
 
             <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')" inputMaxWidth="'300px'"
-                fieldid="'segmentation_assign_campaign_id' + ctrl.index" optionsArray="campaignData">
+                fieldid="'segmentation_assign_campaign_id' + ctrl.index" optionsArray="campaignData"
+                isdataloaded="isDataLoaded('segmentation_assign_campaign_id' + ctrl.index)">
             </ordinary-select2>
 
             <check-box model="ctrl.model['clear']" fieldlabel="ts('Clear before assignment')"

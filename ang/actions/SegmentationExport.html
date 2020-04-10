@@ -17,6 +17,7 @@
             <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
                 fieldid="'segmentation_export_campaign_id' + ctrl.index" optionsArray="campaignData"
                 select-change="statusChanged(value, fieldId)" inputMaxWidth="'300px'"
+                isdataloaded="isDataLoaded('segmentation_export_campaign_id' + ctrl.index)"
                 field-id-to-change="'segmentation_export_segments' + ctrl.index">
             </ordinary-select2>
 

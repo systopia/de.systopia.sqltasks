@@ -337,23 +337,6 @@
         }
       };
 
-      CRM.api3("Campaign", "get", {
-        sequential: 1,
-        return: ["id", "title"],
-        is_active: 1,
-        options: { limit: 0, sort: "title ASC" }
-      }).done(function(result) {
-        if (!result.is_error) {
-          result.values.map(type => {
-            campaignData.push({
-              value: type.id,
-              name: type.title
-            });
-          });
-        }
-        $scope.campaignData = campaignData;
-      });
-
       $scope.shouldShowTimeFieldsByName = function(fieldName) {
         if (!$scope.taskOptions.scheduled) {
           return false;
@@ -376,8 +359,6 @@
         }
       };
     });
-
-  var campaignData = [];
 
   function removeItemFromArray(index) {
     this.$parent.config.actions.splice(index, 1);
@@ -464,7 +445,27 @@
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
         };
-        $scope.campaignData = campaignData;
+        $scope.campaignData = [];
+        CRM.api3("Campaign", "get", {
+          sequential: 1,
+          return: ["id", "title"],
+          is_active: 1,
+          options: { limit: 0, sort: "title ASC" }
+        }).done(function(result) {
+          if (!result.is_error) {
+            var campaignData = [];
+            result.values.map(type => {
+              campaignData.push({
+                value: type.id,
+                name: type.title
+              });
+            });
+            $scope.campaignData = campaignData;
+            loaderService.setDataLoaded('activity_campaign_id_' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
+
         $scope.ts = CRM.ts();
         CRM.api3("OptionValue", "get", {
           sequential: 1,
@@ -922,7 +923,26 @@
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
         };
-        $scope.campaignData = campaignData;
+        $scope.campaignData = [];
+        CRM.api3("Campaign", "get", {
+          sequential: 1,
+          return: ["id", "title"],
+          is_active: 1,
+          options: { limit: 0, sort: "title ASC" }
+        }).done(function(result) {
+          if (!result.is_error) {
+            var campaignData = [];
+            result.values.map(type => {
+              campaignData.push({
+                value: type.id,
+                name: type.title
+              });
+            });
+            $scope.campaignData = campaignData;
+            loaderService.setDataLoaded('segmentation_assign_campaign_id' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
@@ -976,7 +996,26 @@
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
         };
-        $scope.campaignData = campaignData;
+        $scope.campaignData = [];
+        CRM.api3("Campaign", "get", {
+          sequential: 1,
+          return: ["id", "title"],
+          is_active: 1,
+          options: { limit: 0, sort: "title ASC" }
+        }).done(function(result) {
+          if (!result.is_error) {
+            var campaignData = [];
+            result.values.map(type => {
+              campaignData.push({
+                value: type.id,
+                name: type.title
+              });
+            });
+            $scope.campaignData = campaignData;
+            loaderService.setDataLoaded('segmentation_export_campaign_id' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
