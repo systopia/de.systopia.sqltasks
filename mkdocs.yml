@@ -1,6 +1,7 @@
 site_name: SQL Tasks
 repo_url: https://github.com/systopia/de.systopia.sqltasks
-theme: material
+theme: 
+  name: material
 
 nav:
 - 'Home': index.md
