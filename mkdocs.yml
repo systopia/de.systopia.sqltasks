@@ -2,7 +2,7 @@ site_name: SQL Tasks
 repo_url: https://github.com/systopia/de.systopia.sqltasks
 theme: material
 
-pages:
+nav:
 - 'Home': index.md
 - 'Installation': installation.md
 - 'Usage': usage.md
