@@ -5,6 +5,7 @@
             &nbsp;
             {{ts('CSV Export')}}
         </label>
+        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
         <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
@@ -12,6 +13,7 @@
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
+            <action-additional-info model='ctrl.model' fieldPrefix="'csv_export'" index='ctrl.index'></action-additional-info>
 
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['table']" inputMaxWidth="'500px'"
                 fieldlabel="ts('Export Table')" fieldid="'export_table_parameters' + ctrl.index" sizelength="60" >

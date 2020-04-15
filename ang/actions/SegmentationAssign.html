@@ -5,6 +5,7 @@
           &nbsp;
           {{ts('Assign to Campaign (Segmentation)')}}
         </label>
+        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
         <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
@@ -12,6 +13,7 @@
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
+            <action-additional-info model='ctrl.model' fieldPrefix="'segmentation_assign'" index='ctrl.index'></action-additional-info>
 
             <text-input model="ctrl.model['table']" fieldlabel="ts('Data Table')" sizelength="60" inputMaxWidth="'500px'"
                 fieldid="'segmentation_assign_table' + ctrl.index" showHelpIcon=true isrequired="getBooleanFromNumber(ctrl.model['enabled'])"

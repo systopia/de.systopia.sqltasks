@@ -1337,4 +1337,32 @@
       }
     };
   });
+
+  angular.module(moduleName).directive("actionAdditionalInfo", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/actionAdditionalInfo.html",
+      scope: {
+        model: "=",
+        index: "<",
+        fieldPrefix: "<fieldprefix",
+      },
+      bindToController: true,
+      controllerAs: "ctrl",
+      controller: function($scope) {
+        $scope.ts = CRM.ts();
+        $scope.onInfoPress = onInfoPress;
+        $scope.isShowEditForm = false;
+        $scope.toggleShowingEditForm = function(event) {
+          $scope.isShowEditForm = !$scope.isShowEditForm;
+          if ($scope.isShowEditForm) {
+            CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-addition-info-edit-form-wrap').slideDown("fast");
+          } else {
+            CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-addition-info-edit-form-wrap').hide("fast");
+          }
+        };
+      }
+    };
+  });
+
 })(angular, CRM.$, CRM._);

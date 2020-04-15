@@ -5,6 +5,7 @@
             &nbsp;
             {{ts('Synchronise Tag')}}
         </label>
+        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
         <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
@@ -12,6 +13,8 @@
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
+            <action-additional-info model='ctrl.model' fieldPrefix="'sync_tag'" index='ctrl.index'></action-additional-info>
+
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['contact_table']" sizelength="60"
                 fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table' + ctrl.index" inputMaxWidth="'500px'">
             </text-input>

@@ -6,6 +6,7 @@
                 &nbsp;
                 {{ts('Segmentation Export')}}
         </label>
+        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
         <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
@@ -13,6 +14,7 @@
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
+            <action-additional-info model='ctrl.model' fieldPrefix="'segmentation_export'" index='ctrl.index'></action-additional-info>
 
             <ordinary-select2 model="ctrl.model['campaign_id']" fieldlabel="ts('Campaign')"
                 fieldid="'segmentation_export_campaign_id' + ctrl.index" optionsArray="campaignData"

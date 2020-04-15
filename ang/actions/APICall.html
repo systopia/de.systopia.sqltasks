@@ -5,6 +5,7 @@
             &nbsp;
             {{ts('API Call')}}
         </label>
+        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
         <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
@@ -12,6 +13,8 @@
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
+            <action-additional-info model='ctrl.model' fieldPrefix="'api_call'" index='ctrl.index'></action-additional-info>
+
             <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
                     model="ctrl.model['table']" fieldlabel="ts('Data Table')" fieldid="'api_table' + ctrl.index"
                     sizelength="60" inputMaxWidth="'500px'"
