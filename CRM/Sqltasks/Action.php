@@ -66,17 +66,25 @@ abstract class CRM_Sqltasks_Action {
 
   /**
    * log to the task (during execution)
+   *
+   * @param $message
    */
   public function log($message) {
     $this->task->log($message);
   }
 
+
   /**
    * Get the given key from the config
+   *
+   * @param $name
+   * @param bool $resolveGlobalTokens
+   *
+   * @return mixed|null
    */
-  public function getConfigValue($name) {
+  public function getConfigValue($name, $resolveGlobalTokens = TRUE) {
     if (isset($this->config[$name])) {
-      return $this->config[$name];
+      return $resolveGlobalTokens ? $this->resolveGlobalTokens($this->config[$name]) : $this->config[$name];
     } else {
       return NULL;
     }
@@ -84,6 +92,10 @@ abstract class CRM_Sqltasks_Action {
 
   /**
    * Get a list of ints from the string
+   *
+   * @param $string
+   *
+   * @return array
    */
   protected function getIDList($string) {
     $id_list = array();
@@ -102,6 +114,11 @@ abstract class CRM_Sqltasks_Action {
 
   /**
    * Replace all tokens in the string with data from the record
+   *
+   * @param $string
+   * @param $record
+   *
+   * @return string
    */
   protected function resolveTokens($string, $record) {
     while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
@@ -110,6 +127,60 @@ abstract class CRM_Sqltasks_Action {
       $string = str_replace('{' . $match['token'] . '}', $value, $string);
     }
     return $string;
+  }
+
+  /**
+   * Resolve global tokens in the given value
+   *
+   * Supported tokens include:
+   *  - context.*: replacements with the current task context (e.g. input_val)
+   *  - setting.*: replace with the value of a CiviCRM setting
+   *  - config.*: replace with an item in the sqltasks_global_tokens setting
+   *
+   * @param $value
+   *
+   * @return string|string[]
+   */
+  protected function resolveGlobalTokens($value) {
+    if (!is_string($value)) {
+      return $value;
+    }
+    // TODO: add JSON support (with prefix.token.key1.subkey1 syntax?)
+    while (preg_match('/\{(?P<prefix>context|setting|config)\.(?P<token>\w+)\}/', $value, $match)) {
+      $tokenValue = '';
+      switch ($match['prefix']) {
+        case 'context':
+          if (!empty($this->context[$match['token']])) {
+            $tokenValue = $this->context[$match['token']];
+          }
+          break;
+        default:
+
+        case 'setting':
+          $settingVal = Civi::settings()->get($match['token']);
+          if (!empty($settingVal)) {
+            $tokenValue = $settingVal;
+          }
+          break;
+
+        case 'config':
+          $config = Civi::settings()->get('sqltasks_global_tokens');
+          if (is_array($config) && array_key_exists($match['token'], $config)) {
+            $tokenValue = $config[$match['token']];
+          }
+          break;
+      }
+      $token = '{' . $match['prefix'] . '.' . $match['token'] . '}';
+      if (empty($tokenValue)) {
+        $this->log("No value found for token {$token}");
+      }
+      $value = str_replace(
+        $token,
+        $tokenValue,
+        $value
+      );
+    }
+    return $value;
   }
 
   /**
@@ -337,15 +408,6 @@ abstract class CRM_Sqltasks_Action {
    */
   public function hasExecuted() {
     return $this->has_executed;
-  }
-
-  /**
-   * Replace all tokens in the string with data from the context
-   *
-   * @param $string
-   */
-  public function resolveTableToken(&$string) {
-    $string = str_replace('{random}', $this->context['random'], $string);
   }
 
   /**

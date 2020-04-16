@@ -67,4 +67,11 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
     'title'        => 'Log to a file?',
     'description'  => 'Log task output to a file instead of returning it in the API results?',
   );
+  $params['input_val'] = array(
+    'name'         => 'input_val',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Input Value',
+    'description'  => 'Input value with execution context. Will be forwarded to all actions',
+  );
 }

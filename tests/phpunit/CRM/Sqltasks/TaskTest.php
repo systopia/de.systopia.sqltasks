@@ -187,19 +187,41 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
   }
 
   /**
-   * Test that input_val is accepted and forwarded to actions
+   * Test that (global) tokens are replaced with their values
    */
-  public function testInputValue() {
+  public function testGlobalTokens() {
+    $tmp = tempnam(sys_get_temp_dir(), 'csv');
+    // add a global token setting that will be available via {config.*}
+    Civi::settings()->set('sqltasks_global_tokens', ['test' => 'expected_config_value']);
+    // add context and setting token to file
+    $tmp .= '_{context.input_val}_{setting.lcMessages}.csv';
     $data = [
       'version'        => 2,
       'input_required' => TRUE,
       'actions'        => [
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
-          'script'  => 'DROP TABLE IF EXISTS tmp_test_input_value;
+          'script'  => "DROP TABLE IF EXISTS tmp_test_input_value;
                         CREATE TABLE tmp_test_input_value AS
-                        SELECT @input AS foo;',
+                        SELECT
+                          @input AS foo,
+                          '{context.random}' AS random,
+                          '{setting.lcMessages}' AS language,
+                          '{config.test}' AS config",
           'enabled' => TRUE,
+        ],
+        [
+          'type'           => 'CRM_Sqltasks_Action_CSVExport',
+          'enabled'        => TRUE,
+          'table'          => 'tmp_test_input_value',
+          'encoding'       => 'UTF-8',
+          'delimiter'      => ';',
+          'headers'        => "foo=foo",
+          'filename'       => basename($tmp),
+          'path'           => dirname($tmp),
+          'email'          => '',
+          'email_template' => '1',
+          'upload'         => '',
         ],
       ],
     ];
@@ -208,12 +230,38 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
       ['input_val' => 'expected_value']
     );
     $this->assertLogContains("Action 'Run SQL Script' executed in");
+    $this->assertLogContains('Written 1 records to', 'Records should have been written to CSV');
+    $this->assertLogContains("Action 'CSV Export' executed in", 'CSV Export action should have succeeded');
     $actualValue = CRM_Core_DAO::singleValueQuery("SELECT foo FROM tmp_test_input_value");
     $this->assertEquals(
       'expected_value',
       $actualValue,
       'Table should contain the value passed via input_value'
     );
+    $random = CRM_Core_DAO::singleValueQuery("SELECT random FROM tmp_test_input_value");
+    $this->assertEquals(
+      16,
+      strlen($random),
+      'Column "random" should contain 16 random characters'
+    );
+    $language = CRM_Core_DAO::singleValueQuery("SELECT language FROM tmp_test_input_value");
+    $this->assertEquals(
+      Civi::settings()->get('lcMessages'),
+      $language,
+      'Column "language" should match setting'
+    );
+    $config = CRM_Core_DAO::singleValueQuery("SELECT config FROM tmp_test_input_value");
+    $this->assertEquals(
+      Civi::settings()->get('sqltasks_global_tokens')['test'],
+      $config,
+      'Column "config" should match setting in sqltasks_global_tokens'
+    );
+    $tmp = str_replace(
+      ['{context.input_val}', '{setting.lcMessages}'],
+      ['expected_value', Civi::settings()->get('lcMessages')],
+      $tmp
+    );
+    $this->assertFileEquals(__DIR__ . '/../../../fixtures/csvexport_input_val.csv', $tmp);
   }
 
 }
