@@ -297,6 +297,10 @@ class CRM_Sqltasks_Task {
       $this->log("Task is still running. Execution skipped.");
       return $this->log_messages;
     } else {
+
+      $this->log("Starting task execution.");
+      // commit any pending transactions to ensure consistent behaviour
+      CRM_Core_DAO::executeQuery("COMMIT");
       // set last_execution and running_since
       CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
