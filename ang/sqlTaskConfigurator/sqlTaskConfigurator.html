@@ -383,6 +383,9 @@
                                 <div ng-switch-when="CRM_Sqltasks_Action_ErrorHandler">
                                     <error-handler model='action' index='$index'></error-handler>
                                 </div>
+                              <div ng-switch-when="CRM_Sqltasks_Action_RunPHP">
+                                <run-php model='action' index='$index'></run-php>
+                              </div>
                                 <div ng-switch-default></div>
                             </div>
                         </div>

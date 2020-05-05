@@ -91,6 +91,16 @@ abstract class CRM_Sqltasks_Action {
   }
 
   /**
+   * Set a configuration value
+   *
+   * @param $name
+   * @param $value
+   */
+  public function setConfigValue($name, $value) {
+    $this->config[$name] = $value;
+  }
+
+  /**
    * Get a list of ints from the string
    *
    * @param $string

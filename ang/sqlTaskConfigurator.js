@@ -263,7 +263,9 @@
         $scope.actions = result.values;
         if (!getBooleanFromNumber(taskId)) {
           $scope.actions.forEach(function(value) {
-            $scope.addAction(value.type);
+            if (value.is_default_template) {
+              $scope.addAction(value.type);
+            }
           });
         }
         $scope.$apply();
@@ -332,6 +334,8 @@
             return ts("Assign to Campaign (Segmentation)");
           case "CRM_Sqltasks_Action_SegmentationExport":
             return ts("Segmentation Export");
+          case "CRM_Sqltasks_Action_RunPHP":
+            return ts("Run PHP Code");
           default:
             return "";
         }
@@ -821,6 +825,32 @@
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
         $scope.onInfoPress = onInfoPress;
+      }
+    };
+  });
+
+  angular.module(moduleName).directive("runPhp", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/RunPHP.html",
+      scope: {
+        model: "=",
+        index: "<"
+      },
+      bindToController: true,
+      controllerAs: "ctrl",
+      controller: function($scope) {
+        $scope.ts = CRM.ts();
+        $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
+        $scope.onInfoPress = onInfoPress;
+        $scope.onPhpCodePress = function() {
+          CRM.help("PHP Code", {
+            id: "id-php-code",
+            file: "CRM/Sqltasks/Action/RunPHP"
+          });
+          return false;
+        };
       }
     };
   });
