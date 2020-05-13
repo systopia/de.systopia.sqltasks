@@ -19,6 +19,10 @@ function civicrm_api3_sqltask_execute($params) {
       return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
     }
 
+    if ($task->isArchived()) {
+      return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not execute Task.');
+    }
+
     if (empty($params['check_permissions']) || $task->allowedToRun()) {
       $timestamp = microtime(TRUE);
       $result = $task->execute($exec_params);

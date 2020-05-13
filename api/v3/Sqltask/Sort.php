@@ -38,7 +38,7 @@ function civicrm_api3_sqltask_sort($params) {
       $tasksorderNew[$key] = $task[0];
     }
 
-    // check the difference between taskorder array from database and the taskorder array from the screen
+    // check the difference between task order array from database and the task order array from the screen
     if ($taskScreenOrder != $tasksorderDatabase) {
       return civicrm_api3_create_error('Task order can\'t be modified. Task order on database must be equal with entered task order.');
     }

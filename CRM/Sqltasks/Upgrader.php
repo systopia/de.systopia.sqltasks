@@ -260,4 +260,16 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     return TRUE;
   }
 
+  /**
+   * Add 'archive_date' column to 'civicrm_sqltasks' table if column doesn't exist
+   *
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0120() {
+    $this->addArchiveDateColumn();
+
+    return TRUE;
+  }
+
 }

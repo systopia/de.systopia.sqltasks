@@ -38,16 +38,23 @@
         task_id: taskId,
         input_val: inputValue === undefined ? 0 : inputValue,
       }).done(function(result) {
-        if (result.values.log !== undefined && Array.isArray(result.values.log)) {
-          $scope.resultLogs = result.values.log;
-          $scope.isTaskReturnsEmptyLogs = $scope.resultLogs.length  === 0;
+        if (result.values && !result.is_error) {
+          if (result.values.log !== undefined && Array.isArray(result.values.log)) {
+            $scope.resultLogs = result.values.log;
+            $scope.isTaskReturnsEmptyLogs = $scope.resultLogs.length  === 0;
+          } else {
+            $scope.isTaskReturnsEmptyLogs = true;
+          }
+          $scope.isTaskRunning = false;
+          $scope.isShowLogs = true;
+          CRM.alert("Task execution completed", "Task execution", 'success');
         } else {
-          $scope.isTaskReturnsEmptyLogs = true;
+          CRM.alert(result.error_message, ts("Error task execution"), "error");
+          $scope.resultLogs = [ts('Task returns error: ') + result.error_message];
+          $scope.isTaskRunning = false;
+          $scope.isShowLogs = true;
         }
-        $scope.isTaskRunning = false;
-        $scope.isShowLogs = true;
         $scope.$apply();
-        CRM.alert("Task execution completed", "Task execution", 'success');
       }).fail(function() {
         $scope.resultLogs = ["An unknown error occurred during task execution. Please check your server logs for details before proceeding."];
         $scope.isTaskRunning = false;

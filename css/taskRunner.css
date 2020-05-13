@@ -1,6 +1,7 @@
 .sql-task-runner-block {
   padding: 10px 10px 0 10px;
 }
+
 .crm-container .sql-task-runner-buttons.crm-submit-buttons button:disabled {
   background: #bfbfbf;
 }

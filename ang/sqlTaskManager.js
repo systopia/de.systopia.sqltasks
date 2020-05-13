@@ -155,28 +155,61 @@
 
       $scope.onToggleEnablePress = function(taskId, value) {
         var index = $scope.tasks.findIndex(el => el.id === taskId);
-        if (index !== -1) {
-          CRM.api3("Sqltask", "create", {
-            id: taskId,
-            enabled: value
-          }).done(function(result) {
-            if (result.values && !result.is_error) {
-              CRM.alert(
-                ts("Task enabled / disabled successfully"),
-                ts("Enable / disable task"),
-                "success"
-              );
-              $scope.tasks[index] = result.values;
-              $scope.$apply();
-            } else {
-              CRM.alert(
-                ts("Error enabling / disabing task"),
-                ts("Enable / disable task"),
-                "error"
-              );
-            }
-          });
+        var isEnabling = value == 1;
+        if (index === -1) {
+          CRM.alert(ts("Can't find task index. You can refresh page and try it again."), ts("Error enabling/disabling task"), "error");
+          return;
         }
+
+        CRM.api3("Sqltask", "create", {
+          id: taskId,
+          enabled: value
+        }).done(function(result) {
+          if (result.values && !result.is_error) {
+            var successMessageTitle = (isEnabling ? 'Enabling' : 'Disabling') + ' task';
+            CRM.alert(ts('Task has successfully ' + (isEnabling ? 'enabled' : 'disabled')), ts(successMessageTitle), "success");
+            $scope.tasks[index] = result.values;
+            $scope.$apply();
+          } else {
+            CRM.alert(result.error_message, ts('Error ' + (isEnabling ? 'enabling' : 'disabling' + ' task'), "error"));
+          }
+        });
+      };
+
+      $scope.onUnarchivePress = function(taskId) {
+        var index = $scope.tasks.findIndex(el => el.id === taskId);
+        if (index === -1) {
+          CRM.alert(ts("Can't find task index. You can refresh page and try it again."), ts("Error unarchiving task"), "error");
+          return;
+        }
+
+        CRM.api3("Sqltask", "unarchive", {id: taskId}).done(function(result) {
+          if (result.values && !result.is_error) {
+            CRM.alert(ts('Task has successfully unarchived'), ts("Unarchiving task"), "success");
+            $scope.tasks[index] = result.values;
+            $scope.$apply();
+          } else {
+            CRM.alert(result.error_message, ts("Error unarchiving task"), "error");
+          }
+        });
+      };
+
+      $scope.onArchivePress = function(taskId) {
+        var index = $scope.tasks.findIndex(el => el.id === taskId);
+        if (index === -1) {
+          CRM.alert(ts("Can't find task id. You can refresh page and try it again."), ts("Error archiving task"), "error");
+          return;
+        }
+
+        CRM.api3("Sqltask", "archive", {id: taskId}).done(function(result) {
+          if (result.values && !result.is_error) {
+            CRM.alert(ts('Task has successfully archived'), ts("Archiving task"), "success");
+            $scope.tasks[index] = result.values;
+            $scope.$apply();
+          } else {
+            CRM.alert(result.error_message, ts("Error archiving task"), "error");
+          }
+        });
       };
 
       $scope.onDeletePress = function(taskId) {

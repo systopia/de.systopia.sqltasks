@@ -60,6 +60,11 @@ function civicrm_api3_sqltask_create($params) {
     if (empty($task)) {
       return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
     }
+
+    if ($task->isArchived()) {
+      return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not update any fields. To update any fields please unarchive the task.');
+    }
+
     foreach ($taskParams as $name => $value) {
       $task->setAttribute($name, $value, TRUE);
     }

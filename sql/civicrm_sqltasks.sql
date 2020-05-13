@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS `civicrm_sqltasks`(
   `running_since`   datetime     COMMENT 'set while task is being executed',
   `run_permissions` varchar(256) COMMENT 'permissions required to run',
   `input_required`  tinyint NOT NULL DEFAULT 0 COMMENT 'should have a mandatory form field?',
+  `is_archived`     tinyint NOT NULL DEFAULT 0 COMMENT 'is task archived?',
+  `archive_date`    datetime NULL DEFAULT NULL COMMENT 'archive date',
   `last_runtime`    int unsigned COMMENT 'stores the runtime of the last execution in milliseconds',
   `parallel_exec`   tinyint NOT NULL DEFAULT 0 COMMENT 'should this task be executed in parallel?',
   `main_sql`        text         COMMENT 'main script (SQL)',

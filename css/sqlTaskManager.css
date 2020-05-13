@@ -1,7 +1,33 @@
-.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.even-row:not(.disabled)  {
+.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.even-row.enabled  {
   background: #d3f5ac;
 }
 
-.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.odd-row:not(.disabled) {
+.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.odd-row.enabled {
   background: #e5f9d0;
+}
+
+.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.even-row.archived  {
+  background: #fcdebd;
+}
+
+.page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.odd-row.archived {
+  background: #ffeedb;
+}
+
+.sql-task-archive-message {
+  font-weight: bold;
+}
+
+.sql-task-move-arrow {
+  cursor: pointer;
+  display: inline-block;
+  margin: 0;
+}
+
+.sql-task-move-arrow img {
+  height: 15px;
+  width: 10px;
+  padding: 5px;
+  margin: 0;
+  display: block;
 }

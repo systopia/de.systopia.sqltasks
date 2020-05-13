@@ -14,6 +14,10 @@ function civicrm_api3_sqltask_importconfig($params) {
     return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
   }
 
+  if ($task->isArchived()) {
+    return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not import config.');
+  }
+
   if (!empty($params['import_json_data']) && is_array($params['import_json_data'])) {
     $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
     foreach ($data as $key => $value) {
