@@ -406,7 +406,7 @@
         </div>
 
         <div class="crm-submit-buttons">
-            <button ng-disabled="taskOptions.is_archived" class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_Configure_submit"
+            <button ng-disabled="getBooleanFromNumber(ttaskOptions.is_archived)" class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_Configure_submit"
                     type="button" id="_qf_Configure_submit-bottom">
               {{getBooleanFromNumber(taskId) ? ts('Save') : ts('Create')}}
             </button>
