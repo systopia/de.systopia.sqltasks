@@ -1168,8 +1168,7 @@
         $scope.columnsNumber = angular.isDefined($scope.columnsNumber) ? $scope.columnsNumber : 74;
         $scope.inputMaxWidth = angular.isDefined($scope.inputMaxWidth) ? $scope.inputMaxWidth : "300px";
         $scope.textAreaStyles = {
-          'width' : '100%',
-          'max-width' : $scope.inputMaxWidth,
+          'width' : $scope.inputMaxWidth,
           'font-family' : 'monospace, monospace !important',
           'box-sizing' : 'border-box',
         };
