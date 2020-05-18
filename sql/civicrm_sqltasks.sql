@@ -1,7 +1,7 @@
 -- CREATE civicrm_sqltasks TABLE
 CREATE TABLE IF NOT EXISTS `civicrm_sqltasks`(
   `id`              int unsigned NOT NULL AUTO_INCREMENT,
-  `name`            varchar(64)  COMMENT 'name of the task',
+  `name`            varchar(255) COMMENT 'name of the task',
   `description`     text         COMMENT 'task description',
   `category`        varchar(64)  COMMENT 'task category',
   `scheduled`       varchar(256) COMMENT 'scheduling information',
