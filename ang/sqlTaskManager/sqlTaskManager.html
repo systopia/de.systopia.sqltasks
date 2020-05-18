@@ -71,7 +71,7 @@
         </tr>
     </thead>
     <tbody ui-sortable="sortableOptions" id="sortable-tasks" class="ui-sortable tasks-table" ng-model="tasks">
-        <tr ng-repeat="task in tasks" id="{{task.id}}"
+        <tr ng-repeat="task in tasks" id="{{task.id}}" data-task-id="{{task.id}}" class="sql-task-row-item"
             ng-class="{disabled : !getNumberFromString(task.enabled), 'odd-row': $odd, 'even-row': $even}">
             <td>{{task.category}}</div>
             </td>

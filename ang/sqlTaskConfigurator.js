@@ -109,26 +109,16 @@
 
               CRM.api3("Sqltask", "create", preparedData).done(function(result) {
                 if (result.is_error) {
-                  type = "error";
-                  title = "Error";
-                  if (Number(taskId)) {
-                    message = "Error while updating task";
-                  } else {
-                    message = "Error while creating task";
-                  }
-                } else {
-                  type = "success";
-                  title = "Task updated";
-                  message = "Configuration imported successfully.";
-                  if (Number(taskId)) {
-                    message = "Task successfully updated";
-                  } else {
-                    message = "Task successfully created";
-                  }
-                  $location.path("/sqltasks/manage");
-                  $scope.$apply();
+                  var errorMessage = ts('Error while ' + (Number(taskId) ? 'updating' : 'creating') + ' task');
+                  CRM.alert(errorMessage, ts('Error'), 'error');
+                  return;
                 }
-                CRM.alert(message, title, type);
+
+                var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
+                var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
+                CRM.alert(successMessage, title, 'success');
+                $location.path("/sqltasks/manage/" + result.values.id);
+                $scope.$apply();
               });
 
             }

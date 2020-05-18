@@ -6,16 +6,21 @@
   angular.module(moduleName).config([
     "$routeProvider",
     function($routeProvider) {
-      $routeProvider.when("/sqltasks/manage", {
+      $routeProvider.when("/sqltasks/manage/:highlightTaskId?", {
         controller: "sqlTaskManagerCtrl",
-        templateUrl: "~/sqlTaskManager/sqlTaskManager.html"
+        templateUrl: "~/sqlTaskManager/sqlTaskManager.html",
+        resolve: {
+          highlightTaskId: function($route) {
+            return angular.isDefined($route.current.params.highlightTaskId) ? $route.current.params.highlightTaskId : false;
+          }
+        }
       });
     }
   ]);
 
   angular
     .module(moduleName)
-    .controller("sqlTaskManagerCtrl", function($scope, $location) {
+    .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
       $scope.taskIdWithOpenPanel = null;
       $scope.showPanelForTaskId = function(taskId) {
         $scope.taskIdWithOpenPanel = taskId;
@@ -23,6 +28,19 @@
       $scope.ts = CRM.ts();
       $scope.dispatcher_frequency = null;
       $scope.resourceBaseUrl = CRM.config.resourceBase;
+
+      $scope.handleHighlightTask = function(taskId) {
+        if (!taskId) {
+          return;
+        }
+
+        var taskRowElement = CRM.$(".sql-task-row-item[data-task-id='" + taskId + "'] ");
+        if (taskRowElement.length === 1) {
+          CRM.$(window).scrollTop(taskRowElement.offset().top - 80);
+          taskRowElement.effect('highlight', {}, 5000);
+        }
+      };
+
       getAllTasks();
       getCurrentDispatcherFrequency();
 
@@ -173,6 +191,7 @@
         CRM.api3("Sqltask", "getalltasks").done(function(result) {
           $scope.tasks = result.values;
           $scope.$apply();
+          $timeout(function() {$scope.handleHighlightTask(highlightTaskId);}, 1000);
         });
       }
 
