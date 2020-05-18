@@ -107,6 +107,8 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     // upgrades from < 0.8.2 to >= 0.9 as CRM_Sqltasks_Task::store() relies
     // on the column being present.
     $this->addInputRequired();
+    $this->addIsArchivedColumn();
+    $this->addArchiveDateColumn();
     $tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($tasks as $task) {
       $scheduled = $task->getAttribute('scheduled');
@@ -258,6 +260,20 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     $logging->fixSchemaDifferences();
 
     return TRUE;
+  }
+
+  /**
+   * Adds 'archive_date' column to 'civicrm_sqltasks' table if column doesn't exist
+   */
+  private function addArchiveDateColumn() {
+    $this->ctx->log->info('Adding \'archive_date\' column to \'civicrm_sqltasks\' table if column doesn\'t exist');
+    $isColumnExists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'archive_date';");
+    if (!$isColumnExists) {
+      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN  `archive_date` datetime NULL DEFAULT NULL COMMENT 'archive date'");
+      // update rebuild log tables
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+    }
   }
 
   /**
