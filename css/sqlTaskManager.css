@@ -56,3 +56,68 @@
   word-wrap: break-word;
   max-width: 90px;
 }
+
+.sql-task-preference-item {
+  display: inline-block;
+  padding: 10px 15px 10px 10px;
+}
+
+.sql-task-preference-item:first-child {
+  display: inline-block;
+  padding-left: 0;
+}
+
+.sql-task-preference-item-label {
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: 2px;
+}
+
+.sql-task-preference-item-input {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.sql-task-preference-item-label-text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.sql-task-preference-item-color {
+  background: white;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.sql-task-preference-item-color.archived {
+  background: #fcdebd;
+}
+
+.sql-task-preference-item-color.enabled {
+  background: #d3f5ac;
+}
+
+.sql-task-preference-item-color.disabled {
+  background: #EFEFEF;
+}
+
+.sql-task-info-display-counter {
+  padding: 10px;
+  display: inline-block;
+}
+
+.sql-task-info-panel {
+  padding: 10px;
+}
+
+.sql-task-manager-preloader {
+  position: relative;
+  height: 100px;
+}
+
+.sql-task-manager-preloader-message {
+  padding: 10px;
+  color: black;
+}
