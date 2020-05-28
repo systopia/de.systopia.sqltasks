@@ -138,6 +138,10 @@
 
       $scope.sortableOptions = {
         handle: ".handle-drag",
+        placeholder: 'sql-task-target-highlight-place',
+        revert: 300,
+        cursor: "move",
+        scroll: true,
         update: $scope.updatePreviousTaskOrder,
         stop: function(event, helper) {
           var movedTaskId = helper.item.context.getAttribute("data-task-id");

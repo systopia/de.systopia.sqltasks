@@ -121,3 +121,8 @@
   padding: 10px;
   color: black;
 }
+
+.sql-task-target-highlight-place {
+  border: solid 4px #ffe59b !important;
+  height: 130px;
+}
