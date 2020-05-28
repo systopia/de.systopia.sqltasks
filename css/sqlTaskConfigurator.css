@@ -8,8 +8,16 @@
 }
 
 .header-delete-btn {
+  position: relative;
   cursor: pointer !important;
   margin-left: auto;
+  padding: 5px;
+  border: 1px solid rgba(120, 120, 120, 0);
+  z-index: 50;
+}
+
+.header-delete-btn:hover {
+  border-color: rgba(120, 120, 120, 1);
 }
 
 .relativePosition {
@@ -159,4 +167,9 @@ select.pixelInput {
 
 .sql-tasks-actions-wrap .crm-accordion-body:hover  .sql-task-action-addition-info-panel-btn {
   opacity: 1;
+}
+
+.sql-task-target-highlight-place {
+  border: dotted 5px #c9c9c9;
+  height: 50px;
 }

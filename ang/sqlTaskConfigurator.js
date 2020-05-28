@@ -193,58 +193,76 @@
 
       var previousOrder = [];
       $scope.sortableOptions = {
+        placeholder: 'sql-task-target-highlight-place',
+        revert: 300,
+        cursor: "move",
+        scroll: true,
         update: function(e, ui) {
           previousOrder = $scope.config.actions.slice();
           $scope.$apply();
         },
         stop: function(e, ui) {
-          var nextItemIndex = ui.item.sortable.dropindex;
-          var nextElement = $scope.config.actions[nextItemIndex + 1];
-          var currentElement = $scope.config.actions[nextItemIndex];
-          var previousElement = $scope.config.actions[nextItemIndex - 1];
-          if (!currentElement) {
-            return;
-          }
-          if (currentElement.type === "CRM_Sqltasks_Action_ErrorHandler") {
-            if (
-              previousElement.type !== "CRM_Sqltasks_Action_PostSQL" &&
-              previousElement.type !== "CRM_Sqltasks_Action_SuccessHandler" &&
-              previousElement.type !== "CRM_Sqltasks_Action_ErrorHandler"
-            ) {
-              CRM.alert("Wrong actions order", "Error", "error");
-              $scope.config.actions = previousOrder.slice();
-              $scope.$apply();
-            }
-          } else if (
-            currentElement.type === "CRM_Sqltasks_Action_SuccessHandler"
-          ) {
-            if (
-              previousElement.type !== "CRM_Sqltasks_Action_PostSQL" &&
-              previousElement.type !== "CRM_Sqltasks_Action_SuccessHandler"
-            ) {
-              CRM.alert("Wrong actions order", "Error", "error");
-              $scope.config.actions = previousOrder.slice();
-              $scope.$apply();
-            }
-          } else if (currentElement.type === "CRM_Sqltasks_Action_PostSQL") {
-            if (
-              previousElement.type !== "CRM_Sqltasks_Action_PostSQL" &&
-              nextElement.type !== "CRM_Sqltasks_Action_SuccessHandler" &&
-              nextElement.type !== "CRM_Sqltasks_Action_ErrorHandler"
-            ) {
-              CRM.alert("Wrong actions order", "Error", "error");
-              $scope.config.actions = previousOrder.slice();
-              $scope.$apply();
-            }
-          } else if (
-            previousElement.type === "CRM_Sqltasks_Action_SuccessHandler" ||
-            (previousElement.type === "CRM_Sqltasks_Action_ErrorHandler" &&
-              nextElement) ||
-            previousElement.type === "CRM_Sqltasks_Action_PostSQL"
-          ) {
-            CRM.alert("Wrong actions order", "Error", "error");
+          var currentActionIndex = ui.item.sortable.dropindex;
+          var currentAction = $scope.config.actions[currentActionIndex];
+          var topAction = $scope.config.actions[currentActionIndex - 1];
+          var bottomAction = $scope.config.actions[currentActionIndex + 1];
+          var showError = function (extraMessage) {
+            CRM.alert("Error. Can not move action to this position. " + extraMessage, "Wrong actions order", "error");
             $scope.config.actions = previousOrder.slice();
             $scope.$apply();
+          };
+
+          if (!currentAction) {
+            return;
+          }
+
+          switch (currentAction.type) {
+            case "CRM_Sqltasks_Action_ErrorHandler":
+              if ((bottomAction && bottomAction.type !== "CRM_Sqltasks_Action_ErrorHandler")
+                || (topAction && topAction.type !== "CRM_Sqltasks_Action_PostSQL" &&
+                topAction.type !== "CRM_Sqltasks_Action_SuccessHandler"
+                && topAction.type !== "CRM_Sqltasks_Action_ErrorHandler")
+              ) {
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur before other type of actions.');
+              }
+              break;
+            case "CRM_Sqltasks_Action_SuccessHandler":
+              if (bottomAction && bottomAction.type !== "CRM_Sqltasks_Action_ErrorHandler" && bottomAction.type !== "CRM_Sqltasks_Action_SuccessHandler") {
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after this action.');
+              } else if (topAction && topAction.type === "CRM_Sqltasks_Action_PostSQL" || topAction.type === "CRM_Sqltasks_Action_ErrorHandler") {
+                showError('The "' + $scope.formNameFromType(currentAction.type)
+                  + '" can not occur after "' + $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler") + '" and "'
+                  + $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler")
+                  + '" actions.');
+              }
+              break;
+            case "CRM_Sqltasks_Action_PostSQL":
+              if (bottomAction && bottomAction.type !== "CRM_Sqltasks_Action_ErrorHandler" &&
+                bottomAction.type !== "CRM_Sqltasks_Action_SuccessHandler"
+                && bottomAction.type !== "CRM_Sqltasks_Action_PostSQL") {
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after this action.');
+              } else if (topAction && (topAction.type === "CRM_Sqltasks_Action_SuccessHandler" || topAction.type === "CRM_Sqltasks_Action_ErrorHandler")) {
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after those actions: "'
+                  + [$scope.formNameFromType("CRM_Sqltasks_Action_SuccessHandler"), $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler")].join('", "')
+                  + '".');
+              }
+              break;
+            default:
+              if (topAction &&
+                (
+                  topAction.type === "CRM_Sqltasks_Action_SuccessHandler" ||
+                  topAction.type === "CRM_Sqltasks_Action_ErrorHandler" ||
+                  topAction.type === "CRM_Sqltasks_Action_PostSQL"
+                )
+              ) {
+                var actionTypeNames = [
+                  $scope.formNameFromType("CRM_Sqltasks_Action_SuccessHandler"),
+                  $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler"),
+                  $scope.formNameFromType("CRM_Sqltasks_Action_PostSQL"),
+                ];
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after those actions: "' + actionTypeNames.join('", "') + '".');
+              }
+              break;
           }
         }
       };
@@ -280,21 +298,65 @@
       });
 
       $scope.addAction = function(actionName) {
-        var array = $scope.config.actions;
-        for (let index = array.length - 1; index >= 0; index--) {
-          const element = array[index];
-          if (actionName === element.type) {
-            $scope.config.actions.splice(index + 1, 0, { type: actionName });
+        if (actionName === undefined) {
+          return;
+        }
+        var newActionItem = {type: actionName};
+
+        //add to the stack of similar action types:
+        for (let index = $scope.config.actions.length - 1; index >= 0; index--) {
+          if (actionName === $scope.config.actions[index].type) {
+            $scope.config.actions.splice(index + 1, 0, newActionItem);
             return;
           }
         }
-        if (
-          actionName === "CRM_Sqltasks_Action_RunSQL" ||
-          actionName === "CRM_Sqltasks_Action_PostSQL"
-        ) {
-          $scope.config.actions.push({ type: actionName, enabled: "1" });
-        } else {
-          $scope.config.actions.push({ type: actionName });
+
+        if (actionName === "CRM_Sqltasks_Action_RunSQL" || actionName === "CRM_Sqltasks_Action_PostSQL") {
+          newActionItem['enabled'] = "1";
+        }
+
+        var postSqlActionIndexes = [];
+        var successHandlerActionIndexes = [];
+        var errorHandlerActionIndexes = [];
+
+        for (let index = 0; index < $scope.config.actions.length; index++) {
+          if ("CRM_Sqltasks_Action_PostSQL" === $scope.config.actions[index].type) {
+            postSqlActionIndexes.push(index);
+          } else if ("CRM_Sqltasks_Action_SuccessHandler" === $scope.config.actions[index].type) {
+            successHandlerActionIndexes.push(index);
+          } else if ("CRM_Sqltasks_Action_ErrorHandler" === $scope.config.actions[index].type) {
+            errorHandlerActionIndexes.push(index);
+          }
+        }
+
+        switch (actionName) {
+          case "CRM_Sqltasks_Action_PostSQL":
+            if (successHandlerActionIndexes.length === 0 && errorHandlerActionIndexes.length === 0) {
+              $scope.config.actions.push(newActionItem);
+            } else if(successHandlerActionIndexes.length > 0) {
+              $scope.config.actions.splice(successHandlerActionIndexes[0], 0, newActionItem);
+            } else if(errorHandlerActionIndexes.length > 0) {
+              $scope.config.actions.splice(errorHandlerActionIndexes[0], 0, newActionItem);
+            }
+            break;
+          case "CRM_Sqltasks_Action_SuccessHandler":
+            if (errorHandlerActionIndexes.length === 0) {
+              $scope.config.actions.push(newActionItem);
+            } else if(errorHandlerActionIndexes.length > 0) {
+              $scope.config.actions.splice(errorHandlerActionIndexes[0], 0, newActionItem);
+            }
+            break;
+          case "CRM_Sqltasks_Action_ErrorHandler":
+            $scope.config.actions.push(newActionItem);
+            break;
+          default:
+            var mixedActionIndexes = [].concat(postSqlActionIndexes).concat(successHandlerActionIndexes).concat(errorHandlerActionIndexes);
+            if (mixedActionIndexes.length > 0) {
+              $scope.config.actions.splice(Math.min.apply(Math, mixedActionIndexes), 0, newActionItem);
+            } else {
+              $scope.config.actions.push(newActionItem);
+            }
+            break;
         }
       };
 
