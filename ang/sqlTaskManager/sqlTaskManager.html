@@ -65,35 +65,45 @@
     <tbody ui-sortable="sortableOptions" id="sortable-tasks" class="ui-sortable tasks-table" ng-model="tasks">
         <tr ng-repeat="task in tasks" id="{{task.id}}" data-task-id="{{task.id}}" class="sql-task-row-item"
             ng-class="{enabled : getNumberFromString(task.enabled), disabled : !getNumberFromString(task.enabled), 'odd-row': $odd, 'even-row': $even, archived: getNumberFromString(task.is_archived)}">
-            <td>{{task.category}}</td>
+            <td>
+                <div class="sql-task-table-column-category">
+                   {{task.category}}
+                </div>
+            </td>
             <td>[{{task.id}}]</td>
             <td>
-                <span>{{task.name}}</span>
+                <div class="sql-task-table-column-name">{{task.name}}</div>
                 <div ng-if="getNumberFromString(task.is_archived)" class="sql-task-archive-message">{{ts('Archived at %1', { '1' : task.archive_date})}}</div>
             </td>
             <td>
-                <div title="{{task.description}}">{{task.short_desc}}</div>
+                <div class="sql-task-table-column-description" title="{{task.description}}">
+                    {{task.short_desc}}
+                </div>
             </td>
             <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
             <td>
                 <span>{{task.schedule_label}}</span>
                 <span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</strong></span>
             </td>
-            <td>{{task.last_executed}}</td>
+            <td>
+                <div class="sql-task-table-column-last-executed">
+                    {{task.last_executed}}
+                </div>
+            </td>
             <td>{{task.last_runtime}}</td>
             <td>
-                <div class="sql-task-move-arrow-wrap">
-                    <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'top')">
-                        <img src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top" alt="{{ts('Move to top')}}">
+                <div class="sql-task-table-column-last-moving-arrows">
+                    <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'top')">
+                        <img src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top" alt="{{ts('Move to top')}}" class="order-icon">
                     </a>
-                    <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'up')">
-                        <img src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}" alt="Move up one row">
+                    <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'up')">
+                        <img src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}" alt="Move up one row" class="order-icon">
                     </a>
-                    <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'down')">
-                        <img src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;" title="{{ts('Move down one row')}}" alt="Move down one row">
+                    <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'down')">
+                        <img src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;" title="{{ts('Move down one row')}}" alt="Move down one row" class="order-icon">
                     </a>
-                    <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'bottom')">
-                        <img src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}" alt="Move to bottom">
+                    <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'bottom')">
+                        <img src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}" alt="Move to bottom" class="order-icon">
                     </a>
                 </div>
             </td>

@@ -31,3 +31,28 @@
   margin: 0;
   display: block;
 }
+
+.sql-task-table-column-category {
+  word-wrap: break-word;
+  max-width: 120px;
+}
+
+.sql-task-table-column-name {
+  word-wrap: break-word;
+  max-width: 380px;
+}
+
+.sql-task-table-column-description {
+  word-wrap: break-word;
+  max-width: 420px;
+}
+
+.sql-task-table-column-last-executed {
+  word-wrap: break-word;
+  max-width: 130px;
+}
+
+.sql-task-table-column-last-moving-arrows {
+  word-wrap: break-word;
+  max-width: 90px;
+}
