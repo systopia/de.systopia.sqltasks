@@ -60,13 +60,16 @@
 
   <div class="sql-task-manager-preference-wrap">
     <div class="crm-accordion-wrapper collapsed">
-      <div class="crm-accordion-header">{{ts('Tasks display preferences')}}</div>
+      <div class="crm-accordion-header">{{ts('Display Preferences')}}</div>
       <div class="crm-accordion-body">
 
         <div class="sql-task-preference-item">
+          Display tasks that are:
+        </div>
+        <div class="sql-task-preference-item">
           <label class="sql-task-preference-item-label" for="isShowEnabledTask">
             <span class="sql-task-preference-item-color enabled"></span>
-            <span class="sql-task-preference-item-label-text">{{ts('Is show enabled task?')}}</span>
+            <span class="sql-task-preference-item-label-text">{{ts('Enabled')}}</span>
           </label>
           <input class="sql-task-preference-item-input crm-form-checkbox" ng-true-value="'1'" ng-false-value="'0'"
             ng-change="redrawTaskList(); updatePreviousTaskOrder();"
@@ -76,7 +79,7 @@
         <div class="sql-task-preference-item">
           <label class="sql-task-preference-item-label" for="isShowDisabledTask">
             <span class="sql-task-preference-item-color disabled"></span>
-            <span class="sql-task-preference-item-label-text">{{ts('Is show disabled task?')}}</span>
+            <span class="sql-task-preference-item-label-text">{{ts('Disabled')}}</span>
           </label>
           <input class="sql-task-preference-item-input crm-form-checkbox" ng-true-value="'1'" ng-false-value="'0'"
             ng-change="redrawTaskList(); updatePreviousTaskOrder();"
@@ -86,7 +89,7 @@
         <div class="sql-task-preference-item">
           <label class="sql-task-preference-item-label" for="isShowArchivedTask">
             <span class="sql-task-preference-item-color archived"></span>
-            <span class="sql-task-preference-item-label-text">{{ts('Is show archived task?')}}</span>
+            <span class="sql-task-preference-item-label-text">{{ts('Archived')}}</span>
           </label>
           <input class="sql-task-preference-item-input crm-form-checkbox" ng-true-value="'1'" ng-false-value="'0'"
             ng-change="redrawTaskList(); updatePreviousTaskOrder();"
@@ -244,5 +247,4 @@
       <i>{{ts('can potentially destroy your database')}}</i>.
       {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}
   </div>
->>>>>>> acf7173... GP-8323: Refactor 'SqlTask->sort' api. Add 'diplay perferences' block. Add preloader to page. Update 'drag and drop' and moving by arrows functionality. Refactor.
 </div>

@@ -868,7 +868,7 @@ class CRM_Sqltasks_Task {
       'next_execution' => 'TODO',
       'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
       'config'         => $this->getConfiguration(),
-      'is_archived'    => $this->isArchived(),
+      'is_archived'    => (int) $this->isArchived(),
       'archive_date'   => (empty($this->getAttribute('archive_date'))) ? '' : $this->getAttribute('archive_date'),
     ];
 
