@@ -207,7 +207,7 @@
           var topAction = $scope.config.actions[currentActionIndex - 1];
           var bottomAction = $scope.config.actions[currentActionIndex + 1];
           var showError = function (extraMessage) {
-            CRM.alert("Error. Can not move action to this position. " + extraMessage, "Wrong actions order", "error");
+            CRM.alert("Cannot move action to this position. " + extraMessage, "Invalid action order", "error");
             $scope.config.actions = previousOrder.slice();
             $scope.$apply();
           };
@@ -223,26 +223,24 @@
                 topAction.type !== "CRM_Sqltasks_Action_SuccessHandler"
                 && topAction.type !== "CRM_Sqltasks_Action_ErrorHandler")
               ) {
-                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur before other type of actions.');
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" action cannot occur before other types of actions.');
               }
               break;
             case "CRM_Sqltasks_Action_SuccessHandler":
               if (bottomAction && bottomAction.type !== "CRM_Sqltasks_Action_ErrorHandler" && bottomAction.type !== "CRM_Sqltasks_Action_SuccessHandler") {
-                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after this action.');
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" action cannot occur after this action.');
               } else if (topAction && topAction.type === "CRM_Sqltasks_Action_PostSQL" || topAction.type === "CRM_Sqltasks_Action_ErrorHandler") {
                 showError('The "' + $scope.formNameFromType(currentAction.type)
-                  + '" can not occur after "' + $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler") + '" and "'
-                  + $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler")
-                  + '" actions.');
+                  + '" action cannot occur after the "' + $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler") + '" action.');
               }
               break;
             case "CRM_Sqltasks_Action_PostSQL":
               if (bottomAction && bottomAction.type !== "CRM_Sqltasks_Action_ErrorHandler" &&
                 bottomAction.type !== "CRM_Sqltasks_Action_SuccessHandler"
                 && bottomAction.type !== "CRM_Sqltasks_Action_PostSQL") {
-                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after this action.');
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" action cannot occur after this action.');
               } else if (topAction && (topAction.type === "CRM_Sqltasks_Action_SuccessHandler" || topAction.type === "CRM_Sqltasks_Action_ErrorHandler")) {
-                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after those actions: "'
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" action cannot occur after either of these actions: "'
                   + [$scope.formNameFromType("CRM_Sqltasks_Action_SuccessHandler"), $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler")].join('", "')
                   + '".');
               }
@@ -260,7 +258,7 @@
                   $scope.formNameFromType("CRM_Sqltasks_Action_ErrorHandler"),
                   $scope.formNameFromType("CRM_Sqltasks_Action_PostSQL"),
                 ];
-                showError('The "' + $scope.formNameFromType(currentAction.type) + '" can not occur after those actions: "' + actionTypeNames.join('", "') + '".');
+                showError('The "' + $scope.formNameFromType(currentAction.type) + '" action cannot occur after either of these actions: "' + actionTypeNames.join('", "') + '".');
               }
               break;
           }
