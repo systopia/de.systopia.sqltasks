@@ -33,7 +33,6 @@ class CRM_Sqltasks_Task {
     'last_runtime'    => 'Integer',
     'parallel_exec'   => 'Integer',
     'run_permissions' => 'String',
-    'is_archived'     => 'Integer',
     'archive_date'    => 'String',
     // REMOVED - DO NOT USE
     'main_sql'        => 'String',
@@ -90,7 +89,6 @@ class CRM_Sqltasks_Task {
     $defaults = [
       'parallel_exec'  => 0,
       'input_required' => 0,
-      'is_archived' => 0,
     ];
     foreach ($defaults as $attribute => $value) {
       if (empty($this->attributes[$attribute])) {
@@ -110,7 +108,7 @@ class CRM_Sqltasks_Task {
    * Is task archived?
    */
   public function isArchived() {
-    return $this->getAttribute('is_archived') == 1;
+    return !empty($this->getAttribute('archive_date'));
   }
 
   /**
@@ -536,6 +534,7 @@ class CRM_Sqltasks_Task {
     unset($config['weight']);
     unset($config['last_execution']);
     unset($config['last_runtime']);
+    unset($config['archive_date']);
     $config['config'] = $this->config;
     return json_encode($config, JSON_PRETTY_PRINT);
   }
@@ -836,7 +835,7 @@ class CRM_Sqltasks_Task {
       'next_execution' => 'TODO',
       'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
       'config'         => $this->getConfiguration(),
-      'is_archived'    => $this->getAttribute('is_archived'),
+      'is_archived'    => $this->isArchived(),
       'archive_date'   => (empty($this->getAttribute('archive_date'))) ? '' : $this->getAttribute('archive_date'),
     ];
 
@@ -913,17 +912,17 @@ class CRM_Sqltasks_Task {
    * Archive the task
    */
   public function archive() {
-    $this->setAttribute('is_archived', '1', TRUE);
-    $this->setAttribute('enabled', '0', TRUE);
-    $this->setAttribute('archive_date', date('Y-m-d H:i:s'), TRUE);
+    $this->setAttribute('enabled', 0);
+    $this->setAttribute('archive_date', date('Y-m-d H:i:s'));
+    $this->store();
   }
 
   /**
    * Unarchive the task
    */
   public function unarchive() {
-    $this->setAttribute('is_archived', '0', TRUE);
-    $this->setAttribute('archive_date', 'NULL', TRUE);
+    $this->setAttribute('archive_date', NULL);
+    $this->store();
   }
 
 }

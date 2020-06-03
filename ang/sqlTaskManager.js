@@ -185,7 +185,7 @@
 
         CRM.api3("Sqltask", "unarchive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
-            CRM.alert(ts('Task has successfully unarchived'), ts("Unarchiving task"), "success");
+            CRM.alert(ts('Task was successfully unarchived'), ts("Unarchiving task"), "success");
             $scope.tasks[index] = result.values;
             $scope.$apply();
           } else {
@@ -203,7 +203,7 @@
 
         CRM.api3("Sqltask", "archive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
-            CRM.alert(ts('Task has successfully archived'), ts("Archiving task"), "success");
+            CRM.alert(ts('Task was successfully archived'), ts("Archiving task"), "success");
             $scope.tasks[index] = result.values;
             $scope.$apply();
           } else {

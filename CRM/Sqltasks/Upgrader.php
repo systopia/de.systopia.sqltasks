@@ -107,7 +107,6 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     // upgrades from < 0.8.2 to >= 0.9 as CRM_Sqltasks_Task::store() relies
     // on the column being present.
     $this->addInputRequired();
-    $this->addIsArchivedColumn();
     $this->addArchiveDateColumn();
     $tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($tasks as $task) {

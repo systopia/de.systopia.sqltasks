@@ -69,14 +69,14 @@
             <td>[{{task.id}}]</td>
             <td>
                 <span>{{task.name}}</span>
-                <span ng-if="getNumberFromString(task.is_archived)" class="sql-task-archive-message">({{ts('Archived from %1)', { '1' : task.archive_date})}}</span>
+                <div ng-if="getNumberFromString(task.is_archived)" class="sql-task-archive-message">{{ts('Archived at %1', { '1' : task.archive_date})}}</div>
             </td>
             <td>
                 <div title="{{task.description}}">{{task.short_desc}}</div>
             </td>
             <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
             <td>
-                <p>{{task.schedule_label}}</p>
+                <span>{{task.schedule_label}}</span>
                 <span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</strong></span>
             </td>
             <td>{{task.last_executed}}</td>
@@ -116,7 +116,7 @@
                             <a ng-href="#/sqltasks/configure/{{task.id}}"
                                 class="action-item crm-hover-button small-popup"
                                 title="{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}">
-                                {{ts(getNumberFromString(task.is_archived) ? 'Configure(only view)' : 'Configure', {'domain' : 'de.systopia.sqltasks'})}}
+                                {{ts(getNumberFromString(task.is_archived) ? 'Configure (read-only)' : 'Configure', {'domain' : 'de.systopia.sqltasks'})}}
                             </a>
                         </li>
                         <li ng-if="!getNumberFromString(task.is_archived)" >
@@ -137,7 +137,7 @@
                                 {{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}
                             </a>
                         </li>
-                        <li ng-if="!getNumberFromString(task.is_archived)" >
+                        <li ng-if="!getNumberFromString(task.is_archived) && !getNumberFromString(task.enabled)" >
                             <a ng-click="onArchivePress(task.id)" class="action-item crm-hover-button small-popup"
                                 title="{{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}">
                                 {{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}
