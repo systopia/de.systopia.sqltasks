@@ -135,6 +135,10 @@ class CRM_Sqltasks_GlobalToken {
    * @return mixed|string
    */
   public function isTokenExist($tokenName) {
+    if (is_numeric($tokenName)) {
+      $tokenName = (string) $tokenName;
+    }
+
     return !empty($tokenName) && array_key_exists($tokenName, $this->tokens);
   }
 
