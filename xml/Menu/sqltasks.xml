@@ -37,4 +37,10 @@
     <access_arguments>access CiviCRM</access_arguments>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/sqltasks/global-token-manager</path>
+    <page_callback>CRM_Sqltasks_Page_GlobalTokenManager</page_callback>
+    <title>Global Token Manager</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>
