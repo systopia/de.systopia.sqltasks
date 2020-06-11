@@ -125,6 +125,7 @@
 
         var beforeSortTaskOrder = $scope.tasks.map(task => task.id);
         $scope.updateAllTasksOrder(movedTaskId, moveToTaskId);
+        $scope.updatePreviousTaskOrder();
 
         CRM.api3("Sqltask", "sort", {
           after_sort_tasks_order: $scope.tasks.map(task => task.id),
