@@ -67,19 +67,19 @@
 
       $scope.getDisplayedTasks = function() {
         return $scope.tasks.filter(function(task) {
-          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived === 1) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived == 1) {
             return true;
           }
 
-          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled === 1) {
+          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled == 1) {
             return true;
           }
 
           if (!($scope.tasksDisplayPreferences.isShowArchivedTask === '1')) {
-            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled === 0 && task.is_archived !== 1) {
+            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0 && task.is_archived != 1) {
               return true;
             }
-          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled === 0) {
+          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0) {
             return true;
           }
 
@@ -138,7 +138,7 @@
 
       $scope.sortableOptions = {
         handle: ".handle-drag",
-        placeholder: 'sql-task-target-highlight-place',
+        placeholder: 'sql-task-manager-target-highlight-place',
         revert: 300,
         cursor: "move",
         scroll: true,

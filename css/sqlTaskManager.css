@@ -27,7 +27,7 @@
 .sql-task-move-arrow img {
   height: 15px;
   width: 10px;
-  padding: 5px;
+  padding: 2px;
   margin: 0;
   display: block;
 }
@@ -52,7 +52,7 @@
   max-width: 130px;
 }
 
-.sql-task-table-column-last-moving-arrows {
+.sql-task-move-arrow-wrap {
   word-wrap: break-word;
   max-width: 90px;
 }
@@ -122,7 +122,7 @@
   color: black;
 }
 
-.sql-task-target-highlight-place {
+.sql-task-manager-target-highlight-place {
   border: solid 4px #ffe59b !important;
   height: 130px;
 }

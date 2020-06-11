@@ -151,18 +151,18 @@
               </td>
               <td>{{task.last_runtime}}</td>
               <td>
-                  <div class="sql-task-table-column-last-moving-arrows">
-                      <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'top')">
-                          <img src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top" alt="{{ts('Move to top')}}" class="order-icon">
+                  <div class="sql-task-move-arrow-wrap">
+                      <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'top')">
+                          <img src="{{resourceBaseUrl}}i/arrow/first.gif" href="javascript:;" title="Move to top" alt="{{ts('Move to top')}}">
                       </a>
-                      <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'up')">
-                          <img src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}" alt="Move up one row" class="order-icon">
+                      <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'up')">
+                          <img src="{{resourceBaseUrl}}i/arrow/up.gif" href="javascript:;" title="{{ts('Move up one row')}}" alt="Move up one row">
                       </a>
-                      <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'down')">
-                          <img src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;" title="{{ts('Move down one row')}}" alt="Move down one row" class="order-icon">
+                      <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'down')">
+                          <img src="{{resourceBaseUrl}}i/arrow/down.gif" href="javascript:;" title="{{ts('Move down one row')}}" alt="Move down one row">
                       </a>
-                      <a class="crm-weight-arrow" style="cursor: pointer;" ng-click="moveTaskInList(task.id, 'bottom')">
-                          <img src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}" alt="Move to bottom" class="order-icon">
+                      <a class="crm-weight-arrow sql-task-move-arrow crm-hover-button" ng-click="moveTaskInList(task.id, 'bottom')">
+                          <img src="{{resourceBaseUrl}}i/arrow/last.gif" href="javascript:;" title="{{ts('Move to bottom')}}" alt="Move to bottom">
                       </a>
                   </div>
               </td>
