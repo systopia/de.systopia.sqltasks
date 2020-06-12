@@ -29,20 +29,14 @@
         CRM.api3("Sqltask", "deletetask", {
           id: taskId
         }).done(function(result) {
-          if (
-            result.values[0] === "Task doesn't exist anymore." &&
-            !result.is_error
-          ) {
-            CRM.alert(
-              ts("Task deleted successfully"),
-              ts("Deleting task"),
-              "success"
-            );
+          if (result.values[0] === "Task doesn't exist anymore." && !result.is_error) {
+            CRM.alert(ts("Task deleted successfully"), ts("Deleting task"), "success");
           } else {
             CRM.alert(ts("Error deleting task"), ts("Deleting task"), "error");
           }
+          $location.path("/sqltasks/manage");
+          $scope.$apply();
         });
-        $location.path("/sqltasks/manage");
       };
 
       $scope.onBackPress = function() {
