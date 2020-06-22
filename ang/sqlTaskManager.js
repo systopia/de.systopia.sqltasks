@@ -22,12 +22,36 @@
     .module(moduleName)
     .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
       $scope.taskIdWithOpenPanel = null;
-      $scope.showPanelForTaskId = function(taskId) {
-        $scope.taskIdWithOpenPanel = taskId;
-      };
+      $scope.tasks = [];
+      $scope.displayTasks = [];
+      $scope.previousTaskOrder = [];
+      $scope.isTasksLoading = false;
+      $scope.getBooleanFromNumber = function(number) {return !!Number(number);};
+      $scope.getNumberFromString = function(stringValue) {return Number(stringValue);};
+      $scope.showPanelForTaskId = function(taskId) {$scope.taskIdWithOpenPanel = taskId;};
       $scope.ts = CRM.ts();
       $scope.dispatcher_frequency = null;
       $scope.resourceBaseUrl = CRM.config.resourceBase;
+      $scope.tasksDisplayPreferences = {
+        'isShowArchivedTask' : '0',
+        'isShowEnabledTask' : '1',
+        'isShowDisabledTask' : '1',
+      };
+
+      getAllTasks();
+      getCurrentDispatcherFrequency();
+
+      function getAllTasks() {
+        $scope.isTasksLoading = true;
+        CRM.api3("Sqltask", "getalltasks").done(function(result) {
+          $scope.tasks = result.values;
+          $scope.redrawTaskList();
+          $scope.updatePreviousTaskOrder();
+          $scope.$apply();
+          $timeout(function() {$scope.handleHighlightTask(highlightTaskId);}, 1000);
+          $scope.isTasksLoading = false;
+        });
+      }
 
       $scope.handleHighlightTask = function(taskId) {
         if (!taskId) {
@@ -41,30 +65,89 @@
         }
       };
 
-      getAllTasks();
-      getCurrentDispatcherFrequency();
+      $scope.getDisplayedTasks = function() {
+        return $scope.tasks.filter(function(task) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived == 1) {
+            return true;
+          }
+
+          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled == 1) {
+            return true;
+          }
+
+          if (!($scope.tasksDisplayPreferences.isShowArchivedTask === '1')) {
+            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0 && task.is_archived != 1) {
+              return true;
+            }
+          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0) {
+            return true;
+          }
+
+          return false;
+        });
+      };
+
+      $scope.redrawTaskList = function() {
+        $scope.displayTasks = $scope.getDisplayedTasks();
+      };
+
+      $scope.updateTaskData = function(taskId, taskData) {
+        var indexTasks = $scope.tasks.findIndex(task => task.id === taskId);
+        $scope.tasks[indexTasks] = taskData;
+        $scope.redrawTaskList();
+        $scope.$apply();
+      };
+
+      $scope.updatePreviousTaskOrder = function() {
+        $scope.previousTaskOrder = $scope.displayTasks.map(task => task.id);
+      };
+
+      $scope.updateAllTasksOrder = function(movedTaskId, moveToTaskId) {
+        var firstTaskIndex = $scope.tasks.findIndex(task => task.id === movedTaskId);
+        var secondTaskIndex = $scope.tasks.findIndex(task => task.id === moveToTaskId);
+        var firstTask = $scope.tasks[firstTaskIndex];
+        $scope.tasks.splice(firstTaskIndex, 1);
+        $scope.tasks.splice(secondTaskIndex, 0, firstTask);
+      };
+
+      $scope.updateDisplayTasksAfterMoving = function(movedTaskId, moveToTaskId) {
+        var firstTaskIndex = $scope.displayTasks.findIndex(task => task.id === movedTaskId);
+        var secondTaskIndex = $scope.displayTasks.findIndex(task => task.id === moveToTaskId);
+        var firstTask = $scope.displayTasks[firstTaskIndex];
+        $scope.displayTasks.splice(firstTaskIndex, 1);
+        $scope.displayTasks.splice(secondTaskIndex, 0, firstTask);
+      };
+
+      $scope.applySortingTasks = function(movedTaskId, moveToTaskId) {
+        if (movedTaskId === moveToTaskId) {
+          return;
+        }
+
+        var beforeSortTaskOrder = $scope.tasks.map(task => task.id);
+        $scope.updateAllTasksOrder(movedTaskId, moveToTaskId);
+        $scope.updatePreviousTaskOrder();
+
+        CRM.api3("Sqltask", "sort", {
+          after_sort_tasks_order: $scope.tasks.map(task => task.id),
+          before_sort_tasks_order: beforeSortTaskOrder
+        }).done(function(result) {
+          if (result.is_error) {
+            CRM.alert(ts("Error sorting tasks. Refresh the page and try again."), ts("Error"), "error");
+          }
+        });
+      };
 
       $scope.sortableOptions = {
         handle: ".handle-drag",
-        update: function() {
-          const oldOrder = $scope.tasks.map(task => {
-            return task.id;
-          });
-          $scope.oldOrder = oldOrder;
-          $scope.$apply();
-        },
-        stop: function() {
-          const newOrder = $scope.tasks.map(task => {
-            return task.id;
-          });
-          CRM.api3("Sqltask", "sort", {
-            data: newOrder,
-            task_screen_order: $scope.oldOrder
-          }).done(function(result) {
-            if (result.is_error) {
-              CRM.alert(ts("Error sorting tasks."), ts("Error"), "error");
-            }
-          });
+        placeholder: 'sql-task-manager-target-highlight-place',
+        revert: 300,
+        cursor: "move",
+        scroll: true,
+        update: $scope.updatePreviousTaskOrder,
+        stop: function(event, helper) {
+          var movedTaskId = helper.item.context.getAttribute("data-task-id");
+          var moveToTaskId = $scope.previousTaskOrder[$scope.displayTasks.findIndex(task => task.id === movedTaskId)];
+          $scope.applySortingTasks(movedTaskId, moveToTaskId);
         }
       };
 
@@ -83,93 +166,54 @@
         $location.path("/sqltasks/run/" + taskId);
       };
 
-      $scope.moveTaskInList = function(taskId, value) {
-        var index = $scope.tasks.findIndex(el => el.id === taskId);
-        var arrayOfIds = [];
-        $scope.tasks.forEach(task => arrayOfIds.push(task.id));
-        if (index !== -1 && arrayOfIds.length) {
-          var newOrder = swapElementsByAction(value, arrayOfIds, index);
-          if (newOrder !== null) {
-            CRM.api3("Sqltask", "sort", {
-              data: newOrder,
-              task_screen_order: arrayOfIds
-            }).done(function(result) {
-              if (result.values && !result.is_error) {
-                $scope.tasks = swapElementsByAction(value, $scope.tasks, index);
-                $scope.$apply();
-              } else {
-                CRM.alert(
-                  ts("Error changing tasks order."),
-                  ts("Error"),
-                  "error"
-                );
-              }
-            });
-          }
+      $scope.moveTaskInList = function(movedTaskId, direction) {
+        var movedTaskIndex = $scope.displayTasks.findIndex(task => task.id === movedTaskId);
+        var moveToTaskId;
+        var moveToTaskIndex;
+
+        switch (direction) {
+          case "up":
+            moveToTaskIndex = movedTaskIndex - 1;
+            if (moveToTaskIndex === -1) {
+              break;
+            }
+            moveToTaskId = $scope.displayTasks[moveToTaskIndex].id;
+            $scope.updateDisplayTasksAfterMoving(movedTaskId, moveToTaskId);
+            $scope.applySortingTasks(movedTaskId, moveToTaskId);
+            break;
+          case "down":
+            moveToTaskIndex = movedTaskIndex + 1;
+            if ($scope.displayTasks[moveToTaskIndex] === undefined) {
+              break;
+            }
+            moveToTaskId = $scope.displayTasks[moveToTaskIndex].id;
+            $scope.updateDisplayTasksAfterMoving(movedTaskId, moveToTaskId);
+            $scope.applySortingTasks(movedTaskId, moveToTaskId);
+            break;
+          case "top":
+            moveToTaskId = $scope.displayTasks[0].id;
+            $scope.updateDisplayTasksAfterMoving(movedTaskId, moveToTaskId);
+            $scope.applySortingTasks(movedTaskId, moveToTaskId);
+            break;
+          case "bottom":
+            moveToTaskId = $scope.displayTasks[$scope.displayTasks.length - 1].id;
+            $scope.updateDisplayTasksAfterMoving(movedTaskId, moveToTaskId);
+            $scope.applySortingTasks(movedTaskId, moveToTaskId);
+            break;
+          default:
         }
+        $scope.updatePreviousTaskOrder();
       };
 
-      $scope.getBooleanFromNumber = getBooleanFromNumber;
-
-      function getBooleanFromNumber(number) {
-        return !!Number(number);
-      }
-
-      function swapElementsByAction(action, initialArray, index) {
-        var array = initialArray.slice();
-        var newIndex = getNewIndexByAction(action, index, array);
-        if (newIndex !== null) {
-          if (action === "up" || action === "down") {
-            if (array[newIndex] === undefined) {
-              return null;
-            }
-            var tmp = array[newIndex];
-            array[newIndex] = array[index];
-            array[index] = tmp;
-          } else if (action === "bottom" || action === "top") {
-            var cuttedElement = array.splice(index, 1);
-            if (action === "bottom" && cuttedElement.length > 0) {
-              array.push(cuttedElement[0]);
-            } else if (action === "top" && cuttedElement.length > 0) {
-              array.unshift(cuttedElement[0]);
-            }
-          }
-        }
-        return array;
-      }
-
-      function getNewIndexByAction(action, index, lastElementIndex) {
-        switch (action) {
-          case "up":
-            return index - 1;
-          case "down":
-            return index + 1;
-          case "top":
-            return 0;
-          case "bottom":
-            return lastElementIndex - 1;
-          default:
-            return null;
-        }
-      }
-
       $scope.onToggleEnablePress = function(taskId, value) {
-        var index = $scope.tasks.findIndex(el => el.id === taskId);
-        var isEnabling = value == 1;
-        if (index === -1) {
-          CRM.alert(ts("Can't find task index. You can refresh page and try it again."), ts("Error enabling/disabling task"), "error");
-          return;
-        }
-
         CRM.api3("Sqltask", "create", {
           id: taskId,
           enabled: value
         }).done(function(result) {
+          var isEnabling = value === 1;
           if (result.values && !result.is_error) {
-            var successMessageTitle = (isEnabling ? 'Enabling' : 'Disabling') + ' task';
-            CRM.alert(ts('Task has successfully ' + (isEnabling ? 'enabled' : 'disabled')), ts(successMessageTitle), "success");
-            $scope.tasks[index] = result.values;
-            $scope.$apply();
+            CRM.alert(ts('Task has successfully ' + (isEnabling ? 'enabled' : 'disabled')), ts((isEnabling ? 'Enabling' : 'Disabling') + ' task'), "success");
+            $scope.updateTaskData(taskId, result.values);
           } else {
             CRM.alert(result.error_message, ts('Error ' + (isEnabling ? 'enabling' : 'disabling' + ' task'), "error"));
           }
@@ -177,17 +221,10 @@
       };
 
       $scope.onUnarchivePress = function(taskId) {
-        var index = $scope.tasks.findIndex(el => el.id === taskId);
-        if (index === -1) {
-          CRM.alert(ts("Can't find task index. You can refresh page and try it again."), ts("Error unarchiving task"), "error");
-          return;
-        }
-
         CRM.api3("Sqltask", "unarchive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
             CRM.alert(ts('Task was successfully unarchived'), ts("Unarchiving task"), "success");
-            $scope.tasks[index] = result.values;
-            $scope.$apply();
+            $scope.updateTaskData(taskId, result.values);
           } else {
             CRM.alert(result.error_message, ts("Error unarchiving task"), "error");
           }
@@ -195,17 +232,10 @@
       };
 
       $scope.onArchivePress = function(taskId) {
-        var index = $scope.tasks.findIndex(el => el.id === taskId);
-        if (index === -1) {
-          CRM.alert(ts("Can't find task id. You can refresh page and try it again."), ts("Error archiving task"), "error");
-          return;
-        }
-
         CRM.api3("Sqltask", "archive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
             CRM.alert(ts('Task was successfully archived'), ts("Archiving task"), "success");
-            $scope.tasks[index] = result.values;
-            $scope.$apply();
+            $scope.updateTaskData(taskId, result.values);
           } else {
             CRM.alert(result.error_message, ts("Error archiving task"), "error");
           }
@@ -215,18 +245,6 @@
       $scope.onDeletePress = function(taskId) {
         $location.path("/sqltasks/delete/" + taskId);
       };
-
-      $scope.getNumberFromString = function(stringValue) {
-        return Number(stringValue);
-      };
-
-      function getAllTasks() {
-        CRM.api3("Sqltask", "getalltasks").done(function(result) {
-          $scope.tasks = result.values;
-          $scope.$apply();
-          $timeout(function() {$scope.handleHighlightTask(highlightTaskId);}, 1000);
-        });
-      }
 
       function getCurrentDispatcherFrequency() {
         CRM.api3("Job", "get", {
@@ -261,5 +279,6 @@
           }
         });
       }
+
     });
 })(angular, CRM.$, CRM._);
