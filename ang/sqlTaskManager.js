@@ -47,9 +47,9 @@
           $scope.tasks = result.values;
           $scope.redrawTaskList();
           $scope.updatePreviousTaskOrder();
-          $scope.$apply();
-          $timeout(function() {$scope.handleHighlightTask(highlightTaskId);}, 1000);
           $scope.isTasksLoading = false;
+          $scope.$apply();
+          $scope.handleHighlightTask(highlightTaskId);
         });
       }
 
