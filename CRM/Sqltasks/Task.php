@@ -468,6 +468,39 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get list of ordered tasks ids
+   *
+   * @return array
+   */
+  public static function getOrderedTasks() {
+    $result = CRM_Core_DAO::executeQuery('SELECT id FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
+    $tasksOrder = [];
+
+    while ($result->fetch()) {
+      $tasksOrder[] = $result->id;
+    }
+
+    return $tasksOrder;
+  }
+
+  /**
+   * Update order of tasks
+   *
+   * @param $newTasksOrder
+   */
+  public static function updateTasksOrder($newTasksOrder) {
+    foreach ($newTasksOrder as $key => $taskId) {
+      CRM_Core_DAO::executeQuery(
+        'UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2',
+        [
+          1 => [($key * 10) + 10, 'String'],
+          2 => [$taskId, 'Integer'],
+        ]
+      );
+    }
+  }
+
+  /**
    * Get a list of all SQL Task categories
    *
    * @return array
@@ -835,7 +868,7 @@ class CRM_Sqltasks_Task {
       'next_execution' => 'TODO',
       'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
       'config'         => $this->getConfiguration(),
-      'is_archived'    => $this->isArchived(),
+      'is_archived'    => (int) $this->isArchived(),
       'archive_date'   => (empty($this->getAttribute('archive_date'))) ? '' : $this->getAttribute('archive_date'),
     ];
 
