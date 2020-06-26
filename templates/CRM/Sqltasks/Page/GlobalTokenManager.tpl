@@ -26,11 +26,11 @@
           </thead>
           <tr class="global-token__add-new-token-row">
             <td>
-              <input class="global-token__create-token-name-input" type="text" maxlength="{$maxLengthOfTokenName}">
+              <input class="global-token__create-token-name-input crm-form-text" type="text" maxlength="{$maxLengthOfTokenName}">
               <div class="global-token__create-token-error-message-wrap"></div>
             </td>
             <td>
-              <input class="global-token__create-token-value-input" type="text">
+              <input class="global-token__create-token-value-input crm-form-text" type="text">
             </td>
             <td>
               <div>
@@ -51,7 +51,7 @@
     <tr class="global-token__row-template">
       <td>
         <div class="global-token__edit-mode">
-          <input class="global-token__edit-token-name-input" maxlength="{$maxLengthOfTokenName}" type="text">
+          <input class="global-token__edit-token-name-input crm-form-text" maxlength="{$maxLengthOfTokenName}" type="text">
           <div class="global-token__edit-token-error-message-wrap"></div>
         </div>
         <div class="global-token__view-mode">
@@ -60,7 +60,7 @@
       </td>
       <td>
         <div class="global-token__edit-mode">
-          <input class="global-token__edit-token-value-input" type="text">
+          <input class="global-token__edit-token-value-input crm-form-text" type="text">
         </div>
         <div class="global-token__view-mode">
           <div class="global-token__token-value">
@@ -269,12 +269,15 @@
     max-width: 500px;
   }
 
-  .global-token__add-new-token-row .global-token__create-token-value-input,
-  .global-token__add-new-token-row .global-token__create-token-name-input {
+  .global-token__page .global-token__add-new-token-row .global-token__create-token-value-input,
+  .global-token__page .global-token__add-new-token-row .global-token__create-token-name-input ,
+  .global-token__page .global-token__row .global-token__edit-token-name-input ,
+  .global-token__page .global-token__row .global-token__edit-token-value-input {
     width: 100%;
     max-width: 100%;
     display: block;
     box-sizing: border-box;
+    height: 30px;
   }
 </style>
 {/literal}
