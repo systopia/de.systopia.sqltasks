@@ -174,10 +174,7 @@ abstract class CRM_Sqltasks_Action {
           break;
 
         case 'config':
-          $config = Civi::settings()->get('sqltasks_global_tokens');
-          if (is_array($config) && array_key_exists($match['token'], $config)) {
-            $tokenValue = $config[$match['token']];
-          }
+          $tokenValue = (CRM_Sqltasks_GlobalToken::singleton())->getValue($match['token']);
           break;
       }
       $token = '{' . $match['prefix'] . '.' . $match['token'] . '}';
