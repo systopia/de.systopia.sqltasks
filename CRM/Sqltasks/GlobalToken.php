@@ -66,6 +66,8 @@ class CRM_Sqltasks_GlobalToken {
    * @return string
    */
   public function getValue($tokenName) {
+    $tokenName = (string) $tokenName;
+
     if (!empty($tokenName) && array_key_exists($tokenName, $this->tokens)) {
       return $this->tokens[$tokenName];
     }
@@ -86,10 +88,7 @@ class CRM_Sqltasks_GlobalToken {
       return;
     }
 
-    if (is_numeric($tokenName)) {
-      $tokenName = (string) $tokenName;
-    }
-
+    $tokenName = (string) $tokenName;
     $this->tokens[$tokenName] = $tokenValue;
     $this->save();
   }
@@ -109,7 +108,7 @@ class CRM_Sqltasks_GlobalToken {
    */
   public function getTokenData($tokenName) {
     return [
-      'name' => $tokenName,
+      'name' => (string) $tokenName,
       'value' => $this->getValue($tokenName),
     ];
   }
@@ -135,9 +134,7 @@ class CRM_Sqltasks_GlobalToken {
    * @return mixed|string
    */
   public function isTokenExist($tokenName) {
-    if (is_numeric($tokenName)) {
-      $tokenName = (string) $tokenName;
-    }
+    $tokenName = (string) $tokenName;
 
     return !empty($tokenName) && array_key_exists($tokenName, $this->tokens);
   }
@@ -152,9 +149,7 @@ class CRM_Sqltasks_GlobalToken {
       return;
     }
 
-    if (is_numeric($tokenName)) {
-      $tokenName = (string) $tokenName;
-    }
+    $tokenName = (string) $tokenName;
 
     if ($this->isTokenExist($tokenName)) {
       unset($this->tokens[$tokenName]);
