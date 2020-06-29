@@ -150,7 +150,7 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
     'url'        => 'civicrm/a/#/sqltasks/manage',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
-    'separator'  =>  0,
+    'separator'  => 0,
   ));
   _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', array(
       'label'      => E::ts('My Tasks'),
@@ -158,16 +158,16 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
       'url'        => 'civicrm/sqltasks/mytasks',
       'permission' => 'access CiviCRM',
       'operator'   => 'OR',
-      'separator'  =>  0,
+      'separator'  => 0,
   ));
 
-  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', array(
     'label'      => E::ts('Global Token Manager'),
     'name'       => 'global_token_manager',
     'url'        => 'civicrm/sqltasks/global-token-manager',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
-    'separator'  =>  0,
+    'separator'  => 0,
   ));
 
   _sqltasks_civix_navigationMenu($menu);

@@ -3,10 +3,9 @@
     <div class="crm-content-block crm-block">
 
       <div class="help">
-        <p>{ts}This is list of tokens. These tokens can be used in sqltasks.{/ts}</p>
-        <p>{ts}Example of usage:{/ts}</p>
-        <p>&lt;config&gt;{ts}[your token name]{/ts}&lt;/config&gt;</p>
-        <p>{ts}You can create new one.{/ts}</p>
+        <p>{ts}You can manage global tokens below. Global tokens can be used to store values that are used in multiple SQL Tasks, allowing for the value to be changed everywhere by just editing the token. This can be useful for things like credentials.{/ts}</p>
+        <p>{ts}To use a global token, use this syntax in any task field:{/ts}</p>
+        <p><code>{ts}{literal}{config.name_of_token}{/literal}{/ts}</code></p>
       </div>
 
       <div class="global-token__table-wrap">
@@ -174,10 +173,10 @@
                 var tokenName = tokenRow.data('token-name');
                 CRM.api3('SqltaskGlobalToken', 'delete_token', {"name": tokenName}).done(function(result) {
                     if (result.is_error === 0) {
-                        CRM.alert(ts('Task global token successfully deleted!'), ts("Deliting global token"), "success");
+                        CRM.alert(ts('Global token successfully deleted!'), ts("Deleting global token"), "success");
                         tokenRow.remove();
                     } else {
-                        CRM.alert(result.error_message, ts("Deliting global token error"), "error");
+                        CRM.alert(result.error_message, ts("Error deleting global token"), "error");
                     }
                 });
             });
