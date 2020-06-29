@@ -21,6 +21,7 @@
   angular
     .module(moduleName)
     .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
+      $scope.url = CRM.url;
       $scope.taskIdWithOpenPanel = null;
       $scope.tasks = [];
       $scope.displayTasks = [];

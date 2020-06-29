@@ -192,7 +192,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
   public function testGlobalTokens() {
     $tmp = tempnam(sys_get_temp_dir(), 'csv');
     // add a global token setting that will be available via {config.*}
-    Civi::settings()->set('sqltasks_global_tokens', ['test' => 'expected_config_value']);
+    (CRM_Sqltasks_GlobalToken::singleton())->setValue('test', 'expected_config_value');
     // add context and setting token to file
     $tmp .= '_{context.input_val}_{setting.lcMessages}.csv';
     $data = [
@@ -252,7 +252,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     );
     $config = CRM_Core_DAO::singleValueQuery("SELECT config FROM tmp_test_input_value");
     $this->assertEquals(
-      Civi::settings()->get('sqltasks_global_tokens')['test'],
+      (CRM_Sqltasks_GlobalToken::singleton())->getValue('test'),
       $config,
       'Column "config" should match setting in sqltasks_global_tokens'
     );

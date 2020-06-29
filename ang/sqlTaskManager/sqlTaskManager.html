@@ -1,6 +1,5 @@
 <h1 crm-page-title>{{ts('SQL Task Manager')}}</h1>
 
-
 <div ng-if="isTasksLoading" class="sql-task-manager-preloader-block">
   <div class="sql-task-manager-preloader-message">{{ts('Please wait, tasks is loading ...')}}</div>
   <div class="sql-task-manager-preloader">
@@ -26,6 +25,10 @@
           <a href="https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md" target="_blank">{{ts('REPOSITORY')}}</a>
             {{ts('for examples to get you started.')}}
           </a>
+      </div>
+      <div>
+          {{ts('You can manage global tokens ')}}
+          <a href="{{url('civicrm/sqltasks/global-token-manager')}}">{{ts('here.')}}</a>
       </div>
   </div>
 
