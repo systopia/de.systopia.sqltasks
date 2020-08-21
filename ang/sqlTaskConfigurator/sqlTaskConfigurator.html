@@ -294,8 +294,11 @@
                                 href="javascript:;" title="{{ts('Help')}}" class="helpicon">&nbsp;</a>
                         </div>
                         <div class="content">
-                            <input ng-true-value="'1'" ng-false-value="'0'" ng-model="taskOptions.parallel_exec"
-                                   id="parallel_exec" name="parallel_exec" type="checkbox" class="crm-form-checkbox">
+                            <select ng-model="taskOptions.parallel_exec" name="parallel_exec" id="parallel_exec" class="crm-form-select">
+                                <option value="0" selected="selected">no</option>
+                                <option value="1">With other running tasks</option>
+                                <option value="2">Always (multiple instances)</option>
+                            </select>
                         </div>
                         <div class="clear"></div>
                     </div>

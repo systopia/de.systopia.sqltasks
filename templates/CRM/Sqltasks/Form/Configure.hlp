@@ -22,8 +22,17 @@
 {/htxt}
 
 {htxt id='id-configure-parallel'}
-  <p>{ts domain="de.systopia.sqltasks"}If you enable this flag, this task will be executed even if other tasks are still running.{/ts}</p>
-  <p>{ts domain="de.systopia.sqltasks"}It does <i>not</i> mean, that this task itself will be executed in multiple instances at the same time.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}This option lets you decide whether a task should run in parallel. The following options are available:{/ts}</p>
+
+  <dl>
+    <dt>{ts domain="de.systopia.sqltasks"}No{/ts}</dt>
+    <dd>{ts domain="de.systopia.sqltasks"}The task will not run if any other tasks are already running.{/ts}</dd>
+    <dt>{ts domain="de.systopia.sqltasks"}With other running tasks{/ts}</dt>
+    <dd>{ts domain="de.systopia.sqltasks"}The task will be executed even if other tasks are still running, but not if the task itself is already running.{/ts}</dd>
+    <dt>{ts domain="de.systopia.sqltasks"}Always (multiple instances){/ts}</dt>
+    <dd>{ts domain="de.systopia.sqltasks"}The task will always be executed, potentially causing multiple instances of the task to run in parallel.{/ts}</dd>
+  </dl>
+  <p><strong>{ts domain="de.systopia.sqltasks"}Important: With the last option, you are responsible for ensuring multiple instances of the task can run in parallel. That means keeping all identifiers (like table names) unique and ensuring no deadlocks occur.{/ts}</strong></p>
 {/htxt}
 
 {htxt id='id-configure-main'}

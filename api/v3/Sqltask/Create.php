@@ -14,7 +14,7 @@ function civicrm_api3_sqltask_create($params) {
     'input_required','enabled', 'weight', 'run_permissions'
   ];
 
-  $booleanParams = ['parallel_exec', 'input_required', 'enabled'];
+  $booleanParams = ['input_required', 'enabled'];
   foreach ($booleanParams as $booleanParam) {
     if (array_key_exists($booleanParam, $params) && !($params[$booleanParam] == '1' || $params[$booleanParam] == '0')) {
       return civicrm_api3_create_error('Field \'' . $booleanParam . '\' must be \'0\' or \'1\'.');
@@ -149,7 +149,7 @@ function _civicrm_api3_sqltask_create_spec(&$params) {
   $params['parallel_exec'] = [
     'name'         => 'parallel_exec',
     'api.required' => 0,
-    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Allow parallel execution?',
     'description'  => 'Whether to allow multiple instances of this task to run at the same time',
   ];

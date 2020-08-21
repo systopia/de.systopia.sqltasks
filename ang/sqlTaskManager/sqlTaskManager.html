@@ -145,7 +145,7 @@
               <td>{{getNumberFromString(task.enabled) ? 'Yes' : 'No'}}</td>
               <td>
                   <span>{{task.schedule_label}}</span>
-                  <span ng-if="getBooleanFromNumber(task.parallel_exec)"><strong>{{ts('(parallel)')}}</strong></span>
+                  <span ng-if="task.parallel_exec != 0"><strong>{{ts('(parallel)')}}</strong></span>
               </td>
               <td>
                   <div class="sql-task-table-column-last-executed">
