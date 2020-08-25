@@ -283,7 +283,7 @@
         if (defaultOption === "always" && !Number(taskId)) {
           $scope.taskOptions.scheduled = defaultOption;
           $scope.taskOptions.enabled = 0;
-          $scope.taskOptions.parallel_exec = 0;
+          $scope.taskOptions.parallel_exec = '0';
           $scope.taskOptions.input_required = 0;
           $scope.config = Object.assign($scope.config, {
             scheduled_month: 1,

@@ -321,7 +321,7 @@ class CRM_Sqltasks_Task {
     }
 
     // 0. mark task as started
-    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id};");
+    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id} AND parallel_exec != 2");
     if ($is_still_running) {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
@@ -464,7 +464,7 @@ class CRM_Sqltasks_Task {
    * Get a list of tasks ready for execution
    */
   public static function getParallelExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC, id ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec IN (1, 2) ORDER BY weight ASC, id ASC');
   }
 
   /**
