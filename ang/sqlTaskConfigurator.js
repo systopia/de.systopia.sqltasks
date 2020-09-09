@@ -262,6 +262,8 @@
               }
               break;
           }
+          //hack to fix multiple-select2 after drag and drop
+          $('.sql-task-multiple-select2 .content select').select2();
         }
       };
 
