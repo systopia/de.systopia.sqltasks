@@ -160,6 +160,26 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
       'operator'   => 'OR',
       'separator'  => 0,
   ));
+
+  // also add to Automation section
+  if (!_sqltasks_menu_exists($menu, 'Administer/automation')) {
+    _sqltasks_civix_insert_navigation_menu($menu, 'Administer', [
+        'label'      => E::ts('Automation'),
+        'name'       => 'automation',
+        'url'        => NULL,
+        'permission' => 'administer CiviCRM',
+        'operator'   => NULL,
+        'separator'  => 0,
+    ]);
+  }
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/automation', [
+      'label'      => E::ts('SQL Tasks'),
+      'name'       => 'auto_sqltasks_manage',
+      'url'        => 'civicrm/sqltasks/manage',
+      'permission' => 'administer CiviCRM',
+      'operator'   => 'OR',
+      'separator'  => 0,
+  ]);
   _sqltasks_civix_navigationMenu($menu);
 }
 
@@ -201,4 +221,32 @@ function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = ar
       }
     }
   }
+}
+
+/**
+ * Checks whether a navigation menu item exists.
+ *  (copied from form processor, code by Jaap)
+ *
+ * @param array $menu - menu hierarchy
+ * @param string $path - path to parent of this item, e.g. 'my_extension/submenu'
+ *    'Mailing', or 'Administer/System Settings'
+ * @return bool
+ */
+function _sqltasks_menu_exists(&$menu, $path) {
+  // Find an recurse into the next level down
+  $found = FALSE;
+  $path = explode('/', $path);
+  $first = array_shift($path);
+  foreach ($menu as $key => &$entry) {
+    if ($entry['attributes']['name'] == $first) {
+      if (empty($path)) {
+        return true;
+      }
+      $found = _sqltasks_menu_exists($entry['child'], implode('/', $path));
+      if ($found) {
+        return true;
+      }
+    }
+  }
+  return $found;
 }
