@@ -1,0 +1,101 @@
+/* ##### SQLTASK VERSION 0.9 ###########
+{
+    "description": "Will delete old bank statements that are older than 24 months (configurable below), and have no active (i.e. not yet reconciled or ignored) transaction in them.",
+    "category": "BANKING",
+    "scheduled": "monthly",
+    "parallel_exec": null,
+    "run_permissions": null,
+    "config": {
+        "scheduled_month": "1",
+        "scheduled_weekday": "1",
+        "scheduled_day": "1",
+        "scheduled_hour": "0",
+        "scheduled_minute": "0",
+        "activity_contact_table": "",
+        "activity_activity_type_id": "",
+        "activity_status_id": "",
+        "activity_subject": "",
+        "activity_details": "",
+        "activity_activity_date_time": "",
+        "activity_campaign_id": "0",
+        "activity_source_contact_id": "",
+        "activity_assigned_to": "",
+        "activity_medium_id": "",
+        "activity_source_record_id": "",
+        "activity_priority_id": "",
+        "activity_engagement_level": "",
+        "activity_location": "",
+        "activity_duration": "",
+        "api_table": "",
+        "api_entity": "",
+        "api_action": "",
+        "api_parameters": "",
+        "csv_table": "",
+        "csv_encoding": "pass",
+        "csv_delimiter": ";",
+        "csv_delimiter_other": "",
+        "csv_headers": "",
+        "csv_filename": "",
+        "csv_path": "",
+        "csv_email": "",
+        "csv_email_template": "1",
+        "csv_upload": "",
+        "tag_contact_table": "",
+        "tag_tag_id": "13",
+        "tag_entity_table": "civicrm_contact",
+        "group_contact_table": "",
+        "group_group_id": "1",
+        "success_table": "",
+        "success_email": "",
+        "success_email_template": "1",
+        "error_table": "",
+        "error_email": "",
+        "error_email_template": "1"
+    }
+}
+*/ ############ MAIN SQL ###############
+SET @MAX_AGE_IN_MONTHS := 24;
+SET @CUTOFF_TIMESTAMP := NOW() - INTERVAL @MAX_AGE_IN_MONTHS MONTH;
+SELECT @STATUS_OPTION_GROUP_ID := id FROM civicrm_option_group WHERE name ='civicrm_banking.bank_tx_status';
+
+-- select the all batches that have at least one tx to be deleted
+DROP TABLE IF EXISTS tmp_banking_batches_to_delete;
+CREATE TEMPORARY TABLE tmp_banking_batches_to_delete
+SELECT DISTINCT(tx.tx_batch_id) AS batch_id
+FROM civicrm_bank_tx tx
+WHERE value_date   < @CUTOFF_TIMESTAMP
+  AND booking_date < @CUTOFF_TIMESTAMP
+;
+ALTER TABLE tmp_banking_batches_to_delete ADD INDEX batch_id(batch_id);
+
+-- then remove all that are not completed from the list
+DELETE FROM tmp_banking_batches_to_delete
+WHERE batch_id IN (
+   SELECT tx_batch_id 
+   FROM civicrm_bank_tx tx
+   LEFT JOIN civicrm_option_value tx_status
+          ON tx.status_id = tx_status.id
+          AND tx_status.option_group_id = @STATUS_OPTION_GROUP_ID
+   WHERE tx_status.name IN ('new', 'suggestions')
+     AND tx.tx_batch_id IN (SELECT batch_id FROM tmp_banking_batches_to_delete)
+);
+
+-- and remove all that are not entirely in the date range
+DELETE FROM tmp_banking_batches_to_delete
+WHERE batch_id IN (
+   SELECT tx_batch_id 
+   FROM civicrm_bank_tx tx
+   WHERE value_date   >= @CUTOFF_TIMESTAMP
+     AND booking_date >= @CUTOFF_TIMESTAMP
+     AND tx.tx_batch_id IN (SELECT batch_id FROM tmp_banking_batches_to_delete)
+);
+
+-- finally: delete these transactions and batches
+DELETE FROM civicrm_bank_tx
+WHERE tx_batch_id IN (SELECT batch_id FROM tmp_banking_batches_to_delete);
+
+DELETE FROM civicrm_bank_tx_batch
+WHERE id IN (SELECT batch_id FROM tmp_banking_batches_to_delete);
+
+-- ############ POST SQL ###############
+DROP TABLE IF EXISTS tmp_banking_batches_to_delete;
