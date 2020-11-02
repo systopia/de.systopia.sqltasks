@@ -39,6 +39,7 @@ class CRM_Sqltasks_Task {
     // REMOVED - DO NOT USE
     'post_sql'        => 'String',
     'input_required'  => 'Integer',
+    'abort_on_error'  => 'Integer'
   ];
 
   protected $task_id;
@@ -89,6 +90,7 @@ class CRM_Sqltasks_Task {
     $defaults = [
       'parallel_exec'  => 0,
       'input_required' => 0,
+      'abort_on_error' => 0
     ];
     foreach ($defaults as $attribute => $value) {
       if (empty($this->attributes[$attribute])) {
@@ -345,6 +347,16 @@ class CRM_Sqltasks_Task {
     }
     foreach ($actions as $action) {
       $action_name = $action->getName();
+
+      if (
+        $this->error_count > 0
+        && $this->getAttribute("abort_on_error")
+        && get_class($action) !== "CRM_Sqltasks_Action_ErrorHandler"
+      ) {
+        $this->log("Skipped '$action_name' due to previous error");
+        continue;
+      }
+
       $timestamp = microtime(TRUE);
       $action->setContext($context);
 
@@ -870,6 +882,7 @@ class CRM_Sqltasks_Task {
       'config'         => $this->getConfiguration(),
       'is_archived'    => (int) $this->isArchived(),
       'archive_date'   => (empty($this->getAttribute('archive_date'))) ? '' : $this->getAttribute('archive_date'),
+      'abort_on_error' => $this->getAttribute('abort_on_error'),
     ];
 
     return $data;
