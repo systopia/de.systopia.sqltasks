@@ -57,3 +57,7 @@
 {htxt id='id-run-permissions'}
   <p>{ts domain="de.systopia.sqltasks"}List of permissions which will be checked before task is ran.{/ts}</p>
 {/htxt}
+
+{htxt id='id-abort-on-error'}
+  <p>{ts domain="de.systopia.sqltasks"}Enable this flag to stop the execution of the task after an error occurred in an action. Subsequent actions (except for the ErrorHandler) will be skipped.{/ts}</p>
+{/htxt}
