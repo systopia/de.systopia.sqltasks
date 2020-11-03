@@ -108,6 +108,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     // on the column being present.
     $this->addInputRequired();
     $this->addArchiveDateColumn();
+    $this->addAbortOnErrorColumn();
     $tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($tasks as $task) {
       $scheduled = $task->getAttribute('scheduled');
@@ -289,11 +290,8 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
   /**
    * Add column `abort_on_error` to table `civicrm_sqltasks`
-   *
-   * @return bool
-   * @throws \Exception
    */
-  public function upgrade_0130 () {
+  public function addAbortOnErrorColumn () {
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'abort_on_error';");
 
     if (!$column_exists) {
@@ -303,7 +301,14 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
     }
+  }
 
+  /**
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0130 () {
+    $this->addAbortOnErrorColumn();
     return true;
   }
 }
