@@ -17,5 +17,6 @@ CREATE TABLE IF NOT EXISTS `civicrm_sqltasks`(
   `main_sql`        text         COMMENT 'main script (SQL)',
   `post_sql`        text         COMMENT 'cleanup script (SQL)',
   `config`          text         COMMENT 'configuration (JSON)',
+  `abort_on_error`  tinyint NOT NULL DEFAULT 0 COMMENT 'should abort task execution on error?',
   PRIMARY KEY ( `id` )
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;

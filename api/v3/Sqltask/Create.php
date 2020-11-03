@@ -11,10 +11,10 @@
 function civicrm_api3_sqltask_create($params) {
   $taskParamNames = [
     'name', 'description', 'category', 'scheduled', 'parallel_exec',
-    'input_required','enabled', 'weight', 'run_permissions'
+    'input_required','enabled', 'weight', 'run_permissions', 'abort_on_error'
   ];
 
-  $booleanParams = ['input_required', 'enabled'];
+  $booleanParams = ['input_required', 'enabled', 'abort_on_error'];
   foreach ($booleanParams as $booleanParam) {
     if (array_key_exists($booleanParam, $params) && !($params[$booleanParam] == '1' || $params[$booleanParam] == '0')) {
       return civicrm_api3_create_error('Field \'' . $booleanParam . '\' must be \'0\' or \'1\'.');
@@ -176,5 +176,13 @@ function _civicrm_api3_sqltask_create_spec(&$params) {
     'type'         => CRM_Utils_Type::T_TEXT,
     'title'        => 'Configuration',
     'description'  => 'Task configuration, including actions, as an array',
+  ];
+
+  $params['abort_on_error'] = [
+    'name'         => 'abort_on_error',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Abort task execution on error?',
+    'description'  => 'Whether this task should stop execution if an action produces an error',
   ];
 }

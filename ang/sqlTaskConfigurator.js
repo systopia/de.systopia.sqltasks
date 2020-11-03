@@ -287,6 +287,7 @@
           $scope.taskOptions.enabled = 0;
           $scope.taskOptions.parallel_exec = '0';
           $scope.taskOptions.input_required = 0;
+          $scope.taskOptions.abort_on_error = '1';
           $scope.config = Object.assign($scope.config, {
             scheduled_month: 1,
             scheduled_weekday: 1,

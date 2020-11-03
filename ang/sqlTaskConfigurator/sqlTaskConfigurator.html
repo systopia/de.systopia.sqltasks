@@ -321,6 +321,35 @@
                         </div>
                         <div class="clear"></div>
                     </div>
+
+                    <div class="crm-section">
+                        <div class="label">
+                            <label for="abort_on_error">{{ts('Abort on error')}}</label>
+
+                            <a
+                                onclick="CRM.help('Abort execution on error', {id: 'id-abort-on-error', file: 'CRM\/Sqltasks\/Form\/Configure'}); return false;"
+                                href="javascript:;"
+                                title="{{ts('Help')}}"
+                                class="helpicon"
+                            >
+                                &nbsp;
+                            </a>
+                        </div>
+
+                        <div class="content">
+                            <input
+                                class="crm-form-checkbox"
+                                id="abort_on_error"
+                                name="abort_on_error"
+                                ng-true-value="'1'"
+                                ng-false-value="'0'"
+                                ng-model="taskOptions.abort_on_error"
+                                type="checkbox"
+                            />
+                        </div>
+
+                        <div class="clear"></div>
+                    </div>
                 </div>
             </div>
 

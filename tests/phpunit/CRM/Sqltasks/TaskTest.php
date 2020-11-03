@@ -187,6 +187,77 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
   }
 
   /**
+   * Test that execution of the task stops if the "abort_on_error"-flag is set
+   * and an error occurs
+   */
+  public function testAbortOnError () {
+    // Configure task
+    $data = [
+      "version" => 2,
+      "abort_on_error" => true,
+      "actions" => [
+        [
+          "type" => "CRM_Sqltasks_Action_RunSQL",
+          "enabled" => true,
+          "script" => "SELECT 1"
+        ],
+        [
+          "type" => "CRM_Sqltasks_Action_RunSQL",
+          "enabled" => true,
+          "script" => "INSERT INTO no_such_table (id) VALUES (2)"
+        ],
+        [
+          "type" => "CRM_Sqltasks_Action_RunSQL",
+          "enabled" => true,
+          "script" => "SELECT 3"
+        ],
+        [
+          "type" => "CRM_Sqltasks_Action_ErrorHandler",
+          "enabled" => true,
+          "email" => "errorhandler@example.com",
+          "email_template" => "1"
+        ]
+      ]
+    ];
+
+    // Execute task
+    $this->createAndExecuteTask($data);
+
+    // Count action results
+    $actionResultsCount = [
+      "success" => 0,
+      "error" => 0,
+      "skipped" => 0
+    ];
+
+    $errorHandlerExecuted = false;
+
+    foreach ($this->log as $logEntry) {
+      if (strpos($logEntry, "Action 'Run SQL Script' executed") !== false) {
+        $actionResultsCount["success"]++;
+      }
+
+      if (strpos($logEntry, "Error in action 'Run SQL Script'") !== false) {
+        $actionResultsCount["error"]++;
+      }
+
+      if (strpos($logEntry, "Skipped 'Run SQL Script' due to previous error") !== false) {
+        $actionResultsCount["skipped"]++;
+      }
+
+      if (strpos($logEntry, "Action 'Error Handler' executed") !== false) {
+        $errorHandlerExecuted = true;
+      }
+    }
+
+    // Assert that the third action was skipped
+    $this->assertEquals(1, $actionResultsCount["success"], "Exactly 1 action should have been successful");
+    $this->assertEquals(1, $actionResultsCount["error"], "Exactly 1 action should have failed");
+    $this->assertEquals(1, $actionResultsCount["skipped"], "Exactly 1 action should have been skipped");
+    $this->assertTrue($errorHandlerExecuted, "Error Handler should have been executed");
+  }
+
+  /**
    * Test that (global) tokens are replaced with their values
    */
   public function testGlobalTokens() {
