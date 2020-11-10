@@ -65,6 +65,20 @@ function civicrm_api3_sqltask_create($params) {
       return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not update any fields. To update any fields please unarchive the task.');
     }
 
+    // Compare last_modified timestamps to prevent unintended concurrent changes
+    if (
+      !empty($params["last_modified"])
+      && !empty($task->getAttribute("last_modified"))
+      && $params["last_modified"] !== $task->getAttribute("last_modified")
+    ) {
+      $lastModifiedFormatted = date("H:i:s, j M Y", strtotime($task->getAttribute("last_modified")));
+
+      return civicrm_api3_create_error(
+        "This task has been modified by another user at {$lastModifiedFormatted}",
+        [ "error_type" => "CONCURRENT_CHANGES" ]
+      );
+    }
+
     foreach ($taskParams as $name => $value) {
       $task->setAttribute($name, $value, TRUE);
     }
@@ -184,5 +198,13 @@ function _civicrm_api3_sqltask_create_spec(&$params) {
     'type'         => CRM_Utils_Type::T_BOOLEAN,
     'title'        => 'Abort task execution on error?',
     'description'  => 'Whether this task should stop execution if an action produces an error',
+  ];
+
+  $params['last_modified'] = [
+    'name'         => 'last_modified',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Last Modification Date',
+    'description'  => 'Date/Time of the last configuration change',
   ];
 }
