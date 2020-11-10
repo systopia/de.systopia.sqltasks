@@ -107,7 +107,22 @@
                 preparedData.run_permissions = $scope.taskOptions.run_permissions.join(",");
               }
 
-              CRM.api3("Sqltask", "create", preparedData).done(function(result) {
+              function submitCallback (result) {
+                if (result.is_error && result.error_type === "CONCURRENT_CHANGES") {
+                  CRM.confirm({
+                    title: ts("Warning"),
+                    message: ts(`${result.error_message}. Would you like to update the task anyway?`),
+                    options: { yes: "Save anyway", no: "Reload page" },
+                  }).on("crmConfirm:yes", () => {
+                    preparedData.last_modified = null;
+                    CRM.api3("Sqltask", "create", preparedData).done(submitCallback);
+                  }).on("crmConfirm:no", () => {
+                    window.location.reload();
+                  });
+
+                  return;
+                }
+
                 if (result.is_error) {
                   var errorMessage = ts('Error while ' + (Number(taskId) ? 'updating' : 'creating') + ' task');
                   CRM.alert(errorMessage, ts('Error'), 'error');
@@ -119,8 +134,9 @@
                 CRM.alert(successMessage, title, 'success');
                 $location.path("/sqltasks/manage/" + result.values.id);
                 $scope.$apply();
-              });
+              }
 
+              CRM.api3("Sqltask", "create", preparedData).done(submitCallback);
             }
           }, 500);
         };
