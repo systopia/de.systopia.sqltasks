@@ -39,7 +39,8 @@ class CRM_Sqltasks_Task {
     // REMOVED - DO NOT USE
     'post_sql'        => 'String',
     'input_required'  => 'Integer',
-    'abort_on_error'  => 'Integer'
+    'abort_on_error'  => 'Integer',
+    'last_modified'   => 'Date'
   ];
 
   protected $task_id;
@@ -152,13 +153,17 @@ class CRM_Sqltasks_Task {
   public function setConfiguration($config, $writeTrough = FALSE) {
     $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
     if ($writeTrough && $this->task_id) {
+      $this->attributes["last_modified"] = date("Y-m-d H:i:s");
+
       CRM_Core_DAO::executeQuery(
         "UPDATE `civicrm_sqltasks`
-         SET `config` = %1
-         WHERE id = %2",
+         SET `config` = %1,
+             `last_modified` = %2
+         WHERE id = %3",
         [
           1 => [json_encode($config), 'String'],
-          2 => [$this->task_id, 'Integer'],
+          2 => [$this->attributes["last_modified"], "String"],
+          3 => [$this->task_id, 'Integer'],
         ]
       );
     }
@@ -254,6 +259,7 @@ class CRM_Sqltasks_Task {
     $params = array();
     $fields = array();
     $index  = 1;
+    $this->attributes["last_modified"] = date("Y-m-d H:i:s");
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
       if (  $attribute_name == 'last_execution'
          || $attribute_name == 'last_runtime') {
@@ -268,6 +274,9 @@ class CRM_Sqltasks_Task {
         if (is_bool($value)) {
           // need to convert bools to int for DAO
           $value = (int) $value;
+        }
+        if ($attribute_type === "Date") {
+          $attribute_type = "String";
         }
         $params[$index] = array($value, $attribute_type);
         $index += 1;
@@ -875,6 +884,7 @@ class CRM_Sqltasks_Task {
       'run_permissions'=> $this->getAttribute('run_permissions'),
       'last_executed'  => $this->prepareDate($this->getAttribute('last_execution')),
       'last_runtime'   => $this->prepareRuntime($this->getAttribute('last_runtime')),
+      'last_modified'  => $this->getAttribute("last_modified"),
       'parallel_exec'  => $this->getAttribute('parallel_exec'),
       'input_required' => $this->getAttribute('input_required'),
       'next_execution' => 'TODO',
