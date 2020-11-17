@@ -14,6 +14,9 @@
 +--------------------------------------------------------*/
 
 use CRM_Sqltasks_ExtensionUtil as E;
+use League\Csv\CharsetConverter;
+use League\Csv\EncloseField;
+use League\Csv\Writer;
 
 /**
  * This actions allows you to synchronise
@@ -21,6 +24,13 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
+
+  /**
+   * Types of CSV field enclosure
+   */
+  const ENCLOSURE_NONE = "none";
+  const ENCLOSURE_PARTIAL = "partial";
+  const ENCLOSURE_FULL = "full";
 
   /**
    * Get identifier string
@@ -55,6 +65,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       '|' => E::ts('Vertical bar (|)'),
       '' => E::ts('other'),
     );
+  }
+
+  /**
+   * get a list of CSV field enclosure options
+   */
+  public static function getEnclosureModes () {
+    return [self::ENCLOSURE_NONE, self::ENCLOSURE_PARTIAL, self::ENCLOSURE_FULL];
   }
 
   /**
@@ -214,18 +231,38 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // if (!file_exists($filepath)) {
     //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
     // }
-    $out = fopen($filepath, 'w');
+
+    $out = Writer::createFromString("");
 
     // then: run the query
     $export_table = $this->getExportTable();
     $column_specs = $this->getColumnSpecs();
+
+    // Set field delimiter
     $delimiter = $this->getConfigValue('delimiter');
     $delimiter_other = $this->getConfigValue('delimiter_other');
+
     if(empty($delimiter) && !empty($delimiter_other)){
       $delimiter = $delimiter_other;
     }
 
-    $encoding  = $this->getConfigValue('encoding');
+    $out->setDelimiter($delimiter);
+
+    // Set output encoding
+    $encConfig  = $this->getConfigValue('encoding');
+    $encoding = empty($encConfig) ? "UTF-8" : $encConfig;
+    CharsetConverter::addTo($out, "UTF-8", $encoding);
+
+    // Set field enclosure
+    $enclosureMode = $this->getConfigValue("enclosure_mode");
+
+    if ($enclosureMode === self::ENCLOSURE_NONE) {
+      $out->setEnclosure(chr(0));
+    }
+
+    if ($enclosureMode === self::ENCLOSURE_NONE || $enclosureMode === self::ENCLOSURE_FULL) {
+      EncloseField::addTo($out, "\t\x1f");
+    }
 
     // parse specs
     $headers = array();
@@ -236,7 +273,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // write headers
-    $this->writeLine($out, $headers, $delimiter, $encoding);
+    $out->insertOne($headers);
 
     // write the records
     $count = 0;
@@ -256,11 +293,20 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         // TODO: formatting?
         $record[] = isset($query->$column) ? $query->$column : '';
       }
-      $this->writeLine($out, $record, $delimiter, $encoding);
+      $out->insertOne($record);
       $count++;
     }
     $query->free();
-    fclose($out);
+
+    $csvOutput = $out->getContent();
+
+    if ($enclosureMode === self::ENCLOSURE_NONE) {
+      mb_internal_encoding($encoding);
+      $csvOutput = mb_ereg_replace(chr(0), "", $csvOutput);
+      mb_internal_encoding("UTF-8");
+    }
+
+    file_put_contents($filepath, $csvOutput);
     $this->log("Written {$count} records to '{$filepath}'");
 
     // CONTINUE WITH EMPTY FILES?
@@ -350,22 +396,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       } else {
         throw new Exception("Upload failed, couldn't parse credentials", 1);
       }
-    }
-  }
-
-  /**
-   *
-   * @todo: configure more of fputcsv ( resource $handle , array $fields [, string $delimiter = "," [, string $enclosure = '"' [, string $escape_char = "\" ]]] )
-   */
-  protected function writeLine($out, $record, $delimiter, $encoding = NULL) {
-    if ($encoding) {
-      $encoded_record = array();
-      foreach ($record as $value) {
-        $encoded_record[] = mb_convert_encoding($value, $encoding);
-      }
-      fputcsv($out, $encoded_record, $delimiter);
-    } else {
-      fputcsv($out, $record, $delimiter);
     }
   }
 }
