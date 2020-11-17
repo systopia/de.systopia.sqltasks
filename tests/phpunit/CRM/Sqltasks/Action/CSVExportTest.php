@@ -45,4 +45,56 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
     $this->assertFileEquals(__DIR__ . '/../../../../fixtures/csvexport.csv', $tmp);
   }
 
+  public function testFieldEnclosureTypes () {
+    $enclosureModes = ["none", "partial", "full"];
+
+    foreach ($enclosureModes as $mode) {
+      $outputFilename = tempnam(sys_get_temp_dir(), "csv-$mode-");
+      $tmpTable = "tmp_test_action_csvexport";
+
+      $taskConfig = [
+        "version" => CRM_Sqltasks_Config_Format::CURRENT,
+        "actions" => [
+          [
+            "type"    => "CRM_Sqltasks_Action_RunSQL",
+            "enabled" => true,
+            'script'  => "
+              DROP TABLE IF EXISTS $tmpTable;
+              CREATE TABLE $tmpTable (c1 varchar(255), c2 varchar(255), c3 varchar(255));
+              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('a', 'b b', '  c\" ');
+              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('', ' ', '\t');
+              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('€', 'éáó', 'ä ö ü');
+            ",
+          ],
+          [
+            "type"           => "CRM_Sqltasks_Action_CSVExport",
+            "enabled"        => true,
+            "table"          => $tmpTable,
+            "encoding"       => "UTF-8",
+            "delimiter"      => ";",
+            "enclosure_mode" => $mode,
+            "headers"        => "Column 1=c1\r\nColumn 2=c2\r\nColumn 3=c3",
+            "filename"       => basename($outputFilename),
+            "path"           => dirname($outputFilename),
+            "email"          => "",
+            "email_template" => "1",
+            "upload"         => "",
+          ],
+          [
+            "type"    => "CRM_Sqltasks_Action_PostSQL",
+            "enabled" => true,
+            "script"  => "DROP TABLE IF EXISTS $tmpTable;",
+          ],
+        ],
+      ];
+
+      $this->createAndExecuteTask($taskConfig);
+
+      $this->assertFileEquals(
+        __DIR__ . "/../../../../fixtures/csvexport_enclosure_${mode}.csv",
+        $outputFilename
+      );
+    }
+  }
+
 }
