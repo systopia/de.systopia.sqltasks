@@ -109,6 +109,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     $this->addInputRequired();
     $this->addArchiveDateColumn();
     $this->addAbortOnErrorColumn();
+    $this->addLastModifiedColumn();
     $tasks = CRM_Sqltasks_Task::getAllTasks();
     foreach ($tasks as $task) {
       $scheduled = $task->getAttribute('scheduled');
@@ -309,6 +310,30 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    */
   public function upgrade_0130 () {
     $this->addAbortOnErrorColumn();
+    return true;
+  }
+
+  /**
+   * Add column `last_modified` to table `civicrm_sqltasks`
+   */
+  public function addLastModifiedColumn () {
+    $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'last_modified';");
+
+    if (!$column_exists) {
+      $this->ctx->log->info("Adding column `last_modified` tinyint NOT NULL DEFAULT 0 to table `civicrm_sqltasks`");
+      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD `last_modified` datetime COMMENT 'last time the configuration of the task has been modified'");
+
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+    }
+  }
+
+  /**
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0140 () {
+    $this->addLastModifiedColumn();
     return true;
   }
 }

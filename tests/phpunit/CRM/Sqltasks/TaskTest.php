@@ -335,4 +335,78 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertFileEquals(__DIR__ . '/../../../fixtures/csvexport_input_val.csv', $tmp);
   }
 
+  /**
+   * Test that concurrent changes of task configurations are detected
+   */
+  public function testConcurrentChanges () {
+    // Configure task
+    $config = [
+      "version" => 2,
+      "enabled" => 1,
+      "actions" => [
+        [
+          "type" => "CRM_Sqltasks_Action_RunSQL",
+          "enabled" => false,
+          "script" => "SELECT 1"
+        ],
+      ]
+    ];
+
+    // Create task
+    $task = new CRM_Sqltasks_Task(null, $config);
+    $task->store();
+    $taskId = $task->getID();
+    $lastModified = $task->getAttribute("last_modified");
+
+    $apiCallFailed = false;
+
+    // Update task after 1 second via API
+    sleep(1);
+    $config["actions"][0]["enabled"] = true;
+
+    try {
+      civicrm_api3("Sqltask", "create", [
+        "id"            => $taskId,
+        "config"        => $config,
+        "last_modified" => $lastModified,
+      ]);
+    } catch (CiviCRM_API3_Exception $exception) {
+      $apiCallFailed = true;
+    }
+
+    // Assert that the change has been applied as expected
+    $task = CRM_Sqltasks_Task::getTask($taskId);
+    $this->assertEquals(false, $apiCallFailed, "API call should have succeeded");
+
+    $this->assertEquals(
+      1,
+      $task->getConfiguration()["actions"][0]["enabled"],
+      "Task config should have changed"
+    );
+
+    // Update task after another second with now expired last_modified timestamp
+    sleep(1);
+    $config["actions"][0]["enabled"] = false;
+
+    try {
+      civicrm_api3("Sqltask", "create", [
+        "id"            => $taskId,
+        "config"        => $config,
+        "last_modified" => $lastModified,
+      ]);
+    } catch (CiviCRM_API3_Exception $exception) {
+      $apiCallFailed = true;
+    }
+
+    // Assert that the change has not been applied due to a mismatch of last_modified timestamps
+    $task = CRM_Sqltasks_Task::getTask($taskId);
+    $this->assertEquals(true, $apiCallFailed, "API call should have failed");
+
+    $this->assertEquals(
+      1,
+      $task->getConfiguration()["actions"][0]["enabled"],
+      "Task config should not have changed"
+    );
+  }
+
 }
