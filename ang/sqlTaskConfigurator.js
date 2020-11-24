@@ -721,6 +721,12 @@
           loaderService.setDataLoaded('csv_delimiter' + $scope.ctrl.index);
           $scope.$apply();
         });
+
+        CRM.api3("Sqltaskfield", "getenclosuremodes").done(result => {
+          $scope.enclosureOptions = result.values[0].map(mode => ({ value: mode, name: mode }));
+          loaderService.setDataLoaded('csv_enclosure_' + $scope.ctrl.index);
+          $scope.$apply();
+        });
       }
     };
   });

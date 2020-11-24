@@ -34,6 +34,11 @@
                         fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other' + ctrl.index">
             </text-input>
 
+            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"  fieldid="'csv_enclosure_' + ctrl.index"
+                fieldLabel="ts('Field enclosure')" inputMaxWidth="'300px'"  isdataloaded="isDataLoaded('csv_enclosure_' + ctrl.index)"
+                model="ctrl.model['enclosure_mode']" optionsArray="enclosureOptions">
+            </ordinary-select2>
+
             <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['headers']"
                 fieldlabel="ts('Columns')" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Columns", "id-csv-columns", "CRM\/Sqltasks\/Action\/CSVExport")'
