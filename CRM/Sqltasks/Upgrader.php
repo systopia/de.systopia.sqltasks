@@ -336,4 +336,39 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     $this->addLastModifiedColumn();
     return true;
   }
+
+  /**
+   * Create table `civicrm_sqltasks_template`
+   */
+  public function createTemplatesTable () {
+    $tableName = "civicrm_sqltasks_template";
+    $tableExists = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '$tableName';");
+
+    if (!$tableExists) {
+      $this->ctx->log->info("Creating table `$tableName`");
+      CRM_Core_DAO::executeQuery("
+        CREATE TABLE IF NOT EXISTS `$tableName`(
+          `id`              int unsigned NOT NULL AUTO_INCREMENT,
+          `name`            varchar(255) COMMENT 'name of the template',
+          `description`     text         COMMENT 'template description',
+          `config`          text         COMMENT 'configuration (JSON)',
+          `last_modified`   datetime     COMMENT 'last time the template has been modified',
+          PRIMARY KEY ( `id` )
+        ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+      ");
+
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+    }
+  }
+
+  /**
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0150 () {
+    $this->createTemplatesTable();
+    return true;
+  }
+
 }
