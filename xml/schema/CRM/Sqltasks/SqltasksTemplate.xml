@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<table>
+  <base>CRM/Sqltasks</base>
+  <class>SqltasksTemplate</class>
+  <name>civicrm_sqltasks_template</name>
+  <comment>SQL Task configuration template</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique SqltasksTemplate ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>name</name>
+    <type>varchar(255)</type>
+    <comment>name of the template</comment>
+  </field>
+
+  <field>
+    <name>description</name>
+    <type>text</type>
+    <comment>template description</comment>
+  </field>
+
+  <field>
+    <name>config</name>
+    <type>text</type>
+    <comment>configuration (JSON)</comment>
+  </field>
+
+  <field>
+    <name>last_modified</name>
+    <type>datetime</type>
+    <comment>last time the template has been modified</comment>
+  </field>
+
+</table>
