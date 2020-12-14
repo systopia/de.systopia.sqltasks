@@ -4,68 +4,66 @@
         <p>{ts}The selected default template will be used whenever a user wants to create a new task.{/ts}</p>
     </div>
 
-    <div class="crm-form-block">
-        <table>
-            <thead>
-                <tr class="columnheader">
-                    <th></th>
-                    <th>{ts}ID{/ts}</th>
-                    <th>{ts}Name{/ts}</th>
-                    <th>{ts}Description{/ts}</th>
-                    <th>{ts}Last modified{/ts}</th>
-                    <th>{ts}Configuration{/ts}</th>
-                    <th></th>
+    <table class="dataTable">
+        <thead>
+            <tr class="columnheader">
+                <th></th>
+                <th>{ts}ID{/ts}</th>
+                <th>{ts}Name{/ts}</th>
+                <th>{ts}Description{/ts}</th>
+                <th>{ts}Last modified{/ts}</th>
+                <th>{ts}Configuration{/ts}</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {foreach from=$templates item=template}
+                <tr
+                    class="template-row crm-entity"
+                    data-action="create"
+                    data-entity="SqltaskTemplate"
+                    data-id="{$template.id}"
+                >
+                    <td>
+                        {if $defaultTemplateId == $template.id}
+                            <i class="crm-i fa-check-circle"></i>
+                        {/if}
+                    </td>
+
+                    <td>{$template.id}</td>
+                    <td class="crm-editable" data-field="name">{$template.name}</td>
+                    <td class="crm-editable" data-field="description">{$template.description}</td>
+                    <td>{$template.last_modified}</td>
+                    <td class="crm-editable" data-field="config">{$template.config}</td>
+
+                    <td>
+                        <button
+                            class="crm-button download"
+                            data-template-id="{$template.id}"
+                        >
+                            <i class="crm-i fa-download"></i>
+                            <span>{ts}Download{/ts}</span>
+                        </button>
+
+                        <button
+                            class="crm-button set-default"
+                            data-template-id="{$template.id}"
+                            {if $defaultTemplateId == $template.id}disabled{/if}
+                        >
+                            <i class="crm-i fa-check-circle"></i>
+                            <span>{ts}Set as default{/ts}</span>
+                        </button>
+
+                        <button class="crm-button delete" data-template-id="{$template.id}">
+                            <i class="crm-i fa-trash"></i>
+                            <span>{ts}Delete{/ts}</span>
+                        </button>
+                    </td>
                 </tr>
-            </thead>
-
-            <tbody>
-                {foreach from=$templates item=template}
-                    <tr
-                        class="template-row crm-entity"
-                        data-action="create"
-                        data-entity="SqltaskTemplate"
-                        data-id="{$template.id}"
-                    >
-                        <td>
-                            {if $defaultTemplateId == $template.id}
-                                <i class="crm-i fa-check-circle"></i>
-                            {/if}
-                        </td>
-
-                        <td>{$template.id}</td>
-                        <td class="crm-editable" data-field="name">{$template.name}</td>
-                        <td class="crm-editable" data-field="description">{$template.description}</td>
-                        <td>{$template.last_modified}</td>
-                        <td data-field="config">{$template.config}</td>
-
-                        <td>
-                            <button
-                                class="crm-button download"
-                                data-template-id="{$template.id}"
-                            >
-                                <i class="crm-i fa-download"></i>
-                                <span>{ts}Download{/ts}</span>
-                            </button>
-
-                            <button
-                                class="crm-button set-default"
-                                data-template-id="{$template.id}"
-                                {if $defaultTemplateId == $template.id}disabled{/if}
-                            >
-                                <i class="crm-i fa-check-circle"></i>
-                                <span>{ts}Set as default{/ts}</span>
-                            </button>
-
-                            <button class="crm-button delete" data-template-id="{$template.id}">
-                                <i class="crm-i fa-trash"></i>
-                                <span>{ts}Delete{/ts}</span>
-                            </button>
-                        </td>
-                    </tr>
-                {/foreach}
-            </tbody>
-        </table>
-    </div>
+            {/foreach}
+        </tbody>
+    </table>
 
     <div class="crm-form-block">
         <button class="crm-button" id="open-form">
