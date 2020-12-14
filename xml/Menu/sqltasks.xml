@@ -43,4 +43,10 @@
     <title>Global Token Manager</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/sqltasks/templates</path>
+    <page_callback>CRM_Sqltasks_Page_Templates</page_callback>
+    <title>SQL Task Configuration Templates</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>

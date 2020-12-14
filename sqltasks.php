@@ -170,6 +170,15 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
     'separator'  => 0,
   ));
 
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', array(
+    'label'      => E::ts('Templates'),
+    'name'       => 'templates',
+    'url'        => 'civicrm/sqltasks/templates',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+
   _sqltasks_civix_navigationMenu($menu);
 }
 
