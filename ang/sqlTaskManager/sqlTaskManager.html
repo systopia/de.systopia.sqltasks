@@ -61,6 +61,23 @@
 
   <br />
 
+  <div class="sql-task-manager-new-task-panel crm-form-block">
+    <h3>{{ts('Add a new task')}}</h3>
+
+    <div class="content">
+        <p>{{ts('Select a configuration template for the new task')}}</p>
+
+        <select2 id="config-template" name="config-template" isRequired="false"
+            model="selectTemplateModel.templateId" options="templateOptions">
+        </select2>
+
+        <button class="crm-button" ng-click="addNewTask()" ng-disabled="selectTemplateModel.templateId === undefined">
+            <i class="crm-i fa-plus"></i>
+            <span>{{ts('Add')}}</span>
+        </button>
+    </div>
+  </div>
+
   <div class="sql-task-manager-preference-wrap">
     <div class="crm-accordion-wrapper collapsed">
       <div class="crm-accordion-header">{{ts('Display Preferences')}}</div>
