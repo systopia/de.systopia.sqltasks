@@ -357,6 +357,15 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
         ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
       ");
 
+      $defaultTemplate = file_get_contents("tasks/default-template.sqltask", true);
+
+      $this->ctx->log->info("Inserting default template into new table");
+      CRM_Core_DAO::executeQuery("
+        INSERT INTO `civicrm_sqltasks_template`
+          (`name`, `description`, `config`, `last_modified`)
+          VALUES ('Default', 'Default template for new tasks', '$defaultTemplate', NOW());
+      ");
+
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
     }
