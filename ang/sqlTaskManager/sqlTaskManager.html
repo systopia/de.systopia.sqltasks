@@ -11,30 +11,6 @@
 
 <div class="sql-task-manager-page" ng-if="!isTasksLoading">
   <div class="help">
-      <div ng-switch on="tasks.length > 0">
-          <div ng-switch-when="true">
-              {{ts('This is the list of currently configured tasks.', {'domain' : 'de.systopia.sqltasks'})}}
-          </div>
-          <div ng-switch-default>
-              {{ts('It looks like you\'re new here. This is the control center for all you SQL based scheduled tasks, but there is no task configured yet.', {'domain' : 'de.systopia.sqltasks'})}}
-          </div>
-      </div>
-      <div>
-          {{ts('You might want to')}} <a ng-href="#/sqltasks/configure/0">{{ts('ADD A NEW ONE')}}</a>.
-          {{ts('Check out our')}}
-          <a href="https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md" target="_blank">{{ts('REPOSITORY')}}</a>
-            {{ts('for examples to get you started.')}}
-          </a>
-      </div>
-      <div>
-          {{ts('You can manage global tokens ')}}
-          <a href="{{url('civicrm/sqltasks/global-token-manager')}}">{{ts('here.')}}</a>
-      </div>
-  </div>
-
-  <br />
-
-  <div class="help">
       <div ng-switch on="dispatcher_frequency">
           <div ng-switch-when="Daily">
               {{ts('The dispatcher is run')}}
@@ -65,7 +41,17 @@
     <h3>{{ts('Add a new task')}}</h3>
 
     <div class="content">
-        <p>{{ts('Select a configuration template for the new task')}}</p>
+        <p>
+            {{ts('Select a configuration template for the new task.')}}
+            {{ts('Check out our')}}
+
+            <a href="https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md" target="_blank">
+                {{ts('sample task repository')}}
+            </a>
+
+            {{ts('for examples to get you started.')}}
+            </a>
+        </p>
 
         <select2 id="config-template" name="config-template" isRequired="false"
             model="selectTemplateModel.templateId" options="templateOptions">
