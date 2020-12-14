@@ -103,7 +103,7 @@
 
               preparedData.config = $scope.config;
 
-              if ($scope.taskOptions.run_permissions !== undefined) {
+              if (Array.isArray($scope.taskOptions.run_permissions)) {
                 preparedData.run_permissions = $scope.taskOptions.run_permissions.join(",");
               }
 
