@@ -126,3 +126,17 @@
   border: solid 4px #ffe59b !important;
   height: 130px;
 }
+
+.sql-task-manager-new-task-panel div.content {
+  padding: 20px;
+  padding-top: 10px;
+}
+
+.sql-task-manager-new-task-panel div.content p {
+  margin: 0px;
+  margin-bottom: 15px;
+}
+
+.sql-task-manager-new-task-panel div.content select {
+  min-width: 300px;
+}

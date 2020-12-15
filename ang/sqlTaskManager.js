@@ -38,8 +38,12 @@
         'isShowEnabledTask' : '1',
         'isShowDisabledTask' : '1',
       };
+      $scope.templateOptions = [];
+      $scope.selectTemplateModel = { templateId: undefined };
 
       getAllTasks();
+      getAllTemplates();
+      getDefaultTemplate();
       getCurrentDispatcherFrequency();
 
       function getAllTasks() {
@@ -51,6 +55,33 @@
           $scope.isTasksLoading = false;
           $scope.$apply();
           $scope.handleHighlightTask(highlightTaskId);
+        });
+      }
+
+      function getAllTemplates () {
+        CRM.api3("SqltaskTemplate", "get_all").done(result => {
+          if (result.is_error) {
+            console.error(result.error_message);
+            return;
+          }
+
+          $scope.templateOptions = result.values.map(
+            template => ({ value: template.id, name: template.name })
+          );
+
+          $scope.$apply();
+        });
+      }
+
+      function getDefaultTemplate () {
+        CRM.api3("Setting", "getvalue", { name: "sqltasks_default_template" }).done(result => {
+          if (result.is_error) {
+            console.error(result.error_message);
+            return;
+          }
+
+          $scope.selectTemplateModel.templateId = result.result;
+          $scope.$apply();
         });
       }
 
@@ -247,6 +278,10 @@
         $location.path("/sqltasks/delete/" + taskId);
       };
 
+      $scope.addNewTask = function () {
+        $location.url(`/sqltasks/configure/0?template=${$scope.selectTemplateModel.templateId}`);
+      };
+
       function getCurrentDispatcherFrequency() {
         CRM.api3("Job", "get", {
           sequential: 1,
@@ -282,4 +317,29 @@
       }
 
     });
+
+  angular.module(moduleName).directive("select2", () => ({
+    restrict: "E",
+    templateUrl: "~/sqlTaskManager/select2.html",
+    scope: {
+      id: "<",
+      isRequired: "<",
+      model: "=",
+      name: "<",
+      options: "<",
+    },
+    controller: async ($scope) => {
+      while (true) {
+        const component = $(`select[data-directive="select2"]#${$scope.id}`);
+
+        if (component.length > 0) {
+          component.select2();
+          break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+    }
+  }));
+
 })(angular, CRM.$, CRM._);

@@ -103,7 +103,7 @@
 
               preparedData.config = $scope.config;
 
-              if ($scope.taskOptions.run_permissions !== undefined) {
+              if (Array.isArray($scope.taskOptions.run_permissions)) {
                 preparedData.run_permissions = $scope.taskOptions.run_permissions.join(",");
               }
 
@@ -161,6 +161,11 @@
             $scope.$apply();
           }
         });
+      }
+
+      // Use configuration template if task is new
+      if (taskId === "0") {
+        loadConfigTemplate();
       }
 
       CRM.$(function($) {
@@ -285,13 +290,6 @@
 
       CRM.api3("Sqltask", "gettaskactions").done(function(result) {
         $scope.actions = result.values;
-        if (!getBooleanFromNumber(taskId)) {
-          $scope.actions.forEach(function(value) {
-            if (value.is_default_template) {
-              $scope.addAction(value.type);
-            }
-          });
-        }
         $scope.$apply();
       });
 
@@ -431,6 +429,42 @@
             return false;
         }
       };
+
+      async function loadConfigTemplate () {
+        // Extract template ID from query parameters
+        let templateId = $location.search().template;
+
+        // If query parameter 'template' does not exist, get default template ID from API
+        if (!templateId) {
+          templateId = await new Promise(resolve => {
+            CRM.api3("Setting", "getvalue", { name: "sqltasks_default_template" }).done(result => {
+              if (result.is_error) throw new Error(result.error_message);
+              resolve(result.result);
+            });
+          }).catch(console.error);
+        }
+
+        if (!templateId) return;
+
+        // Load template data from API
+        CRM.api3("SqltaskTemplate", "get", { id: templateId }).done(result => {
+          if (result.is_error) {
+            console.error(result.error_message);
+            return;
+          }
+
+          const template = JSON.parse(result.values.config);
+          $scope.config = template.config;
+          $scope.taskOptions.description = template.description;
+          $scope.taskOptions.category = template.category;
+          $scope.taskOptions.scheduled = template.scheduled;
+          $scope.taskOptions.parallel_exec = template.parallel_exec;
+          $scope.taskOptions.run_permissions = template.run_permissions;
+          $scope.taskOptions.input_required = template.input_required;
+          $scope.taskOptions.abort_on_error = template.abort_on_error;
+          $scope.$apply();
+        });
+      }
     });
 
   function removeItemFromArray(index) {
