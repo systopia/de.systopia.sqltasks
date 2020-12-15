@@ -366,6 +366,11 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
           VALUES ('Default', 'Default template for new tasks', '$defaultTemplate', NOW());
       ");
 
+      $defaultTemplateId =  CRM_Core_DAO::singleValueQuery(
+        "SELECT id FROM civicrm_sqltasks_template WHERE name = 'Default' LIMIT 1"
+      );
+      Civi::settings()->set('sqltasks_default_template', $defaultTemplateId);
+
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
     }
