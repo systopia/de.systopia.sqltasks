@@ -23,7 +23,6 @@ use CRM_Sqltasks_ExtensionUtil as E;
 class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
   public function run() {
-    // set title
     CRM_Utils_System::setTitle(E::ts("Available SQL Tasks"));
 
     // get the list of tasks
@@ -36,10 +35,11 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
       $run_permissions = $task->getAttribute('run_permissions');
       if (!empty($run_permissions) && $task->allowedToRun()) {
         $allowed_tasks[$task->getID()] = [
-            'id'           => $task->getID(),
-            'name'         => $task->getAttribute('name'),
-            'last_runtime' => sprintf("%.3f", ($task->getAttribute('last_runtime') / 1000.0)),
-            'description'  => $task->getAttribute('description'),
+          'id'              => $task->getID(),
+          'name'            => $task->getAttribute('name'),
+          'last_runtime'    => sprintf("%.3f", ($task->getAttribute('last_runtime') / 1000.0)),
+          'description'     => $task->getAttribute('description'),
+          'input_required'  => $task->getAttribute('input_required'),
         ];
       }
     }
