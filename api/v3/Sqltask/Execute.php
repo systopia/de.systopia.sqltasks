@@ -23,6 +23,10 @@ function civicrm_api3_sqltask_execute($params) {
       return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not execute Task.');
     }
 
+    if (empty($params['input_val']) && $task->getAttribute('input_required') == 1) {
+      return civicrm_api3_create_error('Input value is required.');
+    }
+
     if (empty($params['check_permissions']) || $task->allowedToRun()) {
       $timestamp = microtime(TRUE);
       $result = $task->execute($exec_params);
