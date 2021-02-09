@@ -33,7 +33,7 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
       // only list tasks that have permissions set
       $run_permissions = $task->getAttribute('run_permissions');
-      if (!empty($run_permissions) && $task->allowedToRun()) {
+      if (!empty($run_permissions) && $task->allowedToRun() && !$task->isArchived()) {
         $allowed_tasks[$task->getID()] = [
           'id'              => $task->getID(),
           'name'            => $task->getAttribute('name'),
