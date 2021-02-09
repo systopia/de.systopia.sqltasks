@@ -50,6 +50,7 @@ class CRM_Sqltasks_Task {
   protected $error_count;
   protected $log_messages;
   protected $log_to_file = FALSE;
+  protected $core_lock_object = NULL;
 
   /** @var array generated, sregistered files */
   protected static $files = [];
@@ -337,9 +338,15 @@ class CRM_Sqltasks_Task {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
       return $this->log_messages;
+    } elseif ($this->isTaskLock()) {
+      $this->status = 'error';
+      $this->log("Task is locked. Execution skipped.");
+      return $this->log_messages;
     } else {
-
       $this->log("Starting task execution.");
+      $this->log("Lock task.");
+      $this->lockTask();
+
       // commit any pending transactions to ensure consistent behaviour
       CRM_Core_DAO::executeQuery("COMMIT");
       // set last_execution and running_since
@@ -389,6 +396,8 @@ class CRM_Sqltasks_Task {
       }
     }
 
+    $this->log("Unlock task.");
+    $this->unlockTask();
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
     if ($this->error_count) {
@@ -979,6 +988,49 @@ class CRM_Sqltasks_Task {
   public function unarchive() {
     $this->setAttribute('archive_date', NULL);
     $this->store();
+  }
+
+  /**
+   * Get core lock object
+   * Method acquire do this sql: SELECT GET_LOCK('hashed_id', 3);
+   * Method isFree do this sql: SELECT IS_FREE_LOCK('hashed_id');
+   * Method release do this sql: SELECT RELEASE_LOCK('hashed_id');
+   * When object is destroyed it calls release method.
+   *
+   * @return \Civi\Core\Lock\LockInterface
+   */
+  private function getCoreLockObject() {
+    if (is_null($this->core_lock_object)) {
+      $this->core_lock_object = CRM_Core_Lock::createGlobalLock('civicrm_de_systopia_sqltasks_case_id_' . $this->getID());
+    }
+
+    return $this->core_lock_object;
+  }
+
+  /**
+   * Lock task
+   *
+   * @return bool
+   * @throws CRM_Core_Exception
+   */
+  public function lockTask() {
+      return $this->getCoreLockObject()->acquire();
+  }
+
+  /**
+   * Is task locked
+   *
+   * @return bool
+   */
+  public function isTaskLock() {
+    return !$this->getCoreLockObject()->isAcquired();
+  }
+
+  /**
+   * Unlock task
+   */
+  public function unlockTask() {
+    $this->getCoreLockObject()->release();
   }
 
 }
