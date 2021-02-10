@@ -18,5 +18,3 @@ class CRM_Sqltasks_Page_Templates extends CRM_Core_Page {
   }
 
 }
-
-?>

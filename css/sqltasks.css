@@ -18,6 +18,18 @@ td.sqltask-mytask-run {
 
 }
 
+.sqltask-mytask-busy {
+    display: none;
+}
+
+tr.sqltask-mytask.loading .sqltask-mytask-busy {
+    display: block;
+}
+
+tr.sqltask-mytask.loading .sqltask-mytask-runtime {
+    display: none;
+}
+
 td.sqltask-mytask-downloads {
 
 }
