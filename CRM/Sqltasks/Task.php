@@ -1001,7 +1001,7 @@ class CRM_Sqltasks_Task {
    */
   private function getCoreLockObject() {
     if (is_null($this->core_lock_object)) {
-      $this->core_lock_object = CRM_Core_Lock::createGlobalLock('civicrm_de_systopia_sqltasks_case_id_' . $this->getID());
+      $this->core_lock_object = CRM_Core_Lock::createGlobalLock('civicrm_de_systopia_sqltasks_task_id_' . $this->getID());
     }
 
     return $this->core_lock_object;
@@ -1011,10 +1011,9 @@ class CRM_Sqltasks_Task {
    * Lock task
    *
    * @return bool
-   * @throws CRM_Core_Exception
    */
   public function lockTask() {
-      return $this->getCoreLockObject()->acquire();
+    return $this->getCoreLockObject()->acquire();
   }
 
   /**
@@ -1023,11 +1022,12 @@ class CRM_Sqltasks_Task {
    * @return bool
    */
   public function isTaskLock() {
-    return !$this->getCoreLockObject()->isAcquired();
+    return !$this->getCoreLockObject()->isFree();
   }
 
   /**
    * Unlock task
+   * Does'nt work if it try to unlock lock created by another Task object
    */
   public function unlockTask() {
     $this->getCoreLockObject()->release();
