@@ -337,14 +337,21 @@ class CRM_Sqltasks_Task {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
       return $this->log_messages;
-    } else {
-
-      $this->log("Starting task execution.");
-      // commit any pending transactions to ensure consistent behaviour
-      CRM_Core_DAO::executeQuery("COMMIT");
-      // set last_execution and running_since
-      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
+
+    $lock = new CRM_Core_Lock($this->getLockName());
+    $lock->acquire();
+    if (!$lock->isAcquired()) {
+      $this->status = 'error';
+      $this->log("Task is locked. Execution skipped.");
+      return $this->log_messages;
+    }
+
+    $this->log("Starting task execution.");
+    // commit any pending transactions to ensure consistent behaviour
+    CRM_Core_DAO::executeQuery("COMMIT");
+    // set last_execution and running_since
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
 
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
     $context = [
@@ -391,6 +398,8 @@ class CRM_Sqltasks_Task {
 
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
+    $lock->release();
+
     if ($this->error_count) {
       $this->status = 'error';
     } else {
@@ -979,6 +988,15 @@ class CRM_Sqltasks_Task {
   public function unarchive() {
     $this->setAttribute('archive_date', NULL);
     $this->store();
+  }
+
+  /**
+   * Generates lock name to the task
+   *
+   * @return string
+   */
+  private function getLockName() {
+    return 'civicrm_de_systopia_sqltasks_task_id_' . $this->getID();
   }
 
 }
