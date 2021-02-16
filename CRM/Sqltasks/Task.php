@@ -50,7 +50,6 @@ class CRM_Sqltasks_Task {
   protected $error_count;
   protected $log_messages;
   protected $log_to_file = FALSE;
-  protected $core_lock_object = NULL;
 
   /** @var array generated, sregistered files */
   protected static $files = [];
@@ -338,20 +337,21 @@ class CRM_Sqltasks_Task {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
       return $this->log_messages;
-    } elseif ($this->isTaskLock()) {
+    }
+
+    $lock = new CRM_Core_Lock($this->getLockName());
+    $lock->acquire();
+    if (!$lock->isAcquired()) {
       $this->status = 'error';
       $this->log("Task is locked. Execution skipped.");
       return $this->log_messages;
-    } else {
-      $this->log("Starting task execution.");
-      $this->log("Lock task.");
-      $this->lockTask();
-
-      // commit any pending transactions to ensure consistent behaviour
-      CRM_Core_DAO::executeQuery("COMMIT");
-      // set last_execution and running_since
-      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
+
+    $this->log("Starting task execution.");
+    // commit any pending transactions to ensure consistent behaviour
+    CRM_Core_DAO::executeQuery("COMMIT");
+    // set last_execution and running_since
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
 
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
     $context = [
@@ -396,10 +396,10 @@ class CRM_Sqltasks_Task {
       }
     }
 
-    $this->log("Unlock task.");
-    $this->unlockTask();
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
+    $lock->release();
+
     if ($this->error_count) {
       $this->status = 'error';
     } else {
@@ -991,46 +991,12 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * Get core lock object
-   * Method acquire do this sql: SELECT GET_LOCK('hashed_id', 3);
-   * Method isFree do this sql: SELECT IS_FREE_LOCK('hashed_id');
-   * Method release do this sql: SELECT RELEASE_LOCK('hashed_id');
-   * When object is destroyed it calls release method.
+   * Generates lock name to the task
    *
-   * @return \Civi\Core\Lock\LockInterface
+   * @return string
    */
-  private function getCoreLockObject() {
-    if (is_null($this->core_lock_object)) {
-      $this->core_lock_object = CRM_Core_Lock::createGlobalLock('civicrm_de_systopia_sqltasks_task_id_' . $this->getID());
-    }
-
-    return $this->core_lock_object;
-  }
-
-  /**
-   * Lock task
-   *
-   * @return bool
-   */
-  public function lockTask() {
-    return $this->getCoreLockObject()->acquire();
-  }
-
-  /**
-   * Is task locked
-   *
-   * @return bool
-   */
-  public function isTaskLock() {
-    return !$this->getCoreLockObject()->isFree();
-  }
-
-  /**
-   * Unlock task
-   * Does'nt work if it try to unlock lock created by another Task object
-   */
-  public function unlockTask() {
-    $this->getCoreLockObject()->release();
+  private function getLockName() {
+    return 'civicrm_de_systopia_sqltasks_task_id_' . $this->getID();
   }
 
 }
