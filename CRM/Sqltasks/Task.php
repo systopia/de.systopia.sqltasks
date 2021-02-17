@@ -339,13 +339,16 @@ class CRM_Sqltasks_Task {
       return $this->log_messages;
     }
 
-    $lock = new CRM_Core_Lock($this->getLockName());
-    $lock->acquire();
-    if (!$lock->isAcquired()) {
-      $this->status = 'error';
-      $this->log("Task is locked. Execution skipped.");
-      return $this->log_messages;
+    if ($this->getAttribute('parallel_exec') != '2') {
+      $lock = new CRM_Core_Lock($this->getLockName());
+      $lock->acquire();
+      if (!$lock->isAcquired()) {
+        $this->status = 'error';
+        $this->log("Task is locked. Execution skipped.");
+        return $this->log_messages;
+      }
     }
+
 
     $this->log("Starting task execution.");
     // commit any pending transactions to ensure consistent behaviour
@@ -398,7 +401,9 @@ class CRM_Sqltasks_Task {
 
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
-    $lock->release();
+    if ($this->getAttribute('parallel_exec') != '2') {
+      $lock->release();
+    }
 
     if ($this->error_count) {
       $this->status = 'error';
