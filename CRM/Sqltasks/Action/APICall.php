@@ -278,7 +278,11 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    * @param $parameters
    */
   protected function reportError($errorMessage, $entity, $action, $parameters) {
-    //TODO: make report
+    $this->task->log('Report API call(' .  $entity . '->' . $action . ')');
+    $this->task->log('Params:' . json_encode($parameters));
+    $this->task->log('Error message:' . $errorMessage);
+    $this->task->incrementErrorCounter();
+    $this->task->setErrorStatus();
   }
 
 }
