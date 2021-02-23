@@ -117,5 +117,3 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
   }
 
 }
-
-?>
