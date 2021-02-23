@@ -529,11 +529,41 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope) {
+      controller: function($scope, loaderService) {;
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
         $scope.onInfoPress = onInfoPress;
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
+
+        if ($scope.ctrl.model.handle_api_errors === undefined) {
+          // apply backend default in UI
+          $scope.ctrl.model.handle_api_errors = 'log_only';
+        }
+
+        $scope.handleApiErrorsOptions = [];
+        CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {
+          sequential: 1,
+          options: {limit : 0}
+        }).done(function(result) {
+          if (!result.is_error) {
+            var handleApiErrorsOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              var entity = result.values[0][key];
+              if (key) {
+                handleApiErrorsOptions.push({
+                  value: key,
+                  name: entity
+                });
+              }
+            });
+            $scope.handleApiErrorsData = handleApiErrorsOptions;
+            loaderService.setDataLoaded('handle_api_errors_index_' + $scope.ctrl.index);
+            $scope.$apply();
+          }
+        });
       }
     };
   });

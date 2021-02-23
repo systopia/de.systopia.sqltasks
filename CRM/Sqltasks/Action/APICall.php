@@ -25,6 +25,25 @@ use CRM_Sqltasks_ExtensionUtil as E;
 class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
 
   /**
+   * Log only
+   * Is default
+   * (this is setting option which set how to handle API errors)
+   */
+  const LOG_ONLY = 'log_only';
+
+  /**
+   * Report task error and continue API calls
+   * (this is setting option which set how to handle API errors)
+   */
+  const REPORT_ERROR_AND_CONTINUE = 'report_error_and_continue';
+
+  /**
+   * Report task error and abort API calls
+   * (this is setting option which set how to handle API errors)
+   */
+  const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
+
+  /**
    * Get identifier string
    */
   public function getID() {
@@ -48,7 +67,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get the table with the contact_id column
+   * Get the table with the contact_id column
    */
   protected function getDataTable() {
     $table_name = $this->getConfigValue('table');
@@ -84,12 +103,12 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get a list of (param, value) definitions
+   * Get a list of (param, value) definitions
    */
   protected function getParameters() {
     $parameters = array();
-    $paremeters_spec = trim($this->getConfigValue('parameters'));
-    $spec_lines = explode(PHP_EOL, $paremeters_spec);
+    $parameters_spec = trim($this->getConfigValue('parameters'));
+    $spec_lines = explode(PHP_EOL, $parameters_spec);
     foreach ($spec_lines as $spec_line) {
       $separator_index = strpos($spec_line, '=');
       if ($separator_index > 0) {
@@ -107,7 +126,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   }
 
   /**
-   * generate a parameter set for the given data row
+   * Generate a parameter set for the given data row
    */
   protected function fillParameters($specs, $data_row) {
     $parameters = array();
@@ -135,6 +154,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    * RUN this action
    */
   public function execute() {
+    $handle_api_errors = $this->getHandleApiErrors();
+
     // API Call specs
     $this->resetHasExecuted();
     $entity = $this->getConfigValue('entity');
@@ -143,25 +164,42 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
 
     // statistics
     $success_counter = 0;
-    $fails = array();
+    $fails = [];
     $more_fails_counter = 0;
+    $skip_counter = 0;
 
     $data_table = $this->getDataTable();
     $excludeSql = '';
+    $is_need_to_skip = false;
     if ($this->_columnExists($data_table, 'exclude')) {
       $excludeSql = 'WHERE (exclude IS NULL OR exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
     }
     $query = CRM_Core_DAO::executeQuery("SELECT * FROM {$data_table} {$excludeSql}");
     while ($query->fetch()) {
+      if ($is_need_to_skip) {
+        $skip_counter += 1;
+        continue;
+      }
+
       $this->setHasExecuted();
       $parameters = $this->fillParameters($parameter_specs, $query);
       try {
-        // error_log("Calling {$entity}.{$action}: " . json_encode($parameters));
         $result = civicrm_api3($entity, $action, $parameters);
       } catch (Exception $e) {
-        $result = array('is_error'  => 1,
-                        'error_msg' => $e->getMessage());
+        $result = [
+          'is_error'  => 1,
+          'error_msg' => $e->getMessage()
+        ];
+
+        if (in_array($handle_api_errors, [self::REPORT_ERROR_AND_CONTINUE, self::REPORT_ERROR_AND_ABORT])) {
+            $this->reportError();
+        }
+
+        if ($handle_api_errors === self::REPORT_ERROR_AND_ABORT) {
+          $this->log("API call failed. Next API call(s) will be skipped.");
+          $is_need_to_skip = true;
+        }
       }
 
       // process result
@@ -193,5 +231,46 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     if ($more_fails_counter) {
       $this->log("{$more_fails_counter} API call(s) FAILED with other messages.");
     }
+    if ($skip_counter) {
+      $this->log("{$skip_counter} API call(s) SKIPPED due to previous error.");
+    }
   }
+
+  /**
+   * Get all possible options of handling API errors
+   *
+   * @return array
+   */
+  public static function getHandleApiErrorsOptions() {
+    return [
+      self::LOG_ONLY => E::ts('Log only'),
+      self::REPORT_ERROR_AND_CONTINUE => E::ts('Report task error and continue API calls'),
+      self::REPORT_ERROR_AND_ABORT => E::ts('Report task error and abort API calls'),
+    ];
+  }
+
+  /**
+   * Gets handle Api errors value
+   * If the value is empty or not valid it returns default value
+   *
+   * @return string
+   */
+  private function getHandleApiErrors() {
+    $handle_api_errors = $this->getConfigValue('handle_api_errors');
+    if (key_exists($handle_api_errors, self::getHandleApiErrorsOptions())) {
+      return $handle_api_errors;
+    }
+
+    return self::LOG_ONLY;
+  }
+
+  /**
+   * Report API call error
+   *
+   */
+  protected function reportError() {
+    $this->task->incrementErrorCounter();
+    $this->task->setErrorStatus();
+  }
+
 }

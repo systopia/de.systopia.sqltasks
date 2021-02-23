@@ -34,6 +34,14 @@
                     helpaction='onInfoPress("Action", "id-api-action", "CRM\/Sqltasks\/Action\/APICall")'>
             </text-input>
 
+			<ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
+							  showHelpIcon=true inputMaxWidth="'300px'"
+							  model="ctrl.model['handle_api_errors']" fieldlabel="ts('Error Handling')"
+							  fieldid="'handle_api_errors' + ctrl.index" optionsArray="handleApiErrorsData"
+							  isdataloaded="isDataLoaded('handle_api_errors_index_' + ctrl.index)"
+							  helpaction='onInfoPress("Error Handling", "id-handle-api-errors", "CRM\/Sqltasks\/Action\/APICall")'>
+			</ordinary-select2>
+
             <text-area isrequired="getBooleanFromNumber(ctrl.model['parameters'])" model="ctrl.model['parameters']"
                        fieldlabel="ts('Parameters')" fieldid="'api_call_parameters' + ctrl.index" rowsnumber='8' inputMaxWidth="'500px'"
                        helpaction='onInfoPress("Columns", "id-api-parameters", "CRM\/Sqltasks\/Action\/APICall")'
