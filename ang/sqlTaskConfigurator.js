@@ -529,7 +529,7 @@
       },
       bindToController: true,
       controllerAs: "ctrl",
-      controller: function($scope, loaderService) {
+      controller: function($scope, loaderService) {;
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
@@ -537,6 +537,11 @@
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
         };
+
+        if ($scope.ctrl.model.handle_api_errors === undefined) {
+          // apply backend default in UI
+          $scope.ctrl.model.handle_api_errors = 'log_only';
+        }
 
         $scope.handleApiErrorsOptions = [];
         CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {

@@ -43,18 +43,18 @@
 
   <ul>
      <li>
-         <dt>{ts domain="de.systopia.sqltasks"}Log only(default){/ts}</dt>
-         <dd>{ts domain="de.systopia.sqltasks"}{/ts}</dd>
+         <dt>{ts domain="de.systopia.sqltasks"}Log only (default){/ts}</dt>
+         <dd>{ts domain="de.systopia.sqltasks"}Log API errors and continue. Don't trigger Error Handler action.{/ts}</dd>
      </li>
 
      <li>
         <dt>{ts domain="de.systopia.sqltasks"}Report task error and continue API calls{/ts}</dt>
-        <dd>{ts domain="de.systopia.sqltasks"}{/ts}</dd>
+        <dd>{ts domain="de.systopia.sqltasks"}Continue with remaining API calls and then report task error to Error Handler.{/ts}</dd>
      </li>
 
      <li>
         <dt>{ts domain="de.systopia.sqltasks"}Report task error and abort API calls{/ts}</dt>
-        <dd>{ts domain="de.systopia.sqltasks"}{/ts}</dd>
+        <dd>{ts domain="de.systopia.sqltasks"}Abort remaining API calls and report task error to Error Handler.{/ts}</dd>
      </li>
   </ul>
 {/htxt}

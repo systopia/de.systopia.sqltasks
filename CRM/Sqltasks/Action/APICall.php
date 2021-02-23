@@ -155,10 +155,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   public function execute() {
     $handle_api_errors = $this->getHandleApiErrors();
-    $this->log('Start API call(s) action ...');
-    if ($handle_api_errors !== self::LOG_ONLY) {
-      $this->log("API call error handling mode is: " . self::getHandleApiErrorsOptions()[$handle_api_errors]);
-    }
 
     // API Call specs
     $this->resetHasExecuted();
@@ -189,7 +185,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       $this->setHasExecuted();
       $parameters = $this->fillParameters($parameter_specs, $query);
       try {
-        // error_log("Calling {$entity}.{$action}: " . json_encode($parameters));
         $result = civicrm_api3($entity, $action, $parameters);
       } catch (Exception $e) {
         $result = [
@@ -198,11 +193,11 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
         ];
 
         if (in_array($handle_api_errors, [self::REPORT_ERROR_AND_CONTINUE, self::REPORT_ERROR_AND_ABORT])) {
-            $this->reportError($e->getMessage(), $entity, $action, $parameters);
+            $this->reportError();
         }
 
         if ($handle_api_errors === self::REPORT_ERROR_AND_ABORT) {
-          $this->log("API call returns error. Next API call(s) will be skipped.");
+          $this->log("API call failed. Next API call(s) will be skipped.");
           $is_need_to_skip = true;
         }
       }
@@ -237,7 +232,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       $this->log("{$more_fails_counter} API call(s) FAILED with other messages.");
     }
     if ($skip_counter) {
-      $this->log("{$skip_counter} API call(s) SKIPPED.");
+      $this->log("{$skip_counter} API call(s) SKIPPED due to previous error.");
     }
   }
 
@@ -272,15 +267,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   /**
    * Report API call error
    *
-   * @param $errorMessage
-   * @param $entity
-   * @param $action
-   * @param $parameters
    */
-  protected function reportError($errorMessage, $entity, $action, $parameters) {
-    $this->task->log('Report API call(' .  $entity . '->' . $action . ')');
-    $this->task->log('Params:' . json_encode($parameters));
-    $this->task->log('Error message:' . $errorMessage);
+  protected function reportError() {
     $this->task->incrementErrorCounter();
     $this->task->setErrorStatus();
   }
