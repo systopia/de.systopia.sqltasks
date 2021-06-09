@@ -1,36 +1,36 @@
 <div class="crm-accordion-wrapper crm-sqltask-tag relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
+            <input ng-model="model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
             &nbsp;
             {{ts('Synchronise Tag')}}
         </label>
-        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
-        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+        <span ng-if="model['action_title']" class="sql-task-action-title">{{model['action_title']}}</span>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
         </label>
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
-            <action-additional-info model='ctrl.model' fieldPrefix="'sync_tag'" index='ctrl.index'></action-additional-info>
+            <action-additional-info model='model' fieldPrefix="'sync_tag'" index='index'></action-additional-info>
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['contact_table']" sizelength="60"
-                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table' + ctrl.index" inputMaxWidth="'500px'">
+            <text-input isrequired="getBooleanFromNumber(model['enabled'])" model="model['contact_table']" sizelength="60"
+                fieldlabel="ts('Contact Table (contact_id)')" fieldid="'tag_contact_table' + index" inputMaxWidth="'500px'">
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['tag_id']" inputMaxWidth="'500px'"
-                              fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + ctrl.index" optionsArray="tagsData"
-                              isdataloaded="isDataLoaded('tag_tag_id_' + ctrl.index)">
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])" model="model['tag_id']" inputMaxWidth="'500px'"
+                              fieldlabel="ts('Synchronise Tag')" fieldid="'tag_tag_id_' + index" optionsArray="tagsData"
+                              isdataloaded="isDataLoaded('tag_tag_id_' + index)">
             </ordinary-select2>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                             model="ctrl.model['entity_table']" fieldlabel="ts('Choose Entity')"
-                             fieldid="'tag_entity_table' + ctrl.index" optionsArray="entityData"
-                             isdataloaded="isDataLoaded('tag_entity_table' + ctrl.index)">>
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])" inputMaxWidth="'300px'"
+                             model="model['entity_table']" fieldlabel="ts('Choose Entity')"
+                             fieldid="'tag_entity_table' + index" optionsArray="entityData"
+                             isdataloaded="isDataLoaded('tag_entity_table' + index)">>
             </ordinary-select2>
 
-            <check-box model="ctrl.model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api' + ctrl.index">
+            <check-box model="model['use_api']" fieldlabel="ts('Use API (slow)')" fieldid="'tag_use_api' + index">
             </check-box>
         </div>
     </div>

@@ -1,86 +1,86 @@
 <div class="crm-accordion-wrapper crm-sqltask-csv relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'" type="checkbox">
+            <input ng-model="model['enabled']" style="cursor: pointer;" ng-true-value="'1'" ng-false-value="'0'" type="checkbox">
             &nbsp;
             {{ts('CSV Export')}}
         </label>
-        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
-        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+        <span ng-if="model['action_title']" class="sql-task-action-title">{{model['action_title']}}</span>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
         </label>
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
-            <action-additional-info model='ctrl.model' fieldPrefix="'csv_export'" index='ctrl.index'></action-additional-info>
+            <action-additional-info model='model' fieldPrefix="'csv_export'" index='index'></action-additional-info>
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['table']" inputMaxWidth="'500px'"
-                fieldlabel="ts('Export Table')" fieldid="'export_table_parameters' + ctrl.index" sizelength="60" >
+            <text-input isrequired="getBooleanFromNumber(model['enabled'])" model="model['table']" inputMaxWidth="'500px'"
+                fieldlabel="ts('Export Table')" fieldid="'export_table_parameters' + index" sizelength="60" >
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                model="ctrl.model['encoding']" fieldlabel="ts('File Encoding')" isdataloaded="isDataLoaded('csv_encoding_' + ctrl.index)"
-                fieldid="'csv_encoding_' + ctrl.index" optionsArray="encodingData">
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])" inputMaxWidth="'300px'"
+                model="model['encoding']" fieldlabel="ts('File Encoding')" isdataloaded="isDataLoaded('csv_encoding_' + index)"
+                fieldid="'csv_encoding_' + index" optionsArray="encodingData">
             </ordinary-select2>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])" inputMaxWidth="'300px'"
-                model="ctrl.model['delimiter']" fieldlabel="ts('Delimiter')" fieldid="'csv_delimiter' + ctrl.index"
-                optionsArray="delimiterData" isdataloaded="isDataLoaded('csv_delimiter' + ctrl.index)">
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])" inputMaxWidth="'300px'"
+                model="model['delimiter']" fieldlabel="ts('Delimiter')" fieldid="'csv_delimiter' + index"
+                optionsArray="delimiterData" isdataloaded="isDataLoaded('csv_delimiter' + index)">
             </ordinary-select2>
 
-            <text-input ng-if="ctrl.model['delimiter'] === 'other'" model="ctrl.model['delimiter_other']"
+            <text-input ng-if="model['delimiter'] === 'other'" model="model['delimiter_other']"
                         inputMaxWidth="'300px'"
-                        fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other' + ctrl.index">
+                        fieldlabel="ts('Other delimiter')" fieldid="'csv_delimiter_other' + index">
             </text-input>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"  fieldid="'csv_enclosure_' + ctrl.index"
-                fieldLabel="ts('Field enclosure')" inputMaxWidth="'300px'"  isdataloaded="isDataLoaded('csv_enclosure_' + ctrl.index)"
-                model="ctrl.model['enclosure_mode']" optionsArray="enclosureOptions">
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])"  fieldid="'csv_enclosure_' + index"
+                fieldLabel="ts('Field enclosure')" inputMaxWidth="'300px'"  isdataloaded="isDataLoaded('csv_enclosure_' + index)"
+                model="model['enclosure_mode']" optionsArray="enclosureOptions">
             </ordinary-select2>
 
-            <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['headers']"
+            <text-area isrequired="getBooleanFromNumber(model['enabled'])" model="model['headers']"
                 fieldlabel="ts('Columns')" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Columns", "id-csv-columns", "CRM\/Sqltasks\/Action\/CSVExport")'
-                showHelpIcon=true fieldid="'csv_headers' + ctrl.index" rowsnumber='8' columnsnumber='40'>
+                showHelpIcon=true fieldid="'csv_headers' + index" rowsnumber='8' columnsnumber='40'>
             </text-area>
 
-            <check-box model="ctrl.model['discard_empty']" fieldlabel="ts('Discard empty file?')"
-                fieldid="'csv_discard_empty' + ctrl.index">
+            <check-box model="model['discard_empty']" fieldlabel="ts('Discard empty file?')"
+                fieldid="'csv_discard_empty' + index">
             </check-box>
 
-            <check-box model="ctrl.model['zip']" fieldlabel="ts('ZIP File')" fieldid="'csv_zip' + ctrl.index">
+            <check-box model="model['zip']" fieldlabel="ts('ZIP File')" fieldid="'csv_zip' + index">
             </check-box>
 
-            <text-input isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['filename']"
-                fieldlabel="ts('File Name')" fieldid="'csv_filename' + ctrl.index" sizelength="60" inputMaxWidth="'500px'"
+            <text-input isrequired="getBooleanFromNumber(model['enabled'])" model="model['filename']"
+                fieldlabel="ts('File Name')" fieldid="'csv_filename' + index" sizelength="60" inputMaxWidth="'500px'"
                 helpaction='onInfoPress("Filename", "id-csv-filename", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true>
             </text-input>
 
-            <text-input model="ctrl.model['path']" fieldlabel="ts('File Path')"
-                        fieldid="'csv_path' + ctrl.index" sizelength="60" inputMaxWidth="'500px'"
+            <text-input model="model['path']" fieldlabel="ts('File Path')"
+                        fieldid="'csv_path' + index" sizelength="60" inputMaxWidth="'500px'"
                         helpaction='onInfoPress("Path", "id-csv-path", "CRM\/Sqltasks\/Action\/CSVExport")'
                         showHelpIcon=true>
             </text-input>
 
-            <text-input model="ctrl.model['email']" fieldlabel="ts('Email to')" fieldid="'csv_email' + ctrl.index" inputMaxWidth="'300px'"
+            <text-input model="model['email']" fieldlabel="ts('Email to')" fieldid="'csv_email' + index" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Email", "id-csv-email", "CRM\/Sqltasks\/Action\/CSVExport")' showHelpIcon=true>
             </text-input>
 
-            <check-box model="ctrl.model['downloadURL']"
-                fieldlabel="ts('Send URL to download file instead of attachment')" fieldid="'csv_downloadURL' + ctrl.index"
+            <check-box model="model['downloadURL']"
+                fieldlabel="ts('Send URL to download file instead of attachment')" fieldid="'csv_downloadURL' + index"
                 helpaction='onInfoPress("DownloadURL", "id-csv-downloadURL", "CRM\/Sqltasks\/Action\/CSVExport")'
                 showHelpIcon=true>
             </check-box>
 
-            <ordinary-select2 isrequired="getBooleanFromNumber(ctrl.model['enabled'])"
-                              model="ctrl.model['email_template']" fieldlabel="ts('Email Template')"
-                              fieldid="'csv_email_template' + ctrl.index" optionsArray="messageTemplateOptions"
-                              isdataloaded="isDataLoaded('csv_email_template' + ctrl.index)">
+            <ordinary-select2 isrequired="getBooleanFromNumber(model['enabled'])"
+                              model="model['email_template']" fieldlabel="ts('Email Template')"
+                              fieldid="'csv_email_template' + index" optionsArray="messageTemplateOptions"
+                              isdataloaded="isDataLoaded('csv_email_template' + index)">
             </ordinary-select2>
 
-            <text-input model="ctrl.model['upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload' + ctrl.index" sizelength="60"
+            <text-input model="model['upload']" fieldlabel="ts('Upload to')" fieldid="'csv_upload' + index" sizelength="60"
                 helpaction='onInfoPress("SFTP Upload", "id-csv-sftp", "CRM\/Sqltasks\/Action\/CSVExport")' inputMaxWidth="'500px'"
                 showHelpIcon=true>
             </text-input>
