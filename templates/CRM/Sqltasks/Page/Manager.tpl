@@ -59,7 +59,9 @@
   {capture assign=add_url}{crmURL p="civicrm/sqltasks/configure" q="reset=1&tid=0"}{/capture}
   {capture assign=repo_url}https://github.com/systopia/de.systopia.sqltasks/blob/master/tasks/readme.md{/capture}
   {capture assign=import_url}{crmURL p="civicrm/sqltasks/import" q="reset=1&tid=0"}{/capture}
-  {ts 1=$add_url 2=$repo_url 3=$import_url}You might want to <a href="%1">ADD A NEW ONE</a>. You can also <a href="%3">IMPORT</a> an existing one from our <a href="%2" target="_blank">REPOSITORY</a> for examples to get you started.{/ts}</a>
+  {capture assign=export_all_url}{crmURL p="civicrm/sqltasks/manage" q="exportall=1&reset=1"}{/capture}
+  {ts 1=$add_url 2=$repo_url 3=$import_url}You might want to <a href="%1">ADD A NEW ONE</a>. You can also <a href="%3">IMPORT</a> an existing one from our <a href="%2" target="_blank">REPOSITORY</a> for examples to get you started.{/ts}</a><br/>
+  {ts 1=$export_all_url}You can <a href="%1">EXPORT ALL</a> tasks configurations files for backup.{/ts}
 </div>
 <br/>
 
