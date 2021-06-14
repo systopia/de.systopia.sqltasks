@@ -82,31 +82,34 @@ class CRM_Sqltasks_Config {
    */
   public function getCurrentDispatcherFrequency() {
     $frequency = NULL;
-    $jobs = civicrm_api3('Job', 'get', array(
-        'api_entity'    => 'Sqltask',
-        'api_action'    => 'execute',
-        'is_active'     => '1'));
-    foreach ($jobs['values'] as $job) {
-      switch ($job['run_frequency']) {
-        case 'Always':
-          $frequency = 'Always';
-          break;
+    // If Cronplus is installed skip this check, it will return an error otherwise
+    if (!CRM_Extension_System::singleton()->getMapper()->isActiveModule('cronplus')) {
+      $jobs = civicrm_api3('Job', 'get', array(
+          'api_entity'    => 'Sqltask',
+          'api_action'    => 'execute',
+          'is_active'     => '1'));
+      foreach ($jobs['values'] as $job) {
+        switch ($job['run_frequency']) {
+          case 'Always':
+            $frequency = 'Always';
+            break;
 
-        case 'Hourly':
-          if ($frequency == NULL || $frequency == 'Daily') {
-            $frequency = 'Hourly';
-          }
-          break;
+          case 'Hourly':
+            if ($frequency == NULL || $frequency == 'Daily') {
+              $frequency = 'Hourly';
+            }
+            break;
 
-        case 'Daily':
-          if ($frequency == NULL) {
-            $frequency = 'Daily';
-          }
-          break;
+          case 'Daily':
+            if ($frequency == NULL) {
+              $frequency = 'Daily';
+            }
+            break;
 
-        default:
-          CRM_Core_Session::setStatus(E::ts('Unexpected run frequency: %1', array(1 => $job['run_frequency'])), E::ts('Error'), 'error');
-          break;
+          default:
+            CRM_Core_Session::setStatus(E::ts('Unexpected run frequency: %1', array(1 => $job['run_frequency'])), E::ts('Error'), 'error');
+            break;
+        }
       }
     }
     return $frequency;
