@@ -56,8 +56,13 @@ class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase impl
       CRM_Sqltasks_BAO_SqltasksTemplate::getAll()
     );
 
+    $templateInfo = [];
+    foreach ($templates as $template) {
+      $templateInfo[] = "id - " . $template['id'] . ', name - ' . $template['name'];
+    }
+
     // Assert that there is exactly 1 template in the database
-    $this->assertEquals(1, count($templates), "There should be exactly 1 template in the database");
+    $this->assertEquals(1, count($templates), "There should be exactly 1 template in the database. Templates from db: " . implode('; ', $templateInfo));
 
     // Assert that the created template's properties match the expected values
     $this->assertTrue(isset($templates[0]["id"]), "Template ID should be set");
