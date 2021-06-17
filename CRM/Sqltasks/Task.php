@@ -135,6 +135,20 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Add +1 to error counter
+   */
+  public function incrementErrorCounter() {
+    $this->error_count += 1;
+  }
+
+  /**
+   * Sets error status
+   */
+  public function setErrorStatus() {
+    $this->status = 'error';
+  }
+
+  /**
    * Get configuration
    */
   public function getConfiguration() {

@@ -1,33 +1,33 @@
 <div class="crm-accordion-wrapper crm-sqltask-task relativePosition collapsed">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-model="ctrl.model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
+            <input ng-model="model['enabled']" style="cursor: pointer;" type="checkbox" ng-true-value="'1'" ng-false-value="'0'">
                 &nbsp;
                 {{ts('Run SQL Task(s)')}}
         </label>
-        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
-        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+        <span ng-if="model['action_title']" class="sql-task-action-title">{{model['action_title']}}</span>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
         </label>
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
-            <action-additional-info model='ctrl.model' fieldPrefix="'call_task'" index='ctrl.index'></action-additional-info>
+            <action-additional-info model='model' fieldPrefix="'call_task'" index='index'></action-additional-info>
 
             <multiple-select2
-                isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['categories']) && !isDataExists(ctrl.model['tasks'])"
-                model="ctrl.model['tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + ctrl.index" inputMaxWidth="'300px'"
-                optionsArray="tasksData" isdataloaded="isDataLoaded('task_tasks_' + ctrl.index)"
+                isrequired="getBooleanFromNumber(model['enabled']) && !isDataExists(model['categories']) && !isDataExists(model['tasks'])"
+                model="model['tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + index" inputMaxWidth="'300px'"
+                optionsArray="tasksData" isdataloaded="isDataLoaded('task_tasks_' + index)"
                 helpaction='onInfoPress("Tasks", "id-task-tasks", "CRM\/Sqltasks\/Action\/CallTask")' showHelpIcon=true>
             </multiple-select2>
 
             <multiple-select2
-                isrequired="getBooleanFromNumber(ctrl.model['enabled']) && !isDataExists(ctrl.model['categories']) && !isDataExists(ctrl.model['tasks'])"
-                model="ctrl.model['categories']" fieldlabel="ts('SQL Task Categories')"
-                fieldid="'task_categories_' + ctrl.index" optionsArray="categoriesData" inputMaxWidth="'300px'"
+                isrequired="getBooleanFromNumber(model['enabled']) && !isDataExists(model['categories']) && !isDataExists(model['tasks'])"
+                model="model['categories']" fieldlabel="ts('SQL Task Categories')"
+                fieldid="'task_categories_' + index" optionsArray="categoriesData" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Categories", "id-task-categories", "CRM\/Sqltasks\/Action\/CallTask")'
-                showHelpIcon=true isdataloaded="isDataLoaded('task_categories_' + ctrl.index)">
+                showHelpIcon=true isdataloaded="isDataLoaded('task_categories_' + index)">
             </multiple-select2>
         </div>
     </div>

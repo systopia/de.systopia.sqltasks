@@ -501,8 +501,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -527,13 +525,41 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
-      controller: function($scope) {
+      controller: function($scope, loaderService) {;
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
         $scope.onInfoPress = onInfoPress;
+        $scope.isDataLoaded = function(elementId) {
+          return loaderService.isDataLoaded(elementId);
+        };
+
+        if ($scope.model.handle_api_errors === undefined) {
+          // apply backend default in UI
+          $scope.model.handle_api_errors = 'log_only';
+        }
+
+        $scope.handleApiErrorsOptions = [];
+        CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {
+          sequential: 1,
+          options: {limit : 0}
+        }).done(function(result) {
+          if (!result.is_error) {
+            var handleApiErrorsOptions = [];
+            Object.keys(result.values[0]).map(key => {
+              var entity = result.values[0][key];
+              if (key) {
+                handleApiErrorsOptions.push({
+                  value: key,
+                  name: entity
+                });
+              }
+            });
+            $scope.handleApiErrorsData = handleApiErrorsOptions;
+            loaderService.setDataLoaded('handle_api_errors_index_' + $scope.index);
+            $scope.$apply();
+          }
+        });
       }
     };
   });
@@ -546,8 +572,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -568,7 +592,7 @@
               });
             });
             $scope.campaignData = campaignData;
-            loaderService.setDataLoaded('activity_campaign_id_' + $scope.ctrl.index);
+            loaderService.setDataLoaded('activity_campaign_id_' + $scope.index);
             $scope.$apply();
           }
         });
@@ -590,7 +614,7 @@
               });
             });
           }
-          loaderService.setDataLoaded('activity_activity_type_id_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_activity_type_id_' + $scope.index);
           $scope.activityTypeData = activityTypeData;
           $scope.$apply();
         });
@@ -612,7 +636,7 @@
             });
           }
           $scope.statusData = statusData;
-          loaderService.setDataLoaded('activity_status_id' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_status_id' + $scope.index);
           $scope.$apply();
         });
 
@@ -633,7 +657,7 @@
             });
           }
           $scope.priorityData = priorityData;
-          loaderService.setDataLoaded('activity_priority_id' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_priority_id' + $scope.index);
           $scope.$apply();
         });
 
@@ -654,7 +678,7 @@
             });
           }
           $scope.engagementIndexData = engagementIndexData;
-          loaderService.setDataLoaded('activity_engagement_level' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_engagement_level' + $scope.index);
           $scope.$apply();
         });
 
@@ -675,7 +699,7 @@
             });
           }
           $scope.mediumData = mediumData;
-          loaderService.setDataLoaded('activity_medium_id' + $scope.ctrl.index);
+          loaderService.setDataLoaded('activity_medium_id' + $scope.index);
           $scope.$apply();
         });
 
@@ -694,8 +718,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -715,7 +737,7 @@
               });
             });
             $scope.messageTemplateOptions = messageTemplateOptions;
-            loaderService.setDataLoaded('csv_email_template' + $scope.ctrl.index);
+            loaderService.setDataLoaded('csv_email_template' + $scope.index);
             $scope.$apply();
           }
         });
@@ -732,7 +754,7 @@
             }
           });
           $scope.encodingData = encodingData;
-          loaderService.setDataLoaded('csv_encoding_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('csv_encoding_' + $scope.index);
           $scope.$apply();
         });
 
@@ -752,13 +774,13 @@
             name: "other"
           });
           $scope.delimiterData = delimiterData;
-          loaderService.setDataLoaded('csv_delimiter' + $scope.ctrl.index);
+          loaderService.setDataLoaded('csv_delimiter' + $scope.index);
           $scope.$apply();
         });
 
         CRM.api3("Sqltaskfield", "getenclosuremodes").done(result => {
           $scope.enclosureOptions = result.values[0].map(mode => ({ value: mode, name: mode }));
-          loaderService.setDataLoaded('csv_enclosure_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('csv_enclosure_' + $scope.index);
           $scope.$apply();
         });
       }
@@ -773,8 +795,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -795,7 +815,7 @@
             });
           });
           $scope.tagsData = tagsData;
-          loaderService.setDataLoaded('tag_tag_id_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('tag_tag_id_' + $scope.index);
           $scope.$apply();
         });
 
@@ -811,7 +831,7 @@
             }
           });
           $scope.entityData = entityData;
-          loaderService.setDataLoaded('tag_entity_table' + $scope.ctrl.index);
+          loaderService.setDataLoaded('tag_entity_table' + $scope.index);
           $scope.$apply();
         });
         $scope.removeItemFromArray = removeItemFromArray;
@@ -828,8 +848,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -850,7 +868,7 @@
             });
           });
           $scope.groupData = groupData;
-          loaderService.setDataLoaded('group_group_id' + $scope.ctrl.index);
+          loaderService.setDataLoaded('group_group_id' + $scope.index);
           $scope.$apply();
         });
         $scope.removeItemFromArray = removeItemFromArray;
@@ -867,8 +885,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -896,7 +912,7 @@
             }
           });
           $scope.categoriesData = categoriesData;
-          loaderService.setDataLoaded('task_categories_' + $scope.ctrl.index);
+          loaderService.setDataLoaded('task_categories_' + $scope.index);
           $scope.$apply();
         });
 
@@ -911,7 +927,7 @@
               });
             });
             $scope.tasksData = tasksData;
-            loaderService.setDataLoaded('task_tasks_' + $scope.ctrl.index);
+            loaderService.setDataLoaded('task_tasks_' + $scope.index);
             $scope.$apply();
           }
         });
@@ -927,8 +943,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -946,8 +960,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.removeItemFromArray = removeItemFromArray;
@@ -980,8 +992,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -997,7 +1007,7 @@
               });
             });
             $scope.messageTemplateOptions = messageTemplateOptions;
-            loaderService.setDataLoaded('success_email_template' + $scope.ctrl.index);
+            loaderService.setDataLoaded('success_email_template' + $scope.index);
             $scope.$apply();
           }
         });
@@ -1018,8 +1028,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -1035,7 +1043,7 @@
               });
             });
             $scope.messageTemplateOptions = messageTemplateOptions;
-            loaderService.setDataLoaded('email_template' + $scope.ctrl.index);
+            loaderService.setDataLoaded('email_template' + $scope.index);
             $scope.$apply();
           }
         });
@@ -1056,8 +1064,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -1078,7 +1084,7 @@
               });
             });
             $scope.campaignData = campaignData;
-            loaderService.setDataLoaded('segmentation_assign_campaign_id' + $scope.ctrl.index);
+            loaderService.setDataLoaded('segmentation_assign_campaign_id' + $scope.index);
             $scope.$apply();
           }
         });
@@ -1089,13 +1095,13 @@
 
         $scope.checkboxChange = function(value) {
           if (value == "1") {
-            this.ctrl.model.segment_name = "";
+            this.model.segment_name = "";
           }
         };
 
         $scope.statusChanged = function() {
-          this.ctrl.model.segment_order_table = "";
-          this.ctrl.model.segment_order = "";
+          this.model.segment_order_table = "";
+          this.model.segment_order = "";
         };
 
         var statusesData = [];
@@ -1114,7 +1120,7 @@
             }
           });
           $scope.statusesData = statusesData;
-          loaderService.setDataLoaded('segmentation_assign_start' + $scope.ctrl.index);
+          loaderService.setDataLoaded('segmentation_assign_start' + $scope.index);
           $scope.$apply();
         });
       }
@@ -1129,8 +1135,6 @@
         model: "=",
         index: "<"
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
           return loaderService.isDataLoaded(elementId);
@@ -1151,7 +1155,7 @@
               });
             });
             $scope.campaignData = campaignData;
-            loaderService.setDataLoaded('segmentation_export_campaign_id' + $scope.ctrl.index);
+            loaderService.setDataLoaded('segmentation_export_campaign_id' + $scope.index);
             $scope.$apply();
           }
         });
@@ -1162,14 +1166,14 @@
 
         $scope.checkboxChange = function(value) {
           if (value == "1") {
-            this.ctrl.model.date_from = "";
-            this.ctrl.model.date_to = "";
+            this.model.date_from = "";
+            this.model.date_to = "";
           }
         };
 
-        if ($scope.ctrl.model && getBooleanFromNumber($scope.ctrl.model.campaign_id)) {
+        if ($scope.model && getBooleanFromNumber($scope.model.campaign_id)) {
           CRM.api3("Segmentation", "segmentlist", {
-            campaign_id: $scope.ctrl.model.campaign_id
+            campaign_id: $scope.model.campaign_id
           }).done(function(result) {
             var segmentationData = [];
             Object.keys(result.values).map(key => {
@@ -1182,7 +1186,7 @@
               }
             });
             $scope.segmentationData = segmentationData;
-            loaderService.setDataLoaded('segmentation_export_segments' + $scope.ctrl.index);
+            loaderService.setDataLoaded('segmentation_export_segments' + $scope.index);
             $scope.$apply();
           });
         }
@@ -1197,14 +1201,14 @@
               });
             });
             $scope.messageTemplateOptions = messageTemplateOptions;
-            loaderService.setDataLoaded('segmentation_export_email_template' + $scope.ctrl.index);
+            loaderService.setDataLoaded('segmentation_export_email_template' + $scope.index);
             $scope.$apply();
           }
         });
 
         $scope.statusChanged = function(value, fieldId) {
           CRM.$(function($) {
-            $scope.ctrl.model.segments = "";
+            $scope.model.segments = "";
             var inputStyles =  {
               'width' : '100%',
               'max-width' : '300px',
@@ -1250,7 +1254,7 @@
             }
           });
           $scope.exporterData = exporterData;
-          loaderService.setDataLoaded('segmentation_export_exporter' + $scope.ctrl.index);
+          loaderService.setDataLoaded('segmentation_export_exporter' + $scope.index);
           $scope.$apply();
         });
       }
@@ -1485,8 +1489,6 @@
         index: "<",
         fieldPrefix: "<fieldprefix",
       },
-      bindToController: true,
-      controllerAs: "ctrl",
       controller: function($scope) {
         $scope.ts = CRM.ts();
         $scope.onInfoPress = onInfoPress;

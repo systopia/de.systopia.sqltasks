@@ -295,7 +295,7 @@
                         </div>
                         <div class="content">
                             <select ng-model="taskOptions.parallel_exec" name="parallel_exec" id="parallel_exec" class="crm-form-select">
-                                <option value="0" selected="selected">no</option>
+                                <option value="0" selected="selected">No</option>
                                 <option value="1">With other running tasks</option>
                                 <option value="2">Always (multiple instances)</option>
                             </select>
@@ -304,7 +304,7 @@
                     </div>
 
                     <multiple-select2 model="taskOptions.run_permissions" fieldlabel="ts('Run Permissions')"
-                        fieldid="'run_permissions' + ctrl.index" optionsArray="permissionsData" inputMaxWidth="'300px'"
+                        fieldid="'run_permissions' + index" optionsArray="permissionsData" inputMaxWidth="'300px'"
                         helpaction='onInfoPress("Run Permissions", "id-run-permissions", "CRM\/Sqltasks\/Form\/Configure")'
                         showHelpIcon=true>
                     </multiple-select2>

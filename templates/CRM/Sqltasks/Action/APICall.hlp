@@ -37,3 +37,24 @@
   <p>{ts domain="de.systopia.sqltasks"}&nbsp;&nbsp;<code>first_name={literal}{contact_first_name}{/literal}</code><br/>&nbsp;&nbsp;<code>contact_type=Individual</code>{/ts}</p>
   <p>{ts domain="de.systopia.sqltasks"}Each line that doesn't follow this format will be ignored.{/ts}</p>
 {/htxt}
+
+{htxt id='id-handle-api-errors'}
+  <p>{ts domain="de.systopia.sqltasks"}This option lets you decide how handle API errors. The following options are available:{/ts}</p>
+
+  <ul>
+     <li>
+         <dt>{ts domain="de.systopia.sqltasks"}Log only (default){/ts}</dt>
+         <dd>{ts domain="de.systopia.sqltasks"}Log API errors and continue. Don't trigger Error Handler action.{/ts}</dd>
+     </li>
+
+     <li>
+        <dt>{ts domain="de.systopia.sqltasks"}Report task error and continue API calls{/ts}</dt>
+        <dd>{ts domain="de.systopia.sqltasks"}Continue with remaining API calls and then report task error to Error Handler.{/ts}</dd>
+     </li>
+
+     <li>
+        <dt>{ts domain="de.systopia.sqltasks"}Report task error and abort API calls{/ts}</dt>
+        <dd>{ts domain="de.systopia.sqltasks"}Abort remaining API calls and report task error to Error Handler.{/ts}</dd>
+     </li>
+  </ul>
+{/htxt}

@@ -8,21 +8,21 @@
   </div>
 
   <div class="sql-task-action-addition-info-edit-form-wrap">
-    <text-input model="ctrl.model['action_title']" fieldlabel="ts('Action title')"
-                fieldid="ctrl.fieldPrefix + '_action_title_' + ctrl.index"  showHelpIcon=true inputMaxWidth="'300px'"
+    <text-input model="model['action_title']" fieldlabel="ts('Action title')"
+                fieldid="fieldPrefix + '_action_title_' + index"  showHelpIcon=true inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Title of action", "id-action-title", "CRM\/Sqltasks\/Action\/ActionAdditionalInfo")'>
     </text-input>
 
-    <text-area model="ctrl.model['action_description']" fieldlabel="ts('Action description')"
-               fieldid="ctrl.fieldPrefix + '_action_description_' + ctrl.index" rowsnumber='10' inputMaxWidth="'500px'"
+    <text-area model="model['action_description']" fieldlabel="ts('Action description')"
+               fieldid="fieldPrefix + '_action_description_' + index" rowsnumber='10' inputMaxWidth="'500px'"
                helpaction='onInfoPress("Description of action", "id-action-description", "CRM\/Sqltasks\/Action\/ActionAdditionalInfo")'
                showHelpIcon=true>
     </text-area>
   </div>
 
-  <div ng-if="ctrl.model['action_description']">
+  <div ng-if="model['action_description']">
     <div class="help">
-      <pre>{{ctrl.model['action_description']}}</pre>
+      <pre>{{model['action_description']}}</pre>
     </div>
   </div>
 

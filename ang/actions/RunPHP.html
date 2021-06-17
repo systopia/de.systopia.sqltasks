@@ -1,22 +1,22 @@
 <div class="crm-accordion-wrapper crm-sqltask-php collapsed relativePosition">
     <div class="crm-accordion-header accordion-header-custom active action-label">
         <label class="input-checkbox">
-            <input ng-true-value="'1'" style="cursor: pointer;" ng-false-value="'0'" ng-model="ctrl.model['enabled']" type="checkbox">
+            <input ng-true-value="'1'" style="cursor: pointer;" ng-false-value="'0'" ng-model="model['enabled']" type="checkbox">
             &nbsp;
             {{ts('Run PHP Code')}}
         </label>
-        <span ng-if="ctrl.model['action_title']" class="sql-task-action-title">{{ctrl.model['action_title']}}</span>
-        <label class="header-delete-btn" ng-click="removeItemFromArray(ctrl.index)">
+        <span ng-if="model['action_title']" class="sql-task-action-title">{{model['action_title']}}</span>
+        <label class="header-delete-btn" ng-click="removeItemFromArray(index)">
             <i class="crm-i fa-trash header-delete"></i>
             {{ts('Delete')}}
         </label>
     </div>
     <div class="crm-accordion-body" style="display: none;">
         <div class="sql-tasks">
-            <action-additional-info model='ctrl.model' fieldPrefix="'php'" index='ctrl.index'></action-additional-info>
+            <action-additional-info model='model' fieldPrefix="'php'" index='index'></action-additional-info>
 
-            <text-area isrequired="getBooleanFromNumber(ctrl.model['enabled'])" model="ctrl.model['php_code']"
-                fieldlabel="ts('PHP Code')" fieldid="'php_code' + ctrl.index" rowsnumber='8' inputMaxWidth="'500px'"
+            <text-area isrequired="getBooleanFromNumber(model['enabled'])" model="model['php_code']"
+                fieldlabel="ts('PHP Code')" fieldid="'php_code' + index" rowsnumber='8' inputMaxWidth="'500px'"
                 helpaction='onInfoPress("PHP Code", "id-php-code", "CRM\/Sqltasks\/Action\/RunPHP")'
                 showHelpIcon=true>
             </text-area>
