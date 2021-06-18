@@ -40,7 +40,7 @@ class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase impl
    * Test deletion of a template
    */
   public function testDeleteTemplate() {
-    $templatesCountBeforeDelete = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
+    $templatesCountBefore = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
 
     try {
       $templateFromApi = civicrm_api3('SqltaskTemplate', 'create', [
@@ -62,9 +62,9 @@ class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase impl
     $templatesCountAfterDelete = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
 
     $this->assertEquals(
-      $templatesCountBeforeDelete,
+      $templatesCountBefore,
       $templatesCountAfterDelete ,
-      "There should be exactly " . $templatesCountBeforeDelete . " template in the database. But exist - " . $templatesCountAfterDelete
+      "There should be exactly " . $templatesCountBefore . " template in the database. But exist - " . $templatesCountAfterDelete
     );
   }
 
