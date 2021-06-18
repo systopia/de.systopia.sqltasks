@@ -40,32 +40,31 @@ class api_v3_SqltaskTemplate_GetTest extends \PHPUnit\Framework\TestCase impleme
    * Test getting a single template by ID
    */
   public function testGetTemplate() {
-    // Configure template
     $templateData = [
       "name"        => "Test-Template",
       "config"      => "{}",
       "description" => "...",
     ];
 
-    // Create template via API
-    $createdTemplate = civicrm_api3("SqltaskTemplate", "create", $templateData)["values"];
+    try {
+      $createdTemplateFromApi = civicrm_api3('SqltaskTemplate', 'create', $templateData);
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
+    }
 
-    // Get template from API by ID
-    $result = civicrm_api3("SqltaskTemplate", "get", [ "id" => $createdTemplate["id"] ])["values"];
+    try {
+      $templateFromApi = civicrm_api3("SqltaskTemplate", "get", [ "id" => $createdTemplateFromApi["values"]["id"]]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.get returns exception:" . $e->getMessage());
+    }
 
-    // Assert that the returned template matches the configured data
-    $this->assertTrue(isset($result["id"]), "Template ID should be set");
-    $this->assertTrue(isset($result["last_modified"]), "'last_modified' timestamp should be set");
-
-    foreach (["name", "config", "description"] as $property) {
+    foreach (array_keys($templateData) as $property) {
       $this->assertEquals(
         $templateData[$property],
-        $result[$property],
+        $templateFromApi["values"][$property],
         sprintf("Template %s should be '%s'", $property, $templateData[$property])
       );
     }
   }
 
 }
-
-?>
