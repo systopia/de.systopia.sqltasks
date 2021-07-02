@@ -40,32 +40,32 @@ class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase impl
    * Test deletion of a template
    */
   public function testDeleteTemplate() {
-    // Configure template
-    $templateData = [
-      "name"        => "Test-Template",
-      "config"      => "{}",
-      "description" => "...",
-    ];
+    $templatesCountBefore = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
 
-    // Create template via API
-    civicrm_api3('SqltaskTemplate', 'create', $templateData);
+    try {
+      $templateFromApi = civicrm_api3('SqltaskTemplate', 'create', [
+        "name"        => "Test-Template",
+        "config"      => "{}",
+        "description" => "...",
+      ]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
+    }
+    $this->assertTrue(isset($templateFromApi['values']["id"]), "Template ID should be set");
 
-    // Fetch templates from the database
-    $templates = CRM_Sqltasks_BAO_SqltasksTemplate::getAll();
+    try {
+      civicrm_api3('SqltaskTemplate', 'delete', [ "id" => $templateFromApi['values']['id']]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.delete returns exception:" . $e->getMessage());
+    }
 
-    // Assert that there is exactly 1 template in the database
-    $this->assertEquals(1, count($templates), "There should be exactly 1 template in the database");
+    $templatesCountAfterDelete = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
 
-    // Delete the created template by ID
-    civicrm_api3('SqltaskTemplate', 'delete', [ "id" => $templates[0]->id ]);
-
-    // Fetch templates from the database
-    $templates = CRM_Sqltasks_BAO_SqltasksTemplate::getAll();
-
-    // Assert that there are no templates in the database
-    $this->assertEquals(0, count($templates), "There should be no templates in the database");
+    $this->assertEquals(
+      $templatesCountBefore,
+      $templatesCountAfterDelete ,
+      "There should be exactly " . $templatesCountBefore . " template in the database. But exist - " . $templatesCountAfterDelete
+    );
   }
 
 }
-
-?>

@@ -40,44 +40,33 @@ class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase impl
    * Test getting all stored templates
    */
   public function testGetAllTemplates() {
-    // Configure templates
-    $templatesData = array_map(
-      function ($i) {
-        return [
+    $templatesCountBeforeCreating = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
+
+    $countOfNewTemplates = 3;
+    for ($i = 1; $i <= $countOfNewTemplates; $i++) {
+      try {
+        civicrm_api3("SqltaskTemplate", "create", [
           "name"        => "Test-Template #$i",
           "config"      => "{}",
           "description" => "...",
-        ];
-      },
-      [1, 2, 3]
+        ]);
+      } catch (CiviCRM_API3_Exception $e) {
+        $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
+      }
+    }
+
+    try {
+      $templatesFromApi = civicrm_api3("SqltaskTemplate", "get_all")["values"];
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.get_all returns exception:" . $e->getMessage());
+    }
+
+    $expectedCountOfTemplates = $templatesCountBeforeCreating + $countOfNewTemplates;
+    $this->assertEquals(
+      $expectedCountOfTemplates,
+      count($templatesFromApi),
+      "Exactly " . $expectedCountOfTemplates . " templates should have been returned. But exist - " .  count($templatesFromApi)
     );
-
-    // Create templates via API
-    foreach ($templatesData as $data) {
-      civicrm_api3("SqltaskTemplate", "create", $data);
-    }
-
-    // Get all templates from the API
-    $templates = civicrm_api3("SqltaskTemplate", "get_all")["values"];
-
-    // Assert that exactly 3 items have been returned
-    $this->assertEquals(3, count($templates), "Exactly 3 templates should have been returned");
-
-    // Sort results
-    usort($templates, function ($a, $b) {
-      return $a["id"] < $b["id"] ? -1 : 1;
-    });
-
-    // Assert that the returned templates match the configured data
-    foreach ($templates as $i => $template) {
-      $this->assertEquals(
-        $templatesData[$i]["name"],
-        $template["name"],
-        sprintf("Template name should be '%s'", $templatesData[$i]["name"])
-      );
-    }
   }
 
 }
-
-?>

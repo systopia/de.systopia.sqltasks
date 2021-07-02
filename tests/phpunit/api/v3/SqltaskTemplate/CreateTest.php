@@ -40,38 +40,40 @@ class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase impl
    * Test creation of a template
    */
   public function testCreateTemplate() {
-    // Configure template
+    $templatesCountBefore = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
+
     $templateData = [
       "name"        => "Test-Template",
       "config"      => "{}",
       "description" => "...",
     ];
 
-    // Create template via API
-    civicrm_api3('SqltaskTemplate', 'create', $templateData);
+    try {
+      $templateFromApi = civicrm_api3('SqltaskTemplate', 'create', $templateData);
+    } catch (CiviCRM_API3_Exception $e) {
+      $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
+    }
 
-    // Fetch templates from the database
-    $templates = array_map(
-      function ($bao) { return $bao->mapToArray(); },
-      CRM_Sqltasks_BAO_SqltasksTemplate::getAll()
+    $this->assertTrue(isset($templateFromApi['values']["id"]), "Template ID should be set");
+    $templatesCountAfter = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
+
+    $expectedTemplateCount = ($templatesCountBefore + 1);
+    $this->assertEquals(
+      ($templatesCountBefore + 1),
+      $templatesCountAfter,
+      "There should be exactly " . $expectedTemplateCount . " template in the database. But exist - " . $templatesCountAfter
     );
 
-    // Assert that there is exactly 1 template in the database
-    $this->assertEquals(1, count($templates), "There should be exactly 1 template in the database");
+    $template = CRM_Sqltasks_BAO_SqltasksTemplate::getOne($templateFromApi['values']["id"]);
+    $this->assertTrue(!empty($template), "Cannot find Template by id = " . $templateFromApi['values']["id"]);
 
-    // Assert that the created template's properties match the expected values
-    $this->assertTrue(isset($templates[0]["id"]), "Template ID should be set");
-    $this->assertTrue(isset($templates[0]["last_modified"]), "'last_modified' timestamp should be set");
-
-    foreach (["name", "config", "description"] as $property) {
+    foreach (array_keys($templateData) as $property) {
       $this->assertEquals(
         $templateData[$property],
-        $templates[0][$property],
+        $template->$property,
         sprintf("Template %s should be '%s'", $property, $templateData[$property])
       );
     }
   }
 
 }
-
-?>

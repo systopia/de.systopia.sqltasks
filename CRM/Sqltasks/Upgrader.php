@@ -28,6 +28,8 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    */
   public function install() {
     $this->executeSqlFile('sql/civicrm_sqltasks.sql');
+    $this->executeSqlFile('sql/civicrm_sqltasks_template.sql');
+    $this->installDefaultTemplate();
 
     // update rebuild log tables
     $logging = new CRM_Logging_Schema();
@@ -338,42 +340,34 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
   }
 
   /**
-   * Create table `civicrm_sqltasks_template`
+   * Creates table `civicrm_sqltasks_template`
    */
-  public function createTemplatesTable () {
+  private function createTemplatesTable() {
     $tableName = "civicrm_sqltasks_template";
     $tableExists = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '$tableName';");
 
     if (!$tableExists) {
       $this->ctx->log->info("Creating table `$tableName`");
-      CRM_Core_DAO::executeQuery("
-        CREATE TABLE IF NOT EXISTS `$tableName`(
-          `id`              int unsigned NOT NULL AUTO_INCREMENT,
-          `name`            varchar(255) COMMENT 'name of the template',
-          `description`     text         COMMENT 'template description',
-          `config`          text         COMMENT 'configuration (JSON)',
-          `last_modified`   datetime     COMMENT 'last time the template has been modified',
-          PRIMARY KEY ( `id` )
-        ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-      ");
-
-      $defaultTemplate = file_get_contents("tasks/default-template.sqltask", true);
-
-      $this->ctx->log->info("Inserting default template into new table");
-      CRM_Core_DAO::executeQuery("
-        INSERT INTO `civicrm_sqltasks_template`
-          (`name`, `description`, `config`, `last_modified`)
-          VALUES ('Default', 'Default template for new tasks', '$defaultTemplate', NOW());
-      ");
-
-      $defaultTemplateId =  CRM_Core_DAO::singleValueQuery(
-        "SELECT id FROM civicrm_sqltasks_template WHERE name = 'Default' LIMIT 1"
-      );
-      Civi::settings()->set('sqltasks_default_template', $defaultTemplateId);
-
+      $this->executeSqlFile('sql/civicrm_sqltasks_template.sql');
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
     }
+  }
+
+  /**
+   * Installs default template and sets it as default in settings
+   */
+  private function installDefaultTemplate() {
+    $taskConfig = file_get_contents("tasks/default-template.sqltask", true);
+
+    $sqltasksTemplate = CRM_Sqltasks_BAO_SqltasksTemplate::create([
+        'name' => 'Default',
+        'description' => 'Default template for new tasks',
+        'config' => $taskConfig,
+      ]
+    );
+
+    Civi::settings()->set('sqltasks_default_template', $sqltasksTemplate->id);
   }
 
   /**
@@ -382,6 +376,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    */
   public function upgrade_0150 () {
     $this->createTemplatesTable();
+
+    $this->ctx->log->info("Inserting default template into new table");
+    $this->installDefaultTemplate();
+
     return true;
   }
 

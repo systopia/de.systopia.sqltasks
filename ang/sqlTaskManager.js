@@ -80,7 +80,10 @@
             return;
           }
 
-          $scope.selectTemplateModel.templateId = result.result;
+          if (result.result !== 'undefined') {
+            $scope.selectTemplateModel.templateId = result.result.toString();
+          }
+
           $scope.$apply();
         });
       }
