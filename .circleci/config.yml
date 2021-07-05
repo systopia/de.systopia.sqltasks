@@ -102,8 +102,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.24
-          version: "5.24"
+          build_name: civi-5.39
+          version: "5.39"
           url: http://localhost:8081
   build_mariadb_10_2:
     executor: civicrm
@@ -124,8 +124,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.24
-          version: "5.24"
+          build_name: civi-5.39
+          version: "5.39"
           url: http://localhost:8081
   build_mariadb_10_3:
     executor: civicrm
@@ -146,8 +146,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.24
-          version: "5.24"
+          build_name: civi-5.39
+          version: "5.39"
           url: http://localhost:8081
 
 workflows:
