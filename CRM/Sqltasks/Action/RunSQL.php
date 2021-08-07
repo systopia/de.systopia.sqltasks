@@ -72,18 +72,17 @@ class CRM_Sqltasks_Action_RunSQL extends CRM_Sqltasks_Action {
     $this->resetHasExecuted();
     try {
       // prepare
-      $config = CRM_Core_Config::singleton();
       $script = html_entity_decode($this->getConfigValue('script'));
       if (!empty($this->context['input_val'])) {
         $input_val = CRM_Core_DAO::escapeString($this->context['input_val']);
         $script = "SET @input = '{$input_val}'; \r\n {$script}";
       }
-      CRM_Utils_File::runSqlQuery($config->dsn, $script);
+      CRM_Sqltasks_Utils::runSqlQuery($script);
     }
     catch (Exception $e) {
       $message = $e->getMessage();
       if ($e instanceof PEAR_Exception && $e->getCause() instanceof DB_Error) {
-      $message .= ' Details: ' . $e->getCause()->getUserInfo();
+        $message .= ' Details: ' . $e->getCause()->getUserInfo();
       }
       $this->log("SQL execution failed: " . $message);
       throw $e;
