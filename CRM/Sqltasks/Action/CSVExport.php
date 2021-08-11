@@ -381,11 +381,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         // connect
         if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
           $sftp = new phpseclib\Net\SFTP($credentials['host']);
+          $mode = phpseclib\Net\SFTP::SOURCE_LOCAL_FILE;
         }
         else {
           // used for legacy versions of phpseclib
           require_once('Net/SFTP.php');
           $sftp = new Net_SFTP($credentials['host']);
+          $mode = NET_SFTP_LOCAL_FILE;
         }
         if (!$sftp->login($credentials['user'], $credentials['password'])) {
           throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
@@ -393,7 +395,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
         // upload
         $target_file = $credentials['remote_path'] . '/' . $filename;
-        if (!$sftp->put($target_file, $filepath, NET_SFTP_LOCAL_FILE)) {
+        if (!$sftp->put($target_file, $filepath, $mode)) {
           throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
         }
 
