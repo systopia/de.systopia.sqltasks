@@ -217,7 +217,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       SELECT
         COUNT(*) AS contact_count
       FROM {$contact_table}
-      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND campaign_id = %0
+      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND civicrm_segmentation_exclude.campaign_id = %0
       WHERE exclude = 1", [[$this->getConfigValue('campaign_id'), 'Integer']]);
     if ($count > 0) {
       $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} WHERE exclude = 1 LIMIT 1")->fetch();
