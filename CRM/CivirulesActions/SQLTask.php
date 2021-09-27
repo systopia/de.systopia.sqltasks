@@ -39,7 +39,7 @@ if (class_exists('CRM_Civirules_Action')) {
         || $triggerData instanceof CRM_Civirules_TriggerData_Cron) {
         $entity = strtolower($triggerData->getEntity());
         $data['entity'] = $entity;
-        $data["{$entity}_data"] = $triggerData->getEntityData($data['entity']);
+        $data["{$entity}_data"] = $triggerData->getEntityData($triggerData->getEntity());
       }
 
       if ($triggerData instanceof CRM_Civirules_TriggerData_Interface_OriginalData) {
