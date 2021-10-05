@@ -66,6 +66,7 @@
       };
       $scope.config = {
         actions: [],
+        actionTemplates: [],
         scheduled_month: "1",
         scheduled_weekday: "1",
         scheduled_day: "1",
@@ -312,6 +313,12 @@
         $scope.$apply();
       });
 
+      // action templates data
+      CRM.api3("SqltasksActionTemplate", "get_all").done(function(result) {
+        $scope.actionTemplates = result.values;
+        $scope.$apply();
+      });
+
       $scope.addAction = function(actionName) {
         if (actionName === undefined) {
           return;
@@ -499,7 +506,8 @@
       templateUrl: "~/sqlTaskConfigurator/RunSQL.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope) {
         $scope.ts = CRM.ts();
@@ -523,7 +531,8 @@
       templateUrl: "~/sqlTaskConfigurator/APICall.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {;
         $scope.ts = CRM.ts();
@@ -570,7 +579,8 @@
       templateUrl: "~/sqlTaskConfigurator/CreateActivity.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -716,7 +726,8 @@
       templateUrl: "~/sqlTaskConfigurator/CSVExport.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.ts = CRM.ts();
@@ -793,7 +804,8 @@
       templateUrl: "~/sqlTaskConfigurator/SyncTag.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -846,7 +858,8 @@
       templateUrl: "~/sqlTaskConfigurator/SyncGroup.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -883,7 +896,8 @@
       templateUrl: "~/sqlTaskConfigurator/CallTask.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.ts = CRM.ts();
@@ -941,7 +955,8 @@
       templateUrl: "~/sqlTaskConfigurator/PostSQL.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope) {
         $scope.ts = CRM.ts();
@@ -958,7 +973,8 @@
       templateUrl: "~/sqlTaskConfigurator/RunPHP.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope) {
         $scope.ts = CRM.ts();
@@ -984,13 +1000,24 @@
     return false;
   }
 
+  function toggleActionTemplateForm() {
+    $scope.isShowActionTemplateForm = false;
+    $scope.isShowActionTemplateForm = !$scope.isShowActionTemplateForm;
+    if ($scope.isShowActionTemplateForm) {
+      CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-template-form-wrap').slideDown("fast");
+    } else {
+      CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-template-form-wrap').hide("fast");
+    }
+  }
+
   angular.module(moduleName).directive("successHandler", function() {
     return {
       restrict: "E",
       templateUrl: "~/sqlTaskConfigurator/SuccessHandler.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -1026,7 +1053,8 @@
       templateUrl: "~/sqlTaskConfigurator/ErrorHandler.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -1062,7 +1090,8 @@
       templateUrl: "~/sqlTaskConfigurator/SegmentationAssign.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -1133,7 +1162,8 @@
       templateUrl: "~/sqlTaskConfigurator/SegmentationExport.html",
       scope: {
         model: "=",
-        index: "<"
+        index: "<",
+        actionTemplates: "="
       },
       controller: function($scope, loaderService) {
         $scope.isDataLoaded = function(elementId) {
@@ -1499,6 +1529,150 @@
             CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-addition-info-edit-form-wrap').slideDown("fast");
           } else {
             CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-addition-info-edit-form-wrap').hide("fast");
+          }
+        };
+      }
+    };
+  });
+
+  angular.module(moduleName).directive("actionTemplateSelect", function () {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/actionTemplateSelect.html",
+      scope: {
+        model: "=",
+        actionTemplates: "=",
+        actionTemplate: "="
+      },
+      controller: function ($scope) {
+        $scope.ts = CRM.ts();
+
+        $scope.loadActionTemplate = function(actionTemplate) {
+          if (actionTemplate && actionTemplate.hasOwnProperty('config')) {
+            angular.forEach(JSON.parse(actionTemplate.config), function (value, key) {
+              $scope.model[key] = value;
+            });
+            // hack to fix select2 refresh
+            CRM.$(function ($) {
+              setTimeout(function () {
+                CRM.$('.crm-section .content select.crm-form-select2').select2();
+              }, 1500);
+            });
+          }
+        };
+
+        $scope.isShowActionTemplateForm = false;
+        $scope.toggleShowingActionTemplateForm = function(event) {
+          $scope.isShowActionTemplateForm = !$scope.isShowActionTemplateForm;
+          if ($scope.isShowActionTemplateForm) {
+            CRM.$(event.currentTarget).closest('.sql-task-action-template-wrapper').find('.sql-task-action-template-form-wrapper').slideDown("fast");
+          } else {
+            CRM.$(event.currentTarget).closest('.sql-task-action-template-wrapper').find('.sql-task-action-template-form-wrapper').hide("fast");
+          }
+        };
+      }
+    };
+  });
+
+  angular.module(moduleName).directive("actionTemplateForm", function () {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/actionTemplateForm.html",
+      scope: {
+        model: "=",
+        actionTemplates: "=",
+        actionTemplate: "="
+      },
+      controller: function ($scope) {
+        $scope.ts = CRM.ts();
+
+        $scope.updateActionTemplate = function(actionTemplate) {
+          $scope.saveActionTemplate(actionTemplate);
+        };
+
+        $scope.createActionTemplate = function(actionTemplate) {
+          if (actionTemplate.hasOwnProperty('id')) {
+            delete actionTemplate.id;
+          }
+          $scope.saveActionTemplate(actionTemplate);
+        };
+
+        $scope.saveActionTemplate = function(actionTemplate) {
+          if (actionTemplate) {
+            let preparedData = $scope.prepareDataForApi(actionTemplate);
+
+            CRM.api3("SqltasksActionTemplate", "create", preparedData).done(function (result) {
+              if (result.is_error == 1) {
+                let title = ts('Action Template Error');
+                let errorMessage = result.hasOwnProperty('error_message') ? result.error_message : ts('Unknown error');
+                CRM.alert(errorMessage, title, 'error');
+              } else if (result.hasOwnProperty('values')) {
+                let actionTemplateId = 0;
+                for (let i = 0; i < $scope.actionTemplates.length; i++) {
+                  if ($scope.actionTemplates[i].id == result.values.id) {
+                    actionTemplateId = result.values.id;
+                    $scope.actionTemplates[i] = result.values;
+                  }
+                }
+                if (actionTemplateId === 0) {
+                  $scope.actionTemplates.push(result.values);
+                }
+                $scope.actionTemplate = result.values;
+                $scope.$apply();
+
+                // hack to fix select2 refresh
+                CRM.$(function($) {
+                  setTimeout(function() {
+                    CRM.$('.crm-section .content select.crm-form-select2').select2();
+                  }, 1500);
+                });
+
+                let title = ts('Action Template ' + (Number(actionTemplateId) ? 'updated' : 'created'));
+                let successMessage = ts('Action Template successfully ' + (Number(actionTemplateId) ? 'updated' : 'created'));
+                CRM.alert(successMessage, title, 'success');
+              }
+            });
+          }
+        };
+
+        $scope.prepareDataForApi = function(actionTemplate) {
+          let config = {};
+          angular.forEach($scope.model, function (value, key) {
+            if (key == 'type') {
+              actionTemplate.type = value;
+            }
+            config[key] = value;
+          });
+          delete config.type;
+          delete config.enabled;
+          delete config.action_title;
+          delete config.action_description;
+          actionTemplate.config = JSON.stringify(config);
+
+          return actionTemplate;
+        };
+
+        $scope.deleteActionTemplate = function(actionTemplate) {
+          if (actionTemplate && actionTemplate.hasOwnProperty('id')) {
+            CRM.api3("SqltasksActionTemplate", "delete", actionTemplate).done(function(result) {
+              if (result.is_error == 1) {
+                let title = ts('Action Template Error');
+                let errorMessage = result.hasOwnProperty('error_message') ? result.error_message : ts('Unknown error');
+                CRM.alert(errorMessage, title, 'error');
+              } else if (result.hasOwnProperty('values')) {
+                for (let i = 0; i < $scope.actionTemplates.length; i++) {
+                  if ($scope.actionTemplates[i].id == actionTemplate.id) {
+                    $scope.actionTemplates.splice(i, 1);
+                  }
+                }
+                $scope.actionTemplate = {};
+                $scope.$apply();
+
+                let title = ts('Action Template deleted');
+                let successMessage = ts('Action Template successfully deleted');
+                CRM.alert(successMessage, title, 'success');
+              }
+            });
           }
         };
       }

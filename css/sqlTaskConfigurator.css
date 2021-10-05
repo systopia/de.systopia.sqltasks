@@ -173,3 +173,17 @@ select.pixelInput {
   border: dotted 5px #c9c9c9;
   height: 50px;
 }
+
+.sql-task-action-template-wrapper {
+  margin-bottom: 10px;
+}
+
+.sql-task-action-template-select-wrapper {
+  float: right;
+  margin-bottom: 20px;
+}
+
+.sql-task-action-template-form-wrapper {
+  border-bottom: 1px solid grey;
+  margin-bottom: 20px;
+}

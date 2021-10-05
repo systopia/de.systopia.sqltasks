@@ -7,9 +7,9 @@
  * extension.
  */
 class CRM_Sqltasks_ExtensionUtil {
-  const SHORT_NAME = "sqltasks";
-  const LONG_NAME = "de.systopia.sqltasks";
-  const CLASS_PREFIX = "CRM_Sqltasks";
+  const SHORT_NAME = 'sqltasks';
+  const LONG_NAME = 'de.systopia.sqltasks';
+  const CLASS_PREFIX = 'CRM_Sqltasks';
 
   /**
    * Translate a string using the extension's domain.
@@ -474,6 +474,11 @@ function _sqltasks_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) 
  */
 function _sqltasks_civix_civicrm_entityTypes(&$entityTypes) {
   $entityTypes = array_merge($entityTypes, [
+    'CRM_Sqltasks_DAO_SqltasksActionTemplates' => [
+      'name' => 'SqltasksActionTemplates',
+      'class' => 'CRM_Sqltasks_DAO_SqltasksActionTemplates',
+      'table' => 'civicrm_sqltasks_action_template',
+    ],
     'CRM_Sqltasks_DAO_SqltasksTemplate' => [
       'name' => 'SqltasksTemplate',
       'class' => 'CRM_Sqltasks_DAO_SqltasksTemplate',
