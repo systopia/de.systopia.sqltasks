@@ -28,7 +28,7 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
     // get the list of tasks
     $allowed_tasks = [];
-    $all_tasks = CRM_Sqltasks_Task::getAllTasks();
+    $all_tasks = CRM_Sqltasks_Task::getExecutionTaskList();
     foreach ($all_tasks as $task) {
       /** @var $task CRM_Sqltasks_Task */
 
@@ -36,10 +36,10 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
       $run_permissions = $task->getAttribute('run_permissions');
       if (!empty($run_permissions) && $task->allowedToRun()) {
         $allowed_tasks[$task->getID()] = [
-            'id'           => $task->getID(),
-            'name'         => $task->getAttribute('name'),
-            'last_runtime' => sprintf("%.3f", ($task->getAttribute('last_runtime') / 1000.0)),
-            'description'  => $task->getAttribute('description'),
+          'id'           => $task->getID(),
+          'name'         => $task->getAttribute('name'),
+          'last_runtime' => sprintf("%.3f", ($task->getAttribute('last_runtime') / 1000.0)),
+          'description'  => $task->getAttribute('description'),
         ];
       }
     }
@@ -49,4 +49,5 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
     parent::run();
   }
+
 }
