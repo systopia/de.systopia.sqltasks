@@ -2,7 +2,7 @@
 
 <table>
   <base>CRM/Sqltasks</base>
-  <class>SqltasksActionTemplates</class>
+  <class>SqltasksActionTemplate</class>
   <name>civicrm_sqltasks_action_template</name>
   <comment>SQL Task configuration action template</comment>
   <log>true</log>

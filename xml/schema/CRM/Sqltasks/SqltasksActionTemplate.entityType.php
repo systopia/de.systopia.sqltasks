@@ -3,8 +3,8 @@
 // https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
 return [
   [
-    'name' => 'SqltasksActionTemplates',
-    'class' => 'CRM_Sqltasks_DAO_SqltasksActionTemplates',
+    'name' => 'SqltasksActionTemplate',
+    'class' => 'CRM_Sqltasks_DAO_SqltasksActionTemplate',
     'table' => 'civicrm_sqltasks_action_template',
   ],
 ];
