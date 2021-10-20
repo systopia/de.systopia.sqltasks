@@ -107,7 +107,7 @@ class CRM_Sqltasks_DAO_SqltasksTemplate extends CRM_Core_DAO {
         ],
         'name' => [
           'name' => 'name',
-          'type' => CRM_Utils_Type::T_STRING,
+          'type' => CRM_Utils_Type::T_VARCHAR(255),
           'title' => E::ts('Name'),
           'description' => E::ts('name of the template'),
           'where' => 'civicrm_sqltasks_template.name',

@@ -474,9 +474,9 @@ function _sqltasks_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) 
  */
 function _sqltasks_civix_civicrm_entityTypes(&$entityTypes) {
   $entityTypes = array_merge($entityTypes, [
-    'CRM_Sqltasks_DAO_SqltasksActionTemplates' => [
-      'name' => 'SqltasksActionTemplates',
-      'class' => 'CRM_Sqltasks_DAO_SqltasksActionTemplates',
+    'CRM_Sqltasks_DAO_SqltasksActionTemplate' => [
+      'name' => 'SqltasksActionTemplate',
+      'class' => 'CRM_Sqltasks_DAO_SqltasksActionTemplate',
       'table' => 'civicrm_sqltasks_action_template',
     ],
     'CRM_Sqltasks_DAO_SqltasksTemplate' => [
