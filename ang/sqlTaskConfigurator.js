@@ -313,8 +313,10 @@
         $scope.$apply();
       });
 
-      // action templates data
-      CRM.api3("SqltasksActionTemplate", "get_all").done(function(result) {
+      CRM.api3("SqltasksActionTemplate", "get", {
+        sequential: 1,
+        options: {limit : 0}
+      }).done(function(result) {
         $scope.actionTemplates = result.values;
         $scope.$apply();
       });
@@ -1600,6 +1602,7 @@
         $scope.saveActionTemplate = function(actionTemplate) {
           if (actionTemplate) {
             let preparedData = $scope.prepareDataForApi(actionTemplate);
+            preparedData.sequential = 1;
 
             CRM.api3("SqltasksActionTemplate", "create", preparedData).done(function (result) {
               if (result.is_error == 1) {
@@ -1609,15 +1612,15 @@
               } else if (result.hasOwnProperty('values')) {
                 let actionTemplateId = 0;
                 for (let i = 0; i < $scope.actionTemplates.length; i++) {
-                  if ($scope.actionTemplates[i].id == result.values.id) {
-                    actionTemplateId = result.values.id;
-                    $scope.actionTemplates[i] = result.values;
+                  if ($scope.actionTemplates[i].id == result.values[0].id) {
+                    actionTemplateId = result.values[0].id;
+                    $scope.actionTemplates[i] = result.values[0];
                   }
                 }
                 if (actionTemplateId === 0) {
-                  $scope.actionTemplates.push(result.values);
+                  $scope.actionTemplates.push(result.values[0]);
                 }
-                $scope.actionTemplate = result.values;
+                $scope.actionTemplate = result.values[0];
                 $scope.$apply();
 
                 // hack to fix select2 refresh
