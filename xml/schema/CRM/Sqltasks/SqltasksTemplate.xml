@@ -20,7 +20,8 @@
 
   <field>
     <name>name</name>
-    <type>varchar(255)</type>
+    <type>varchar</type>
+    <length>255</length>
     <comment>name of the template</comment>
   </field>
 
