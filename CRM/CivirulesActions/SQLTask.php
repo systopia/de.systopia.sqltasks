@@ -39,7 +39,7 @@ if (class_exists('CRM_Civirules_Action')) {
         || $triggerData instanceof CRM_Civirules_TriggerData_Cron) {
         $entity = strtolower($triggerData->getEntity());
         $data['entity'] = $entity;
-        $data["{$entity}_data"] = $triggerData->getEntityData($data['entity']);
+        $data["{$entity}_data"] = $triggerData->getEntityData($triggerData->getEntity());
       }
 
       if ($triggerData instanceof CRM_Civirules_TriggerData_Interface_OriginalData) {
@@ -72,6 +72,17 @@ if (class_exists('CRM_Civirules_Action')) {
       }
 
       return '';
+    }
+
+    public static function setCustomFields($event) {
+      $event_data = (array) $event;
+
+      $op = $event_data["action"];
+      $object_name = $event_data["entity"];
+      $object_id = $event_data["id"];
+      $params = $event_data["params"];
+
+      CRM_Civirules_Utils_CustomDataFromPre::pre($op, $object_name, $object_id, $params, null);
     }
   }
 }

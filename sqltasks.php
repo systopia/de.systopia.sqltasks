@@ -24,6 +24,14 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 function sqltasks_civicrm_config(&$config) {
   _sqltasks_civix_civicrm_config($config);
+
+  if (class_exists('CRM_Civirules_Utils_CustomDataFromPre')) {
+    Civi::dispatcher()->addListener(
+      'hook_civicrm_pre',
+      'CRM_CivirulesActions_SQLTask::setCustomFields',
+      1
+    );
+  }
 }
 
 /**
