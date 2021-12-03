@@ -75,6 +75,8 @@ if (class_exists('CRM_Civirules_Action')) {
     }
 
     public static function setCustomFields($event) {
+      if (!class_exists('CRM_Civirules_Utils_CustomDataFromPre')) return;
+
       $event_data = (array) $event;
 
       $op = $event_data["action"];
