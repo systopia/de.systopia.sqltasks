@@ -4,7 +4,7 @@
                 ng-options="template.name for template in actionTemplates | filter:{type:model.type} track by template.id"
                 ng-model="actionTemplate"
                 ng-click="$event.stopPropagation()"
-                ng-change="loadActionTemplate(actionTemplate)">
+                ng-change="loadActionTemplate(actionTemplate.id)">
             <option value="" selected="selected" disabled>- Load Template -</option>
         </select>
         <label class="header-delete-btn" ng-click="toggleShowingActionTemplateForm($event)">

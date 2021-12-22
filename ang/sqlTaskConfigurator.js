@@ -1550,7 +1550,8 @@
       controller: function ($scope) {
         $scope.ts = CRM.ts();
 
-        $scope.loadActionTemplate = function(actionTemplate) {
+        $scope.loadActionTemplate = function(actionTemplateId) {
+          let actionTemplate = $scope.getActionTemplate(actionTemplateId);
           if (actionTemplate && actionTemplate.hasOwnProperty('config')) {
             angular.forEach(JSON.parse(actionTemplate.config), function (value, key) {
               $scope.model[key] = value;
@@ -1563,6 +1564,10 @@
             });
           }
         };
+
+        $scope.getActionTemplate = function(actionTemplateId) {
+          return $scope.actionTemplates.find(x => x.id === actionTemplateId);
+        }
 
         $scope.isShowActionTemplateForm = false;
         $scope.toggleShowingActionTemplateForm = function(event) {
@@ -1589,11 +1594,27 @@
       controller: function ($scope) {
         $scope.ts = CRM.ts();
 
+        $scope.isActionTemplateNameEmpty = function (actionTemplate) {
+          return !actionTemplate.name || /^\s*$/.test(actionTemplate.name);
+        }
+
         $scope.updateActionTemplate = function(actionTemplate) {
+          if ($scope.isActionTemplateNameEmpty(actionTemplate)) {
+            let title = ts('Action Template Error');
+            let errorMessage = 'Action Template Name is required';
+            CRM.alert(errorMessage, title, 'error');
+            return false;
+          }
           $scope.saveActionTemplate(actionTemplate);
         };
 
         $scope.createActionTemplate = function(actionTemplate) {
+          if ($scope.isActionTemplateNameEmpty(actionTemplate)) {
+            let title = ts('Action Template Error');
+            let errorMessage = 'Action Template Name is required';
+            CRM.alert(errorMessage, title, 'error');
+            return false;
+          }
           if (actionTemplate.hasOwnProperty('id')) {
             delete actionTemplate.id;
           }
@@ -1612,7 +1633,6 @@
                 CRM.alert(errorMessage, title, 'error');
               } else if (result.hasOwnProperty('values')) {
                 let actionTemplateId = 0;
-                console.log($scope.actionTemplates);
                 for (let i = 0; i < $scope.actionTemplates.length; i++) {
                   if ($scope.actionTemplates[i].id == result.values[0].id) {
                     actionTemplateId = result.values[0].id;
