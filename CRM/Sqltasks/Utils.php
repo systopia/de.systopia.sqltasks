@@ -56,4 +56,17 @@ class CRM_Sqltasks_Utils {
     }
   }
 
+  public static function setCivirulesCustomFields($event) {
+    if (!class_exists('CRM_Civirules_Utils_CustomDataFromPre')) return;
+
+    $event_data = (array) $event;
+
+    $op = $event_data["action"];
+    $object_name = $event_data["entity"];
+    $object_id = $event_data["id"];
+    $params = $event_data["params"];
+
+    CRM_Civirules_Utils_CustomDataFromPre::pre($op, $object_name, $object_id, $params, null);
+  }
+
 }

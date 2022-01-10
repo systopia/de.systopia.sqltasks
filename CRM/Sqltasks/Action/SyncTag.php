@@ -69,28 +69,32 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     $excludeSqlWhere = '';
     if ($this->_columnExists($contact_table, 'exclude')) {
       $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
-      $excludeSqlWhere = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $excludeSqlWhere = 'AND (exclude IS NULL OR exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
     }
 
     // first: remove the contacts that are NOT tagged
     CRM_Core_DAO::executeQuery("
-      DELETE FROM civicrm_entity_tag
-       WHERE tag_id = {$tag_id}
-         AND entity_table = '{$entity_table}'
-         AND entity_id NOT IN (SELECT contact_id FROM `{$contact_table}` {$excludeSqlWhere})");
+      DELETE civicrm_entity_tag
+      FROM civicrm_entity_tag
+      LEFT JOIN `{$contact_table}` ON `{$contact_table}`.contact_id = civicrm_entity_tag.entity_id {$excludeSqlWhere}
+       WHERE civicrm_entity_tag.tag_id = {$tag_id}
+         AND civicrm_entity_tag.entity_table = '{$entity_table}'
+         AND `{$contact_table}`.contact_id IS NULL");
 
     // then: add all missing contacts
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
-        (SELECT
+        SELECT
           '{$entity_table}'  AS entity_table,
-          contact_id         AS entity_id,
+          {$contact_table}.contact_id         AS entity_id,
           {$tag_id}          AS tag_id
         FROM {$contact_table}
-        WHERE contact_id IS NOT NULL {$excludeSql})
-        ON DUPLICATE KEY UPDATE
-          civicrm_entity_tag.id = civicrm_entity_tag.id");
+        LEFT JOIN civicrm_entity_tag ON civicrm_entity_tag.tag_id = {$tag_id}
+                                            AND civicrm_entity_tag.entity_table = '{$entity_table}'
+                                            AND civicrm_entity_tag.entity_id = {$contact_table}.contact_id
+        WHERE contact_id IS NOT NULL AND civicrm_entity_tag.entity_id IS NULL {$excludeSql}
+    ");
   }
 
   /**

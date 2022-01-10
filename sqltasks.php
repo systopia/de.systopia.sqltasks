@@ -27,7 +27,7 @@ function sqltasks_civicrm_config(&$config) {
 
   Civi::dispatcher()->addListener(
     'hook_civicrm_pre',
-    'CRM_CivirulesActions_SQLTask::setCustomFields',
+    'CRM_Sqltasks_Utils::setCivirulesCustomFields',
     1
   );
 }
