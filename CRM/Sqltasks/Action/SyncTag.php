@@ -83,17 +83,21 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
          AND `{$contact_table}`.contact_id IS NULL");
 
     // then: add all missing contacts
+    // this uses ON DUPLICATE KEY UPDATE rather than SELECT DISTINCT as it
+    // seems to perform better in most scenarios
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
-        SELECT
+        (SELECT
           '{$entity_table}'  AS entity_table,
           {$contact_table}.contact_id         AS entity_id,
           {$tag_id}          AS tag_id
         FROM {$contact_table}
-        LEFT JOIN civicrm_entity_tag ON civicrm_entity_tag.tag_id = {$tag_id}
-                                            AND civicrm_entity_tag.entity_table = '{$entity_table}'
-                                            AND civicrm_entity_tag.entity_id = {$contact_table}.contact_id
-        WHERE contact_id IS NOT NULL AND civicrm_entity_tag.entity_id IS NULL {$excludeSql}
+        LEFT JOIN civicrm_entity_tag et ON et.tag_id = {$tag_id}
+                                            AND et.entity_table = '{$entity_table}'
+                                            AND et.entity_id = {$contact_table}.contact_id
+        WHERE contact_id IS NOT NULL AND et.entity_id IS NULL {$excludeSql})
+        ON DUPLICATE KEY UPDATE
+            civicrm_entity_tag.id = civicrm_entity_tag.id
     ");
   }
 
