@@ -158,14 +158,16 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       // compile email
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
       $email = array(
         'id'              => $this->getConfigValue('email_template'),
         // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
         'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$emailDomain}",
         );
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      if (!empty($emailDomain)) {
+        $email['reply_to'] = "do-not-reply@{$emailDomain}";
+      }
 
       // attach the log
       $attach_log = $this->getConfigValue('attach_log');
