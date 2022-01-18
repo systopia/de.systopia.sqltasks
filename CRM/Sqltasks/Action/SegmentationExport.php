@@ -300,7 +300,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       // add all the variables
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+
       $attachment  = array('fullPath'  => $filepath,
                            'mime_type' => 'application/zip',
                            'cleanName' => basename($filepath));
@@ -310,9 +310,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
         // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
         'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$emailDomain}",
         'attachments'     => array($attachment),
         );
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      if (!empty($emailDomain)) {
+        $email['reply_to'] = "do-not-reply@{$emailDomain}";
+      }
       civicrm_api3('MessageTemplate', 'send', $email);
       $this->log("Sent file to '{$email_list}'");
     }

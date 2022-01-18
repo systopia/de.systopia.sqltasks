@@ -350,16 +350,18 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       // add all the variables
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
       // and send the template via email
       $email = array(
           'id'        => $this->getConfigValue('email_template'),
           'to_email'  => $this->getConfigValue('email'),
           'from'      => "SQL Tasks <{$domainEmailAddress}>",
-          'reply_to'  => "do-not-reply@{$emailDomain}",
           'contactId' => CRM_Core_Session::getLoggedInContactID() // sluc: if contactId param is empty, it won't get into hook_civicrm_tokenValues()
         );
+      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+      if (!empty($emailDomain)) {
+        $email['reply_to'] = "do-not-reply@{$emailDomain}";
+      }
 
       // add file as attachment or setup URL token
       if(!$config_offer_link){
