@@ -402,7 +402,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    * @return bool
    * @throws \Exception
    */
-  public function upgrade_200 () {
+  public function upgrade_0200 () {
     $this->createActionTemplatesTable();
     return true;
   }

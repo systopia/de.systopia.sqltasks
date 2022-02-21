@@ -1003,16 +1003,6 @@
     return false;
   }
 
-  function toggleActionTemplateForm() {
-    $scope.isShowActionTemplateForm = false;
-    $scope.isShowActionTemplateForm = !$scope.isShowActionTemplateForm;
-    if ($scope.isShowActionTemplateForm) {
-      CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-template-form-wrap').slideDown("fast");
-    } else {
-      CRM.$(event.currentTarget).closest('.sql-task-action-addition-info-wrap').find('.sql-task-action-template-form-wrap').hide("fast");
-    }
-  }
-
   angular.module(moduleName).directive("successHandler", function() {
     return {
       restrict: "E",

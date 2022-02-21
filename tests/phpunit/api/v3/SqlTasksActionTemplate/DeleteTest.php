@@ -41,7 +41,7 @@ class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCa
    */
   public function testDeleteTemplate() {
     try {
-      $templatesCountBefore = civicrm_api3('SqltasksActionTemplate', 'get')["count"];
+      $templatesCountBefore = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
     } catch (CiviCRM_API3_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
@@ -64,7 +64,7 @@ class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCa
     }
 
     try {
-      $templatesCountAfterDelete = civicrm_api3('SqltasksActionTemplate', 'get')["count"];
+      $templatesCountAfterDelete = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
     } catch (CiviCRM_API3_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }

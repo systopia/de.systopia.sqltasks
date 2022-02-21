@@ -41,7 +41,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
    */
   public function testCreateTemplate() {
     try {
-      $templatesCountBefore = civicrm_api3('SqltasksActionTemplate', 'get')["count"];
+      $templatesCountBefore = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
     } catch (CiviCRM_API3_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
@@ -61,7 +61,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
     $this->assertTrue(isset(reset($templateFromApi['values'])["id"]), "Template ID should be set");
 
     try {
-      $templatesCountAfter = civicrm_api3('SqltasksActionTemplate', 'get')["count"];
+      $templatesCountAfter = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
     } catch (CiviCRM_API3_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
