@@ -31,7 +31,7 @@ class CRM_Sqltasks_Upgrader_Base {
   protected $extensionDir;
 
   /**
-   * @var revisionNumber[]
+   * @var array
    *   sorted numerically
    */
   private $revisions;
@@ -47,10 +47,9 @@ class CRM_Sqltasks_Upgrader_Base {
    */
   public static function instance() {
     if (!self::$instance) {
-      // FIXME auto-generate
       self::$instance = new CRM_Sqltasks_Upgrader(
         'de.systopia.sqltasks',
-        realpath(__DIR__ . '/../../../')
+        E::path()
       );
     }
     return self::$instance;

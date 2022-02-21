@@ -12,6 +12,19 @@
         </label>
     </div>
     <div class="crm-accordion-body" style="display: none;">
+        <div class="sql-task-action-template-wrapper">
+            <action-template-select
+                model='model'
+                action-templates='actionTemplates'
+                action-template='actionTemplate'>
+            </action-template-select>
+            <div class="clear"></div>
+            <action-template-form
+                model='model'
+                action-templates='actionTemplates'
+                action-template='actionTemplate'>
+            </action-template-form>
+        </div>
         <div class="sql-tasks">
             <action-additional-info model='model' fieldPrefix="'segmentation_assign'" index='index'></action-additional-info>
 

@@ -383,4 +383,27 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     return true;
   }
 
+  /**
+   * Creates table `civicrm_sqltasks_action_template`
+   */
+  private function createActionTemplatesTable() {
+    $tableName = "civicrm_sqltasks_action_template";
+    $tableExists = CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE '$tableName';");
+
+    if (!$tableExists) {
+      $this->ctx->log->info("Creating table `$tableName`");
+      $this->executeSqlFile('sql/civicrm_sqltasks_action_template.sql');
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+    }
+  }
+
+  /**
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0200 () {
+    $this->createActionTemplatesTable();
+    return true;
+  }
 }

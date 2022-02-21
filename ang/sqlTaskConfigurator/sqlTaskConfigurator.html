@@ -384,44 +384,44 @@
                         <div ng-repeat="action in config.actions track by $index">
                             <div ng-switch="action.type">
                                 <div ng-switch-when="CRM_Sqltasks_Action_RunSQL">
-                                    <run-sql model='action' index='$index'></run-sql>
+                                    <run-sql model='action' index='$index' action-templates='actionTemplates'></run-sql>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_SegmentationAssign">
-                                    <segmentation-assign model='action' index='$index'></segmentation-assign>
+                                    <segmentation-assign model='action' index='$index' action-templates='actionTemplates'></segmentation-assign>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_CreateActivity">
-                                    <create-activity model='action' index='$index'></create-activity>
+                                    <create-activity model='action' index='$index' action-templates='actionTemplates'></create-activity>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_APICall">
-                                    <api-call model='action' index='$index'></api-call>
+                                    <api-call model='action' index='$index' action-templates='actionTemplates'></api-call>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_CSVExport">
-                                    <csv-export model='action' index='$index'></csv-export>
+                                    <csv-export model='action' index='$index' action-templates='actionTemplates'></csv-export>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_SyncTag">
-                                    <sync-tag model='action' index='$index'></sync-tag>
+                                    <sync-tag model='action' index='$index' action-templates='actionTemplates'></sync-tag>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_SyncGroup">
-                                    <sync-group model='action' index='$index'></sync-group>
+                                    <sync-group model='action' index='$index' action-templates='actionTemplates'></sync-group>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_SegmentationExport">
-                                    <segmentation-export model='action' index='$index'></segmentation-export>
+                                    <segmentation-export model='action' index='$index' action-templates='actionTemplates'></segmentation-export>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_CallTask">
-                                    <call-task model='action' index='$index'></call-task>
+                                    <call-task model='action' index='$index' action-templates='actionTemplates'></call-task>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_PostSQL">
-                                    <post-sql model='action' index='$index'></post-sql>
+                                    <post-sql model='action' index='$index' action-templates='actionTemplates'></post-sql>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_SuccessHandler">
-                                    <success-handler model='action' index='$index'></success-handler>
+                                    <success-handler model='action' index='$index' action-templates='actionTemplates'></success-handler>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_ErrorHandler">
-                                    <error-handler model='action' index='$index'></error-handler>
+                                    <error-handler model='action' index='$index' action-templates='actionTemplates'></error-handler>
                                 </div>
-                              <div ng-switch-when="CRM_Sqltasks_Action_RunPHP">
-                                <run-php model='action' index='$index'></run-php>
-                              </div>
+                                <div ng-switch-when="CRM_Sqltasks_Action_RunPHP">
+                                  <run-php model='action' index='$index' action-templates='actionTemplates'></run-php>
+                                </div>
                                 <div ng-switch-default></div>
                             </div>
                         </div>
