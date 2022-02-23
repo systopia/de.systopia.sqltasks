@@ -159,7 +159,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       $email_list = $this->getConfigValue('email');
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
       $email = array(
-        'id'              => $this->getConfigValue('email_template'),
+        'id'              => (int) $this->getConfigValue('email_template'),
         // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
         'from'            => "SQL Tasks <{$domainEmailAddress}>",

@@ -2,13 +2,14 @@
 
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base class for task tests
  *
  * @group headless
  */
-abstract class CRM_Sqltasks_AbstractTaskTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface {
+abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements HeadlessInterface, HookInterface {
 
   /**
    * @var array

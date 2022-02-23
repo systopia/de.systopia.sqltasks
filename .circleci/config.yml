@@ -50,7 +50,7 @@ commands:
         type: string
         default: master
     steps:
-      - run: su - buildkit -c "cd /buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext/$CIRCLE_PROJECT_REPONAME && phpunit5"
+      - run: su - buildkit -c "cd /buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext/$CIRCLE_PROJECT_REPONAME && phpunit7"
   run_all:
     description: "Run all steps"
     parameters:
