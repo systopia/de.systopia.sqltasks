@@ -51,13 +51,17 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
     // Put some data in, read it back out, and delete it.
 
     $created = $this->callAPISuccess('SqltasksActionTemplate', 'create', [
-      'name' => "ActionTemplate",
+      'name'   => 'ActionTemplate',
+      'type'   => 'CRM_Sqltasks_Action_RunSQL',
+      'config' => '{}',
     ]);
     $this->assertTrue(is_numeric($created['id']));
 
     $get = $this->callAPISuccess('SqltasksActionTemplate', 'get', []);
     $this->assertEquals(1, $get['count']);
     $this->assertEquals("ActionTemplate", $get['values'][$created['id']]['name']);
+    $this->assertEquals("CRM_Sqltasks_Action_RunSQL", $get['values'][$created['id']]['type']);
+    $this->assertEquals("{}", $get['values'][$created['id']]['config']);
 
     $this->callAPISuccess('SqltasksActionTemplate', 'delete', [
       'id' => $created['id'],
