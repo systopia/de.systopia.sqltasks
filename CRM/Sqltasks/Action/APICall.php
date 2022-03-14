@@ -160,7 +160,14 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $this->resetHasExecuted();
     $entity = $this->getConfigValue('entity');
     $action = $this->getConfigValue('action');
+    $store_api_results = $this->getConfigValue('store_api_results');
+    $data_table = $this->getDataTable();
     $parameter_specs = $this->getParameters();
+
+    if ($store_api_results) {
+      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `id` INT AUTO_INCREMENT PRIMARY KEY");
+      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `api_result` TEXT");
+    }
 
     // statistics
     $success_counter = 0;
@@ -168,7 +175,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $more_fails_counter = 0;
     $skip_counter = 0;
 
-    $data_table = $this->getDataTable();
     $excludeSql = '';
     $is_need_to_skip = false;
     if ($this->_columnExists($data_table, 'exclude')) {
@@ -200,6 +206,12 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
           $this->log("API call failed. Next API call(s) will be skipped.");
           $is_need_to_skip = true;
         }
+      }
+
+      if ($store_api_results) {
+        $record_id = $query->id;
+        $result_json = json_encode($result);
+        CRM_Core_DAO::executeQuery("UPDATE `$data_table` SET `api_result` = '$result_json' WHERE `id` = $record_id");
       }
 
       // process result

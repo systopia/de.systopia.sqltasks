@@ -27,4 +27,34 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_Abstr
     parent::setUp();
   }
 
+  protected static function createRandomTestContact() {
+    $uniqueID = bin2hex(random_bytes(8));
+
+    $contactResult = civicrm_api3('Contact', 'create', [
+      'first_name'   => 'Test',
+      'last_name'    => $uniqueID,
+      'contact_type' => 'Individual',
+      'email'        => "test-$uniqueID@example.com",
+    ]);
+
+    return (int) $contactResult['id'];
+  }
+
+  protected static function getCreateTempContactTableAction(string $tableName, array $contactIDs) {
+    $sql = "
+      DROP TABLE IF EXISTS `$tableName`;
+      CREATE TABLE `$tableName` (contact_id INT);
+    ";
+
+    foreach ($contactIDs as $contactID) {
+      $sql .= "INSERT INTO `$tableName` VALUES ($contactID);\n";
+    }
+
+    return [
+      'type'    => 'CRM_Sqltasks_Action_RunSQL',
+      'enabled' => TRUE,
+      'script'  => $sql,
+    ];
+  }
+
 }
