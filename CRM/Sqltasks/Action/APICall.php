@@ -211,7 +211,11 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       if ($store_api_results) {
         $record_id = $query->id;
         $result_json = json_encode($result);
-        CRM_Core_DAO::executeQuery("UPDATE `$data_table` SET `api_result` = '$result_json' WHERE `id` = $record_id");
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$data_table` SET `api_result` = %1 WHERE `id` = $record_id",
+          [ 1 => [$result_json, 'String'] ]
+        );
       }
 
       // process result
