@@ -40,14 +40,16 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_Abstr
     return (int) $contactResult['id'];
   }
 
-  protected static function getCreateTempContactTableAction(string $tableName, array $contactIDs) {
+  protected static function getCreateTempContactTableAction(string $tableName, array $rows) {
     $sql = "
       DROP TABLE IF EXISTS `$tableName`;
-      CREATE TABLE `$tableName` (contact_id INT);
+      CREATE TABLE `$tableName` (contact_id INT, exclude BOOL);
     ";
 
-    foreach ($contactIDs as $contactID) {
-      $sql .= "INSERT INTO `$tableName` VALUES ($contactID);\n";
+    foreach ($rows as $row) {
+      $contactID = $row['contact_id'];
+      $exclude = $row['exclude'];
+      $sql .= "INSERT INTO `$tableName` (contact_id, exclude) VALUES ($contactID, $exclude);\n";
     }
 
     return [

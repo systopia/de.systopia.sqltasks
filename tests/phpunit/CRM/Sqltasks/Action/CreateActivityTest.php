@@ -6,6 +6,34 @@
  * @group headless
  */
 class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_AbstractActionTest {
+  public $campaignID;
+
+  public function setUp() {
+    parent::setUp();
+
+    $campaignResult = $this->callAPISuccess('Campaign', 'create', [
+      'title' => 'Test Campaign',
+    ]);
+
+    $this->campaignID = (int) $campaignResult['id'];
+
+    $this->callAPISuccess('OptionValue', 'create', [
+      'label'           => 'Exclusion Record',
+      'name'            => 'Exclusion Record',
+      'option_group_id' => 'activity_type',
+    ]);
+
+    CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `civicrm_segmentation_exclude`");
+
+    CRM_Core_DAO::executeQuery(
+      "CREATE TABLE `civicrm_segmentation_exclude` (campaign_id INT, contact_id INT)"
+    );
+  }
+
+  public function tearDown() {
+    CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `civicrm_segmentation_exclude`");
+    parent::tearDown();
+  }
 
   public function testCreateActivity() {
     $data = [
@@ -52,10 +80,23 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
 
   public function testStoreActivityID_MassActivity() {
     $tmpContactTable = 'tmp_test_action_createactivity';
-    $contactIDs = [];
+    $tableRows = [];
 
     for ($i = 0; $i < 3; $i++) {
-      $contactIDs[] = self::createRandomTestContact();
+      $contactID = self::createRandomTestContact();
+
+      $tableRows[] = [
+        'contact_id' => $contactID,
+        'exclude'    => $i % 2,
+      ];
+
+      CRM_Core_DAO::executeQuery(
+        "INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)",
+        [
+          1 => [$this->campaignID, 'Integer'],
+          2 => [$contactID, 'Integer'],
+        ]
+      );
     }
 
     foreach ([TRUE, FALSE] as $use_api) {
@@ -65,10 +106,11 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       $config = [
         'version' => CRM_Sqltasks_Config_Format::CURRENT,
         'actions' => [
-          self::getCreateTempContactTableAction($tmpContactTable, $contactIDs),
+          self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
           [
             'type'               => 'CRM_Sqltasks_Action_CreateActivity',
             'activity_type_id'   => '3',
+            'campaign_id'        => $this->campaignID,
             'contact_table'      => $tmpContactTable,
             'enabled'            => TRUE,
             'individual'         => FALSE,
@@ -87,7 +129,9 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         'subject' => $activitySubject,
       ]);
 
-      $queryResult = CRM_Core_DAO::executeQuery("SELECT `activity_id`, `contact_id` FROM `$tmpContactTable`");
+      $queryResult = CRM_Core_DAO::executeQuery(
+        "SELECT `activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
+      );
 
       while ($queryResult->fetch()) {
         $this->assertObjectHasAttribute(
@@ -95,6 +139,25 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
           $queryResult,
           'Temporary table should have a activity_id column'
         );
+
+        $this->assertNotNull(
+          $queryResult->activity_id,
+          'Field activity_id should not be null'
+        );
+
+        if ((int) $queryResult->exclude){
+          $exclActivity = $this->callAPISuccess('Activity', 'getsingle', [
+            'id' => $queryResult->activity_id,
+          ]);
+
+          $this->assertEquals(
+            CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_Activity', 'activity_type_id', 'Exclusion Record'),
+            $exclActivity['activity_type_id'],
+            'Associated activity should be of type "Exclusion Record"'
+          );
+
+          continue;
+        }
 
         $this->assertEquals(
           $activityResult['id'],
@@ -109,20 +172,34 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
 
   public function testStoreActivityID_IndividualActivities() {
     $tmpContactTable = 'tmp_test_action_createactivity';
-    $contactIDs = [];
+    $tableRows = [];
 
     for ($i = 0; $i < 3; $i++) {
-      $contactIDs[] = self::createRandomTestContact();
+      $contactID = self::createRandomTestContact();
+
+      $tableRows[] = [
+        'contact_id' => $contactID,
+        'exclude'    => $i % 2,
+      ];
+
+      CRM_Core_DAO::executeQuery(
+        "INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)",
+        [
+          1 => [$this->campaignID, 'Integer'],
+          2 => [$contactID, 'Integer'],
+        ]
+      );
     }
 
     foreach ([TRUE, FALSE] as $use_api) {
       $config = [
         'version' => CRM_Sqltasks_Config_Format::CURRENT,
         'actions' => [
-          self::getCreateTempContactTableAction($tmpContactTable, $contactIDs),
+          self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
           [
             'type'               => 'CRM_Sqltasks_Action_CreateActivity',
             'activity_type_id'   => '3',
+            'campaign_id'        => $this->campaignID,
             'contact_table'      => $tmpContactTable,
             'enabled'            => TRUE,
             'individual'         => TRUE,
@@ -137,7 +214,9 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
 
       $this->createAndExecuteTask($config);
 
-      $queryResult = CRM_Core_DAO::executeQuery("SELECT `activity_id`, `contact_id` FROM `$tmpContactTable`");
+      $queryResult = CRM_Core_DAO::executeQuery(
+        "SELECT `activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
+      );
 
       while ($queryResult->fetch()) {
         $this->assertObjectHasAttribute(
@@ -150,6 +229,20 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
           $queryResult->activity_id,
           'Field activity_id should not be null'
         );
+
+        if ((int) $queryResult->exclude) {
+          $exclActivity = $this->callAPISuccess('Activity', 'getsingle', [
+            'id' => $queryResult->activity_id,
+          ]);
+
+          $this->assertEquals(
+            CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_Activity', 'activity_type_id', 'Exclusion Record'),
+            $exclActivity['activity_type_id'],
+            'Associated activity should be of type "Exclusion Record"'
+          );
+
+          continue;
+        }
 
         $activityContactCount = $this->callAPISuccessGetCount('ActivityContact', [
           'activity_id'    => $queryResult->activity_id,

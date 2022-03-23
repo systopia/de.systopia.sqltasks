@@ -93,10 +93,13 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
   public function testStoreApiResult() {
     $tmpContactTable = 'tmp_test_action_apicall';
-    $contactIDs = [];
+    $tableRows = [];
 
     for ($i = 0; $i < 3; $i++) {
-      $contactIDs[] = self::createRandomTestContact();
+      $tableRows[] = [
+        'contact_id' => self::createRandomTestContact(),
+        'exclude'    => $i === 2 ? 1 : 0,
+      ];
     }
 
     $phoneNumber = self::generateRandomPhoneNumber();
@@ -109,7 +112,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
-        self::getCreateTempContactTableAction($tmpContactTable, $contactIDs),
+        self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
         [
           'type'              => 'CRM_Sqltasks_Action_APICall',
           'action'            => 'create',
@@ -128,7 +131,9 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       'phone' => $phoneNumber,
     ]);
 
-    $queryResult = CRM_Core_DAO::executeQuery("SELECT `contact_id`, `api_result` FROM `$tmpContactTable`");
+    $queryResult = CRM_Core_DAO::executeQuery(
+      "SELECT `contact_id`, `api_result`, `exclude` FROM `$tmpContactTable`"
+    );
 
     while ($queryResult->fetch()) {
       $this->assertObjectHasAttribute(
@@ -136,6 +141,15 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
         $queryResult,
         'Temporary table should have a api_result column'
       );
+
+      if ((int) $queryResult->exclude) {
+        $this->assertNull(
+          $queryResult->api_result,
+          'Field api_result should be null'
+        );
+
+        continue;
+      }
 
       $this->assertNotNull(
         $queryResult->api_result,

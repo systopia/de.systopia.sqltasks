@@ -120,7 +120,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     if ($store_activity_ids) {
-      CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `activity_id` = $activity_id");
+      CRM_Core_DAO::executeQuery(
+        "UPDATE `$contact_table` SET `activity_id` = $activity_id WHERE 1 $excludeSql"
+      );
     }
 
     if ($use_api) {
@@ -233,6 +235,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     if (!$this->_columnExists($contact_table, 'exclude')) {
       return;
     }
+
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+
     $count = CRM_Core_DAO::singleValueQuery("
       SELECT
         COUNT(*) AS contact_count
@@ -267,6 +272,12 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
         }
       }
       $activity = civicrm_api3('Activity', 'create', $activity_data);
+
+      if ($store_activity_ids) {
+        $activity_id = (int) $activity['id'];
+        CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `activity_id` = $activity_id WHERE `exclude` = 1");
+      }
+
       $query = "INSERT IGNORE INTO civicrm_activity_contact
                    (SELECT
                       NULL               AS id,
