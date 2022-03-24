@@ -165,8 +165,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $parameter_specs = $this->getParameters();
 
     if ($store_api_results) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `id` INT AUTO_INCREMENT PRIMARY KEY");
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `api_result` TEXT");
+      $data_table_ai_col = self::addAutoIncrementColumn($data_table);
+      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `sqltask_api_result` TEXT");
     }
 
     // statistics
@@ -209,11 +209,11 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       }
 
       if ($store_api_results) {
-        $record_id = $query->id;
+        $record_id = $query->$data_table_ai_col;
         $result_json = json_encode($result);
 
         CRM_Core_DAO::executeQuery(
-          "UPDATE `$data_table` SET `api_result` = %1 WHERE `id` = $record_id",
+          "UPDATE `$data_table` SET `sqltask_api_result` = %1 WHERE `$data_table_ai_col` = $record_id",
           [ 1 => [$result_json, 'String'] ]
         );
       }

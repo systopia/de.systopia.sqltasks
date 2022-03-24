@@ -130,24 +130,24 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       ]);
 
       $queryResult = CRM_Core_DAO::executeQuery(
-        "SELECT `activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
+        "SELECT `sqltask_activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
       );
 
       while ($queryResult->fetch()) {
         $this->assertObjectHasAttribute(
-          'activity_id',
+          'sqltask_activity_id',
           $queryResult,
-          'Temporary table should have a activity_id column'
+          'Temporary table should have a sqltask_activity_id column'
         );
 
         $this->assertNotNull(
-          $queryResult->activity_id,
-          'Field activity_id should not be null'
+          $queryResult->sqltask_activity_id,
+          'Field sqltask_activity_id should not be null'
         );
 
         if ((int) $queryResult->exclude){
           $exclActivity = $this->callAPISuccess('Activity', 'getsingle', [
-            'id' => $queryResult->activity_id,
+            'id' => $queryResult->sqltask_activity_id,
           ]);
 
           $this->assertEquals(
@@ -161,7 +161,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
 
         $this->assertEquals(
           $activityResult['id'],
-          $queryResult->activity_id,
+          $queryResult->sqltask_activity_id,
           'Row should contain the ID of the created activity'
         );
       }
@@ -215,24 +215,24 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       $this->createAndExecuteTask($config);
 
       $queryResult = CRM_Core_DAO::executeQuery(
-        "SELECT `activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
+        "SELECT `sqltask_activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
       );
 
       while ($queryResult->fetch()) {
         $this->assertObjectHasAttribute(
-          'activity_id',
+          'sqltask_activity_id',
           $queryResult,
-          'Temporary table should have a activity_id column'
+          'Temporary table should have a sqltask_activity_id column'
         );
 
         $this->assertNotNull(
-          $queryResult->activity_id,
-          'Field activity_id should not be null'
+          $queryResult->sqltask_activity_id,
+          'Field sqltask_activity_id should not be null'
         );
 
         if ((int) $queryResult->exclude) {
           $exclActivity = $this->callAPISuccess('Activity', 'getsingle', [
-            'id' => $queryResult->activity_id,
+            'id' => $queryResult->sqltask_activity_id,
           ]);
 
           $this->assertEquals(
@@ -245,7 +245,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         }
 
         $activityContactCount = $this->callAPISuccessGetCount('ActivityContact', [
-          'activity_id'    => $queryResult->activity_id,
+          'activity_id'    => $queryResult->sqltask_activity_id,
           'contact_id'     => $queryResult->contact_id,
           'record_type_id' => "Activity Targets",
         ]);

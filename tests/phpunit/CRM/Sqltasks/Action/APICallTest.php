@@ -132,31 +132,31 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
     ]);
 
     $queryResult = CRM_Core_DAO::executeQuery(
-      "SELECT `contact_id`, `api_result`, `exclude` FROM `$tmpContactTable`"
+      "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"
     );
 
     while ($queryResult->fetch()) {
       $this->assertObjectHasAttribute(
-        'api_result',
+        'sqltask_api_result',
         $queryResult,
         'Temporary table should have a api_result column'
       );
 
       if ((int) $queryResult->exclude) {
         $this->assertNull(
-          $queryResult->api_result,
-          'Field api_result should be null'
+          $queryResult->sqltask_api_result,
+          'Field sqltask_api_result should be null'
         );
 
         continue;
       }
 
       $this->assertNotNull(
-        $queryResult->api_result,
-        'Field api_result should not be null'
+        $queryResult->sqltask_api_result,
+        'Field sqltask_api_result should not be null'
       );
 
-      $apiResult = json_decode($queryResult->api_result, TRUE);
+      $apiResult = json_decode($queryResult->sqltask_api_result, TRUE);
 
       $this->assertArrayHasKey('is_error', $apiResult);
 

@@ -21,6 +21,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
+  private $contact_table_ai_col;
 
   /**
    * Get identifier string
@@ -53,8 +54,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     if ($this->getConfigValue('store_activity_ids')) {
       $contact_table = $this->getContactTable();
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `id` INT AUTO_INCREMENT PRIMARY KEY");
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `activity_id` INT");
+      $this->contact_table_ai_col = self::addAutoIncrementColumn($contact_table);
+      CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `sqltask_activity_id` INT");
     }
 
     $individual = $this->getConfigValue('individual');
@@ -121,7 +122,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     if ($store_activity_ids) {
       CRM_Core_DAO::executeQuery(
-        "UPDATE `$contact_table` SET `activity_id` = $activity_id WHERE 1 $excludeSql"
+        "UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE 1 $excludeSql"
       );
     }
 
@@ -224,8 +225,12 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
       // Set the activity_id in the temporary contact table
       if ($store_activity_ids) {
-        $record_id = (int) $record->id;
-        CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `activity_id` = $activity_id WHERE `id` = $record_id");
+        $contact_table_ai_col = $this->contact_table_ai_col;
+        $record_id = (int) $record->$contact_table_ai_col;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE `$contact_table_ai_col` = $record_id"
+        );
       }
     }
   }
@@ -275,7 +280,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
       if ($store_activity_ids) {
         $activity_id = (int) $activity['id'];
-        CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `activity_id` = $activity_id WHERE `exclude` = 1");
+        CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE `exclude` = 1");
       }
 
       $query = "INSERT IGNORE INTO civicrm_activity_contact
