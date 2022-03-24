@@ -120,7 +120,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
           'entity'            => 'Phone',
           'parameters'        => self::serializeApiCallParams($apiCallParams),
           'store_api_results' => TRUE,
-          'table'             => 'tmp_test_action_apicall',
+          'table'             => $tmpContactTable,
         ],
       ],
     ];

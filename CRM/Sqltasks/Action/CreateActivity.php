@@ -54,6 +54,11 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     if ($this->getConfigValue('store_activity_ids')) {
       $contact_table = $this->getContactTable();
+
+      if (strpos($contact_table, 'civicrm_') === 0) {
+        throw new CRM_Core_Exception("Cannot alter table $contact_table");
+      }
+
       $this->contact_table_ai_col = self::addAutoIncrementColumn($contact_table);
       CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `sqltask_activity_id` INT");
     }

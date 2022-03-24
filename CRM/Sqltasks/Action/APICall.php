@@ -165,6 +165,10 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $parameter_specs = $this->getParameters();
 
     if ($store_api_results) {
+      if (strpos($data_table, 'civicrm_') === 0) {
+        throw new CRM_Core_Exception("Cannot alter table $data_table");
+      }
+
       $data_table_ai_col = self::addAutoIncrementColumn($data_table);
       CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `sqltask_api_result` TEXT");
     }
