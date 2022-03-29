@@ -21,6 +21,8 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
+  const ACTIVITY_ID_COLUMN = 'sqltask_activity_id';
+
   private $contact_table_ai_col;
 
   /**
@@ -60,7 +62,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
 
       $this->contact_table_ai_col = self::addAutoIncrementColumn($contact_table);
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `sqltask_activity_id` INT");
+      $this->addActivityIdColumn($contact_table);
     }
 
     $individual = $this->getConfigValue('individual');
@@ -126,8 +128,10 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     if ($store_activity_ids) {
+      $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
       CRM_Core_DAO::executeQuery(
-        "UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE 1 $excludeSql"
+        "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE 1 $excludeSql"
       );
     }
 
@@ -158,7 +162,6 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
     }
   }
-
 
   /**
    * Generate individual activities
@@ -232,9 +235,10 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       if ($store_activity_ids) {
         $contact_table_ai_col = $this->contact_table_ai_col;
         $record_id = (int) $record->$contact_table_ai_col;
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
 
         CRM_Core_DAO::executeQuery(
-          "UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE `$contact_table_ai_col` = $record_id"
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `$contact_table_ai_col` = $record_id"
         );
       }
     }
@@ -285,7 +289,11 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
       if ($store_activity_ids) {
         $activity_id = (int) $activity['id'];
-        CRM_Core_DAO::executeQuery("UPDATE `$contact_table` SET `sqltask_activity_id` = $activity_id WHERE `exclude` = 1");
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `exclude` = 1"
+        );
       }
 
       $query = "INSERT IGNORE INTO civicrm_activity_contact
@@ -367,6 +375,29 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     return date('YmdHis', strtotime($string));
+  }
+
+  /**
+   * Add a column to the temporary contact table in which the IDs of the
+   * created activities will be stored
+   *
+   * @param string $contact_table - Name of the table
+   *
+   * @return void
+   */
+  protected function addActivityIdColumn(string $contact_table) {
+    $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+    $columnsResult = CRM_Core_DAO::executeQuery(
+      "SHOW COLUMNS FROM `$contact_table` LIKE '$activity_id_column'"
+    );
+
+    if ($columnsResult->fetch()) {
+      $this->log("WARNING: Overwriting existing values for '$activity_id_column' in '$contact_table'");
+      return;
+    }
+
+    CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `$activity_id_column` INT");
   }
 
 }

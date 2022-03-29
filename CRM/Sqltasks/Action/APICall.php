@@ -43,6 +43,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
 
+  const API_RESULT_COLUMN = 'sqltask_api_result';
+
   /**
    * Get identifier string
    */
@@ -170,7 +172,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       }
 
       $data_table_ai_col = self::addAutoIncrementColumn($data_table);
-      CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `sqltask_api_result` TEXT");
+      $this->addApiResultColumn($data_table);
     }
 
     // statistics
@@ -215,9 +217,10 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
       if ($store_api_results) {
         $record_id = $query->$data_table_ai_col;
         $result_json = json_encode($result);
+        $api_result_column = self::API_RESULT_COLUMN;
 
         CRM_Core_DAO::executeQuery(
-          "UPDATE `$data_table` SET `sqltask_api_result` = %1 WHERE `$data_table_ai_col` = $record_id",
+          "UPDATE `$data_table` SET `$api_result_column` = %1 WHERE `$data_table_ai_col` = $record_id",
           [ 1 => [$result_json, 'String'] ]
         );
       }
@@ -291,6 +294,29 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   protected function reportError() {
     $this->task->incrementErrorCounter();
     $this->task->setErrorStatus();
+  }
+
+  /**
+   * Add a column to the temporary data table in which the results of the
+   * API calls will be stored
+   *
+   * @param string $data_table - Name of the table
+   *
+   * @return void
+   */
+  protected function addApiResultColumn(string $data_table) {
+    $api_result_column = self::API_RESULT_COLUMN;
+
+    $columnsResult = CRM_Core_DAO::executeQuery(
+      "SHOW COLUMNS FROM `$data_table` LIKE '$api_result_column'"
+    );
+
+    if ($columnsResult->fetch()) {
+      $this->log("WARNING: Overwriting existing values for '$api_result_column' in '$data_table'");
+      return;
+    }
+
+    CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `$api_result_column` TEXT");
   }
 
 }
