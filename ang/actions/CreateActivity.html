@@ -42,8 +42,12 @@
                 fieldid="'activity_individual' + index">
             </check-box>
 
-            <check-box model="model['store_activity_ids']" fieldlabel="ts('Store Activity IDs')"
-                fieldid="'activity_store_ids' + index">
+            <check-box
+                model="model['store_activity_ids']"
+                fieldid="'activity_store_ids' + index"
+                fieldlabel="ts('Store Activity IDs')"
+                helpaction="onInfoPress('Store Activity IDs', 'id-activity-store-ids', 'CRM\/Sqltasks\/Action\/CreateActivity')"
+                showHelpIcon="true">
             </check-box>
 
             <hr>

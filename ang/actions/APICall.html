@@ -55,9 +55,12 @@
 							  helpaction='onInfoPress("Error Handling", "id-handle-api-errors", "CRM\/Sqltasks\/Action\/APICall")'>
 			</ordinary-select2>
 
-            <check-box model="model['store_api_results']"
-                       fieldlabel="ts('Store API results')"
-                       fieldid="'api_call_store_results' + index">
+            <check-box
+                model="model['store_api_results']"
+                fieldid="'api_call_store_results' + index"
+                fieldlabel="ts('Store API results')"
+                helpaction="onInfoPress('Store API results', 'id-api-store-results', 'CRM\/Sqltasks\/Action\/APICall')"
+                showHelpIcon="true">
             </check-box>
 
             <text-area isrequired="getBooleanFromNumber(model['parameters'])" model="model['parameters']"
