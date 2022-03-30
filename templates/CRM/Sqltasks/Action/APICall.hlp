@@ -58,3 +58,7 @@
      </li>
   </ul>
 {/htxt}
+
+{htxt id='id-api-store-results'}
+  <p>{ts domain="de.systopia.sqltasks"}This will add a column called <code>sqltask_api_result</code> containing the results of this action's API calls (formatted as JSON) to the data table.{/ts}</p>
+{/htxt}

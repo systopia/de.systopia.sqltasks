@@ -47,17 +47,21 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
    * Note how the function name begins with the word "test".
    */
   public function testCreateGetDelete() {
-    // Boilerplate entity has one data field -- 'contact_id'.
+    // Boilerplate entity has one data field -- 'name'.
     // Put some data in, read it back out, and delete it.
 
     $created = $this->callAPISuccess('SqltasksActionTemplate', 'create', [
-      'contact_id' => 1,
+      'name'   => 'ActionTemplate',
+      'type'   => 'CRM_Sqltasks_Action_RunSQL',
+      'config' => '{}',
     ]);
     $this->assertTrue(is_numeric($created['id']));
 
     $get = $this->callAPISuccess('SqltasksActionTemplate', 'get', []);
     $this->assertEquals(1, $get['count']);
-    $this->assertEquals(1, $get['values'][$created['id']]['contact_id']);
+    $this->assertEquals("ActionTemplate", $get['values'][$created['id']]['name']);
+    $this->assertEquals("CRM_Sqltasks_Action_RunSQL", $get['values'][$created['id']]['type']);
+    $this->assertEquals("{}", $get['values'][$created['id']]['config']);
 
     $this->callAPISuccess('SqltasksActionTemplate', 'delete', [
       'id' => $created['id'],

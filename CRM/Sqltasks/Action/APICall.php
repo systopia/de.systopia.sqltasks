@@ -43,6 +43,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
 
+  const API_RESULT_COLUMN = 'sqltask_api_result';
+
   /**
    * Get identifier string
    */
@@ -160,7 +162,18 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $this->resetHasExecuted();
     $entity = $this->getConfigValue('entity');
     $action = $this->getConfigValue('action');
+    $store_api_results = $this->getConfigValue('store_api_results');
+    $data_table = $this->getDataTable();
     $parameter_specs = $this->getParameters();
+
+    if ($store_api_results) {
+      if (strpos($data_table, 'civicrm_') === 0) {
+        throw new CRM_Core_Exception("Cannot alter table $data_table");
+      }
+
+      $data_table_ai_col = self::addAutoIncrementColumn($data_table);
+      $this->addApiResultColumn($data_table);
+    }
 
     // statistics
     $success_counter = 0;
@@ -168,7 +181,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $more_fails_counter = 0;
     $skip_counter = 0;
 
-    $data_table = $this->getDataTable();
     $excludeSql = '';
     $is_need_to_skip = false;
     if ($this->_columnExists($data_table, 'exclude')) {
@@ -200,6 +212,17 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
           $this->log("API call failed. Next API call(s) will be skipped.");
           $is_need_to_skip = true;
         }
+      }
+
+      if ($store_api_results) {
+        $record_id = $query->$data_table_ai_col;
+        $result_json = json_encode($result);
+        $api_result_column = self::API_RESULT_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$data_table` SET `$api_result_column` = %1 WHERE `$data_table_ai_col` = $record_id",
+          [ 1 => [$result_json, 'String'] ]
+        );
       }
 
       // process result
@@ -271,6 +294,29 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   protected function reportError() {
     $this->task->incrementErrorCounter();
     $this->task->setErrorStatus();
+  }
+
+  /**
+   * Add a column to the temporary data table in which the results of the
+   * API calls will be stored
+   *
+   * @param string $data_table - Name of the table
+   *
+   * @return void
+   */
+  protected function addApiResultColumn(string $data_table) {
+    $api_result_column = self::API_RESULT_COLUMN;
+
+    $columnsResult = CRM_Core_DAO::executeQuery(
+      "SHOW COLUMNS FROM `$data_table` LIKE '$api_result_column'"
+    );
+
+    if ($columnsResult->fetch()) {
+      $this->log("WARNING: Overwriting existing values for '$api_result_column' in '$data_table'");
+      return;
+    }
+
+    CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `$api_result_column` TEXT");
   }
 
 }

@@ -21,6 +21,9 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
+  const ACTIVITY_ID_COLUMN = 'sqltask_activity_id';
+
+  private $contact_table_ai_col;
 
   /**
    * Get identifier string
@@ -50,6 +53,18 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
    */
   public function execute() {
     $this->resetHasExecuted();
+
+    if ($this->getConfigValue('store_activity_ids')) {
+      $contact_table = $this->getContactTable();
+
+      if (strpos($contact_table, 'civicrm_') === 0) {
+        throw new CRM_Core_Exception("Cannot alter table $contact_table");
+      }
+
+      $this->contact_table_ai_col = self::addAutoIncrementColumn($contact_table);
+      $this->addActivityIdColumn($contact_table);
+    }
+
     $individual = $this->getConfigValue('individual');
     if ($individual) {
       $this->createIndividualActivities();
@@ -63,8 +78,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
    * Generate individual activities
    */
   public function createMassActivity() {
-    $use_api       = $this->getConfigValue('use_api');
-    $contact_table = $this->getContactTable();
+    $use_api            = $this->getConfigValue('use_api');
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+    $contact_table      = $this->getContactTable();
 
     // load one line for the tokens
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} LIMIT 1;");
@@ -103,11 +119,20 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
     }
     $activity = civicrm_api3('Activity', 'create', $activity_data);
+    $activity_id = (int) $activity['id'];
 
     $excludeSql = '';
     if ($this->_columnExists($contact_table, 'exclude')) {
       $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
+    }
+
+    if ($store_activity_ids) {
+      $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+      CRM_Core_DAO::executeQuery(
+        "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE 1 $excludeSql"
+      );
     }
 
     if ($use_api) {
@@ -138,13 +163,13 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
   }
 
-
   /**
    * Generate individual activities
    */
   public function createIndividualActivities() {
-    $use_api       = $this->getConfigValue('use_api');
-    $contact_table = $this->getContactTable();
+    $use_api            = $this->getConfigValue('use_api');
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+    $contact_table      = $this->getContactTable();
 
     // static activity parameters
     $activity_template = array(
@@ -199,11 +224,22 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
           unset($activity[$field]);
         }
       }
-      if ($use_api) {
-        civicrm_api3('Activity', 'create', $activity);
 
+      if ($use_api) {
+        $activity_id = (int) civicrm_api3('Activity', 'create', $activity)['id'];
       } else {
-        $this->createActivitySQL($activity);
+        $activity_id = $this->createActivitySQL($activity);
+      }
+
+      // Set the activity_id in the temporary contact table
+      if ($store_activity_ids) {
+        $contact_table_ai_col = $this->contact_table_ai_col;
+        $record_id = (int) $record->$contact_table_ai_col;
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `$contact_table_ai_col` = $record_id"
+        );
       }
     }
   }
@@ -213,6 +249,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     if (!$this->_columnExists($contact_table, 'exclude')) {
       return;
     }
+
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+
     $count = CRM_Core_DAO::singleValueQuery("
       SELECT
         COUNT(*) AS contact_count
@@ -247,6 +286,16 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
         }
       }
       $activity = civicrm_api3('Activity', 'create', $activity_data);
+
+      if ($store_activity_ids) {
+        $activity_id = (int) $activity['id'];
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `exclude` = 1"
+        );
+      }
+
       $query = "INSERT IGNORE INTO civicrm_activity_contact
                    (SELECT
                       NULL               AS id,
@@ -267,6 +316,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
   /**
    * use SQL to create that activity
+   *
+   * @return int $activity_id   ID of the newly created activity
    */
   protected function createActivitySQL($data) {
     // use the BAO
@@ -310,7 +361,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
     }
 
+    $activity_id = (int) $activity->id;
     $activity->free();
+    return $activity_id;
   }
 
   /**
@@ -322,6 +375,29 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     return date('YmdHis', strtotime($string));
+  }
+
+  /**
+   * Add a column to the temporary contact table in which the IDs of the
+   * created activities will be stored
+   *
+   * @param string $contact_table - Name of the table
+   *
+   * @return void
+   */
+  protected function addActivityIdColumn(string $contact_table) {
+    $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+    $columnsResult = CRM_Core_DAO::executeQuery(
+      "SHOW COLUMNS FROM `$contact_table` LIKE '$activity_id_column'"
+    );
+
+    if ($columnsResult->fetch()) {
+      $this->log("WARNING: Overwriting existing values for '$activity_id_column' in '$contact_table'");
+      return;
+    }
+
+    CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `$activity_id_column` INT");
   }
 
 }

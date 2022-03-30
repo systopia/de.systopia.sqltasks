@@ -91,4 +91,115 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
     $this->assertEquals(0, $phoneCountExclude, 'Excluded phone should not have been added to contact');
   }
 
+  public function testStoreApiResult() {
+    $tmpContactTable = 'tmp_test_action_apicall';
+    $tableRows = [];
+
+    for ($i = 0; $i < 3; $i++) {
+      $tableRows[] = [
+        'contact_id' => self::createRandomTestContact(),
+        'exclude'    => $i === 2 ? 1 : 0,
+      ];
+    }
+
+    $phoneNumber = self::generateRandomPhoneNumber();
+
+    $apiCallParams = [
+      'contact_id' => '{contact_id}',
+      'phone'      => $phoneNumber,
+    ];
+
+    $config = [
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
+        [
+          'type'              => 'CRM_Sqltasks_Action_APICall',
+          'action'            => 'create',
+          'enabled'           => TRUE,
+          'entity'            => 'Phone',
+          'parameters'        => self::serializeApiCallParams($apiCallParams),
+          'store_api_results' => TRUE,
+          'table'             => $tmpContactTable,
+        ],
+      ],
+    ];
+
+    $this->createAndExecuteTask($config);
+
+    $phoneResult = $this->callApiSuccess('Phone', 'get', [
+      'phone' => $phoneNumber,
+    ]);
+
+    $queryResult = CRM_Core_DAO::executeQuery(
+      "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"
+    );
+
+    while ($queryResult->fetch()) {
+      $this->assertObjectHasAttribute(
+        'sqltask_api_result',
+        $queryResult,
+        'Temporary table should have a api_result column'
+      );
+
+      if ((int) $queryResult->exclude) {
+        $this->assertNull(
+          $queryResult->sqltask_api_result,
+          'Field sqltask_api_result should be null'
+        );
+
+        continue;
+      }
+
+      $this->assertNotNull(
+        $queryResult->sqltask_api_result,
+        'Field sqltask_api_result should not be null'
+      );
+
+      $apiResult = json_decode($queryResult->sqltask_api_result, TRUE);
+
+      $this->assertArrayHasKey('is_error', $apiResult);
+
+      if ($apiResult['is_error']) {
+        trigger_error('API call failed', E_USER_WARNING);
+      } else {
+        $phoneProps = array_values($apiResult['values'])[0];
+
+        $this->assertEquals(
+          $queryResult->contact_id,
+          $phoneProps['contact_id'],
+          'API result should contain the original contact ID'
+        );
+
+        $this->assertEquals(
+          $phoneNumber,
+          $phoneProps['phone'],
+          'API result should contain the original phone number'
+        );
+      }
+    }
+
+    CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `$tmpContactTable`");
+  }
+
+  private static function generateRandomPhoneNumber() {
+    $digits = "";
+
+    for ($i = 0; $i < 12; $i++) {
+      $digits .= (string) random_int(0, 9);
+    }
+
+    return trim(chunk_split($digits, 4, '-'), '-');
+  }
+
+  private static function serializeApiCallParams(array $params) {
+    $paramPairs = [];
+
+    foreach ($params as $key => $value) {
+      $paramPairs[] = "$key=$value";
+    }
+
+    return join("\r\n", $paramPairs);
+  }
+
 }
