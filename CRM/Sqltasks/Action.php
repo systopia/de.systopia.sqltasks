@@ -443,7 +443,7 @@ abstract class CRM_Sqltasks_Action {
    */
   protected static function addAutoIncrementColumn(string $table): string {
     $autoIncColResult = CRM_Core_DAO::executeQuery(
-      "SHOW COLUMNS FROM `$table` WHERE `Extra` LIKE '%auto_increment%'",
+      "SHOW COLUMNS FROM `$table` WHERE `Extra` LIKE '%auto_increment%'"
     );
 
     if ($autoIncColResult->fetch()) {
