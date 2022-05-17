@@ -25,6 +25,7 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
     CRM_Utils_System::setTitle(E::ts('SQL Task Manager'));
 
     // first: process commands (if any)
+    $this->processExportAllCommand();
     $this->processExportCommand();
     $this->processDeleteCommand();
     $this->processEnableDisableCommand();
@@ -121,6 +122,41 @@ class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
       return $options[$string];
     } else {
       return E::ts('ERROR');
+    }
+  }
+
+  /**
+   * export all tasks in zip file
+   */
+  protected function processExportAllCommand() {
+    $exportall = CRM_Utils_Request::retrieve('exportall', 'Integer');
+    if ($exportall) {
+      $tasks = CRM_Sqltasks_Task::getAllTasks();
+      if (!empty($tasks)) {
+        $zip = new ZipArchive();
+        $fileURL = CRM_Core_Config::singleton()->uploadDir . "sqltasks_" . time() . ".zip";
+        if ($zip->open($fileURL, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE) {
+          foreach ($tasks as $task) {
+            $taskFileName = preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->getAttribute('name')) . '.sqltask';
+            $zip->addFromString($taskFileName, $task->exportConfiguration());
+          }
+          $zip->close();
+          CRM_Utils_System::setHttpHeader('Content-Type', 'application/zip');
+          CRM_Utils_System::setHttpHeader('Content-Disposition', 'attachment; filename=' . CRM_Utils_File::cleanFileName(basename($fileURL)));
+          CRM_Utils_System::setHttpHeader('Content-Length', '' . filesize($fileURL));
+          ob_clean();
+          flush();
+          readfile($fileURL);
+          unlink($fileURL);
+          CRM_Utils_System::civiExit();
+        }
+        else {
+          CRM_Core_Session::setStatus(E::ts('Cannot create ZIP file'), E::ts('Error'), 'error');
+        }
+      }
+      else {
+        CRM_Core_Session::setStatus(E::ts('There are no Tasks to be exported'), E::ts('Error'), 'error');
+      }
     }
   }
 

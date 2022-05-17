@@ -160,6 +160,26 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
       'operator'   => 'OR',
       'separator'  => 0,
   ));
+
+  // also add to Automation section
+  if (!_sqltasks_menu_exists($menu, 'Administer/automation')) {
+    _sqltasks_civix_insert_navigation_menu($menu, 'Administer', [
+        'label'      => E::ts('Automation'),
+        'name'       => 'automation',
+        'url'        => NULL,
+        'permission' => 'administer CiviCRM',
+        'operator'   => NULL,
+        'separator'  => 0,
+    ]);
+  }
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/automation', [
+      'label'      => E::ts('SQL Tasks'),
+      'name'       => 'auto_sqltasks_manage',
+      'url'        => 'civicrm/sqltasks/manage',
+      'permission' => 'administer CiviCRM',
+      'operator'   => 'OR',
+      'separator'  => 0,
+  ]);
   _sqltasks_civix_navigationMenu($menu);
 }
 
@@ -189,14 +209,44 @@ function sqltasks_civicrm_tokens(&$tokens) {
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
  */
 function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
-  $files     = CRM_Sqltasks_Task::getAllFiles();
-  $last_file = CRM_Sqltasks_Task::getLastFile();
-  foreach ($cids as $cid) {
-    $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
-    $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
-    foreach ($files as $index => $file) {
-      $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
-      $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
+  if (is_array($cids) && !empty($tokens['sqltasks'])) {
+    $files     = CRM_Sqltasks_Task::getAllFiles();
+    $last_file = CRM_Sqltasks_Task::getLastFile();
+    foreach ($cids as $cid) {
+      $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
+      $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
+      foreach ($files as $index => $file) {
+        $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
+        $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
+      }
     }
   }
+}
+
+/**
+ * Checks whether a navigation menu item exists.
+ *  (copied from form processor, code by Jaap)
+ *
+ * @param array $menu - menu hierarchy
+ * @param string $path - path to parent of this item, e.g. 'my_extension/submenu'
+ *    'Mailing', or 'Administer/System Settings'
+ * @return bool
+ */
+function _sqltasks_menu_exists(&$menu, $path) {
+  // Find an recurse into the next level down
+  $found = FALSE;
+  $path = explode('/', $path);
+  $first = array_shift($path);
+  foreach ($menu as $key => &$entry) {
+    if ($entry['attributes']['name'] == $first) {
+      if (empty($path)) {
+        return true;
+      }
+      $found = _sqltasks_menu_exists($entry['child'], implode('/', $path));
+      if ($found) {
+        return true;
+      }
+    }
+  }
+  return $found;
 }
