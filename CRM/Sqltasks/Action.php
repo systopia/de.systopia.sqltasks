@@ -436,27 +436,4 @@ abstract class CRM_Sqltasks_Action {
     return TRUE;
   }
 
-  /**
-   * Add a auto_increment column to a table if one doesn't already exist
-   *
-   * @return string - Name of the auto_increment column
-   */
-  protected static function addAutoIncrementColumn(string $table): string {
-    $autoIncColResult = CRM_Core_DAO::executeQuery(
-      "SHOW COLUMNS FROM `$table` WHERE `Extra` LIKE '%auto_increment%'"
-    );
-
-    if ($autoIncColResult->fetch()) {
-      return $autoIncColResult->Field;
-    }
-
-    $aiColName = 'sqltask_row_id';
-
-    CRM_Core_DAO::executeQuery(
-      "ALTER TABLE `$table` ADD `$aiColName` INT AUTO_INCREMENT PRIMARY KEY"
-    );
-
-    return $aiColName;
-  }
-
 }

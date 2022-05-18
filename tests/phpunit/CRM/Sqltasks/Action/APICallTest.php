@@ -127,10 +127,6 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
     $this->createAndExecuteTask($config);
 
-    $phoneResult = $this->callApiSuccess('Phone', 'get', [
-      'phone' => $phoneNumber,
-    ]);
-
     $queryResult = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"
     );
@@ -139,7 +135,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       $this->assertObjectHasAttribute(
         'sqltask_api_result',
         $queryResult,
-        'Temporary table should have a api_result column'
+        'Temporary table should have a sqltask_api_result column'
       );
 
       if ((int) $queryResult->exclude) {
