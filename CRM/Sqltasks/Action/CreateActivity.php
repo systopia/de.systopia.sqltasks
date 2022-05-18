@@ -21,6 +21,8 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
+  use CRM_Sqltasks_TempTableAlterations;
+
   const ACTIVITY_ID_COLUMN = 'sqltask_activity_id';
 
   private $contact_table_ai_col;
