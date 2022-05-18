@@ -22,7 +22,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Task {
 
-  protected static $main_attributes = array(
+  protected static $main_attributes = [
     'name'            => 'String',
     'description'     => 'String',
     'category'        => 'String',
@@ -33,8 +33,15 @@ class CRM_Sqltasks_Task {
     'last_runtime'    => 'Integer',
     'parallel_exec'   => 'Integer',
     'run_permissions' => 'String',
+    'archive_date'    => 'String',
+    // REMOVED - DO NOT USE
     'main_sql'        => 'String',
-    'post_sql'        => 'String');
+    // REMOVED - DO NOT USE
+    'post_sql'        => 'String',
+    'input_required'  => 'Integer',
+    'abort_on_error'  => 'Integer',
+    'last_modified'   => 'Date'
+  ];
 
   protected $task_id;
   protected $attributes;
@@ -49,6 +56,9 @@ class CRM_Sqltasks_Task {
 
   /**
    * Constructor
+   *
+   * @param $task_id
+   * @param array $data
    */
   public function __construct($task_id, $data = []) {
     $this->task_id      = $task_id;
@@ -62,24 +72,50 @@ class CRM_Sqltasks_Task {
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
       $this->attributes[$attribute_name] = CRM_Utils_Array::value($attribute_name, $data);
     }
+    $this->setDefaultAttributes();
 
-    // everything else goes into $this->config
+    // everything else is passed to setConfiguration()
+    $config = [];
     foreach ($data as $attribute_name => $value) {
       if (!isset(self::$main_attributes[$attribute_name])) {
-        $this->config[$attribute_name] = $value;
+        $config[$attribute_name] = $value;
+      }
+    }
+    $this->setConfiguration($config);
+  }
+
+  /**
+   * Set default values for some attributes
+   */
+  private function setDefaultAttributes() {
+    $defaults = [
+      'parallel_exec'  => 0,
+      'input_required' => 0,
+      'abort_on_error' => 0
+    ];
+    foreach ($defaults as $attribute => $value) {
+      if (empty($this->attributes[$attribute])) {
+        $this->attributes[$attribute] = $value;
       }
     }
   }
 
   /**
-   * get a single attribute from the task
+   * Get a single attribute from the task
    */
   public function getID() {
     return $this->task_id;
   }
 
   /**
-   * get the current status of this task
+   * Is task archived?
+   */
+  public function isArchived() {
+    return !empty($this->getAttribute('archive_date'));
+  }
+
+  /**
+   * Get the current status of this task
    *
    * Should return one of:
    *  'init'    - task object has not yet been executed
@@ -92,28 +128,66 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * check if the task has encountered errors during execution
+   * Check if the task has encountered errors during execution
    */
   public function hasExecutionErrors() {
     return $this->error_count > 0 || $this->status == 'error';
   }
 
   /**
-   * get configuration
+   * Add +1 to error counter
+   */
+  public function incrementErrorCounter() {
+    $this->error_count += 1;
+  }
+
+  /**
+   * Sets error status
+   */
+  public function setErrorStatus() {
+    $this->status = 'error';
+  }
+
+  /**
+   * Get configuration
    */
   public function getConfiguration() {
     return $this->config;
   }
 
   /**
-   * set entire configuration
+   * Set entire configuration
+   *
+   * @param $config
+   * @param bool $writeTrough
+   *
+   * @return mixed
+   * @throws Exception
    */
-  public function setConfiguration($config) {
+  public function setConfiguration($config, $writeTrough = FALSE) {
+    $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
+    if ($writeTrough && $this->task_id) {
+      $this->attributes["last_modified"] = date("Y-m-d H:i:s");
+
+      CRM_Core_DAO::executeQuery(
+        "UPDATE `civicrm_sqltasks`
+         SET `config` = %1,
+             `last_modified` = %2
+         WHERE id = %3",
+        [
+          1 => [json_encode($config), 'String'],
+          2 => [$this->attributes["last_modified"], "String"],
+          3 => [$this->task_id, 'Integer'],
+        ]
+      );
+    }
     return $this->config = $config;
   }
 
   /**
-   * append log messages
+   * Append log messages
+   *
+   * @param $message
    */
   public function log($message) {
     $message = "[Task {$this->getID()}] {$message}";
@@ -124,7 +198,7 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * clear log and files
+   * Clear log and files
    */
   public function reset() {
     $this->log_messages = [];
@@ -132,7 +206,7 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * write current log into a temp file
+   * Write current log into a temp file
    */
   public function writeLogfile() {
     $logfile = tempnam(sys_get_temp_dir(), 'sqltask-') . '.log';
@@ -148,18 +222,28 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * get a single attribute from the task
+   * Get a single attribute from the task
+   *
+   * @param $attribute_name
+   *
+   * @return mixed
    */
   public function getAttribute($attribute_name) {
     return CRM_Utils_Array::value($attribute_name, $this->attributes);
   }
 
   /**
-   * set a single attribute
+   * Set a single attribute
+   *
+   * @param $attribute_name
+   * @param $value
+   * @param bool $writeTrough
+   * @throws Exception
    */
   public function setAttribute($attribute_name, $value, $writeTrough = FALSE) {
     if (isset(self::$main_attributes[$attribute_name])) {
       $this->attributes[$attribute_name] = $value;
+      $this->setDefaultAttributes();
       if ($writeTrough && $this->task_id) {
         CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks`
                                     SET `{$attribute_name}` = %1
@@ -172,13 +256,24 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get all task attributes
+   *
+   * @return array
+   */
+  public function getAttributes() {
+    return $this->attributes;
+  }
+
+  /**
    * Store this task (create or update)
    */
   public function store() {
+    $this->setDefaultAttributes();
     // sort out parameters
     $params = array();
     $fields = array();
     $index  = 1;
+    $this->attributes["last_modified"] = date("Y-m-d H:i:s");
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
       if (  $attribute_name == 'last_execution'
          || $attribute_name == 'last_runtime') {
@@ -190,6 +285,13 @@ class CRM_Sqltasks_Task {
         $fields[$attribute_name] = "NULL";
       } else {
         $fields[$attribute_name] = "%{$index}";
+        if (is_bool($value)) {
+          // need to convert bools to int for DAO
+          $value = (int) $value;
+        }
+        if ($attribute_type === "Date") {
+          $attribute_type = "String";
+        }
         $params[$index] = array($value, $attribute_type);
         $index += 1;
       }
@@ -216,18 +318,17 @@ class CRM_Sqltasks_Task {
       $values_sql  = implode(',', $values);
       $sql = "INSERT INTO `civicrm_sqltasks` ({$columns_sql}) VALUES ({$values_sql});";
     }
-    // error_log("STORE QUERY: " . $sql);
-    // error_log("STORE PARAM: " . json_encode($params));
     CRM_Core_DAO::executeQuery($sql, $params);
     if (empty($this->task_id)) {
       $this->task_id = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
     }
   }
 
-
-
   /**
    * Executes the given task
+   *
+   * @param array $params
+   * @return array
    */
   public function execute($params = []) {
     if (!empty($params['log_to_file'])) {
@@ -238,29 +339,59 @@ class CRM_Sqltasks_Task {
     $this->reset();
     $task_timestamp = microtime(TRUE) * 1000;
 
+    if ($this->isArchived()) {
+      $this->status = 'error';
+      $this->log("Task is archived. Execution skipped.");
+      return $this->log_messages;
+    }
+
     // 0. mark task as started
-    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id};");
+    $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id} AND parallel_exec != 2");
     if ($is_still_running) {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
       return $this->log_messages;
-    } else {
-      // set last_execution and running_since
-      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
     }
 
-    // 1. run the main SQL
-    $this->executeSQLScript($this->getAttribute('main_sql'), "Main SQL");
+    if ($this->getAttribute('parallel_exec') != '2') {
+      $lock = new CRM_Core_Lock($this->getLockName());
+      $lock->acquire();
+      if (!$lock->isAcquired()) {
+        $this->status = 'error';
+        $this->log("Task is locked. Execution skipped.");
+        return $this->log_messages;
+      }
+    }
 
-    // 2. run the actions
+
+    $this->log("Starting task execution.");
+    // commit any pending transactions to ensure consistent behaviour
+    CRM_Core_DAO::executeQuery("COMMIT");
+    // set last_execution and running_since
+    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET last_execution = NOW(), running_since = NOW() WHERE id = {$this->task_id};");
+
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
+    $context = [
+      'actions' => $actions,
+      'random'  => CRM_Utils_String::createRandom(16, CRM_Utils_String::ALPHANUMERIC),
+    ];
+    if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
+      $context['input_val'] = $params['input_val'];
+    }
     foreach ($actions as $action) {
-      if ($action->isResultHandler()) {
-        continue; // result handlers will only be executed at the end
+      $action_name = $action->getName();
+
+      if (
+        $this->error_count > 0
+        && $this->getAttribute("abort_on_error")
+        && get_class($action) !== "CRM_Sqltasks_Action_ErrorHandler"
+      ) {
+        $this->log("Skipped '$action_name' due to previous error");
+        continue;
       }
 
-      $action_name = $action->getName();
       $timestamp = microtime(TRUE);
+      $action->setContext($context);
 
       // check action configuration
       try {
@@ -282,31 +413,26 @@ class CRM_Sqltasks_Task {
       }
     }
 
-    // 3. run the post SQL
-    $this->executeSQLScript($this->getAttribute('post_sql'), "Post SQL");
-
-    // 4. update/close the task
     $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
     CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET running_since = NULL, last_runtime = {$task_runtime} WHERE id = {$this->task_id};");
+    if ($this->getAttribute('parallel_exec') != '2') {
+      $lock->release();
+    }
+
     if ($this->error_count) {
       $this->status = 'error';
     } else {
       $this->status = 'success';
     }
 
-    // 5. run result handlers
-    foreach ($actions as $action) {
-      if ($action->isResultHandler()) {
-        $action->executeResultHandler($actions);
-      }
-    }
-
     return $this->log_messages;
   }
 
-
   /**
-   * execute a single SQL script
+   * Execute a single SQL script
+   *
+   * @param $script
+   * @param $script_name
    */
   protected function executeSQLScript($script, $script_name) {
     if (empty($script)) {
@@ -341,7 +467,10 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * delete a task with the given ID
+   * Delete a task with the given ID
+   *
+   * @param $tid
+   * @return null
    */
   public static function delete($tid) {
     $tid = (int) $tid;
@@ -350,7 +479,24 @@ class CRM_Sqltasks_Task {
   }
 
   /**
+   * Get a list of tasks ready for execution which prepared for select
+   *
+   * @return array
+   */
+  public static function getExecutionTaskListOptions() {
+    $preparedTasksOptions = array();
+    $task_search = CRM_Core_DAO::executeQuery('SELECT `id`, `name` FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
+    while ($task_search->fetch()) {
+      $preparedTasksOptions[$task_search->id] = "[{$task_search->id}] " . $task_search->name;
+    }
+
+    return $preparedTasksOptions;
+  }
+
+  /**
    * Get a list of all tasks
+   *
+   * @return CRM_Sqltasks_Task[]
    */
   public static function getAllTasks() {
     return self::getTasks('SELECT * FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
@@ -367,11 +513,63 @@ class CRM_Sqltasks_Task {
    * Get a list of tasks ready for execution
    */
   public static function getParallelExecutionTaskList() {
-    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec = 1 ORDER BY weight ASC, id ASC');
+    return self::getTasks('SELECT * FROM civicrm_sqltasks WHERE enabled=1 AND parallel_exec IN (1, 2) ORDER BY weight ASC, id ASC');
+  }
+
+  /**
+   * Get list of ordered tasks ids
+   *
+   * @return array
+   */
+  public static function getOrderedTasks() {
+    $result = CRM_Core_DAO::executeQuery('SELECT id FROM civicrm_sqltasks ORDER BY weight ASC, id ASC');
+    $tasksOrder = [];
+
+    while ($result->fetch()) {
+      $tasksOrder[] = $result->id;
+    }
+
+    return $tasksOrder;
+  }
+
+  /**
+   * Update order of tasks
+   *
+   * @param $newTasksOrder
+   */
+  public static function updateTasksOrder($newTasksOrder) {
+    foreach ($newTasksOrder as $key => $taskId) {
+      CRM_Core_DAO::executeQuery(
+        'UPDATE civicrm_sqltasks SET weight = %1 WHERE id = %2',
+        [
+          1 => [($key * 10) + 10, 'String'],
+          2 => [$taskId, 'Integer'],
+        ]
+      );
+    }
+  }
+
+  /**
+   * Get a list of all SQL Task categories
+   *
+   * @return array
+   */
+  public static function getTaskCategoryList() {
+    $categories = [];
+    $categoryDAO = CRM_Core_DAO::executeQuery("SELECT DISTINCT(category) AS category FROM `civicrm_sqltasks`;");
+
+    while ($categoryDAO->fetch()) {
+      $categories[] = $categoryDAO->category;
+    }
+
+    return $categories;
   }
 
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
+   *
+   * @param $sql_query
+   * @return CRM_Sqltasks_Task[]
    */
   public static function getTasks($sql_query) {
     $tasks = array();
@@ -396,6 +594,8 @@ class CRM_Sqltasks_Task {
   /**
    * Load a list of tasks based on the data yielded by the given SQL query
    *
+   * @param $tid
+   *
    * @return CRM_Sqltasks_Task task
    */
   public static function getTask($tid) {
@@ -411,29 +611,54 @@ class CRM_Sqltasks_Task {
   public function exportConfiguration() {
     // copy the attributes
     $config = $this->attributes;
+    unset($config['name']);
+    unset($config['enabled']);
+    unset($config['weight']);
+    unset($config['last_execution']);
+    unset($config['last_runtime']);
+    unset($config['archive_date']);
     $config['config'] = $this->config;
+    $export = json_encode($config, JSON_PRETTY_PRINT);
+    if (Civi::settings()->get('sqltask_export_append_scripts') !== FALSE) {
+      $export .= "\n" . $this->getScriptsForExport();
+    }
+    return $export;
+  }
 
-    // remove some stuff
-    unset($config['name'], $config['enabled'], $config['weight'], $config['last_execution'], $config['last_runtime']);
+  private function getScriptsForExport() {
+    $scripts = CRM_Sqltasks_Config_Format::SCRIPT_SENTINEL;
+    $actions = CRM_Sqltasks_Action::getTaskActions($this);
+    $scriptCounts = [];
+    foreach ($actions as $action) {
+      $className = get_class($action);
+      if ($action instanceof CRM_Sqltasks_Action_RunSQL || $action instanceof CRM_Sqltasks_Action_RunPHP) {
+        $label = NULL;
+        switch ($className) {
+          case 'CRM_Sqltasks_Action_RunSQL':
+            $label = 'SQL Script';
+            $script = $action->getConfigValue('script', FALSE);
+            break;
 
-    // extract sqls
-    $main_sql = html_entity_decode($config['main_sql']);
-    $post_sql = html_entity_decode($config['post_sql']);
-    unset($config['main_sql'], $config['post_sql']);
+          case 'CRM_Sqltasks_Action_PostSQL':
+            $label = 'Cleanup SQL Script';
+            $script = $action->getConfigValue('script', FALSE);
+            break;
 
-    // new file format:
-    // ---- HEADER
-    // [config]
-    // ---- MAIN SQL
-    // [SQL]
-    // ---- POST SQL
-    // [SQL]
-    return CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_FILE_HEADER
-         . json_encode($config, JSON_PRETTY_PRINT)
-         . CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_MAIN_HEADER
-         . $main_sql
-         . CRM_Sqltasks_Config::SQLTASK_FILE_FORMAT_POST_HEADER
-         . $post_sql;
+          case 'CRM_Sqltasks_Action_RunPHP':
+            $label = 'PHP Script';
+            $script = $action->getConfigValue('php_code', FALSE);
+            break;
+        }
+        $scriptCounts[$className] = ($scriptCounts[$className] ?? 0) + 1;
+        $actionTitle = '';
+        if (!empty($action->getConfigValue('action_title', FALSE))) {
+          $actionTitle = ' - ' . $action->getConfigValue('action_title', FALSE);
+        }
+        $scripts .= "##### {$label} {$scriptCounts[$className]}{$actionTitle} #####\n";
+        $scripts .= $script . "\n";
+      }
+    }
+    return $scripts;
   }
 
   /**
@@ -481,7 +706,11 @@ class CRM_Sqltasks_Task {
   //  +---------------------------------+
 
   /**
-   * main dispatcher, triggered by a scheduled Job
+   * Main dispatcher, triggered by a scheduled Job
+   *
+   * @param array $params
+   *
+   * @return array
    */
   public static function runDispatcher($params = []) {
     $results = array();
@@ -502,7 +731,7 @@ class CRM_Sqltasks_Task {
       // NORMAL DISPATCH
       $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->allowedToRun() && $task->shouldRun()) {
+        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute($params);
         }
       }
@@ -511,7 +740,7 @@ class CRM_Sqltasks_Task {
       // PARALLEL DISPATCH: only run tasks flagged as parallel
       $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
       foreach ($tasks as $task) {
-        if ($task->allowedToRun() && $task->shouldRun()) {
+        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
           $results[] = $task->execute($params);
         }
       }
@@ -636,17 +865,17 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * get the option for scheduling (simple version)
+   * Get the option for scheduling (simple version)
    */
   public static function getSchedulingOptions() {
-    $frequencies = array(
+    $frequencies = [
       'always'  => E::ts('always'),
       'hourly'  => E::ts('every hour'),
       'daily'   => E::ts('every day (after midnight)'),
       'weekly'  => E::ts('every week'),
       'monthly' => E::ts('every month'),
       'yearly'  => E::ts('annually'),
-      );
+    ];
 
     // get scheduler information
     $config = CRM_Sqltasks_Config::singleton();
@@ -676,7 +905,7 @@ class CRM_Sqltasks_Task {
   }
 
   /**
-   * calculate the next execution date
+   * Calculate the next execution date
    */
   public static function getNextExecutionTime() {
     // TODO:
@@ -704,4 +933,129 @@ class CRM_Sqltasks_Task {
   public static function getLastFile() {
     return end(self::$files);
   }
+
+  /**
+   * Returns prepared task
+   *
+   * @return array
+   */
+  public function getPreparedTask() {
+    $data = [
+      'id'             => $this->getID(),
+      'name'           => $this->getAttribute('name'),
+      'description'    => $this->getAttribute('description'),
+      'short_desc'     => $this->prepareShortDescription($this->getAttribute('description')),
+      'category'       => $this->getAttribute('category'),
+      'schedule_label' => $this->prepareSchedule($this->getAttribute('scheduled')),
+      'schedule'       => $this->getAttribute('scheduled'),
+      'scheduled'      => $this->getAttribute('scheduled'),
+      'run_permissions'=> $this->getAttribute('run_permissions'),
+      'last_executed'  => $this->prepareDate($this->getAttribute('last_execution')),
+      'last_runtime'   => $this->prepareRuntime($this->getAttribute('last_runtime')),
+      'last_modified'  => $this->getAttribute("last_modified"),
+      'parallel_exec'  => $this->getAttribute('parallel_exec'),
+      'input_required' => $this->getAttribute('input_required'),
+      'next_execution' => 'TODO',
+      'enabled'        => (empty($this->getAttribute('enabled'))) ? 0 : 1,
+      'config'         => $this->getConfiguration(),
+      'is_archived'    => (int) $this->isArchived(),
+      'archive_date'   => (empty($this->getAttribute('archive_date'))) ? '' : $this->getAttribute('archive_date'),
+      'abort_on_error' => $this->getAttribute('abort_on_error'),
+    ];
+
+    return $data;
+  }
+
+  /**
+   * Prepares a short description
+   *
+   * @param $description
+   * @return false|string
+   */
+  protected function prepareShortDescription($description) {
+    if (strlen($description) > 64) {
+      return substr($description, 0, 64) . '...';
+    }
+
+    return $description;
+  }
+
+  /**
+   * Prepares a date
+   *
+   * @param $string
+   *
+   * @return false|string
+   */
+  protected function prepareDate($string) {
+    if (empty($string)) {
+      return E::ts('never');
+    } else {
+      return date('Y-m-d H:i:s', strtotime($string));
+    }
+  }
+
+  /**
+   * Prepares a scheduling option
+   *
+   * @param $string
+   *
+   * @return mixed|string
+   */
+  protected function prepareSchedule($string) {
+    $options = CRM_Sqltasks_Task::getSchedulingOptions();
+    if (isset($options[$string])) {
+      return $options[$string];
+    } else {
+      return E::ts('ERROR');
+    }
+  }
+
+  /**
+   * Prepares an integer microtime value
+   *
+   * @param $value
+   *
+   * @return mixed|string
+   */
+  protected function prepareRuntime($value) {
+    if (!$value) {
+      return E::ts('n/a');
+    } elseif ($value > (1000 * 60)) {
+      // render values > 1 minute as min:second
+      $minutes = $value / (1000 * 60);
+      $seconds = ($value % (1000 * 60)) / 1000;
+      return sprintf("%d:%02d min", $minutes, $seconds);
+    } else {
+      // render values < 1 minute as 0.000 seconds
+      return sprintf("%d.%03ds", ($value/1000), ($value%1000));
+    }
+  }
+
+  /**
+   * Archive the task
+   */
+  public function archive() {
+    $this->setAttribute('enabled', 0);
+    $this->setAttribute('archive_date', date('Y-m-d H:i:s'));
+    $this->store();
+  }
+
+  /**
+   * Unarchive the task
+   */
+  public function unarchive() {
+    $this->setAttribute('archive_date', NULL);
+    $this->store();
+  }
+
+  /**
+   * Generates lock name to the task
+   *
+   * @return string
+   */
+  private function getLockName() {
+    return 'civicrm_de_systopia_sqltasks_task_id_' . $this->getID();
+  }
+
 }

@@ -33,3 +33,7 @@
 {htxt id='id-activity-assignees'}
   <p>{ts domain="de.systopia.sqltasks"}You can enter a comma-separated list of contact IDs to assign the activities to all of them.{/ts}</p>
 {/htxt}
+
+{htxt id='id-activity-store-ids'}
+  <p>{ts domain="de.systopia.sqltasks"}This will add a column called <code>sqltask_activity_id</code> containing the IDs of the created activities to the contact table.{/ts}</p>
+{/htxt}

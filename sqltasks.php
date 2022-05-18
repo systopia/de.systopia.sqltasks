@@ -24,6 +24,12 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 function sqltasks_civicrm_config(&$config) {
   _sqltasks_civix_civicrm_config($config);
+
+  Civi::dispatcher()->addListener(
+    'hook_civicrm_pre',
+    'CRM_Sqltasks_Utils::setCivirulesCustomFields',
+    1
+  );
 }
 
 /**
@@ -139,19 +145,22 @@ function sqltasks_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
+ * Implements hook_civicrm_entityTypes().
+ *
+ * Declare entity types provided by this module.
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+ */
+function sqltasks_civicrm_entityTypes(&$entityTypes) {
+  _sqltasks_civix_civicrm_entityTypes($entityTypes);
+}
+
+/**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  */
 function sqltasks_civicrm_navigationMenu(&$menu) {
-  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
-    'label'      => E::ts('Manage SQL Tasks'),
-    'name'       => 'sqltasks_manage',
-    'url'        => 'civicrm/sqltasks/manage',
-    'permission' => 'administer CiviCRM',
-    'operator'   => 'OR',
-    'separator'  => 0,
-  ));
   _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', array(
       'label'      => E::ts('My Tasks'),
       'name'       => 'sqltasks_mytasks',
@@ -172,14 +181,9 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
         'separator'  => 0,
     ]);
   }
-  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/automation', [
-      'label'      => E::ts('SQL Tasks'),
-      'name'       => 'auto_sqltasks_manage',
-      'url'        => 'civicrm/sqltasks/manage',
-      'permission' => 'administer CiviCRM',
-      'operator'   => 'OR',
-      'separator'  => 0,
-  ]);
+  _sqltasks_add_admin_items($menu, 'Administer/System Settings');
+  _sqltasks_add_admin_items($menu, 'Administer/automation');
+
   _sqltasks_civix_navigationMenu($menu);
 }
 
@@ -249,4 +253,39 @@ function _sqltasks_menu_exists(&$menu, $path) {
     }
   }
   return $found;
+}
+
+function _sqltasks_add_admin_items(&$menu, $path) {
+  _sqltasks_civix_insert_navigation_menu($menu, $path, [
+    'label'      => E::ts('SQL Tasks'),
+    'name'       => 'sqltasks_manage',
+    'url'        => 'civicrm/a/#/sqltasks/manage',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ]);
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+    'label'      => E::ts('Global Token Manager'),
+    'name'       => 'global_token_manager',
+    'url'        => 'civicrm/sqltasks/global-token-manager',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+    'label'      => E::ts('Task Templates'),
+    'name'       => 'templates',
+    'url'        => 'civicrm/sqltasks/templates',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+    'label'      => E::ts('Export All Tasks'),
+    'name'       => 'export_all',
+    'url'        => 'civicrm/sqltasks/export',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
 }

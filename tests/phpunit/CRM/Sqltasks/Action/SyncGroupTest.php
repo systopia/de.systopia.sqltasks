@@ -14,12 +14,26 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
       'title' => 'testSyncGroup',
     ))['id'];
     $data = [
-      'main_sql'            => "DROP TABLE IF EXISTS tmp_test_action_syncgroup;
-                                CREATE TABLE tmp_test_action_syncgroup AS " . self::TEST_CONTACT_SQL,
-      'post_sql'            => 'DROP TABLE IF EXISTS tmp_test_action_syncgroup;',
-      'group_enabled'       => '1',
-      'group_contact_table' => 'tmp_test_action_syncgroup',
-      'group_group_id'      => $groupId,
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_syncgroup;
+                        CREATE TABLE tmp_test_action_syncgroup AS " . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'          => 'CRM_Sqltasks_Action_SyncGroup',
+          'enabled'       => TRUE,
+          'contact_table' => 'tmp_test_action_syncgroup',
+          'group_id'      => $groupId,
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
+        ],
+      ],
     ];
     $this->createAndExecuteTask($data);
 

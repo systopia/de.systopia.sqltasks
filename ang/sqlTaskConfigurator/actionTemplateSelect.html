@@ -1,0 +1,15 @@
+<div class="sql-task-action-template-select-wrapper">
+    <label class="header-template-select">
+        <select class="crm-form-select"
+                ng-options="template.name for template in actionTemplates | filter:{type:model.type} track by template.id"
+                ng-model="actionTemplate"
+                ng-click="$event.stopPropagation()"
+                ng-change="loadActionTemplate(actionTemplate.id)">
+            <option value="" selected="selected" disabled>- Load Template -</option>
+        </select>
+        <label class="header-delete-btn" ng-click="toggleShowingActionTemplateForm($event)">
+            <i class="crm-i fa-edit"></i>
+        </label>
+    </label>
+</div>
+<div class="clear"></div>

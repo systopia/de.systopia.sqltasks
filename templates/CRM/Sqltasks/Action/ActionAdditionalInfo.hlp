@@ -1,0 +1,7 @@
+{htxt id='id-action-title'}
+  <p>{ts domain="de.systopia.sqltasks"}Use to make visual difference between similar actions.{/ts}</p>
+{/htxt}
+
+{htxt id='id-action-description'}
+  <p>{ts domain="de.systopia.sqltasks"}Use to write important information about this task.{/ts}</p>
+{/htxt}

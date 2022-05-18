@@ -1,0 +1,16 @@
+<select
+    class="crm-form-select"
+    data-directive="select2"
+    id="{{id}}"
+    name="{{name}}"
+    ng-model="model"
+    ng-required="isRequired"
+>
+    <option
+        ng-repeat="option in options"
+        ng-selected="{{option.value === model}}"
+        value="{{option.value}}"
+    >
+        {{option.name}}
+    </option>
+</select>
