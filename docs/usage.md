@@ -1,7 +1,7 @@
 # Usage
 
-Tasks can be managed by going to *Administer* → *System Settings* →
-*Manage SQL Tasks*. The task manager shows a list of all tasks and supports
+Tasks can be managed by going to *Administer* → *Automation* →
+*SQL Tasks*. The task manager shows a list of all tasks and supports
 actions like changing the task configuration or running them. You can also
 change the order in which they are executed when started via the dispatcher.
 This can be done by either clicking the arrows under "Selection Order" or by
@@ -23,7 +23,7 @@ run each time the Job Scheduler is executing.
 
 Instead of making `INSERT`, `UPDATE`, or `DELETE` queries directly within the
 task's SQL code, always prefer using the "API Call" action, as this helps
-preserving data integrity and allows other things to happen for each action
+to preserve data integrity and allows other things to happen for each action
 (e.g. logging, or running any hook implementations by other extensions).
 
 For queries that don't need additional indices, prefer to create views instead
@@ -67,11 +67,30 @@ will be assigned to the tag you select, while it will be removed for all others.
 The synchronization is implemented using raw SQL, so it performs well in large
 environments with tags assigned to hundreds of thousands of contacts. Note that
 hooks are not triggered unless you use the "Use API" option (which will take
-significantly longer). 
+significantly longer).
 
 ### Synchronise Group
 
 Works the same way as "Synchronise Tags", only for groups.
+
+### Run PHP Code
+
+The Run PHP Code action allows execution of arbitrary PHP code within a task.
+This action type should be used sparingly and only if the alternative is
+way more complex. For most use-cases, custom PHP code should only be used
+within CiviCRM extension.
+
+Code is executed within the context of an instance of `CRM_Sqltasks_Action_RunPHP`.
+It is therefore possible to invoke the task logger and/or error handler
+from within the custom code as follows:
+
+```php
+// Example: add a message to the task execution log:
+$this->log('Custom PHP code executed successfully');
+
+// Example: mark the task as failed
+$this->task->setErrorStatus();
+```
 
 ### Success Handler
 

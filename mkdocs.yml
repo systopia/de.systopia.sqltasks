@@ -1,6 +1,6 @@
 site_name: SQL Tasks
 repo_url: https://github.com/systopia/de.systopia.sqltasks
-theme: 
+theme:
   name: material
 
 nav:
@@ -8,6 +8,11 @@ nav:
 - 'Installation': installation.md
 - 'Usage': usage.md
 - 'Example': example.md
+- 'Global Tokens': global-tokens.md
+- 'Templates': templates.md
+- 'Integrations':
+  - 'CiviRules': civirules.md
+  - 'Custom': custom-integrations.md
 - 'Security considerations': security-considerations.md
 - 'Known issues': known-issues.md
 
