@@ -275,9 +275,8 @@ class CRM_Sqltasks_Task {
     $index  = 1;
     $this->attributes["last_modified"] = date("Y-m-d H:i:s");
     foreach (self::$main_attributes as $attribute_name => $attribute_type) {
-      if (  $attribute_name == 'last_execution'
-         || $attribute_name == 'last_runtime') {
-        // don't overwrite timestamp
+      if (in_array($attribute_name, ['last_execution', 'last_runtime', 'main_sql', 'post_sql'])) {
+        // don't overwrite timestamps and legacy columns
         continue;
       }
       $value = $this->getAttribute($attribute_name);
@@ -577,7 +576,9 @@ class CRM_Sqltasks_Task {
     while ($task_search->fetch()) {
       $data = array();
       foreach (self::$main_attributes as $attribute_name => $attribute_type) {
-        $data[$attribute_name] = $task_search->$attribute_name;
+        if (isset($task_search->$attribute_name)) {
+          $data[$attribute_name] = $task_search->$attribute_name;
+        }
       }
       if (isset($task_search->config)) {
         $config = json_decode($task_search->config, TRUE);

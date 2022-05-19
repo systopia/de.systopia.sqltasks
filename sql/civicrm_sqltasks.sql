@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS `civicrm_sqltasks`(
   `archive_date`    datetime NULL DEFAULT NULL COMMENT 'archive date',
   `last_runtime`    int unsigned COMMENT 'stores the runtime of the last execution in milliseconds',
   `parallel_exec`   tinyint NOT NULL DEFAULT 0 COMMENT 'should this task be executed in parallel?',
-  `main_sql`        text         COMMENT 'main script (SQL)',
-  `post_sql`        text         COMMENT 'cleanup script (SQL)',
   `config`          text         COMMENT 'configuration (JSON)',
   `abort_on_error`  tinyint NOT NULL DEFAULT 0 COMMENT 'should abort task execution on error?',
   `last_modified`   datetime     COMMENT 'last time the configuration of the task has been modified',
