@@ -6,6 +6,7 @@ theme:
 nav:
 - 'Home': index.md
 - 'Installation': installation.md
+- 'Configuration': configuration.md
 - 'Usage': usage.md
 - 'Example': example.md
 - 'Global Tokens': global-tokens.md
