@@ -46,7 +46,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           'action'     => 'update',
           'parameters' => json_encode([
             'where' => [
-              ['id', '=', '$data.contact_id'],
+              ['id', '=', '{contact_id}'],
             ],
             'values' => [
               'do_not_email' => TRUE,
@@ -91,7 +91,13 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
 
     $rowCount = count($tableRows);
 
-    foreach (['log_only', 'report_error_and_continue', 'report_error_and_abort'] as $errorHandling) {
+    $errorHandlingOptions = [
+      'log_only',
+      'report_error_and_continue',
+      'report_error_and_abort',
+    ];
+
+    foreach ($errorHandlingOptions as $errorHandling) {
       $config = [
         'version' => CRM_Sqltasks_Config_Format::CURRENT,
         'actions' => [
@@ -191,7 +197,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           'parameters'        => json_encode([
             'select' => ['contact_type'],
             'where' => [
-              ['id', '=', '$data.contact_id'],
+              ['id', '=', '{contact_id}'],
             ],
             'limit' => 1,
           ]),
@@ -231,122 +237,62 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
 
   public function testInputValues() {
     $tmpContactTable = 'tmp_test_action_apiv4call';
+    $contactID = self::createRandomTestContact();
 
     $tableRows = [
       [
-        // Placeholder entry
-        'contact_id' => 0,
+        'contact_id' => $contactID,
         'exclude'    => 0,
       ]
     ];
 
-    $contactID = self::createRandomTestContact();
-
-    $contactResult = Api4\Contact::get()
-      ->addSelect('display_name')
-      ->addWhere('id', '=', $contactID)
-      ->setLimit(1)
-      ->execute();
-
-    $expectedDisplayName = $contactResult[0]['display_name'];
+    $randomChars = bin2hex(random_bytes(8));
 
     $config = [
       'version'        => CRM_Sqltasks_Config_Format::CURRENT,
       'input_required' => TRUE,
-      'actions' => [
+      'actions'        => [
         self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
         [
-          'type'              => 'CRM_Sqltasks_Action_APIv4Call',
-          'table'             => $tmpContactTable,
-          'enabled'           => TRUE,
-          'store_api_results' => TRUE,
-          'entity'            => 'Contact',
-          'action'            => 'get',
-          'parameters'        => json_encode([
-            'select' => ['display_name'],
-            'where'  => [
-              // Take the contact ID from the input value instead of the temp table
-              ['id', '=', '$context.input_val'],
+          'type'       => 'CRM_Sqltasks_Action_APIv4Call',
+          'table'      => $tmpContactTable,
+          'enabled'    => TRUE,
+          'entity'     => 'Note',
+          'action'     => 'create',
+          'parameters' => json_encode([
+            'values' => [
+              'entity_table' => 'civicrm_contact',
+              'entity_id'    => '{contact_id}',
+              'subject'      => 'CRM_Sqltasks_Action_APIv4CallTest::testInputValues',
+              'note'         => '123 {context.input_val} 456',
             ],
-            'limit'  => 1,
           ]),
         ],
+        self::getDropTempContactTableAction($tmpContactTable),
       ],
     ];
 
     $this->createAndExecuteTask(
       $config,
-      [ 'input_val' => $contactID ]
+      [ 'input_val' => $randomChars ]
     );
 
-    $query = CRM_Core_DAO::executeQuery(
-      "SELECT `sqltask_api_result` FROM `$tmpContactTable` LIMIT 1"
-    );
-
-    $query->fetch();
-    $actionResult = json_decode($query->sqltask_api_result, TRUE);
-
-    $this->assertEquals($expectedDisplayName, $actionResult[0]['display_name']);
-  }
-
-  public function testGlobalTokens() {
-    $tmpContactTable = 'tmp_test_action_apiv4call';
-
-    $tableRows = [
-      [
-        // Placeholder entry
-        'contact_id' => 0,
-        'exclude'    => 0,
-      ]
-    ];
-
-    $contactID = self::createRandomTestContact();
-    CRM_Sqltasks_GlobalToken::singleton()->setValue('contact_id', $contactID);
-
-    $contactResult = Api4\Contact::get()
-      ->addSelect('display_name')
-      ->addWhere('id', '=', $contactID)
+    $noteResult = Api4\Note::get()
+      ->addWhere('entity_table', '=', 'civicrm_contact')
+      ->addWhere('entity_id', '=', $contactID)
+      ->addWhere('subject', '=', 'CRM_Sqltasks_Action_APIv4CallTest::testInputValues')
+      ->addSelect('note')
       ->setLimit(1)
       ->execute();
 
-    $expectedDisplayName = $contactResult[0]['display_name'];
-
-    $config = [
-      'version'        => CRM_Sqltasks_Config_Format::CURRENT,
-      'actions' => [
-        self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
-        [
-          'type'              => 'CRM_Sqltasks_Action_APIv4Call',
-          'table'             => $tmpContactTable,
-          'enabled'           => TRUE,
-          'store_api_results' => TRUE,
-          'entity'            => 'Contact',
-          'action'            => 'get',
-          'parameters'        => json_encode([
-            'select' => ['display_name'],
-            'where'  => [
-              // Take the contact ID from the input value instead of the temp table
-              ['id', '=', '$config.contact_id'],
-            ],
-            'limit'  => 1,
-          ]),
-        ],
-      ],
-    ];
-
-    $this->createAndExecuteTask($config);
-
-    $query = CRM_Core_DAO::executeQuery(
-      "SELECT `sqltask_api_result` FROM `$tmpContactTable` LIMIT 1"
+    $this->assertEquals(
+      "123 $randomChars 456",
+      $noteResult[0]['note'],
+      "The created note should contain '123 $randomChars 456'"
     );
-
-    $query->fetch();
-    $actionResult = json_decode($query->sqltask_api_result, TRUE);
-
-    $this->assertEquals($expectedDisplayName, $actionResult[0]['display_name']);
   }
 
-  public function testSettings() {
+  public function testGlobalTokens() {
     $tmpContactTable = 'tmp_test_action_apiv4call';
     $contactID = self::createRandomTestContact();
 
@@ -357,7 +303,8 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ]
     ];
 
-    $maxAttachments = Civi::settings()->get('max_attachments');
+    $randomChars = bin2hex(random_bytes(8));
+    CRM_Sqltasks_GlobalToken::singleton()->setValue('random_chars', $randomChars);
 
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
@@ -373,8 +320,60 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           'parameters'        => json_encode([
             'values' => [
               'entity_table' => 'civicrm_contact',
-              'entity_id'    => $contactID,
-              'note'         => '$setting.max_attachments',
+              'entity_id'    => '{contact_id}',
+              'subject'      => 'CRM_Sqltasks_Action_APIv4CallTest::testGlobalTokens',
+              'note'         => '123 {config.random_chars} 456',
+            ],
+          ]),
+        ],
+      ],
+    ];
+
+    $this->createAndExecuteTask($config);
+
+    $noteResult = Api4\Note::get()
+      ->addWhere('entity_table', '=', 'civicrm_contact')
+      ->addWhere('entity_id', '=', $contactID)
+      ->addWhere('subject', '=', 'CRM_Sqltasks_Action_APIv4CallTest::testGlobalTokens')
+      ->addSelect('note')
+      ->setLimit(1)
+      ->execute();
+
+    $this->assertEquals(
+      "123 $randomChars 456",
+      $noteResult[0]['note'],
+      "The created note should contain '123 $randomChars 456'"
+    );
+  }
+
+  public function testSettings() {
+    $tmpContactTable = 'tmp_test_action_apiv4call';
+    $contactID = self::createRandomTestContact();
+
+    $tableRows = [
+      [
+        'contact_id' => $contactID,
+        'exclude'    => 0,
+      ]
+    ];
+
+    $config = [
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
+        [
+          'type'              => 'CRM_Sqltasks_Action_APIv4Call',
+          'table'             => $tmpContactTable,
+          'enabled'           => TRUE,
+          'store_api_results' => TRUE,
+          'entity'            => 'Note',
+          'action'            => 'create',
+          'parameters'        => json_encode([
+            'values' => [
+              'entity_table' => 'civicrm_contact',
+              'entity_id'    => '{contact_id}',
+              'subject'      => 'CRM_Sqltasks_Action_APIv4CallTest::testSettings',
+              'note'         => '123 {setting.max_attachments} 456',
             ],
           ]),
         ],
@@ -385,12 +384,19 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
     $this->createAndExecuteTask($config);
 
     $noteResult = Api4\Note::get()
-      ->addSelect('note')
       ->addWhere('entity_table', '=', 'civicrm_contact')
       ->addWhere('entity_id', '=', $contactID)
+      ->addWhere('subject', '=', 'CRM_Sqltasks_Action_APIv4CallTest::testSettings')
+      ->addSelect('note')
       ->setLimit(1)
       ->execute();
 
-    $this->assertEquals($maxAttachments, $noteResult[0]['note']);
+    $maxAttachments = Civi::settings()->get('max_attachments');
+
+    $this->assertEquals(
+      "123 $maxAttachments 456",
+      $noteResult[0]['note'],
+      "The created note should contain '123 $maxAttachments 456'"
+    );
   }
 }
