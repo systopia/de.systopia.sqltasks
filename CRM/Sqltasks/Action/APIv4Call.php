@@ -126,58 +126,10 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
   }
 
   private function substitueParameterVariables($params, $record) {
-    $contextPrefix = '$context.';
-    $dataPrefix = '$data.';
-    $globalPrefix = '$config.';
-    $settingPrefix = '$setting.';
-
     foreach ($params as $key => $value) {
       if (is_string($value)) {
-        if (strpos($value, $contextPrefix) === 0) {
-          $varName = substr($value, strlen($contextPrefix));
-
-          if (empty($this->context[$varName])) {
-            $this->log("No value for context variable '$varName' given");
-            continue;
-          }
-
-          $params[$key] = $this->context[$varName];
-        }
-
-        if (strpos($value, $dataPrefix) === 0) {
-          $varName = substr($value, strlen($dataPrefix));
-
-          if (!property_exists($record, $varName)) {
-            $this->log("Field '$varName' not found in data table");
-            continue;
-          }
-
-          $params[$key] = $record->$varName;
-        }
-
-        if (strpos($value, $globalPrefix) === 0) {
-          $varName = substr($value, strlen($globalPrefix));
-          $globalTokenVal = CRM_Sqltasks_GlobalToken::singleton()->getValue($varName);
-
-          if (empty($globalTokenVal)) {
-            $this->log("No value for global token '$varName'");
-            continue;
-          }
-
-          $params[$key] = $globalTokenVal;
-        }
-
-        if (strpos($value, $settingPrefix) === 0) {
-          $varName = substr($value, strlen($settingPrefix));
-          $settingVal = Civi::settings()->get($varName);
-
-          if (empty($settingVal)) {
-            $this->log("No value for setting '$varName'");
-            continue;
-          }
-
-          $params[$key] = $settingVal;
-        }
+        $params[$key] = $this->resolveTokens($value, $record);
+        $params[$key] = $this->resolveGlobalTokens($params[$key]);
       }
 
       if (is_array($value)) {
