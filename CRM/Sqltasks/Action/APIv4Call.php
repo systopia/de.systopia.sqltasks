@@ -117,7 +117,9 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
       $this->log("{$count} API call(s) FAILED with message: '{$errMsg}'");
     }
 
-    $this->log("{$this->skipCount} API call(s) SKIPPED due to previous error.");
+    if ($this->skipCount > 0) {
+      $this->log("{$this->skipCount} API call(s) SKIPPED due to previous error.");
+    }
   }
 
   private function reportError() {

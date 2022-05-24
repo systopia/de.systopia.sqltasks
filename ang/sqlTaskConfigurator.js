@@ -393,6 +393,8 @@
             return ts("Create Activity");
           case "CRM_Sqltasks_Action_APICall":
             return ts("API Call");
+          case "CRM_Sqltasks_Action_APIv4Call":
+            return ts("APIv4 Call");
           case "CRM_Sqltasks_Action_CSVExport":
             return ts("CSV Export");
           case "CRM_Sqltasks_Action_SyncTag":
@@ -573,6 +575,70 @@
           }
         });
       }
+    };
+  });
+
+  angular.module(moduleName).directive("apiv4Call", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/APIv4Call.html",
+      scope: {
+        model: "=",
+        index: "<",
+        actionTemplates: "=",
+      },
+      controller: function($scope) {
+        $scope.apiv4Entities = [];
+        $scope.apiv4EntityActions = [];
+        $scope.apiv4ErrorHandlerOptions = [];
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
+        $scope.onInfoPress = onInfoPress;
+        $scope.removeItemFromArray = removeItemFromArray;
+        $scope.ts = CRM.ts();
+
+        $scope.onEntitySelection = function(entity) {
+          getActionsForEntity(entity);
+        }
+
+        CRM.api4("Entity", "get", {
+          select: ["name"],
+        }).then(entities => {
+          $scope.apiv4Entities = entities.map(({ name }) => ({ name, value: name }));
+
+          if ($scope.model.entity) {
+            getActionsForEntity($scope.model.entity);
+          } else {
+            $scope.$apply();
+          }
+        }, console.error);
+
+        CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {
+          sequential: 1,
+          options: { limit: 0 },
+        }).done(result => {
+          if (result.is_error) {
+            console.error(result);
+            return;
+          }
+
+          for (const [value, name] of Object.entries(result.values[0])) {
+            $scope.apiv4ErrorHandlerOptions.push({ value, name });
+          }
+
+          $scope.$apply();
+        });
+
+        function getActionsForEntity(entity) {
+          if (!entity) return;
+
+          CRM.api4(entity, "getActions", {
+            select: ["name"],
+          }).then(actions => {
+            $scope.apiv4EntityActions = actions.map(({ name }) => ({ name, value: name }));
+            $scope.$apply();
+          }, console.error);
+        }
+      },
     };
   });
 
