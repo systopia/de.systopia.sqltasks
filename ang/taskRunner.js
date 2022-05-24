@@ -28,6 +28,7 @@
     $scope.isTaskReturnsEmptyLogs = false;
     $scope.isShowLogs = false;
     $scope.isTaskRunning = false;
+    $scope.runButtonText = $scope.ts('Run task');
     $scope.inputValue = inputValue;
 
     $scope.runTask = function() {
@@ -54,8 +55,10 @@
           $scope.isTaskRunning = false;
           $scope.isShowLogs = true;
         }
+        $scope.runButtonText = $scope.ts('Run again');
         $scope.$apply();
       }).fail(function() {
+        $scope.runButtonText = $scope.ts('Run again');
         $scope.resultLogs = ["An unknown error occurred during task execution. Please check your server logs for details before proceeding."];
         $scope.isTaskRunning = false;
         $scope.isShowLogs = true;

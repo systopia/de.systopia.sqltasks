@@ -30,8 +30,8 @@
     <a class="button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
         {{ts('Back to Manager')}}
     </a>
-    <button class="button" ng-disabled="isTaskRunning" ng-click='runTask()' title="{{ts('Run again')}}">
-        {{ts('Run again')}}
+    <button class="button" ng-disabled="isTaskRunning" ng-click='runTask()' title="{{runButtonText}}">
+      {{runButtonText}}
     </button>
     <a class="button" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
         {{ts('Configure task')}}
