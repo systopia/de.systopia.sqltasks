@@ -438,10 +438,20 @@
         </div>
 
         <div class="crm-submit-buttons">
-            <button ng-disabled="getBooleanFromNumber(taskOptions.is_archived)" class="crm-form-submit default validate" crm-icon="fa-check" name="_qf_Configure_submit"
-                    type="button" id="_qf_Configure_submit-bottom">
-              {{getBooleanFromNumber(taskId) ? ts('Save') : ts('Create')}}
+            <button ng-disabled="getBooleanFromNumber(taskOptions.is_archived)"
+                    class="crm-form-submit default validate sql-task-configurator-save-button"
+                    crm-icon="fa-check" type="button"
+                    id="_qf_Configure_submit-bottom-save-and-done">
+                {{getBooleanFromNumber(taskId) ? ts('Save and Done') : ts('Create and Done')}}
             </button>
+
+            <button ng-disabled="getBooleanFromNumber(taskOptions.is_archived)"
+                    class="crm-form-submit default validate sql-task-configurator-save-button"
+                    crm-icon="fa-check" type="button"
+                    id="_qf_Configure_submit-bottom-save-and-run">
+                {{getBooleanFromNumber(taskId) ? ts('Save and Run') : ts('Create and Run')}}
+            </button>
+
             <a class="button crm-button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
                 <i class="crm-i fa-times"></i>
                 {{ts('Back to Manager')}}

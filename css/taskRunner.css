@@ -9,3 +9,9 @@
 .crm-container .sql-task-runner-buttons.crm-submit-buttons  button:disabled:hover {
   background: #bfbfbf;
 }
+
+.crm-container .sql-task-runner-buttons.crm-submit-buttons > a,
+.crm-container .sql-task-runner-buttons.crm-submit-buttons > button {
+  padding: 11px 12px !important;
+  margin-right: 5px !important;
+}

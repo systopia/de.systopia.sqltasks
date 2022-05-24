@@ -88,11 +88,7 @@
         }, 1500);
 
         var form = document.querySelector("#sql-task-form");
-        var triggerButton = document.querySelector(
-          "#_qf_Configure_submit-bottom"
-        );
-
-        triggerButton.onclick = function() {
+        var saveTask = function(runAfterSave) {
           openCheckedActions();
           setTimeout(function() {
             if (form.reportValidity()) {
@@ -132,8 +128,19 @@
 
                 var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
                 var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
+                var redirectLink = '';
+                var linkToManage = '/sqltasks/manage/' + result.values.id;
+                var linkToRunConfiguration = '/sqltasks/run/configuration/' + result.values.id + '/' + result.values.input_required;
+
+                if (runAfterSave) {
+                  redirectLink = linkToRunConfiguration;
+                } else {
+                  redirectLink = linkToManage;
+                  successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunConfiguration + '" className="button crm-button">Run Task Now</a>';
+                }
+
                 CRM.alert(successMessage, title, 'success');
-                $location.path("/sqltasks/manage/" + result.values.id);
+                $location.path(redirectLink);
                 $scope.$apply();
               }
 
@@ -141,6 +148,11 @@
             }
           }, 500);
         };
+
+        var triggerButtonSaveAndRun = document.querySelector("#_qf_Configure_submit-bottom-save-and-run");
+        var triggerButtonSaveAndDone = document.querySelector("#_qf_Configure_submit-bottom-save-and-done");
+        triggerButtonSaveAndDone.onclick = function () {saveTask(false)};
+        triggerButtonSaveAndRun.onclick = function () {saveTask(true)};
       });
 
       if (taskId) {
