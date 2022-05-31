@@ -14,9 +14,19 @@
 
 {capture assign=apiurl}{crmURL p="civicrm/api4"}{/capture}
 
+{htxt id='id-apiv4-explorer-url'}
+  <p>
+    {ts domain="de.systopia.sqltasks" 1=$apiurl}
+      After configuring an API call in the <a href="%1" target="_blank">APIv4 Explorer</a> you can
+      copy the URL from the address bar of your browser and paste it in here to fill in some of the
+      form fields below.
+    {/ts}
+  </p>
+{/htxt}
+
 {htxt id='id-apiv4-datatable'}
   <p>
-    {ts domain="de.systopia.sqltasks"}This table is the data source for you API calls.{/ts}
+    {ts domain="de.systopia.sqltasks"}This table is the data source for your APIv4 calls.{/ts}
   </p>
 
   <p>

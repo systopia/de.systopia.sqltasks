@@ -47,13 +47,26 @@
             ></action-additional-info>
 
             <text-input
+                fieldid="'apiv4_url' + index"
+                fieldlabel="ts('APIv4 Explorer URL')"
+                helpaction="onInfoPress('APIv4 Explorer URL', 'id-apiv4-explorer-url', 'CRM/Sqltasks/Action/APIv4Call')"
+                input-change="onUrlInput(value)"
+                inputMaxWidth="'600px'"
+                isrequired="false"
+                model="model['url']"
+                showHelpIcon="true"
+            ></text-input>
+
+            <hr style="margin-bottom:1em;" />
+
+            <text-input
                 fieldid="'apiv4_table' + index"
                 fieldlabel="ts('Data Table')"
                 helpaction="onInfoPress('Data Table', 'id-apiv4-datatable', 'CRM/Sqltasks/Action/APIv4Call')"
                 inputMaxWidth="'500px'"
                 isrequired="getBooleanFromNumber(model['enabled'])"
                 model="model['table']"
-                showHelpIcon=true
+                showHelpIcon="true"
                 sizelength="60"
             ></text-input>
 
