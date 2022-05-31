@@ -26,7 +26,7 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
     $entity = $this->getConfigValue('entity');
     $action = $this->getConfigValue('action');
     $dataTable = $this->getConfigValue('table');
-    $paramsEncoded = $this->getConfigValue('parameters');
+    $paramsEncoded = $this->getConfigValue('parameters') ?? [];
     $params = json_decode($paramsEncoded, TRUE, 512, JSON_THROW_ON_ERROR);
     $storeApiResults = $this->getConfigValue('store_api_results');
 

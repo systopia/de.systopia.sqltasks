@@ -596,47 +596,207 @@
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.ts = CRM.ts();
 
-        $scope.onEntitySelection = function(entity) {
-          getActionsForEntity(entity);
-        }
+        $scope.onEntitySelection = function (entity) {
+          updateAction(entity);
+        };
 
-        CRM.api4("Entity", "get", {
-          select: ["name"],
-        }).then(entities => {
-          $scope.apiv4Entities = entities.map(({ name }) => ({ name, value: name }));
+        $scope.onUrlInput = async function (urlString) {
+          if (urlString.length < 1) return;
 
-          if ($scope.model.entity) {
-            getActionsForEntity($scope.model.entity);
-          } else {
-            $scope.$apply();
-          }
-        }, console.error);
+          const { entity, action, parameters } = parseApiExplorerUrl(urlString);
 
-        CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {
-          sequential: 1,
-          options: { limit: 0 },
-        }).done(result => {
-          if (result.is_error) {
-            console.error(result);
+          if (!isValidEntity(entity)) {
+            console.error(`Invalid entity '${entity}'`);
             return;
           }
 
-          for (const [value, name] of Object.entries(result.values[0])) {
-            $scope.apiv4ErrorHandlerOptions.push({ value, name });
+          await selectEntity(entity);
+          await updateAction(entity, action);
+
+          if (parameters) {
+            $scope.model.parameters = JSON.stringify(parameters, undefined, 4);
+            $scope.$apply();
+          }
+        };
+
+        initialSetup();
+
+        function fetchEntities() {
+          return CRM.api4("Entity", "get", {
+            select: ["name"],
+          }).then(
+            entities => entities.map(({ name }) => ({ name, value: name }))
+          ).catch(error => {
+            console.error(error);
+            return [];
+          });
+        }
+
+        function fetchEntityActions(entity) {
+          return CRM.api4(entity, "getActions", {
+            select: ["name"],
+          }).then(
+            actions => actions.map(({ name }) => ({ name, value: name }))
+          ).catch(error => {
+            console.error(error);
+            return [];
+          });
+        }
+
+        function fetchErrorHandlerOptions() {
+          return new Promise((resolve, reject) => {
+            CRM.api3("Sqltaskfield", "get_handle_api_errors_options", {
+              sequential: 1,
+              options: { limit: 0 },
+            }).done(result => {
+              if (result.is_error) {
+                reject(result);
+                return;
+              }
+
+              resolve(
+                Object.entries(result.values[0]).map(
+                  ([ value, name ]) => ({ value, name })
+                )
+              );
+            });
+          }).catch(error => {
+            console.error(error);
+            return [];
+          });
+        }
+
+        async function initialSetup() {
+          let entity = $scope.model.entity;
+
+          $scope.apiv4Entities = await fetchEntities();
+          $scope.apiv4ErrorHandlerOptions = await fetchErrorHandlerOptions();
+          $scope.$apply();
+
+          if (!isValidEntity(entity)) {
+            entity = undefined;
           }
 
+          await selectEntity(entity);
+          await updateAction(entity);
+        }
+
+        function isValidEntity(entity) {
+          return $scope.apiv4Entities.find(({ name }) => name === entity) !== undefined;
+        }
+
+        function parseApiExplorerUrl(urlString) {
+          const result = {
+            entity: undefined,
+            action: undefined,
+            parameters: {},
+          }
+
+          try {
+            const url = new URL(urlString);
+
+            let urlHash = url.hash;
+            let matches = urlHash.match(/^#\/explorer(?<urlHash>\/.*)?$/);
+
+            if (matches === null) throw new Error(`Invalid URL hash: '${urlHash}'`);
+
+            urlHash = matches.groups.urlHash;
+
+            if (urlHash === undefined) return result;
+
+            matches = urlHash.match(/^\/(?<entity>[a-zA-Z0-9_]+)?(?<urlHash>\/.*)?$/);
+            result.entity = matches.groups.entity;
+            urlHash = matches.groups.urlHash
+
+            if (urlHash === undefined) return result;
+
+            matches = urlHash.match(/^\/(?<action>[a-zA-Z0-9_]+)?(?<urlHash>\?.*)?$/);
+            result.action = matches.groups.action;
+            urlHash = matches.groups.urlHash
+
+            if (urlHash === undefined) return result;
+
+            result.parameters = parseApiCallParams(urlHash);
+          } catch (error) {
+            console.error("Invalid APIv4 Explorer URL:", urlString);
+            console.error(error);
+          }
+
+          return result;
+        }
+
+        function parseApiCallParams(searchParamsStr) {
+          const parameters = {};
+          const searchParams = new URLSearchParams(searchParamsStr);
+
+          for (const [key, value] of searchParams.entries()) {
+            switch (key) {
+              case "limit": {
+                parameters.limit = parseInt(value, 10);
+                break;
+              }
+
+              case "groupBy":
+              case "having":
+              case "join":
+              case "select":
+              case "where": {
+                parameters[key] = JSON.parse(value);
+                break;
+              }
+
+              case "chain":
+              case "orderBy":
+              case "values": {
+                parameters[key] = Object.fromEntries(JSON.parse(value));
+                break;
+              }
+
+              default: {
+                console.error(`Unknown parameter '${key}'`);
+                break;
+              }
+            }
+          }
+
+          return parameters;
+        }
+
+        function selectEntity(value) {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              CRM.$($ => $(`select#apiv4_entity${$scope.index}`).val(value).trigger("change"));
+              resolve();
+            }, 50)
+          });
+        }
+
+        function selectAction(value) {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              CRM.$($ => $(`select#apiv4_action${$scope.index}`).val(value).trigger("change"));
+              resolve();
+            }, 50)
+          });
+        }
+
+        async function updateAction(entity, newAction = undefined) {
+          let action = newAction || $scope.model.action;
+
+          if (!entity) {
+            $scope.apiv4EntityActions = [];
+            await selectAction(undefined);
+            return;
+          }
+
+          $scope.apiv4EntityActions = await fetchEntityActions(entity);
           $scope.$apply();
-        });
 
-        function getActionsForEntity(entity) {
-          if (!entity) return;
+          if (!$scope.apiv4EntityActions.find(({ name }) => action === name)) {
+            action = undefined;
+          }
 
-          CRM.api4(entity, "getActions", {
-            select: ["name"],
-          }).then(actions => {
-            $scope.apiv4EntityActions = actions.map(({ name }) => ({ name, value: name }));
-            $scope.$apply();
-          }, console.error);
+          await selectAction(action);
         }
       },
     };
@@ -1393,6 +1553,7 @@
         extraText: "<extratext",
         isDisabled: "<disabled",
         inputMaxWidth: "<inputmaxwidth",
+        inputChange: "&",
       },
       controller: function($scope) {
         $scope.isDisabled = angular.isDefined($scope.isDisabled) ? $scope.isDisabled : false;
