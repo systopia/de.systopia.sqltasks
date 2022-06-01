@@ -5,9 +5,12 @@
     <page_callback>CRM_Sqltasks_Page_Manager</page_callback>
     <title>SQL Task Manager</title>
     <access_arguments>administer CiviCRM</access_arguments>
-    <desc>Manage your SQL Tasks</desc>
-    <adminGroup>System Settings</adminGroup>
-    <icon>admin/small/option.png</icon>
+  </item>
+  <item>
+    <path>civicrm/sqltasks/export</path>
+    <page_callback>CRM_Sqltasks_Page_Export</page_callback>
+    <title>Export SQL Task</title>
+    <access_arguments>administer CiviCRM</access_arguments>
   </item>
   <item>
     <path>civicrm/sqltasks/configure</path>
@@ -16,21 +19,34 @@
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
   <item>
-    <path>civicrm/sqltasks/run</path>
-    <page_callback>CRM_Sqltasks_Page_Runner</page_callback>
-    <title>Runner</title>
-    <access_arguments>administer CiviCRM</access_arguments>
-  </item>
-  <item>
-    <path>civicrm/sqltasks/import</path>
-    <page_callback>CRM_Sqltasks_Form_ConfigImport</page_callback>
-    <title>ConfigImport</title>
-    <access_arguments>administer CiviCRM</access_arguments>
-  </item>
-  <item>
     <path>civicrm/sqltasks/mytasks</path>
     <page_callback>CRM_Sqltasks_Page_Mytasks</page_callback>
     <title>Mytasks</title>
     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civirule/form/settings</path>
+    <page_callback>CRM_CivirulesActions_Form_Settings</page_callback>
+    <title>Civirules Action Setting</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civirule/form/action/sqltask</path>
+    <page_callback>CRM_CivirulesActions_Form_SQLTask</page_callback>
+    <title>Set sql task</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/sqltasks/global-token-manager</path>
+    <page_callback>CRM_Sqltasks_Page_GlobalTokenManager</page_callback>
+    <title>Global Token Manager</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/sqltasks/templates</path>
+    <page_callback>CRM_Sqltasks_Page_Templates</page_callback>
+    <title>SQL Task Configuration Templates</title>
+    <access_arguments>administer CiviCRM</access_arguments>
   </item>
 </menu>

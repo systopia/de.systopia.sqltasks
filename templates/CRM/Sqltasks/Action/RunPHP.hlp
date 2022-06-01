@@ -1,0 +1,19 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2020 SYSTOPIA                            |
+| Author: P. Figel <pfigel@greenpeace.org>               |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-php-code'}
+  <p>{ts domain="de.systopia.sqltasks"}This is the PHP code that is executed in the context of an instance of <code>CRM_Sqltasks_Action_RunPHP</code>.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasksd"}You can run arbitrary PHP code here. Please refer to <code>CRM_Sqltasks_Action_RunPHP</code> for available methods and properties. You may also call any other function, class or method available in CiviCRM. <strong>But beware</strong>: with great power comes great responsibility!{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Is is highly recommended to only use this action in exceptional circumstances. Almost all tasks should be implemented using a combination of SQL and any of the other available actions.{/ts}</p>
+{/htxt}

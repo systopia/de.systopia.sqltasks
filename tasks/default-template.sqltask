@@ -1,0 +1,31 @@
+{
+    "description": "Default template for new tasks",
+    "category": "",
+    "scheduled": "daily",
+    "parallel_exec": 0,
+    "run_permissions": null,
+    "input_required": 0,
+    "abort_on_error": "1",
+    "config": {
+        "actions": [
+            {
+                "type": "CRM_Sqltasks_Action_RunSQL",
+                "enabled": "1",
+                "script": ""
+            },
+            {
+                "type": "CRM_Sqltasks_Action_ErrorHandler",
+                "enabled": "1",
+                "email": "",
+                "email_template": "",
+                "attach_log": "1"
+            }
+        ],
+        "scheduled_month": "1",
+        "scheduled_weekday": "1",
+        "scheduled_day": "1",
+        "scheduled_hour": "0",
+        "scheduled_minute": "0",
+        "version": "2"
+    }
+}

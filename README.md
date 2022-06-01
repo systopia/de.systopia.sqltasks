@@ -1,5 +1,7 @@
 # SQL Tasks Extension - Configurable recurring tasks
 
+[![CircleCI](https://circleci.com/gh/systopia/de.systopia.sqltasks.svg?style=svg)](https://circleci.com/gh/systopia/de.systopia.sqltasks)
+
 *Disclaimer*: The scope of this extension is implementers and skilled
 administrators only.
 

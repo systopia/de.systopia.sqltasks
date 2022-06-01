@@ -1,0 +1,27 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2018 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-task-tasks'}
+  <p>{ts domain="de.systopia.sqltasks"}You can select any tasks (except this one) to be run as an action of this task.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Only enabled tasks will be run, in the order defined by the task manager, <i>not</i> this list.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}The tasks selected here will be run <i>together</i> with the ones selected by category below.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}<strong>Be <id>very</id> careful with this! You can easily create circular execution patterns that <i>will</i> break the system.</strong>{/ts}</p>
+{/htxt}
+
+{htxt id='id-task-categories'}
+  <p>{ts domain="de.systopia.sqltasks"}You can select any number of task categories to be run as an action of this task.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}Only enabled tasks of the selected categories will be run, in the order defined by the task manager, <i>not</i> this list.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}The tasks selected here will be run <i>together</i> with the ones selected individually above.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}<strong>Be <id>very</id> careful with this! You can easily create circular execution patterns that <i>will</i> break the system.</strong>{/ts}</p>
+{/htxt}

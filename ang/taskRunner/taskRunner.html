@@ -1,0 +1,40 @@
+<div class="crm-form-block">
+  <div class="sql-task-runner-block">
+    <h1 crm-page-title>{{ts('Running SQL task')}}</h1>
+    <p>{{ts('Please use the "run again" button below, if you want to execute this task again.')}}</p>
+
+    <div ng-if="inputValue !== undefined">
+      <label>
+        <span>{{ts('Current input value:')}}</span>
+        <input type="text" disabled value="{{inputValue}}">
+      </label>
+      <p>{{ts('This value will be passed to the @input variable in task.')}}</p>
+    </div>
+
+    <div ng-if="isTaskRunning">
+      <p>{{ts('Executing...')}}</p>
+    </div>
+
+    <div ng-if="!isTaskRunning && isShowLogs">
+      <div ng-if="!isTaskReturnsEmptyLogs">
+        <p>{{ts('Logs:')}}</p>
+        <ul>
+          <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
+        </ul>
+      </div>
+      <p ng-if="isTaskReturnsEmptyLogs">{{ts('Task returns empty logs.')}}</p>
+    </div>
+  </div>
+
+  <div class="sql-task-runner-buttons crm-submit-buttons">
+    <a class="button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
+        {{ts('Back to Manager')}}
+    </a>
+    <button class="button" ng-disabled="isTaskRunning" ng-click='runTask()' title="{{ts('Run again')}}">
+        {{ts('Run again')}}
+    </button>
+    <a class="button" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
+        {{ts('Configure task')}}
+    </a>
+  </div>
+</div>

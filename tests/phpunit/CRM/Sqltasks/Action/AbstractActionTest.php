@@ -1,15 +1,13 @@
 <?php
 
 use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 
 /**
  * Base class for action tests
  *
  * @group headless
  */
-abstract class CRM_Sqltasks_Action_AbstractActionTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface {
+abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_AbstractTaskTest {
   use Api3TestTrait;
 
   const TEST_CONTACT_SQL = "SELECT contact_id FROM civicrm_email WHERE email = 'john.doe@example.com';";
@@ -18,18 +16,6 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends \PHPUnit_Framework
    * @var int
    */
   protected $contactId;
-
-  /**
-   * @var array
-   */
-  protected $log;
-
-  public function setUpHeadless() {
-    return \Civi\Test::headless()
-      ->uninstallMe(__DIR__)
-      ->installMe(__DIR__)
-      ->apply(TRUE);
-  }
 
   public function setUp() {
     $this->contactId = $this->callApiSuccess('Contact', 'create', [
@@ -41,18 +27,36 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends \PHPUnit_Framework
     parent::setUp();
   }
 
-  public function tearDown() {
-    parent::tearDown();
+  protected static function createRandomTestContact() {
+    $uniqueID = bin2hex(random_bytes(8));
+
+    $contactResult = civicrm_api3('Contact', 'create', [
+      'first_name'   => 'Test',
+      'last_name'    => $uniqueID,
+      'contact_type' => 'Individual',
+      'email'        => "test-$uniqueID@example.com",
+    ]);
+
+    return (int) $contactResult['id'];
   }
 
-  protected function createAndExecuteTask(array $data) {
-    $task = new CRM_Sqltasks_Task(NULL, $data);
-    $task->store();
-    $this->log = $task->execute();
-  }
+  protected static function getCreateTempContactTableAction(string $tableName, array $rows) {
+    $sql = "
+      DROP TABLE IF EXISTS `$tableName`;
+      CREATE TABLE `$tableName` (contact_id INT, exclude BOOL);
+    ";
 
-  protected function assertLogContains($expected, $message) {
-    $this->assertContains($expected, implode("\n", $this->log), $message);
+    foreach ($rows as $row) {
+      $contactID = $row['contact_id'];
+      $exclude = $row['exclude'];
+      $sql .= "INSERT INTO `$tableName` (contact_id, exclude) VALUES ($contactID, $exclude);\n";
+    }
+
+    return [
+      'type'    => 'CRM_Sqltasks_Action_RunSQL',
+      'enabled' => TRUE,
+      'script'  => $sql,
+    ];
   }
 
 }

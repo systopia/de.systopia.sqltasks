@@ -35,16 +35,30 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
       'title'      => 'testCampaign',
     ))['id'];
     $data = [
-      'main_sql'                                => "DROP TABLE IF EXISTS tmp_test_action_segmentationassign;
-                                                    CREATE TABLE tmp_test_action_segmentationassign AS " . self::TEST_CONTACT_SQL,
-      'post_sql'                                => 'DROP TABLE IF EXISTS tmp_test_action_segmentationassign;',
-      'segmentation_assign_enabled'             => '1',
-      'segmentation_assign_table'               => 'tmp_test_action_segmentationassign',
-      'segmentation_assign_campaign_id'         => $campaignId,
-      'segmentation_assign_segment_name'        => 'testSegmentationAssign',
-      'segmentation_assign_start'               => 'leave',
-      'segmentation_assign_segment_order'       => '',
-      'segmentation_assign_segment_order_table' => '',
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_segmentationassign;
+                        CREATE TABLE tmp_test_action_segmentationassign AS " . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'                => 'CRM_Sqltasks_Action_SegmentationAssign',
+          'enabled'             => TRUE,
+          'table'               => 'tmp_test_action_segmentationassign',
+          'campaign_id'         => $campaignId,
+          'segment_name'        => 'testSegmentationAssign',
+          'start'               => 'leave',
+          'segment_order'       => '',
+          'segment_order_table' => '',
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_segmentationassign;',
+        ],
+      ],
     ];
     $this->createAndExecuteTask($data);
 
