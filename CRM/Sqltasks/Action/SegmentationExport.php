@@ -22,6 +22,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  * @see https://github.com/systopia/de.systopia.segmentation
  */
 class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_Action_EmailActionTrait;
 
   /**
    * Get identifier string
@@ -297,27 +298,18 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      // add all the variables
-      $email_list = $this->getConfigValue('email');
-      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-
-      $attachment  = array('fullPath'  => $filepath,
-                           'mime_type' => 'application/zip',
-                           'cleanName' => basename($filepath));
-      // and send the template via email
-      $email = array(
+      $attachment  = [
+        'fullPath'  => $filepath,
+        'mime_type' => 'application/zip',
+        'cleanName' => basename($filepath)
+      ];
+      // send the template via email
+      $email = [
         'id'              => $this->getConfigValue('email_template'),
-        // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
-        'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'attachments'     => array($attachment),
-        );
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-      if (!empty($emailDomain)) {
-        $email['reply_to'] = "do-not-reply@{$emailDomain}";
-      }
-      civicrm_api3('MessageTemplate', 'send', $email);
-      $this->log("Sent file to '{$email_list}'");
+        'attachments'     => [$attachment],
+      ];
+      $this->sendEmailMessage($email);
     }
 
     // PROCESS 2: UPLOAD
