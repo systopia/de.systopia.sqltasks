@@ -23,6 +23,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_Action_EmailActionTrait;
 
   protected $id;
   protected $name;
@@ -155,20 +156,10 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      // compile email
-      $email_list = $this->getConfigValue('email');
-      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $email = array(
-        'id'              => (int) $this->getConfigValue('email_template'),
-        // 'to_name'         => $this->getConfigValue('email'),
-        'to_email'        => $this->getConfigValue('email'),
-        'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        );
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-      if (!empty($emailDomain)) {
-        $email['reply_to'] = "do-not-reply@{$emailDomain}";
-      }
-
+      $email = [
+        'id' => (int) $this->getConfigValue('email_template'),
+        'to_email' => $this->getConfigValue('email'),
+      ];
       // attach the log
       $attach_log = $this->getConfigValue('attach_log');
       if ($attach_log) {
@@ -176,14 +167,13 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
         $logfile = $this->task->writeLogfile();
 
         // attach it
-        $email['attachments'][] = array('fullPath'  => $logfile,
-                                        'mime_type' => 'application/zip',
-                                        'cleanName' => $this->task->getAttribute('name') . '-execution.log');
+        $email['attachments'][] = [
+          'fullPath'  => $logfile,
+          'mime_type' => 'application/zip',
+          'cleanName' => $this->task->getAttribute('name') . '-execution.log'
+        ];
       }
-
-      // and send the template via email
-      civicrm_api3('MessageTemplate', 'send', $email);
-      $this->log("Sent {$this->id} message to '{$email_list}'");
+      $this->sendEmailMessage($email);
     }
   }
 

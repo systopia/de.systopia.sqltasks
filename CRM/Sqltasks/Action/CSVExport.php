@@ -24,6 +24,7 @@ use League\Csv\Writer;
  *
  */
 class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_Action_EmailActionTrait;
 
   /**
    * Types of CSV field enclosure
@@ -347,32 +348,21 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      // add all the variables
-      $email_list = $this->getConfigValue('email');
-      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-
-      // and send the template via email
-      $email = array(
-          'id'        => $this->getConfigValue('email_template'),
-          'to_email'  => $this->getConfigValue('email'),
-          'from'      => "SQL Tasks <{$domainEmailAddress}>",
-          'contactId' => CRM_Core_Session::getLoggedInContactID() // sluc: if contactId param is empty, it won't get into hook_civicrm_tokenValues()
-        );
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-      if (!empty($emailDomain)) {
-        $email['reply_to'] = "do-not-reply@{$emailDomain}";
-      }
-
+      // send the template via email
+      $email = [
+          'id' => $this->getConfigValue('email_template'),
+          'to_email' => $this->getConfigValue('email'),
+      ];
       // add file as attachment or setup URL token
-      if(!$config_offer_link){
-        $attachment = array('fullPath'  => $filepath,
-                            'mime_type' => $mime_type,
-                            'cleanName' => basename($filepath));
+      if (!$config_offer_link) {
+        $attachment = [
+          'fullPath'  => $filepath,
+          'mime_type' => $mime_type,
+          'cleanName' => basename($filepath)
+        ];
         $email['attachments'] = [$attachment];
       }
-
-      civicrm_api3('MessageTemplate', 'send', $email);
-      $this->log("Sent file to '{$email_list}'");
+      $this->sendEmailMessage($email);
     }
 
     // 3) UPLOAD
