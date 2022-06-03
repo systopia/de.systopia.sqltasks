@@ -35,7 +35,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
     $this->createAndExecuteTask($data);
 
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
-    $this->assertLogContains("Action 'API Call' executed in", 'API call action should have succeeded');
+    $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
     $phoneCount = $this->callApiSuccess('Phone', 'getcount', [
       'contact_id' => $this->contactId,
       'phone'      => '1800testAPICall',
@@ -78,7 +78,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
     $this->assertLogContains('Column "exclude" exists, might skip some rows', '"exclude" column should have been detected');
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
-    $this->assertLogContains("Action 'API Call' executed in", 'API call action should have succeeded');
+    $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
     $phoneCount = $this->callApiSuccess('Phone', 'getcount', [
       'contact_id' => $this->contactId,
       'phone'      => '1800testInclude',

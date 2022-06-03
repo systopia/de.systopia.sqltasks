@@ -392,7 +392,7 @@
           case "CRM_Sqltasks_Action_CreateActivity":
             return ts("Create Activity");
           case "CRM_Sqltasks_Action_APICall":
-            return ts("API Call");
+            return ts("APIv3 Call");
           case "CRM_Sqltasks_Action_APIv4Call":
             return ts("APIv4 Call");
           case "CRM_Sqltasks_Action_CSVExport":
