@@ -57,7 +57,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    * Get a human readable name
    */
   public function getName() {
-    return E::ts('API Call');
+    return E::ts('APIv3 Call');
   }
 
   /**
