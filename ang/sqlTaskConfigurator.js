@@ -639,6 +639,8 @@
           }
         };
 
+        const entityActionCache = new Map();
+
         initialSetup();
 
         async function addUrlInputControls() {
@@ -695,11 +697,17 @@
         }
 
         function fetchEntityActions(entity) {
+          if (entityActionCache.has(entity)) {
+            return Promise.resolve(entityActionCache.get(entity));
+          }
+
           return CRM.api4(entity, "getActions", {
             select: ["name"],
-          }).then(
-            actions => actions.map(({ name }) => ({ name, value: name }))
-          ).catch(error => {
+          }).then((actions) => {
+            const entityActions = actions.map(({ name }) => ({ name, value: name }));
+            entityActionCache.set(entity, entityActions);
+            return entityActions;
+          }).catch(error => {
             console.error(error);
             return [];
           });
