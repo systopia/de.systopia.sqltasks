@@ -753,7 +753,7 @@
               }
 
               default: {
-                console.error(`Unknown parameter '${key}'`);
+                parameters[key] = JSON.parse(value);
                 break;
               }
             }
