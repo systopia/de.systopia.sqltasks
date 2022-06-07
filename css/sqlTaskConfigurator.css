@@ -106,6 +106,13 @@ select.pixelInput {
   height: auto;
 }
 
+.crm-container .sql-tasks .crm-sqltask-apiv4 .api-url-controls {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 10px;
+  padding: 5px;
+}
+
 .sql-task-action-title {
   padding-left: 5px;
   margin-bottom: 5px;

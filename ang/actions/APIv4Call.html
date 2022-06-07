@@ -1,4 +1,4 @@
-<div class="crm-accordion-wrapper crm-sqltask-api relativePosition collapsed">
+<div class="crm-accordion-wrapper crm-sqltask-apiv4 relativePosition collapsed">
     <div class="crm-accordion-header active accordion-header-custom action-label">
         <label class="input-checkbox">
             <input
@@ -88,6 +88,7 @@
                 isrequired="getBooleanFromNumber(model['enabled'])"
                 model="model['action']"
                 optionsArray="apiv4EntityActions"
+                select-change="onActionSelection(value)"
                 showHelpIcon="true"
             ></ordinary-select2>
 
@@ -113,6 +114,7 @@
                 fieldid="'apiv4_parameters' + index"
                 fieldlabel="ts('Parameters')"
                 helpaction="onInfoPress('Parameters', 'id-apiv4-parameters', 'CRM/Sqltasks/Action/APIv4Call')"
+                input-change="onParamsChange(value)"
                 inputMaxWidth="'500px'"
                 isrequired="false"
                 model="model['parameters']"
