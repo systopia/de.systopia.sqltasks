@@ -593,17 +593,37 @@
         $scope.apiv4ErrorHandlerOptions = [];
         $scope.getBooleanFromNumber = getBooleanFromNumber;
         $scope.onInfoPress = onInfoPress;
+        $scope.parsedApiUrl = {};
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.ts = CRM.ts();
 
         $scope.onEntitySelection = function (entity) {
+          if (entity !== $scope.parsedApiUrl.entity) setApiUrl("");
           updateAction(entity);
         };
 
-        $scope.onUrlInput = async function (urlString) {
-          if (urlString.length < 1) return;
+        $scope.onActionSelection = function (action) {
+          if (action !== $scope.parsedApiUrl.action) setApiUrl("");
+        }
 
-          const { entity, action, parameters } = parseApiExplorerUrl(urlString);
+        $scope.onParamsChange = function (paramsJSON) {
+          try {
+            const params = JSON.parse(paramsJSON);
+            if (!_.isEqual(params, $scope.parsedApiUrl.parameters)) setApiUrl("");
+          } catch (_error) {}
+        }
+
+        $scope.onUrlInput = async function (urlString) {
+          if (urlString.length < 1) {
+            $scope.parsedApiUrl = {};
+            return;
+          }
+
+          const { success, entity, action, parameters } = parseApiExplorerUrl(urlString);
+
+          if (success) {
+            $scope.parsedApiUrl = { entity, action, parameters };
+          } else return;
 
           if (!isValidEntity(entity)) {
             console.error(`Invalid entity '${entity}'`);
@@ -620,6 +640,48 @@
         };
 
         initialSetup();
+
+        async function addUrlInputControls() {
+          await new Promise(resolve => setTimeout(resolve, 50));
+
+          CRM.$(($) => {
+            const copyBtn = $(document.createElement("label"))
+              .addClass("api-url-controls")
+              .attr("title", $scope.ts("Copy"))
+              .append("<i class=\"crm-i fa-copy\"></i>")
+              .on("click", () => navigator.clipboard.writeText($scope.model.url));
+
+            const clearBtn = $(document.createElement("label"))
+              .addClass("api-url-controls")
+              .append(`<i class="crm-i fa-trash"></i> ${$scope.ts("Clear")}`)
+              .on("click", () => setApiUrl(""));
+
+            const updateBtn = $(document.createElement("label"))
+              .addClass("api-url-controls")
+              .append(`<i class="crm-i fa-link"></i> ${$scope.ts("Generate APIv4 Explorer URL")}`)
+              .on("click", () => {
+                setApiUrl(serializeApiCall());
+
+                CRM.alert(
+                  $scope.ts(`
+                    If you use variables in your API parameters (global tokens,
+                    settings, etc.) the generated URLs might be invalid.
+                  `),
+                  $scope.ts("Warning"),
+                  "info",
+                );
+              });
+
+            const rootElem = $(`input#apiv4_url${$scope.index}`).parent();
+
+            if (navigator.clipboard) rootElem.append(copyBtn);
+
+            rootElem
+              .append("<br />")
+              .append(clearBtn)
+              .append(updateBtn);
+          });
+        }
 
         function fetchEntities() {
           return CRM.api4("Entity", "get", {
@@ -667,6 +729,8 @@
         }
 
         async function initialSetup() {
+          await addUrlInputControls();
+
           let entity = $scope.model.entity;
 
           $scope.apiv4Entities = await fetchEntities();
@@ -677,6 +741,7 @@
             entity = undefined;
           }
 
+          await setApiUrl("");
           await selectEntity(entity);
           await updateAction(entity);
         }
@@ -687,6 +752,7 @@
 
         function parseApiExplorerUrl(urlString) {
           const result = {
+            success: false,
             entity: undefined,
             action: undefined,
             parameters: {},
@@ -717,6 +783,7 @@
             if (urlHash === undefined) return result;
 
             result.parameters = parseApiCallParams(urlHash);
+            result.success = true;
           } catch (error) {
             console.error("Invalid APIv4 Explorer URL:", urlString);
             console.error(error);
@@ -777,6 +844,52 @@
               CRM.$($ => $(`select#apiv4_action${$scope.index}`).val(value).trigger("change"));
               resolve();
             }, 50)
+          });
+        }
+
+        function serializeApiCall() {
+          try {
+            const entity = $scope.model.entity || "";
+            const action = $scope.model.action || "";
+            const parameters = JSON.parse($scope.model.parameters || "{}");
+
+            const urlParams = new URLSearchParams();
+
+            for (const [key, value] of Object.entries(parameters)) {
+              switch (key) {
+                case "chain":
+                case "orderBy":
+                case "values": {
+                  urlParams.append(key, JSON.stringify(Object.entries(value)));
+                  break;
+                }
+
+                default: {
+                  urlParams.append(key, JSON.stringify(value));
+                  break;
+                }
+              }
+            }
+
+            const { protocol, host } = window.location;
+            const urlBase = `${protocol}//${host}/civicrm/api4#/explorer`;
+            const apiv4ExplorerUrl = `${urlBase}/${entity}/${action}?${urlParams.toString()}`;
+
+            return apiv4ExplorerUrl;
+          } catch (error) {
+            console.error("Failed to serialize API call");
+            console.error(error);
+          }
+
+          return "";
+        }
+
+        function setApiUrl(value) {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              CRM.$($ => $(`input#apiv4_url${$scope.index}`).val(value).trigger("change"));
+              resolve();
+            }, 50);
           });
         }
 
@@ -1525,6 +1638,7 @@
         showHelpIcon: "<showhelpicon",
         columnsNumber: "<columnsnumber",
         inputMaxWidth: "<inputmaxwidth",
+        inputChange: "&",
       },
       controller: function($scope) {
         $scope.columnsNumber = angular.isDefined($scope.columnsNumber) ? $scope.columnsNumber : 74;
