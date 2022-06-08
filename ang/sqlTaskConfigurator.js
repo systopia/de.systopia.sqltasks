@@ -88,7 +88,7 @@
         }, 1500);
 
         var form = document.querySelector("#sql-task-form");
-        var saveTask = function(runAfterSave) {
+        var saveTask = function(redirectToDashboardAfterSaving) {
           openCheckedActions();
           setTimeout(function() {
             if (form.reportValidity()) {
@@ -105,6 +105,10 @@
               }
 
               function submitCallback (result) {
+                if (result.is_error === 0) {
+                  $scope.taskOptions.last_modified = result.values.last_modified;
+                }
+
                 if (result.is_error && result.error_type === "CONCURRENT_CHANGES") {
                   CRM.confirm({
                     title: ts("Warning"),
@@ -128,19 +132,16 @@
 
                 var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
                 var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
-                var redirectLink = '';
                 var linkToManage = '/sqltasks/manage/' + result.values.id;
                 var linkToRunConfiguration = '/sqltasks/run/configuration/' + result.values.id + '/' + result.values.input_required;
-
-                if (runAfterSave) {
-                  redirectLink = linkToRunConfiguration;
-                } else {
-                  redirectLink = linkToManage;
-                  successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunConfiguration + '" className="button crm-button">Run Task Now</a>';
-                }
+                successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunConfiguration + '" className="button crm-button">Run Task Now</a>';
 
                 CRM.alert(successMessage, title, 'success');
-                $location.path(redirectLink);
+
+                if (redirectToDashboardAfterSaving) {
+                  $location.path(linkToManage);
+                }
+
                 $scope.$apply();
               }
 
@@ -149,10 +150,10 @@
           }, 500);
         };
 
-        var triggerButtonSaveAndRun = document.querySelector("#_qf_Configure_submit-bottom-save-and-run");
+        var triggerButtonSave = document.querySelector("#_qf_Configure_submit-bottom-save");
         var triggerButtonSaveAndDone = document.querySelector("#_qf_Configure_submit-bottom-save-and-done");
-        triggerButtonSaveAndDone.onclick = function () {saveTask(false)};
-        triggerButtonSaveAndRun.onclick = function () {saveTask(true)};
+        triggerButtonSaveAndDone.onclick = function () {saveTask(true)};
+        triggerButtonSave.onclick = function () {saveTask(false)};
       });
 
       if (taskId) {
