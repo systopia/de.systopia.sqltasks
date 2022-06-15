@@ -133,10 +133,10 @@
                 var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
                 var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
                 var linkToManage = '/sqltasks/manage/' + result.values.id;
-                var linkToRunConfiguration = '/sqltasks/run/configuration/' + result.values.id + '/' + result.values.input_required;
-                successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunConfiguration + '" className="button crm-button">Run Task Now</a>';
+                var linkToRunTask = '/sqltasks/run/' + result.values.id;
+                successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunTask + '">Run Task Now</a>';
 
-                CRM.alert(successMessage, title, 'success');
+                CRM.alert(successMessage, title, 'success', {'unique': true, 'expires' : 10000 });
 
                 if (redirectToDashboardAfterSaving) {
                   $location.path(linkToManage);
