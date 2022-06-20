@@ -5,8 +5,7 @@
 
             <div class="sql-tasks-basic-information-block">
                 <div class="crm-submit-buttons">
-                    <a class="button crm-button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
-                        <i class="crm-i fa-times"></i>
+                    <a class="button crm-button" crm-icon="fa-list" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
                         {{ts('Back to Manager')}}
                     </a>
                 </div>
@@ -440,7 +439,7 @@
         <div class="crm-submit-buttons">
             <button ng-disabled="getBooleanFromNumber(taskOptions.is_archived)"
                     class="crm-form-submit default validate sql-task-configurator-save-button"
-                    crm-icon="fa-check" type="button"
+                    crm-icon="fa-floppy-o" type="button"
                     id="_qf_Configure_submit-bottom-save">
                 {{ts('Save')}}
             </button>
@@ -452,8 +451,7 @@
                 {{getBooleanFromNumber(taskId) ? ts('Save and Done') : ts('Create and Done')}}
             </button>
 
-            <a class="button crm-button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
-                <i class="crm-i fa-times"></i>
+            <a class="button crm-button" crm-icon="fa-list" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
                 {{ts('Back to Manager')}}
             </a>
         </div>
