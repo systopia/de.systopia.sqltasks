@@ -1,7 +1,7 @@
 /* 'str' is alias for sql-task-runner */
 
 .str__content-wrap {
-  max-width: 500px;
+  max-width: 800px;
   padding: 20px;
 }
 
@@ -17,6 +17,11 @@
   padding-left: 0 !important;
   padding-bottom: 0 !important;
   padding-top: 10px !important;
+}
+
+.str__buttons-wrap .crm-i, #sql-task-form .crm-i {
+  display: inline !important;
+  padding-right: 4px;
 }
 
 .crm-container .str__buttons-wrap.crm-submit-buttons button:disabled {

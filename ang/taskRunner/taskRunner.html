@@ -1,7 +1,7 @@
 <div class="str__sql-task-runner">
   <div class="crm-form-block">
       <div class="str__content-wrap">
-          <h1 crm-page-title>{{ts('Running SQL task')}}</h1>
+          <h1 crm-page-title>{{ts('Run SQL task:')}} {{task.name}}</h1>
 
           <div class="str__loader" ng-if="isTaskLoading">
               loading ...
@@ -12,7 +12,8 @@
           </div>
 
           <p ng-if="isTaskSuccessfullyLoaded" class="help str__no-margin">
-              <span>{{ts('Please use the "' + runButtonText + '" button below, if you want to execute this task.')}}</span>
+              <span ng-if="!isShowLogs">{{ts('Are you sure you want to execute "%1"?', {1: task.name})}}</span>
+              <span ng-if="isShowLogs">{{ts('Task "%1" has been executed. Please use "Run again" below if you want to execute again.', {1: task.name})}}</span>
           </p>
 
           <div ng-show="isTaskSuccessfullyLoaded && isInputValueRequired()" >
@@ -46,13 +47,13 @@
           </div>
 
           <div class="str__buttons-wrap crm-submit-buttons">
-              <a class="button" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
+              <a class="button" crm-icon="fa-list" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
                   {{ts('Back to Manager')}}
               </a>
-              <button ng-show="isTaskSuccessfullyLoaded" class="button" ng-disabled="isTaskRunning || (isTaskSuccessfullyLoaded && isInputValueRequired() && inputValue.length === 0)" ng-click='runTask()' title="{{runButtonText}}">
+              <a ng-show="isTaskSuccessfullyLoaded" class="button" crm-icon="fa-play-circle" ng-disabled="isTaskRunning || (isTaskSuccessfullyLoaded && isInputValueRequired() && inputValue.length === 0)" ng-click='runTask()' title="{{runButtonText}}">
                   {{runButtonText}}
-              </button>
-              <a ng-show="isTaskSuccessfullyLoaded" class="button" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
+              </a>
+              <a ng-show="isTaskSuccessfullyLoaded" class="button" crm-icon="fa-pencil" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
                   {{ts('Configure task')}}
               </a>
           </div>
