@@ -113,6 +113,16 @@ select.pixelInput {
   padding: 5px;
 }
 
+.crm-container .sql-tasks .crm-sqltask-apiv4 text-input.explorer-url input[type=text].invalid {
+  border: 2px solid red;
+}
+
+.crm-container .sql-tasks .crm-sqltask-apiv4 text-input.explorer-url input[type=text].invalid + span.error-msg {
+  color: red;
+  display: block;
+  font-weight: bold;
+}
+
 .sql-task-action-title {
   padding-left: 5px;
   margin-bottom: 5px;
