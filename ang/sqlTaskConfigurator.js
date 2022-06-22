@@ -616,20 +616,30 @@
         $scope.onUrlInput = async function (urlString) {
           if (urlString.length < 1) {
             $scope.parsedApiUrl = {};
+            setUrlValid(true);
             return;
           }
 
           const { success, entity, action, parameters } = parseApiExplorerUrl(urlString);
 
-          if (success) {
-            $scope.parsedApiUrl = { entity, action, parameters };
-          } else return;
-
-          if (!isValidEntity(entity)) {
-            console.error(`Invalid entity '${entity}'`);
+          if (!success) {
+            setUrlValid(false, "Invalid APIv4 Explorer URL");
             return;
           }
 
+          $scope.parsedApiUrl = { entity, action, parameters };
+
+          if (!isValidEntity(entity)) {
+            setUrlValid(false, `Invalid entity '${entity}'`);
+            return;
+          }
+
+          if (!(await isValidEntityAction(entity, action))) {
+            setUrlValid(false, `Invalid action '${action}' for entity ${entity}`);
+            return;
+          }
+
+          setUrlValid(true);
           await selectEntity(entity);
           await updateAction(entity, action);
 
@@ -758,6 +768,13 @@
           return $scope.apiv4Entities.find(({ name }) => name === entity) !== undefined;
         }
 
+        async function isValidEntityAction(entity, action) {
+          await fetchEntityActions(entity);
+          if (!entityActionCache.has(entity)) return false;
+          if (!entityActionCache.get(entity).find(({ name }) => name === action)) return false;
+          return true;
+        }
+
         function parseApiExplorerUrl(urlString) {
           const result = {
             success: false,
@@ -793,7 +810,6 @@
             result.parameters = parseApiCallParams(urlHash);
             result.success = true;
           } catch (error) {
-            console.error("Invalid APIv4 Explorer URL:", urlString);
             console.error(error);
           }
 
@@ -898,6 +914,25 @@
               CRM.$($ => $(`input#apiv4_url${$scope.index}`).val(value).trigger("change"));
               resolve();
             }, 50);
+          });
+        }
+
+        function setUrlValid (isValid, errorMsg = "Invalid input") {
+          CRM.$($ => {
+            const urlInput = $(`input#apiv4_url${$scope.index}`);
+            $(`input#apiv4_url${$scope.index} + span.error-msg`).remove();
+
+            if (isValid) {
+              urlInput.removeClass("invalid");
+              return;
+            }
+
+            urlInput.addClass("invalid");
+
+            const errorContainer = document.createElement("span");
+            errorContainer.classList.add("error-msg");
+            errorContainer.textContent = errorMsg;
+            $(errorContainer).insertAfter(urlInput);
           });
         }
 
