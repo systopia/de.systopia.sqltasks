@@ -59,4 +59,12 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_Abstr
     ];
   }
 
+  protected static function getDropTempContactTableAction(string $tableName) {
+    return [
+      'type'    => 'CRM_Sqltasks_Action_PostSQL',
+      'enabled' => TRUE,
+      'script'  => "DROP TABLE IF EXISTS `$tableName`;",
+    ];
+  }
+
 }

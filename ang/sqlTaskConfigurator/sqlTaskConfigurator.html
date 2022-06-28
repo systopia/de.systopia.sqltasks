@@ -395,6 +395,9 @@
                                 <div ng-switch-when="CRM_Sqltasks_Action_APICall">
                                     <api-call model='action' index='$index' action-templates='actionTemplates'></api-call>
                                 </div>
+                                <div ng-switch-when="CRM_Sqltasks_Action_APIv4Call">
+                                    <apiv4-call model='action' index='$index' action-templates='actionTemplates'></apiv4-call>
+                                </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_CSVExport">
                                     <csv-export model='action' index='$index' action-templates='actionTemplates'></csv-export>
                                 </div>

@@ -10,7 +10,8 @@
     </div>
     <div class="content">
         <input ng-disabled="isDisabled" ng-style="inputStyle"  name="{{fieldId}}"  size="{{sizeLength}}" type="text"
-               id="{{fieldId}}" class="crm-form-text" ng-model="componentModel" ng-required="isRequired">
+               id="{{fieldId}}" class="crm-form-text" ng-model="componentModel" ng-required="isRequired"
+               ng-change="inputChange({ value: componentModel })">
         <span ng-if="extraText.length > 0" class="description">&nbsp;{{extraText}}</span>
     </div>
     <div class="clear"></div>
