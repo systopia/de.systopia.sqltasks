@@ -88,11 +88,7 @@
         }, 1500);
 
         var form = document.querySelector("#sql-task-form");
-        var triggerButton = document.querySelector(
-          "#_qf_Configure_submit-bottom"
-        );
-
-        triggerButton.onclick = function() {
+        var saveTask = function(redirectToDashboardAfterSaving) {
           openCheckedActions();
           setTimeout(function() {
             if (form.reportValidity()) {
@@ -109,6 +105,10 @@
               }
 
               function submitCallback (result) {
+                if (result.is_error === 0) {
+                  $scope.taskOptions.last_modified = result.values.last_modified;
+                }
+
                 if (result.is_error && result.error_type === "CONCURRENT_CHANGES") {
                   CRM.confirm({
                     title: ts("Warning"),
@@ -132,8 +132,16 @@
 
                 var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
                 var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
-                CRM.alert(successMessage, title, 'success');
-                $location.path("/sqltasks/manage/" + result.values.id);
+                var linkToManage = '/sqltasks/manage/' + result.values.id;
+                var linkToRunTask = '/sqltasks/run/' + result.values.id;
+                successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunTask + '">Run Task Now</a>';
+
+                CRM.alert(successMessage, title, 'success', {'unique': true, 'expires' : 10000 });
+
+                if (redirectToDashboardAfterSaving) {
+                  $location.path(linkToManage);
+                }
+
                 $scope.$apply();
               }
 
@@ -141,6 +149,11 @@
             }
           }, 500);
         };
+
+        var triggerButtonSave = document.querySelector("#_qf_Configure_submit-bottom-save");
+        var triggerButtonSaveAndDone = document.querySelector("#_qf_Configure_submit-bottom-save-and-done");
+        triggerButtonSaveAndDone.onclick = function () {saveTask(true)};
+        triggerButtonSave.onclick = function () {saveTask(false)};
       });
 
       if (taskId) {

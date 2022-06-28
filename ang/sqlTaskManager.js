@@ -186,21 +186,6 @@
         }
       };
 
-      $scope.confirmRunTaskWithInputVariable = function(taskId) {
-        var inputVariable = CRM.$('.sql-task-run-task-with-variable-dialog input.run-sql-task-input-variable').val();
-        if (inputVariable === undefined || inputVariable.length < 1) {
-          CRM.alert(ts("The 'variable' field is required. Please fill the input and try again."), ts("Variable field"), "warning");
-        } else {
-          window.waitSqlTaskId = taskId;
-          $location.path("/sqltasks/run/" + taskId + '/' + inputVariable);
-        }
-      };
-
-      $scope.confirmRunTask = function(taskId) {
-        window.waitSqlTaskId = taskId;
-        $location.path("/sqltasks/run/" + taskId);
-      };
-
       $scope.moveTaskInList = function(movedTaskId, direction) {
         var movedTaskIndex = $scope.displayTasks.findIndex(task => task.id === movedTaskId);
         var moveToTaskId;
@@ -279,6 +264,10 @@
 
       $scope.onDeletePress = function(taskId) {
         $location.path("/sqltasks/delete/" + taskId);
+      };
+
+      $scope.onExecutePress = function(taskId) {
+        $location.path("/sqltasks/run/" + taskId);
       };
 
       $scope.addNewTask = function () {
