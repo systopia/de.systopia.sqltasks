@@ -1,0 +1,11 @@
+{
+    "name": "civicrm/sqltasks",
+    "description": "Manage recurring tasks based on SQL queries",
+    "license": "AGPL-3.0-only",
+    "authors": [
+        {
+            "name": "SYSTOPIA",
+            "email": "endres@systopia.de"
+        }
+    ]
+}
