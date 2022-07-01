@@ -80,6 +80,21 @@
       $scope.taskId = taskId;
 
       $scope.onInfoPress = onInfoPress;
+      $scope.handleTaskResponse = function (result) {
+        if (result.is_error === 0) {
+          var task = Object.assign({}, result.values);
+          $scope.config = Object.assign({}, task.config);
+          delete task["config"];
+          $scope.taskOptions = task;
+
+          if ($scope.taskOptions.run_permissions === '') {
+            $scope.taskOptions.run_permissions = [];
+          } else {
+            $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
+          }
+          $scope.$apply();
+        }
+      };
       $scope.getBooleanFromNumber = getBooleanFromNumber;
 
       $scope.$on("$viewContentLoaded", function() {
@@ -105,9 +120,7 @@
               }
 
               function submitCallback (result) {
-                if (result.is_error === 0) {
-                  $scope.taskOptions.last_modified = result.values.last_modified;
-                }
+                $scope.handleTaskResponse(result);
 
                 if (result.is_error && result.error_type === "CONCURRENT_CHANGES") {
                   CRM.confirm({
@@ -142,6 +155,8 @@
                   $location.path(linkToManage);
                 }
 
+                $scope.taskId = result.values.id;
+                taskId = result.values.id;
                 $scope.$apply();
               }
 
@@ -161,19 +176,7 @@
           sequential: 1,
           id: taskId
         }).done(function(result) {
-          if (!result.is_error) {
-            var task = Object.assign({}, result.values);
-            $scope.config = Object.assign({}, task.config);
-            delete task["config"];
-            $scope.taskOptions = task;
-
-            if ($scope.taskOptions.run_permissions === '') {
-              $scope.taskOptions.run_permissions = [];
-            } else {
-              $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
-            }
-            $scope.$apply();
-          }
+          $scope.handleTaskResponse(result);
         });
       }
 
