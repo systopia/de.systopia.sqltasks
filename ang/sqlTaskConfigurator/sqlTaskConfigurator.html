@@ -444,7 +444,7 @@
                     class="crm-form-submit default validate sql-task-configurator-save-button"
                     crm-icon="fa-floppy-o" type="button"
                     id="_qf_Configure_submit-bottom-save">
-                {{ts('Save')}}
+                {{getBooleanFromNumber(taskId) ? ts('Save') : ts('Create')}}
             </button>
 
             <button ng-disabled="getBooleanFromNumber(taskOptions.is_archived)"
