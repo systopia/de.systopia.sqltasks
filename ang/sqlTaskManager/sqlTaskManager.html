@@ -177,14 +177,9 @@
                       {{ts('Actions', {'domain' : 'de.systopia.sqltasks'})}}
                       <ul ng-if="taskIdWithOpenPanel == task.id" class="panel">
                           <li ng-if="!getNumberFromString(task.is_archived)" >
-                              <a ng-if="!getNumberFromString(task.input_required)" class="action-item crm-hover-button" href="javascript:;" title="{{ts('Confirm')}}"
-                                  crm-confirm="{title: ts('Run this task?'), width: '40%', message: ts('Are you sure you want to run this task?')}" on-yes="confirmRunTask(task.id)">
-                                  {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
-                              </a>
-                              <a ng-if="getNumberFromString(task.input_required)"  class="action-item crm-hover-button" href="javascript:;" title="{{ts('Confirm')}}"
-                                  crm-confirm="{title: ts('Run this task?'), templateUrl: '~/sqlTaskManager/dialogWithInputVariable.html', width: '40%', export: {ts:ts, foo: '3333'}}"
-                                  on-yes="confirmRunTaskWithInputVariable(task.id)">
-                                  {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
+                              <a ng-click="onExecutePress(task.id)" class="action-item crm-hover-button small-popup"
+                                 title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}">
+                                 {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li>

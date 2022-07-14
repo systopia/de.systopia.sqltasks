@@ -80,6 +80,21 @@
       $scope.taskId = taskId;
 
       $scope.onInfoPress = onInfoPress;
+      $scope.handleTaskResponse = function (result) {
+        if (result.is_error === 0) {
+          var task = Object.assign({}, result.values);
+          $scope.config = Object.assign({}, task.config);
+          delete task["config"];
+          $scope.taskOptions = task;
+
+          if ($scope.taskOptions.run_permissions === '') {
+            $scope.taskOptions.run_permissions = [];
+          } else {
+            $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
+          }
+          $scope.$apply();
+        }
+      };
       $scope.getBooleanFromNumber = getBooleanFromNumber;
 
       $scope.$on("$viewContentLoaded", function() {
@@ -88,11 +103,7 @@
         }, 1500);
 
         var form = document.querySelector("#sql-task-form");
-        var triggerButton = document.querySelector(
-          "#_qf_Configure_submit-bottom"
-        );
-
-        triggerButton.onclick = function() {
+        var saveTask = function(redirectToDashboardAfterSaving) {
           openCheckedActions();
           setTimeout(function() {
             if (form.reportValidity()) {
@@ -109,6 +120,8 @@
               }
 
               function submitCallback (result) {
+                $scope.handleTaskResponse(result);
+
                 if (result.is_error && result.error_type === "CONCURRENT_CHANGES") {
                   CRM.confirm({
                     title: ts("Warning"),
@@ -132,8 +145,18 @@
 
                 var title = ts('Task ' + (Number(taskId) ? 'updated' : 'created'));
                 var successMessage = ts('Task successfully ' + (Number(taskId) ? 'updated' : 'created'));
-                CRM.alert(successMessage, title, 'success');
-                $location.path("/sqltasks/manage/" + result.values.id);
+                var linkToManage = '/sqltasks/manage/' + result.values.id;
+                var linkToRunTask = '/sqltasks/run/' + result.values.id;
+                successMessage += '<br> <a  href="' + CRM.url('civicrm/a') + '#' + linkToRunTask + '">Run Task Now</a>';
+
+                CRM.alert(successMessage, title, 'success', {'unique': true, 'expires' : 10000 });
+
+                if (redirectToDashboardAfterSaving) {
+                  $location.path(linkToManage);
+                }
+
+                $scope.taskId = result.values.id;
+                taskId = result.values.id;
                 $scope.$apply();
               }
 
@@ -141,6 +164,11 @@
             }
           }, 500);
         };
+
+        var triggerButtonSave = document.querySelector("#_qf_Configure_submit-bottom-save");
+        var triggerButtonSaveAndDone = document.querySelector("#_qf_Configure_submit-bottom-save-and-done");
+        triggerButtonSaveAndDone.onclick = function () {saveTask(true)};
+        triggerButtonSave.onclick = function () {saveTask(false)};
       });
 
       if (taskId) {
@@ -148,19 +176,7 @@
           sequential: 1,
           id: taskId
         }).done(function(result) {
-          if (!result.is_error) {
-            var task = Object.assign({}, result.values);
-            $scope.config = Object.assign({}, task.config);
-            delete task["config"];
-            $scope.taskOptions = task;
-
-            if ($scope.taskOptions.run_permissions === '') {
-              $scope.taskOptions.run_permissions = [];
-            } else {
-              $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
-            }
-            $scope.$apply();
-          }
+          $scope.handleTaskResponse(result);
         });
       }
 

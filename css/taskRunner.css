@@ -1,11 +1,52 @@
-.sql-task-runner-block {
+/* 'str' is alias for sql-task-runner */
+
+.str__content-wrap {
+  max-width: 800px;
+  padding: 20px;
+}
+
+.str__logs, .str__executing-loader {
+  padding-top: 10px;
+}
+
+.str__block {
   padding: 10px 10px 0 10px;
 }
 
-.crm-container .sql-task-runner-buttons.crm-submit-buttons button:disabled {
+.str__buttons-wrap {
+  padding-left: 0 !important;
+  padding-bottom: 0 !important;
+  padding-top: 10px !important;
+}
+
+.str__buttons-wrap .crm-i, #sql-task-form .crm-i {
+  display: inline !important;
+  padding-right: 4px;
+}
+
+.crm-container .str__buttons-wrap.crm-submit-buttons button:disabled {
   background: #bfbfbf;
 }
 
-.crm-container .sql-task-runner-buttons.crm-submit-buttons  button:disabled:hover {
+.crm-container .str__buttons-wrap.crm-submit-buttons  button:disabled:hover {
   background: #bfbfbf;
 }
+
+.crm-container .str__buttons-wrap.crm-submit-buttons > a,
+.crm-container .str__buttons-wrap.crm-submit-buttons > button {
+  padding: 11px 12px !important;
+  margin-right: 5px !important;
+}
+
+.str__input-value-wrap {
+  padding: 20px;
+}
+
+.sql-task-task-run-configuration-errors {
+  margin-top: 10px;
+}
+
+.str__no-margin {
+  margin: 0 !important;
+}
+
