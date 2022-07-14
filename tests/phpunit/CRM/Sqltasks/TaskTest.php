@@ -153,9 +153,9 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $query = CRM_Core_DAO::executeQuery("SELECT * FROM civicrm_sqltasks WHERE name = 'testExecuteTask'");
     $query->fetch();
     $this->assertGreaterThan(0, $query->last_runtime);
-    $dbNow = CRM_Core_DAO::singleValueQuery("SELECT NOW()");
-    // this could, in theory, fail due to timing, but it hasn't so far, so #YOLO
-    $this->assertEquals($dbNow, $query->last_execution, 'Task should have been executed recently');
+    $dbNow = strtotime(CRM_Core_DAO::singleValueQuery("SELECT NOW()"));
+    $lastExecTime = strtotime($query->last_execution);
+    $this->assertLessThanOrEqual(1, abs($dbNow - $lastExecTime), 'Task should have been executed recently');
     $executed = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM tmp_test_execute");
     $this->assertEquals(1, $executed, 'Table and row from Main SQL should have been created');
     $executed = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM tmp_test_execute_post");

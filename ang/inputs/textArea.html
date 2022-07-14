@@ -12,7 +12,8 @@
     <div class="content">
         <textarea rows="{{rowsNumber}}" cols="{{columnsNumber}}" ng-required="isRequired"
                   ng-style="textAreaStyles" name="{{fieldId}}" id="{{fieldId}}"
-                  class="crm-form-textarea" ng-model="componentModel">
+                  class="crm-form-textarea" ng-model="componentModel"
+                  ng-change="inputChange({ value: componentModel })">
         </textarea>
     </div>
     <div class="clear"></div>

@@ -1,0 +1,148 @@
+{*-------------------------------------------------------+
+| SYSTOPIA SQL TASKS EXTENSION                           |
+| Copyright (C) 2017 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{capture assign=apiurl}{crmURL p="civicrm/api4"}{/capture}
+
+{htxt id='id-apiv4-explorer-url'}
+  <p>
+    {ts domain="de.systopia.sqltasks" 1=$apiurl}
+      After configuring an API call in the <a href="%1" target="_blank">APIv4 Explorer</a> you can
+      copy the URL from the address bar of your browser and paste it in here to fill in some of the
+      form fields below.
+    {/ts}
+  </p>
+{/htxt}
+
+{htxt id='id-apiv4-datatable'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}This table is the data source for your APIv4 calls.{/ts}
+  </p>
+
+  <p>
+    {ts domain="de.systopia.sqltasks"}
+      The action will call the CiviCRM APIv4 for <b><i>every</i></b> row in this table.
+    {/ts}
+  </p>
+{/htxt}
+
+{htxt id='id-apiv4-entity'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}Select the <b>entity</b> for your APIv4 call.{/ts}
+  </p>
+
+  <p>
+    {ts domain="de.systopia.sqltasks" 1=$apiurl}
+      If you don't know what this means you might want to have a look at the
+      <a href="%1" target="_blank">APIv4 Explorer</a>.
+    {/ts}
+  </p>
+{/htxt}
+
+{htxt id='id-apiv4-action'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}Select the <b>action</b> for your APIv4 call.{/ts}
+  </p>
+
+  <p>
+    {ts domain="de.systopia.sqltasks" 1=$apiurl}
+      If you don't know what this means you might want to have a look at the
+      <a href="%1" target="_blank">APIv4 Explorer</a>.
+    {/ts}
+  </p>
+{/htxt}
+
+{htxt id='id-apiv4-handle-api-errors'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}
+      This option lets you decide how to handle API errors. The following options are available:
+    {/ts}
+  </p>
+
+  <ul>
+     <li>
+         <dt>{ts domain="de.systopia.sqltasks"}Log only (default){/ts}</dt>
+
+         <dd>
+          {ts domain="de.systopia.sqltasks"}
+            Log API errors and continue. Don't trigger Error Handler action.
+          {/ts}
+        </dd>
+     </li>
+
+     <li>
+        <dt>{ts domain="de.systopia.sqltasks"}Report task error and continue API calls{/ts}</dt>
+
+        <dd>
+          {ts domain="de.systopia.sqltasks"}
+            Continue with remaining API calls and then report task error to Error Handler.
+          {/ts}
+        </dd>
+     </li>
+
+     <li>
+        <dt>{ts domain="de.systopia.sqltasks"}Report task error and abort API calls{/ts}</dt>
+
+        <dd>
+          {ts domain="de.systopia.sqltasks"}
+            Abort remaining API calls and report task error to Error Handler.
+          {/ts}
+        </dd>
+     </li>
+  </ul>
+{/htxt}
+
+{htxt id='id-apiv4-store-results'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}
+      This will add a column called <code>sqltask_api_result</code> containing the results of this
+      action's API calls (formatted as JSON) to the data table.
+    {/ts}
+  </p>
+{/htxt}
+
+
+{htxt id='id-apiv4-parameters'}
+  <p>
+    {ts domain="de.systopia.sqltasks"}
+      Here you can define the parameters for your APIv4 call as a JSON object.
+    {/ts}
+  </p>
+
+  <p>
+    {ts domain="de.systopia.sqltasks"}
+      You can also use variables that will be evaluated during execution like this:
+    {/ts}
+  </p>
+
+  <ul>
+    <li>
+      <b><code>{literal}{contact_id}{/literal}</code></b> for the value in the
+      <code>contact_id</code> column of the data table
+    </li>
+
+    <li>
+      <b><code>{literal}{context.input_val}{/literal}</code></b> for the task's input value
+    </li>
+
+    <li>
+      <b><code>{literal}{config.token_xyz}{/literal}</code></b> for the value of the global token
+      <code>token_xyz</code>
+    </li>
+
+    <li>
+      <b><code>{literal}{setting.max_attachments}{/literal}</code></b> for the value of the CiviCRM
+      setting <code>max_attachments</code>
+    </li>
+  </ul>
+{/htxt}

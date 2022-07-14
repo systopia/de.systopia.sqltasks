@@ -23,6 +23,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_TempTableAlterations;
 
   /**
    * Log only
@@ -56,7 +57,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    * Get a human readable name
    */
   public function getName() {
-    return E::ts('API Call');
+    return E::ts('APIv3 Call');
   }
 
   /**
@@ -167,12 +168,8 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
     $parameter_specs = $this->getParameters();
 
     if ($store_api_results) {
-      if (strpos($data_table, 'civicrm_') === 0) {
-        throw new CRM_Core_Exception("Cannot alter table $data_table");
-      }
-
       $data_table_ai_col = self::addAutoIncrementColumn($data_table);
-      $this->addApiResultColumn($data_table);
+      $this->addApiResultColumn($data_table, self::API_RESULT_COLUMN);
     }
 
     // statistics
@@ -294,29 +291,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   protected function reportError() {
     $this->task->incrementErrorCounter();
     $this->task->setErrorStatus();
-  }
-
-  /**
-   * Add a column to the temporary data table in which the results of the
-   * API calls will be stored
-   *
-   * @param string $data_table - Name of the table
-   *
-   * @return void
-   */
-  protected function addApiResultColumn(string $data_table) {
-    $api_result_column = self::API_RESULT_COLUMN;
-
-    $columnsResult = CRM_Core_DAO::executeQuery(
-      "SHOW COLUMNS FROM `$data_table` LIKE '$api_result_column'"
-    );
-
-    if ($columnsResult->fetch()) {
-      $this->log("WARNING: Overwriting existing values for '$api_result_column' in '$data_table'");
-      return;
-    }
-
-    CRM_Core_DAO::executeQuery("ALTER TABLE `$data_table` ADD `$api_result_column` TEXT");
   }
 
 }
