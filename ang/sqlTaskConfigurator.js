@@ -1593,7 +1593,7 @@
         };
 
         if ($scope.model && getBooleanFromNumber($scope.model.campaign_id)) {
-          CRM.api3("Segmentation", "segmentlist", {
+          CRM.api3("SegmentationOrder", "get_segments", {
             campaign_id: $scope.model.campaign_id
           }).done(function(result) {
             var segmentationData = [];
@@ -1644,7 +1644,7 @@
             }, 0);
           });
           if (getBooleanFromNumber(value)) {
-            CRM.api3("Segmentation", "segmentlist", {
+            CRM.api3("SegmentationOrder", "get_segments", {
               campaign_id: value
             }).done(function(result) {
               var segmentationData = [];
