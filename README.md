@@ -15,6 +15,7 @@ of the following generic CiviCRM actions:
 
 - Create activities
 - Call any CiviCRM API3 action
+- API4 is [supported in version 2.x+](https://github.com/systopia/de.systopia.sqltasks/tags)
 - Export to CSV, including zipping, uploading, emailing the results
 - Synchronize a SQL result contact ID list with a given tag or group
 
