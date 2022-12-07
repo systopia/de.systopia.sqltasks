@@ -406,4 +406,6 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     $this->createActionTemplatesTable();
     return true;
   }
+
+  // TODO: add upgrader for civicrm_sqltasks_execution
 }
