@@ -18,13 +18,12 @@
   <version>2.0-dev</version>
   <develStage>dev</develStage>
   <compatibility>
-    <ver>4.7</ver>
-    <ver>5.0</ver>
+    <ver>5.38</ver>
   </compatibility>
   <comments>The initial development of this handy tool was funded by Greenpeace Central and Eastern Europe</comments>
   <civix>
     <namespace>CRM/Sqltasks</namespace>
-    <format>22.10.0</format>
+    <format>22.12.1</format>
   </civix>
   <mixins>
     <mixin>ang-php@1.0.0</mixin>
@@ -35,4 +34,5 @@
   <classloader>
     <psr0 prefix="CRM_" path="."/>
   </classloader>
+  <upgrader>CRM_Sqltasks_Upgrader</upgrader>
 </extension>

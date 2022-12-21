@@ -49,6 +49,7 @@ class CRM_Sqltasks_Task {
   protected $status;
   protected $error_count;
   protected $log_messages;
+  protected $detailedTaskLogs;
   protected $log_to_file = FALSE;
 
   /** @var array generated, sregistered files */
@@ -188,13 +189,42 @@ class CRM_Sqltasks_Task {
    * Append log messages
    *
    * @param $message
+   * @param null $type
+   * @param bool $skipRegularLog
    */
-  public function log($message) {
+  public function log($message, $type = NULL, $skipRegularLog = FALSE) {
+    $this->detailedTaskLogs[] = $this->prepareDetailedTaskLogs($message, $type);
+
+    if ($skipRegularLog) {
+      return;
+    }
+
     $message = "[Task {$this->getID()}] {$message}";
     $this->log_messages[] = $message;
     if ($this->log_to_file) {
       CRM_Core_Error::debug_log_message($message, FALSE, 'sqltasks');
     }
+  }
+
+  /**
+   * @param $message
+   * @param $type
+   * @return array
+   */
+  private function prepareDetailedTaskLogs($message, $type) {
+    if (empty($type)) {
+      $type = $this->status;
+    }
+
+    return [
+      'task_id' => $this->getID(),
+      'message' => $message,
+      'task_status' => $this->status,
+      'message_type' => $type,
+      'timestamp_in_seconds' => microtime(TRUE) * 1000,
+      'timestamp_in_microseconds' => microtime(TRUE),
+      'date' => date('Y-m-d H:i:s'),
+    ];
   }
 
   /**
@@ -334,14 +364,20 @@ class CRM_Sqltasks_Task {
     if (!empty($params['log_to_file'])) {
       $this->log_to_file = TRUE;
     }
+
+    $taskStartDate = date('Y-m-d H:i:s');
+    $inputValue = NULL;
     $this->status = 'running';
     $this->error_count = 0;
     $this->reset();
     $task_timestamp = microtime(TRUE) * 1000;
+    $this->log('Start running task!', 'info', TRUE);
 
     if ($this->isArchived()) {
+      $this->error_count += 1;
       $this->status = 'error';
       $this->log("Task is archived. Execution skipped.");
+      $this->logExecutionTask(0, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -350,6 +386,7 @@ class CRM_Sqltasks_Task {
     if ($is_still_running) {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
+      $this->logExecutionTask(0, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -359,10 +396,10 @@ class CRM_Sqltasks_Task {
       if (!$lock->isAcquired()) {
         $this->status = 'error';
         $this->log("Task is locked. Execution skipped.");
+        $this->logExecutionTask(0, $taskStartDate, $inputValue);
         return $this->log_messages;
       }
     }
-
 
     $this->log("Starting task execution.");
     // commit any pending transactions to ensure consistent behaviour
@@ -376,7 +413,9 @@ class CRM_Sqltasks_Task {
       'random'  => CRM_Utils_String::createRandom(16, CRM_Utils_String::ALPHANUMERIC),
     ];
     if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
-      $context['input_val'] = $params['input_val'];
+      $inputValue = $params['input_val'];
+      $context['input_val'] = $inputValue;
+      $this->log("Set input val to '{$inputValue}'.", 'info', TRUE);
     }
     foreach ($actions as $action) {
       $action_name = $action->getName();
@@ -425,7 +464,28 @@ class CRM_Sqltasks_Task {
       $this->status = 'success';
     }
 
+    $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
+
     return $this->log_messages;
+  }
+
+  /**
+   * Logs the data after while execution
+   *
+   * @return void
+   */
+  public function logExecutionTask($taskRuntime, $taskStartDate, $inputValue) {
+    CRM_Sqltasks_BAO_SqltasksExecution::create([
+      'sqltask_id' => $this->getID(),
+      'start_date' => $taskStartDate,
+      'end_date' => date('Y-m-d H:i:s'),
+      'runtime' => $taskRuntime,
+      'input' => $inputValue,
+      'log' => json_encode($this->detailedTaskLogs),
+      'files' => json_encode(self::$files),
+      'error_count' => $this->error_count,
+      'created_id' => CRM_Core_Session::getLoggedInContactID(),
+    ]);
   }
 
   /**
@@ -530,6 +590,22 @@ class CRM_Sqltasks_Task {
     }
 
     return $tasksOrder;
+  }
+
+  /**
+   * Get tasks options prepared for html select
+   *
+   * @return array
+   */
+  public static function getTaskOptions() {
+    $dao = CRM_Core_DAO::executeQuery('SELECT * FROM civicrm_sqltasks');
+    $tasksOptions = [];
+
+    while ($dao->fetch()) {
+      $tasksOptions[$dao->id] = $dao->name;
+    }
+
+    return $tasksOptions;
   }
 
   /**

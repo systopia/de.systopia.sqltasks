@@ -226,6 +226,13 @@
                                   {{ts('Export Config', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
+                          <li>
+                              <a ng-href="/civicrm/sqltasks-execution/list?sqltask_id={{task.id}}"
+                                  class="action-item crm-hover-button small-popup"
+                                  title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  {{ts('Execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
                           <li ng-if="!getNumberFromString(task.is_archived)" >
                               <a ng-href="#/sqltasks/import/{{task.id}}"
                                   class="action-item crm-hover-button small-popup"
