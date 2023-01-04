@@ -49,13 +49,10 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       return NULL;
     }
 
-    $dao = CRM_Core_DAO::executeQuery("SELECT * FROM %1 WHERE id = %2;", [
-      1 => [self::getTableName(), "MysqlColumnNameOrAlias"],
-      2 => [$id, "Integer"],
-    ]);
+    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['id' => $id]);
 
-    while ($dao->fetch()) {
-      return self::prepareData($dao);
+    foreach ($sqltasksExecutions as $sqltasksExecution) {
+      return $sqltasksExecution;
     }
 
     return NULL;
@@ -75,43 +72,85 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       'runtime' => $dao->runtime,
       'input' => $dao->input,
       'log' => $dao->log,
-      'decoded_logs' => json_decode($dao->log, true),
+      'decoded_logs' => CRM_Sqltasks_BAO_SqltasksExecution::prepareLogs($dao->log),
       'files' => $dao->files,
       'error_count' => $dao->error_count,
       'created_id' => $dao->created_id,
+      'created_contact_display_name' => $dao->created_contact_display_name,
     ];
   }
 
   /**
-   * Builds query for receiving data
-   *
-   * @param string $returnValueType
-   *
-   * @return \CRM_Utils_SQL_Select
+   * @param $logsString
+   * @return array
    */
-  private static function buildSelectQuery($returnValueType = null) {
-    $query = CRM_Utils_SQL_Select::from(CRM_Sqltasks_BAO_SqltasksExecution::getTableName());
+  public static function prepareLogs($logsString) {
+    $logs = json_decode($logsString, true);
 
-    if ($returnValueType == 'count') {
-      $query->select('COUNT(id)');
-    } else {
-      $query->select('*');
+    foreach ($logs as $key => $log) {
+      if (!empty($log['timestamp_in_microseconds'])) {
+        $dateTimeObj = DateTime::createFromFormat('U.u', $log['timestamp_in_microseconds']);
+        if (!empty($dateTimeObj)) {
+          $logs[$key]['date_time_obj'] = $dateTimeObj;
+        } else {
+          $logs[$key]['date_time_obj'] = (new DateTime())->setTimestamp(0);
+        }
+      } else {
+        $logs[$key]['date_time_obj'] = (new DateTime())->setTimestamp(0);
+      }
     }
 
-    return $query;
+    return $logs;
   }
 
   /**
-   * Builds 'where' condition for query
+   * Gets all data
    *
-   * @param $query
    * @param array $params
    *
-   * @return mixed
+   * @return array
    */
-  private static function buildWhereQuery($query, $params = []) {
+  public static function getAll($params = []) {
+    //TODO: rewrite this method to use api4?
+    $query = CRM_Sqltasks_BAO_SqltasksExecution::buildQuery($params);
+    $dao = CRM_Core_DAO::executeQuery($query->toSQL());
+    $items = [];
+
+    while ($dao->fetch()) {
+      $items[] = self::prepareData($dao);
+    }
+
+    return $items;
+  }
+
+  /**
+   * @param $sqltaskId
+   * @return int|null
+   */
+  public static function getTheLatestExecutionId($sqltaskId) {
+    $sqltaskId = (int) $sqltaskId;
+    if (empty($sqltaskId)) {
+      return null;
+    }
+
+    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['sqltask_id' => $sqltaskId, 'order_by' => ['civicrm_sqltasks_execution.id' => 'DESC']]);
+
+    foreach ($sqltasksExecutions as $sqltasksExecution) {
+      return $sqltasksExecution['id'];
+    }
+
+    return null;
+  }
+
+  public static function buildQuery($params = []) {
+    $query = CRM_Utils_SQL_Select::from(CRM_Sqltasks_BAO_SqltasksExecution::getTableName());
+
+    $query->select('civicrm_sqltasks_execution.*');
+    $query->join('civicrm_contact', "LEFT JOIN civicrm_contact AS civicrm_contact ON civicrm_sqltasks_execution.created_id = civicrm_contact.id");
+    $query->select('civicrm_contact.display_name as created_contact_display_name');
+
     if (!empty($params['id'])) {
-      $query->where('id = #id', ['id' => $params['id']]);
+      $query->where('civicrm_sqltasks_execution.id = #id', ['id' => $params['id']]);
     }
 
     if (!empty($params['sqltask_id'])) {
@@ -162,51 +201,17 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       $query->where('end_date = @end_date', ['end_date' => $params["end_date"]]);
     }
 
-    return $query;
-  }
+    if (!empty($params['order_by']) && is_array($params['order_by'])) {
+      $availableFieldsToSort = ['civicrm_sqltasks_execution.id', '.civicrm_sqltasks_execution.end_date', 'civicrm_sqltasks_execution.start_date'];
 
-  /**
-   * Adds order params to query
-   *
-   * @param $query
-   * @param array $params
-   * @return mixed
-   */
-  private static function buildOrderQuery($query, $params = []) {
-    if (!empty($params['options']['sort'])) {
-      $sortParams = explode(' ', strtolower($params['options']['sort']));
-      $availableFieldsToSort = ['id', 'end_date', 'start_date'];
-      $order = '';
-
-      if (!empty($sortParams[1]) && ($sortParams[1] == 'desc' || $sortParams[1] == 'asc')) {
-        $order = $sortParams[1];
-      }
-
-      if (in_array($sortParams[0], $availableFieldsToSort)) {
-        $query->orderBy($sortParams[0] . ' ' . $order);
+      foreach ($params['order_by'] as $orderByColumn => $orderByType) {
+        if (in_array($orderByColumn, $availableFieldsToSort) && in_array($orderByType, ['DESC', 'ASC'])) {
+          $query->orderBy($orderByColumn . ' ' . $orderByType);
+        }
       }
     }
 
     return $query;
-  }
-
-  /**
-   * Gets all data
-   *
-   * @param array $params
-   *
-   * @return array
-   */
-  public static function getAll($params = []) {
-    $query = self::buildOrderQuery(self::buildWhereQuery(self::buildSelectQuery(), $params), $params);
-    $dao = CRM_Core_DAO::executeQuery($query->toSQL());
-    $items = [];
-
-    while ($dao->fetch()) {
-      $items[] = self::prepareData($dao);
-    }
-
-    return $items;
   }
 
 }

@@ -5,7 +5,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
   protected $searchParams = [
-    'options' => ['sort' => 'id desc'],
+    'order_by' => ['civicrm_sqltasks_execution.id' => 'DESC'],//ASC DESC
   ];
 
   public function preProcess() {

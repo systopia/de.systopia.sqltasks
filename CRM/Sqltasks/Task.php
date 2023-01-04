@@ -216,14 +216,16 @@ class CRM_Sqltasks_Task {
       $type = $this->status;
     }
 
+    $microseconds = microtime(TRUE);
+    $now = DateTime::createFromFormat('U.u', $microseconds);
+
     return [
       'task_id' => $this->getID(),
       'message' => $message,
       'task_status' => $this->status,
       'message_type' => $type,
-      'timestamp_in_seconds' => microtime(TRUE) * 1000,
-      'timestamp_in_microseconds' => microtime(TRUE),
-      'date' => date('Y-m-d H:i:s'),
+      'timestamp_in_microseconds' => $microseconds,
+      'date_formatted' => $now->format("Y-m-d H:i:s.v"),
     ];
   }
 
@@ -377,7 +379,8 @@ class CRM_Sqltasks_Task {
       $this->error_count += 1;
       $this->status = 'error';
       $this->log("Task is archived. Execution skipped.");
-      $this->logExecutionTask(0, $taskStartDate, $inputValue);
+      $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+      $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -386,7 +389,8 @@ class CRM_Sqltasks_Task {
     if ($is_still_running) {
       $this->status = 'error';
       $this->log("Task is still running. Execution skipped.");
-      $this->logExecutionTask(0, $taskStartDate, $inputValue);
+      $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+      $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -396,7 +400,8 @@ class CRM_Sqltasks_Task {
       if (!$lock->isAcquired()) {
         $this->status = 'error';
         $this->log("Task is locked. Execution skipped.");
-        $this->logExecutionTask(0, $taskStartDate, $inputValue);
+        $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+        $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
         return $this->log_messages;
       }
     }

@@ -37,7 +37,7 @@
 
   <br />
 
-  <div class="sql-task-manager-new-task-panel crm-form-block">
+  <div class="sql-task-manager-new-task-panel crm-form-block sql-task-manager-override-shadow">
     <h3>{{ts('Add a new task')}}</h3>
 
     <div class="content">
@@ -50,7 +50,14 @@
             </a>
 
             {{ts('for examples to get you started.')}}
-            </a>
+        </p>
+
+        <p>
+          <a ng-href="/civicrm/sqltasks-execution/list"
+             target="_blank"
+             title="{{ts('Go to the tasks execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
+            {{ts('Go to the tasks execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+          </a>
         </p>
 
         <select2 id="config-template" name="config-template" isRequired="false"
@@ -229,8 +236,15 @@
                           <li>
                               <a ng-href="/civicrm/sqltasks-execution/list?sqltask_id={{task.id}}"
                                   class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  title="{{ts('Execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
                                   {{ts('Execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li>
+                              <a ng-href="/civicrm/sqltasks-execution/latest-logs?sqltask_id={{task.id}}"
+                                  class="action-item crm-hover-button small-popup"
+                                  title="{{ts('Latest execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  {{ts('Latest execution logs', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li ng-if="!getNumberFromString(task.is_archived)" >
