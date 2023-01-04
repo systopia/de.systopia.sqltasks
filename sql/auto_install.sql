@@ -63,9 +63,7 @@ CREATE TABLE `civicrm_sqltasks_execution` (
   `files` longtext NULL COMMENT 'Task result files (JSON)',
   `error_count` int unsigned NULL COMMENT 'Task execution error count',
   `created_id` int unsigned NULL COMMENT 'Contact ID of task executor',
-  PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_sqltasks_execution_sqltask_id FOREIGN KEY (`sqltask_id`) REFERENCES `civicrm_sqltasks`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_sqltasks_execution_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
+  PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
 
