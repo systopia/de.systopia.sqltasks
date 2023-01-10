@@ -69,11 +69,16 @@
       <div>Execution logs:</div>
 
       <div class="sql-task__log-wrap">
-          <ol>
-              {foreach from=$logsTaskExecution item=logItem}
+          <ol class="sql-task__log-item-wrap">
+              {foreach from=$logsTaskExecution item=logItem name=logsTaskExecutionLoop}
                   <li class="sql-task__log-item">
-                    <span><b>{$logItem.date_time_obj->format("m-d-Y H:i:s.u")}:</b></span>
-                    <span>{$logItem.message}</span>
+                    <div class="sql-task__log-item-number"><b>{$smarty.foreach.logsTaskExecutionLoop.iteration})</b></div>
+                    <div class="sql-task__log-item-time">
+                      <span><b>{$logItem.date_time_obj->format("m-d-Y H:i:s")}</b><i class="sql-task__log-item-time-micro">{$logItem.date_time_obj->format(".u")}</i>:</span>
+                    </div>
+                    <div class="sql-task__log-item-value">
+                      <span>{$logItem.message}</span>
+                    </div>
                   </li>
               {/foreach}
           </ol>
@@ -89,6 +94,29 @@
   box-shadow: none !important;
 }
 
+.sql-task__log-item-wrap {
+  margin: 0 !important;
+  padding: 10px 20px !important;
+}
+
+.sql-task__log-item-time-micro {
+  font-size: 9px;
+}
+
+.sql-task__log-item-time {
+  white-space: nowrap;
+  padding: 10px 10px 10px 5px;
+}
+
+.sql-task__log-item-value {
+  background: white;
+  padding: 10px 10px 10px 10px;
+}
+
+.sql-task__log-item-number {
+  padding: 10px 5px 10px 10px;
+}
+
 .sql-task__log-wrap {
   border: 1px solid #c1c1c1;
   margin-top: 10px;
@@ -97,7 +125,20 @@
 
 .sql-task__log-item {
   padding-bottom: 10px;
-  max-width: 700px;
+  max-width: 900px;
+  padding-top: 10px;
+  display: flex;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  background: white;
+}
+
+.sql-task__log-item:first-child {
+  margin-bottom: 0;
+}
+
+.sql-task__log-item:last-child {
+  margin-bottom: 0;
 }
 
 .sql-task__description {
