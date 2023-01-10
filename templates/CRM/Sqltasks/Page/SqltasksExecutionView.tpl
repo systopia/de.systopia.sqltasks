@@ -9,80 +9,67 @@
           <span>{ts}Back to list{/ts}</span>
         </a>
         <a class="sql-task__view-logs-button crm-form-submit default crm-button crm-hover-button"
-           href="{$manageSqlTaskUrl}" title="{ts}Go manage task{/ts}">
+           href="{$manageSqlTaskUrl}">
           <span class="ui-button-icon ui-icon fa-pencil"></span>
           <span class="ui-button-icon-space"> </span>
-          <span>{ts}Manage this sqltask{/ts}</span>
+          <span>{ts}Configure Task{/ts}</span>
         </a>
       </div>
 
       <div>
         <div>
-          <div><b>{$task.name}</b></div>
-          <div>Task id={$taskId}.</div>
+          <div><b>Task: [{$taskId}] {$task.name}</b></div>
           <div class="sql-task__description">{$task.description}</div>
         </div>
 
         <div class="sql-task__info-item-wrap">
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Execution start date</div>
+            <div class="sql-task__info-item-title">Start date</div>
             <div class="sql-task__info-item-value">{$sqltasksExecution.start_date}</div>
           </div>
 
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Execution end date</div>
+            <div class="sql-task__info-item-title">End date</div>
             <div class="sql-task__info-item-value">{$sqltasksExecution.end_date}</div>
           </div>
 
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Task runtime(milliseconds)</div>
-            <div class="sql-task__info-item-value">{$sqltasksExecution.runtime} milliseconds</div>
+            <div class="sql-task__info-item-title">Task runtime</div>
+            <div class="sql-task__info-item-value">{$sqltasksExecution.runtime/1000}s</div>
           </div>
         </div>
 
         <div class="sql-task__info-item-wrap">
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Is executions has errors?</div>
-            <div class="sql-task__info-item-value">{if $sqltasksExecution.is_has_errors} yes, errors count = {$sqltasksExecution.error_count}{else} no {/if}</div>
+            <div class="sql-task__info-item-title">Error Count</div>
+            <div class="sql-task__info-item-value {if $sqltasksExecution.is_has_errors}crm-error{/if}">{$sqltasksExecution.error_count}</div>
           </div>
 
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Task input value</div>
+            <div class="sql-task__info-item-title">Input</div>
             <div class="sql-task__info-item-value">{$sqltasksExecution.input}</div>
           </div>
 
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Executor contact:</div>
+            <div class="sql-task__info-item-title">Executed by</div>
             <div class="sql-task__info-item-value">
               <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$sqltasksExecution.id`"}"  target="_blank">{$sqltasksExecution.created_contact_display_name}</a>
             </div>
           </div>
 
           <div class="sql-task__info-item">
-            <div class="sql-task__info-item-title">Task files:</div>
+            <div class="sql-task__info-item-title">Files:</div>
             <div class="sql-task__info-item-value">{$sqltasksExecution.files}</div>
           </div>
         </div>
 
       </div>
 
-      <div>Execution logs:</div>
+      <div class="sql-task__info-item-title">Execution log:</div>
 
-      <div class="sql-task__log-wrap">
-          <ol class="sql-task__log-item-wrap">
-              {foreach from=$logsTaskExecution item=logItem name=logsTaskExecutionLoop}
-                  <li class="sql-task__log-item">
-                    <div class="sql-task__log-item-number"><b>{$smarty.foreach.logsTaskExecutionLoop.iteration})</b></div>
-                    <div class="sql-task__log-item-time">
-                      <span><b>{$logItem.date_time_obj->format("m-d-Y H:i:s")}</b><i class="sql-task__log-item-time-micro">{$logItem.date_time_obj->format(".u")}</i>:</span>
-                    </div>
-                    <div class="sql-task__log-item-value">
-                      <span>{$logItem.message}</span>
-                    </div>
-                  </li>
-              {/foreach}
-          </ol>
-      </div>
+      <pre class="sql-task__log-wrap">
+{foreach from=$logsTaskExecution item=logItem}{$logItem.date_time_obj->format("m-d-Y H:i:s.u")}: {$logItem.message}
+{/foreach}</pre>
 
     </div>
   </div>

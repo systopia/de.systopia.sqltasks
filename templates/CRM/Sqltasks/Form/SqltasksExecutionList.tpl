@@ -88,7 +88,6 @@
             <div class="sql-task__execution-list-count-message">Have found {$sqltasksExecutions|@count} executions:</div>
             <table class="dataTable">
               <tr>
-                <th>id</th>
                 <th>task id</th>
                 <th>error count</th>
                 <th>Start date</th>
@@ -99,12 +98,11 @@
               </tr>
                 {foreach from=$sqltasksExecutions item=sqltasksExecution}
                   <tr class="{if $sqltasksExecution.is_has_errors}sql-task__error-execution{else}sql-task__success-execution{/if}">
-                    <td>{$sqltasksExecution.id}</td>
                     <td>{$sqltasksExecution.sqltask_id}</td>
                     <td>{$sqltasksExecution.error_count}</td>
                     <td>{$sqltasksExecution.start_date}</td>
                     <td>{$sqltasksExecution.end_date}</td>
-                    <td>{$sqltasksExecution.runtime} milliseconds</td>
+                    <td>{$sqltasksExecution.runtime/1000}s</td>
                     <td>
                       <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$sqltasksExecution.created_id`"}"  target="_blank">{$sqltasksExecution.created_contact_display_name}</a>
                     </td>
