@@ -63,9 +63,12 @@
       $scope.ts = CRM.ts();
       $scope.showLatestLogsUrl = CRM.url('civicrm/sqltasks-execution/latest-logs', {"sqltask_id" : taskId});
       $scope.showAllLogsUrl = CRM.url('civicrm/sqltasks-execution/list', {"sqltask_id" : taskId});
-      $scope.taskOptions = {
-        scheduled: ""
-      };
+      $scope.taskOptions = {scheduled: ""};
+      $scope.templateId = $location.search().template;
+      $scope.formAction = (taskId === "0") ? 'create' : 'edit';
+      $scope.isTemplateIdExist = function () {return !!Number($scope.templateId);};
+      $scope.isCreatingNewSqlTask = function () {return $scope.formAction === 'create';};
+      $scope.isEditingSqlTask = function () {return $scope.formAction === 'edit';};
       $scope.config = {
         actions: [],
         actionTemplates: [],
@@ -183,7 +186,7 @@
       }
 
       // Use configuration template if task is new
-      if (taskId === "0") {
+      if ($scope.isCreatingNewSqlTask()) {
         loadConfigTemplate();
       }
 
@@ -315,17 +318,21 @@
       CRM.api3("Sqltaskfield", "getschedulingoptions").done(function(result) {
         $scope.schedulingOptions = result.values[0];
         var defaultOption = Object.keys(result.values[0])[0];
-        if (defaultOption === "always" && !Number(taskId)) {
-          $scope.taskOptions.scheduled = defaultOption;
-          $scope.taskOptions.enabled = 0;
-          $scope.taskOptions.parallel_exec = '0';
-          $scope.taskOptions.input_required = 0;
-          $scope.taskOptions.abort_on_error = '1';
-          $scope.config = Object.assign($scope.config, {
-            scheduled_month: 1,
-            scheduled_weekday: 1,
-            scheduled_day: 1
-          });
+        if (defaultOption === "always" && $scope.isCreatingNewSqlTask()) {
+          if ($scope.isTemplateIdExist()) {
+            $scope.taskOptions.enabled = 0;
+          } else {
+            $scope.taskOptions.scheduled = defaultOption;
+            $scope.taskOptions.enabled = 0;
+            $scope.taskOptions.parallel_exec = '0';
+            $scope.taskOptions.input_required = 0;
+            $scope.taskOptions.abort_on_error = '1';
+            $scope.config = Object.assign($scope.config, {
+              scheduled_month: 1,
+              scheduled_weekday: 1,
+              scheduled_day: 1
+            });
+          }
         }
         loaderService.updateExecutionBlock();
         $scope.$apply();
@@ -461,12 +468,9 @@
       };
 
       async function loadConfigTemplate () {
-        // Extract template ID from query parameters
-        let templateId = $location.search().template;
-
         // If query parameter 'template' does not exist, get default template ID from API
-        if (!templateId) {
-          templateId = await new Promise(resolve => {
+        if (!$scope.templateId) {
+          $scope.templateId = await new Promise(resolve => {
             CRM.api3("Setting", "getvalue", { name: "sqltasks_default_template" }).done(result => {
               if (result.is_error) throw new Error(result.error_message);
               resolve(result.result);
@@ -474,10 +478,10 @@
           }).catch(console.error);
         }
 
-        if (!templateId) return;
+        if (!$scope.templateId) return;
 
         // Load template data from API
-        CRM.api3("SqltaskTemplate", "get", { id: templateId }).done(result => {
+        CRM.api3("SqltaskTemplate", "get", { id: $scope.templateId }).done(result => {
           if (result.is_error) {
             console.error(result.error_message);
             return;
