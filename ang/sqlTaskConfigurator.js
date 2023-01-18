@@ -85,18 +85,20 @@
       $scope.taskId = taskId;
 
       $scope.onInfoPress = onInfoPress;
+      $scope.fixTaskOptionRunPermissions = function () {
+        if ($scope.taskOptions.run_permissions === '') {
+          $scope.taskOptions.run_permissions = [];
+        } else {
+          $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
+        }
+      }
       $scope.handleTaskResponse = function (result) {
         if (result.is_error === 0) {
           var task = Object.assign({}, result.values);
           $scope.config = Object.assign({}, task.config);
           delete task["config"];
           $scope.taskOptions = task;
-
-          if ($scope.taskOptions.run_permissions === '') {
-            $scope.taskOptions.run_permissions = [];
-          } else {
-            $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
-          }
+          $scope.fixTaskOptionRunPermissions();
           $scope.$apply();
         }
       };
@@ -494,6 +496,7 @@
           $scope.taskOptions.scheduled = template.scheduled;
           $scope.taskOptions.parallel_exec = template.parallel_exec;
           $scope.taskOptions.run_permissions = template.run_permissions;
+          $scope.fixTaskOptionRunPermissions();
           $scope.taskOptions.input_required = template.input_required;
           $scope.taskOptions.abort_on_error = template.abort_on_error;
           $scope.$apply();
