@@ -189,10 +189,10 @@ class CRM_Sqltasks_Task {
    * Append log messages
    *
    * @param $message
-   * @param null $type
+   * @param $type
    * @param bool $skipRegularLog
    */
-  public function log($message, $type = NULL, $skipRegularLog = FALSE) {
+  public function log($message, $type = 'info', $skipRegularLog = FALSE) {
     $this->detailedTaskLogs[] = $this->prepareDetailedTaskLogs($message, $type);
 
     if ($skipRegularLog) {
@@ -200,7 +200,7 @@ class CRM_Sqltasks_Task {
     }
 
     $message = "[Task {$this->getID()}] {$message}";
-    $this->log_messages[] = $message;
+    $this->log_messages[] = (!is_null($type) ? $type . ': ' : '') . $message;
     if ($this->log_to_file) {
       CRM_Core_Error::debug_log_message($message, FALSE, 'sqltasks');
     }
@@ -212,20 +212,12 @@ class CRM_Sqltasks_Task {
    * @return array
    */
   private function prepareDetailedTaskLogs($message, $type) {
-    if (empty($type)) {
-      $type = $this->status;
-    }
-
     $microseconds = microtime(TRUE);
-    $now = DateTime::createFromFormat('U.u', $microseconds);
 
     return [
-      'task_id' => $this->getID(),
       'message' => $message,
-      'task_status' => $this->status,
       'message_type' => $type,
       'timestamp_in_microseconds' => $microseconds,
-      'date_formatted' => $now->format("Y-m-d H:i:s.v"),
     ];
   }
 
@@ -378,7 +370,7 @@ class CRM_Sqltasks_Task {
     if ($this->isArchived()) {
       $this->error_count += 1;
       $this->status = 'error';
-      $this->log("Task is archived. Execution skipped.");
+      $this->log("Task is archived. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
@@ -388,7 +380,7 @@ class CRM_Sqltasks_Task {
     $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id} AND parallel_exec != 2");
     if ($is_still_running) {
       $this->status = 'error';
-      $this->log("Task is still running. Execution skipped.");
+      $this->log("Task is still running. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
@@ -399,14 +391,14 @@ class CRM_Sqltasks_Task {
       $lock->acquire();
       if (!$lock->isAcquired()) {
         $this->status = 'error';
-        $this->log("Task is locked. Execution skipped.");
+        $this->log("Task is locked. Execution skipped.", 'error');
         $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
         $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
         return $this->log_messages;
       }
     }
 
-    $this->log("Starting task execution.");
+    $this->log("Starting task execution.", 'info');
     // commit any pending transactions to ensure consistent behaviour
     CRM_Core_DAO::executeQuery("COMMIT");
     // set last_execution and running_since
@@ -430,7 +422,7 @@ class CRM_Sqltasks_Task {
         && $this->getAttribute("abort_on_error")
         && get_class($action) !== "CRM_Sqltasks_Action_ErrorHandler"
       ) {
-        $this->log("Skipped '$action_name' due to previous error");
+        $this->log("Skipped '$action_name' due to previous error", 'info');
         continue;
       }
 
@@ -442,7 +434,7 @@ class CRM_Sqltasks_Task {
         $action->checkConfiguration();
       } catch (Exception $e) {
         $this->error_count += 1;
-        $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
+        $this->log("Configuration Error '{$action_name}': " . $e -> getMessage(), 'error');
         continue;
       }
 
@@ -450,10 +442,10 @@ class CRM_Sqltasks_Task {
       try {
         $action->execute();
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
-        $this->log("Action '{$action_name}' executed in {$runtime}s.");
+        $this->log("Action '{$action_name}' executed in {$runtime}s.", 'info');
       } catch (Exception $e) {
         $this->error_count += 1;
-        $this->log("Error in action '{$action_name}': " . $e -> getMessage());
+        $this->log("Error in action '{$action_name}': " . $e -> getMessage(), 'error');
       }
     }
 
@@ -501,7 +493,7 @@ class CRM_Sqltasks_Task {
    */
   protected function executeSQLScript($script, $script_name) {
     if (empty($script)) {
-      $this->log("No '{$script_name}' given.");
+      $this->log("No '{$script_name}' given.", 'info');
       return;
     }
 
@@ -520,14 +512,14 @@ class CRM_Sqltasks_Task {
       }
 
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
-      $this->log("Script '{$script_name}' executed in {$runtime}s.");
+      $this->log("Script '{$script_name}' executed in {$runtime}s.", 'info');
     } catch (Exception $e) {
       $this->error_count += 1;
       $message = $e->getMessage();
       if ($e instanceof PEAR_Exception && $e->getCause() instanceof DB_Error) {
         $message .= ' Details: ' . $e->getCause()->getUserInfo();
       }
-      $this->log("Script '{$script_name}' failed: " . $message);
+      $this->log("Script '{$script_name}' failed: " . $message, 'error');
     }
   }
 
@@ -737,7 +729,7 @@ class CRM_Sqltasks_Task {
         'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}&mime-type={$mime_type}", TRUE),
     ];
     self::$files[] = $file_entry;
-    $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
+    $this->log("Published file '$filename' with URL {$file_entry['download_link']}", 'info');
   }
 
 
@@ -805,7 +797,7 @@ class CRM_Sqltasks_Task {
     // check if the user has at least one of them
     $is_allowed = CRM_Core_Permission::check([$run_permissions]);
     if (!$is_allowed) {
-      $this->log("User does not have enough permissions to run task [{$this->getID()}]");
+      $this->log("User does not have enough permissions to run task [{$this->getID()}]", 'error');
     }
     return $is_allowed;
   }

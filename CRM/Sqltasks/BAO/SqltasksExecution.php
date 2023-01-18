@@ -26,21 +26,6 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   }
 
   /**
-   * @param $daoItems
-   * @return array
-   */
-  public static function decodeLogs($daoItems) {
-    $decodedItems = [];
-
-    foreach ($daoItems as $item) {
-      $item['logs'] = json_decode($item['log']);
-      $decodedItems[] = $item;
-    }
-
-    return $decodedItems;
-  }
-
-  /**
    * @param $id
    * @return array|null
    */
@@ -56,28 +41,6 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     }
 
     return NULL;
-  }
-
-  /**
-   * @param $dao
-   * @return array
-   */
-  protected static function prepareData($dao) {
-    return [
-      'id' => $dao->id,
-      'sqltask_id' => $dao->sqltask_id,
-      'is_has_errors' => $dao->error_count > 0,
-      'start_date' => $dao->start_date,
-      'end_date' => $dao->end_date,
-      'runtime' => $dao->runtime,
-      'input' => $dao->input,
-      'log' => $dao->log,
-      'decoded_logs' => CRM_Sqltasks_BAO_SqltasksExecution::prepareLogs($dao->log),
-      'files' => $dao->files,
-      'error_count' => $dao->error_count,
-      'created_id' => $dao->created_id,
-      'created_contact_display_name' => $dao->created_contact_display_name,
-    ];
   }
 
   /**
@@ -103,6 +66,67 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return $logs;
   }
 
+  public static function buildApiQuery($params) {
+    $api = \Civi\Api4\SqltasksExecution::get();
+
+    $fields = ['id', 'sqltask_id', 'created_id', 'input', 'error_count', 'start_date', 'end_date', 'runtime'];
+
+    foreach ($params as $name => $value) {
+      if (in_array($name, $fields)) {
+        $api->addWhere($name, '=', $value);
+      }
+    }
+
+    if (!empty($params['is_has_errors'])) {
+      $api->addWhere('error_count', '>', 0);
+    }
+
+    if (!empty($params['is_has_no_errors'])) {
+      $api->addWhere('error_count', '=', 0);
+    }
+
+    if (!empty($params['to_start_date'])) {
+      $api->addWhere('start_date', '<=', $params["to_start_date"]);
+    }
+
+    if (!empty($params['from_start_date'])) {
+      $api->addWhere('start_date', '>=', $params["from_start_date"]);
+    }
+
+    if (!empty($params['to_end_date'])) {
+      $api->addWhere('end_date', '<=', $params["to_end_date"]);
+    }
+
+    if (!empty($params['from_end_date'])) {
+      $api->addWhere('end_date', '>=', $params["from_end_date"]);
+    }
+
+    if (!empty($params['order_by']) && is_array($params['order_by'])) {
+      foreach ($params['order_by'] as $orderByColumn => $orderByType) {
+        if (in_array($orderByColumn, $fields) && in_array($orderByType, ['DESC', 'ASC'])) {
+          $api->addOrderBy($orderByColumn, $orderByType);
+        }
+      }
+    }
+
+    if (!empty($params['limit_per_page']) && !empty($params['page_number'])) {
+      $limit = (int) $params['limit_per_page'];
+      $offset = (int) (($params['page_number'] - 1) * $limit);
+      $api->setLimit($limit);
+      $api->setOffset($offset);
+    }
+
+    if (!empty($params['limit'])) {
+      $api->setLimit($params['limit']);
+    }
+
+    if (!empty($params['offset'])) {
+      $api->setOffset($params['offset']);
+    }
+
+    return $api;
+  }
+
   /**
    * Gets all data
    *
@@ -111,16 +135,45 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
    * @return array
    */
   public static function getAll($params = []) {
-    //TODO: rewrite this method to use api4?
-    $query = CRM_Sqltasks_BAO_SqltasksExecution::buildQuery($params);
-    $dao = CRM_Core_DAO::executeQuery($query->toSQL());
+    $api = CRM_Sqltasks_BAO_SqltasksExecution::buildApiQuery($params);
+    $api->addSelect('contact.display_name');
+    $api->addSelect('*');
+    $api->addJoin('Contact AS contact', 'LEFT', ['created_id', '=', 'contact.id']);
+
+    $sqltasksExecutions = $api->execute();
     $items = [];
 
-    while ($dao->fetch()) {
-      $items[] = self::prepareData($dao);
+    foreach ($sqltasksExecutions as $sqltasksExecution) {
+      $items[] = [
+        'id' => $sqltasksExecution['id'],
+        'sqltask_id' => $sqltasksExecution['sqltask_id'],
+        'is_has_errors' => $sqltasksExecution['error_count'] > 0,
+        'start_date' => $sqltasksExecution['start_date'],
+        'end_date' => $sqltasksExecution['end_date'],
+        'runtime' => $sqltasksExecution['runtime'],
+        'input' => $sqltasksExecution['input'],
+        'log' => $sqltasksExecution['log'],
+        'decoded_logs' => CRM_Sqltasks_BAO_SqltasksExecution::prepareLogs($sqltasksExecution['log']),
+        'files' => $sqltasksExecution['files'],
+        'error_count' => $sqltasksExecution['error_count'],
+        'created_id' => $sqltasksExecution['created_id'],
+        'created_contact_display_name' => $sqltasksExecution['contact.display_name'],
+      ];
     }
 
     return $items;
+  }
+
+  public static function getCount($params = []) {
+    unset($params['page_number']);
+    unset($params['limit_per_page']);
+    unset($params['limit']);
+    unset($params['offset']);
+
+    $api = CRM_Sqltasks_BAO_SqltasksExecution::buildApiQuery($params);
+    $api->addSelect('COUNT(id) AS count');
+
+    return $api->execute()->first()['count'];
   }
 
   /**
@@ -133,85 +186,13 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       return null;
     }
 
-    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['sqltask_id' => $sqltaskId, 'order_by' => ['civicrm_sqltasks_execution.id' => 'DESC']]);
+    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['sqltask_id' => $sqltaskId, 'order_by' => ['id' => 'DESC'], 'limit' => 1]);
 
     foreach ($sqltasksExecutions as $sqltasksExecution) {
       return $sqltasksExecution['id'];
     }
 
     return null;
-  }
-
-  public static function buildQuery($params = []) {
-    $query = CRM_Utils_SQL_Select::from(CRM_Sqltasks_BAO_SqltasksExecution::getTableName());
-
-    $query->select('civicrm_sqltasks_execution.*');
-    $query->join('civicrm_contact', "LEFT JOIN civicrm_contact AS civicrm_contact ON civicrm_sqltasks_execution.created_id = civicrm_contact.id");
-    $query->select('civicrm_contact.display_name as created_contact_display_name');
-
-    if (!empty($params['id'])) {
-      $query->where('civicrm_sqltasks_execution.id = #id', ['id' => $params['id']]);
-    }
-
-    if (!empty($params['sqltask_id'])) {
-      $query->where('sqltask_id = #sqltask_id', ['sqltask_id' => $params['sqltask_id']]);
-    }
-
-    if (!empty($params['created_id'])) {
-      $query->where('created_id = #created_id', ['created_id' => $params['created_id']]);
-    }
-
-    if (!empty($params['input'])) {
-      $query->where('input = @input', ['input' => $params['input']]);
-    }
-
-    if (!empty($params['error_count'])) {
-      $query->where('error_count = #error_count', ['error_count' => $params['error_count']]);
-    }
-
-    if (!empty($params['is_has_errors'])) {
-      $query->where('error_count > 0');
-    }
-
-    if (!empty($params['is_has_no_errors'])) {
-      $query->where('error_count = 0');
-    }
-
-    if (!empty($params['start_date'])) {
-      $query->where('start_date = @start_date', ['start_date' => $params["start_date"]]);
-    }
-
-    if (!empty($params['to_start_date'])) {
-      $query->where('start_date <= @to_start_date', ['to_start_date' => $params["to_start_date"]]);
-    }
-
-    if (!empty($params['from_start_date'])) {
-      $query->where('start_date >= @from_start_date', ['from_start_date' => $params["from_start_date"]]);
-    }
-
-    if (!empty($params['to_end_date'])) {
-      $query->where('end_date <= @to_end_date', ['to_end_date' => $params["to_end_date"]]);
-    }
-
-    if (!empty($params['from_end_date'])) {
-      $query->where('end_date >= @from_end_date', ['from_end_date' => $params["from_end_date"]]);
-    }
-
-    if (!empty($params['end_date'])) {
-      $query->where('end_date = @end_date', ['end_date' => $params["end_date"]]);
-    }
-
-    if (!empty($params['order_by']) && is_array($params['order_by'])) {
-      $availableFieldsToSort = ['civicrm_sqltasks_execution.id', '.civicrm_sqltasks_execution.end_date', 'civicrm_sqltasks_execution.start_date'];
-
-      foreach ($params['order_by'] as $orderByColumn => $orderByType) {
-        if (in_array($orderByColumn, $availableFieldsToSort) && in_array($orderByType, ['DESC', 'ASC'])) {
-          $query->orderBy($orderByColumn . ' ' . $orderByType);
-        }
-      }
-    }
-
-    return $query;
   }
 
 }

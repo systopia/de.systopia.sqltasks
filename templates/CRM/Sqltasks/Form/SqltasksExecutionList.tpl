@@ -58,6 +58,14 @@
                       {$form.to_end_date.html}
                   </div>
                 </div>
+
+                <div class="sql-task__search-item-row">
+                  <div class="sql-task__search-item">
+                      {$form.limit_per_page.label}<br/>
+                      {$form.limit_per_page.html}
+                  </div>
+                </div>
+
               </div>
             </div>
 
@@ -85,33 +93,43 @@
         <div class="sql-task__execution-list-result-wrap">
 
           {if $sqltasksExecutions}
-            <div class="sql-task__execution-list-count-message">Have found {$sqltasksExecutions|@count} executions:</div>
-            <table class="dataTable">
-              <tr>
-                <th>task id</th>
-                <th>error count</th>
-                <th>Start date</th>
-                <th>End date</th>
-                <th>Task runtime(milliseconds)</th>
-                <th>Executor</th>
-                <th>actions</th>
-              </tr>
-                {foreach from=$sqltasksExecutions item=sqltasksExecution}
-                  <tr class="{if $sqltasksExecution.is_has_errors}sql-task__error-execution{else}sql-task__success-execution{/if}">
-                    <td>{$sqltasksExecution.sqltask_id}</td>
-                    <td>{$sqltasksExecution.error_count}</td>
-                    <td>{$sqltasksExecution.start_date}</td>
-                    <td>{$sqltasksExecution.end_date}</td>
-                    <td>{$sqltasksExecution.runtime/1000}s</td>
-                    <td>
-                      <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$sqltasksExecution.created_id`"}"  target="_blank">{$sqltasksExecution.created_contact_display_name}</a>
-                    </td>
-                    <td>
-                      <a href="{crmURL p='civicrm/sqltasks-execution/view' q="reset=1&id=`$sqltasksExecution.id`"}" target="_blank">Detailed logs</a>
-                    </td>
-                  </tr>
-                {/foreach}
-            </table>
+            <div class="sql-task__execution-list-count-message">
+              <div>Have found {$sqltasksExecutionsCount} executions.</div>
+            </div>
+
+            {include file="CRM/Sqltasks/Chank/SqltasksExecutionListPagination.tpl"}
+
+            <div class="sql-task__execution-list-table">
+              <table class="dataTable">
+                <tr>
+                  <th>task id</th>
+                  <th>error count</th>
+                  <th>Start date</th>
+                  <th>End date</th>
+                  <th>Task runtime(milliseconds)</th>
+                  <th>Executor</th>
+                  <th>actions</th>
+                </tr>
+                  {foreach from=$sqltasksExecutions item=sqltasksExecution}
+                    <tr class="{if $sqltasksExecution.is_has_errors}sql-task__error-execution{else}sql-task__success-execution{/if}">
+                      <td>{$sqltasksExecution.sqltask_id}</td>
+                      <td>{$sqltasksExecution.error_count}</td>
+                      <td>{$sqltasksExecution.start_date}</td>
+                      <td>{$sqltasksExecution.end_date}</td>
+                      <td>{$sqltasksExecution.runtime/1000}s</td>
+                      <td>
+                        <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$sqltasksExecution.created_id`"}"  target="_blank">{$sqltasksExecution.created_contact_display_name}</a>
+                      </td>
+                      <td>
+                        <a href="{crmURL p='civicrm/sqltasks-execution/view' q="reset=1&id=`$sqltasksExecution.id`"}" target="_blank">Detailed logs</a>
+                      </td>
+                    </tr>
+                  {/foreach}
+              </table>
+            </div>
+
+          {include file="CRM/Sqltasks/Chank/SqltasksExecutionListPagination.tpl"}
+
           {else}
             <div>Empty result.</div>
           {/if}
@@ -123,6 +141,11 @@
 
 {literal}
 <style>
+
+.sql-task__execution-list-table {
+  padding-bottom: 10px;
+}
+
 .sql-task__execution-list-wrap > .crm-block.crm-form-block {
   box-shadow: none !important;
 }
@@ -132,11 +155,11 @@
 }
 
 .sql-task__execution-list-result-wrap {
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .sql-task__execution-list-count-message {
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 .sql-task__search-block {
@@ -150,6 +173,7 @@
   gap: 10px;
   align-content: center;
   padding-top: 20px;
+  padding-bottom: 10px;
 }
 
 .sql-task__search-button {
