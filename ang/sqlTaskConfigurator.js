@@ -61,6 +61,8 @@
         $scope.isLoaded = true;
       }
       $scope.ts = CRM.ts();
+      $scope.showLatestLogsUrl = CRM.url('civicrm/sqltasks-execution/latest-logs', {"sqltask_id" : taskId});
+      $scope.showAllLogsUrl = CRM.url('civicrm/sqltasks-execution/list', {"sqltask_id" : taskId});
       $scope.taskOptions = {
         scheduled: ""
       };

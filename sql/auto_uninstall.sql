@@ -16,6 +16,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `civicrm_sqltasks_template`;
+DROP TABLE IF EXISTS `civicrm_sqltasks_execution`;
 DROP TABLE IF EXISTS `civicrm_sqltasks_action_template`;
 
 SET FOREIGN_KEY_CHECKS=1;

@@ -37,7 +37,7 @@
 
   <br />
 
-  <div class="sql-task-manager-new-task-panel crm-form-block">
+  <div class="sql-task-manager-new-task-panel crm-form-block sql-task-manager-override-shadow">
     <h3>{{ts('Add a new task')}}</h3>
 
     <div class="content">
@@ -50,7 +50,6 @@
             </a>
 
             {{ts('for examples to get you started.')}}
-            </a>
         </p>
 
         <select2 id="config-template" name="config-template" isRequired="false"
@@ -108,7 +107,14 @@
 
   <div class="sql-task-info-panel">
     <div class="sql-task-info-display-counter">
-      <span>{{ts('Displaying %1 of %2 tasks.', { '1' : displayTasks.length, '2' : tasks.length})}}</span>
+      <div>{{ts('Displaying %1 of %2 tasks.', { '1' : displayTasks.length, '2' : tasks.length})}}</div>
+    </div>
+    <div class="sql-task-info-view-logs">
+      <a ng-href="/civicrm/sqltasks-execution/list"
+                  target="_blank"
+                  title="{{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}" style="float: right; display: block; text-align: right;">
+        {{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+      </a>
     </div>
   </div>
   <table class="display">
@@ -178,59 +184,84 @@
                       <ul ng-if="taskIdWithOpenPanel == task.id" class="panel">
                           <li ng-if="!getNumberFromString(task.is_archived)" >
                               <a ng-click="onExecutePress(task.id)" class="action-item crm-hover-button small-popup"
-                                 title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}">
+                                 title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}"
+                                 crm-icon="fa-play">
                                  {{ts('Run Now', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li>
                               <a ng-href="#/sqltasks/configure/{{task.id}}"
                                   class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  title="{{ts('Configure', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-pencil">
                                   {{ts(getNumberFromString(task.is_archived) ? 'Configure (read-only)' : 'Configure', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li ng-if="!getNumberFromString(task.is_archived)" >
                               <a ng-if="getNumberFromString(task.enabled)" ng-click="onToggleEnablePress(task.id, 0)"
                                   class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Disable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  title="{{ts('Disable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-stop-circle">
                                   {{ts('Disable', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                               <a ng-if="!getNumberFromString(task.enabled)" ng-click="onToggleEnablePress(task.id, 1)"
                                   class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Enable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}">
+                                  title="{{ts('Enable for scheduled execution', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-play-circle">
                                   {{ts('Enable', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li>
-                              <a ng-click="onDeletePress(task.id)" class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}">
-                                  {{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}
-                              </a>
-                          </li>
-                          <li ng-if="!getNumberFromString(task.is_archived) && !getNumberFromString(task.enabled)" >
-                              <a ng-click="onArchivePress(task.id)" class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}">
-                                  {{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}
-                              </a>
-                          </li>
-                          <li ng-if="getNumberFromString(task.is_archived)" >
-                              <a ng-click="onUnarchivePress(task.id)" class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Unarchive task', {'domain' : 'de.systopia.sqltasks'})}}">
-                                  {{ts('Unarchive', {'domain' : 'de.systopia.sqltasks'})}}
-                              </a>
-                          </li>
-                          <li>
                               <a ng-href="/civicrm/sqltasks/export?id={{task.id}}"
-                                  class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}">
+                                 class="action-item crm-hover-button small-popup"
+                                 title="{{ts('Export Configuration', {'domain' : 'de.systopia.sqltasks'})}}"
+                                 crm-icon="fa-download">
                                   {{ts('Export Config', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                           <li ng-if="!getNumberFromString(task.is_archived)" >
                               <a ng-href="#/sqltasks/import/{{task.id}}"
-                                  class="action-item crm-hover-button small-popup"
-                                  title="{{ts('Import Configuration', {'domain' : 'de.systopia.sqltasks'})}}">
+                                 class="action-item crm-hover-button small-popup"
+                                 title="{{ts('Import Configuration', {'domain' : 'de.systopia.sqltasks'})}}"
+                                 crm-icon="fa-upload">
                                   {{ts('Import Config', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li>
+                              <a ng-href="/civicrm/sqltasks-execution/list?sqltask_id={{task.id}}"
+                                 class="action-item crm-hover-button small-popup"
+                                 title="{{ts('Show all execution logs', {'domain' : 'de.systopia.sqltasks'})}}"
+                                 crm-icon="fa-bars">
+                                  {{ts('Execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li>
+                              <a ng-href="/civicrm/sqltasks-execution/latest-logs?sqltask_id={{task.id}}"
+                                 class="action-item crm-hover-button small-popup"
+                                 title="{{ts('Show latest execution logs', {'domain' : 'de.systopia.sqltasks'})}}"
+                                 crm-icon="fa-eye">
+                                  {{ts('Show latest execution', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li>
+                              <a ng-click="onDeletePress(task.id)" class="action-item crm-hover-button small-popup"
+                                  title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-trash">
+                                  {{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li ng-if="!getNumberFromString(task.is_archived) && !getNumberFromString(task.enabled)" >
+                              <a ng-click="onArchivePress(task.id)" class="action-item crm-hover-button small-popup"
+                                  title="{{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-archive">
+                                  {{ts('Archive', {'domain' : 'de.systopia.sqltasks'})}}
+                              </a>
+                          </li>
+                          <li ng-if="getNumberFromString(task.is_archived)" >
+                              <a ng-click="onUnarchivePress(task.id)" class="action-item crm-hover-button small-popup"
+                                  title="{{ts('Unarchive task', {'domain' : 'de.systopia.sqltasks'})}}"
+                                  crm-icon="fa-undo">
+                                  {{ts('Unarchive', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                           </li>
                       </ul>

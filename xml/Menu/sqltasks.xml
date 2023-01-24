@@ -49,4 +49,22 @@
     <title>SQL Task Configuration Templates</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/sqltasks-execution/list</path>
+    <page_callback>CRM_Sqltasks_Form_SqltasksExecutionList</page_callback>
+    <title>SqltasksExecutionList</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/sqltasks-execution/view</path>
+    <page_callback>CRM_Sqltasks_Page_SqltasksExecutionView</page_callback>
+    <title>SqltasksExecutionView</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/sqltasks-execution/latest-logs</path>
+    <page_callback>CRM_Sqltasks_Page_TaskLatestLogs</page_callback>
+    <title>Sqltasks Task Latest Logs</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>

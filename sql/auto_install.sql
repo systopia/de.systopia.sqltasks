@@ -18,6 +18,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `civicrm_sqltasks_template`;
+DROP TABLE IF EXISTS `civicrm_sqltasks_execution`;
 DROP TABLE IF EXISTS `civicrm_sqltasks_action_template`;
 
 SET FOREIGN_KEY_CHECKS=1;
@@ -41,6 +42,28 @@ CREATE TABLE `civicrm_sqltasks_action_template` (
   `config` text NOT NULL COMMENT 'Action Template Configuration',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `index_unique_name_type`(name, type)
+)
+ENGINE=InnoDB;
+
+-- /*******************************************************
+-- *
+-- * civicrm_sqltasks_execution
+-- *
+-- * FIXME
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_sqltasks_execution` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique SqltasksExecution ID',
+  `sqltask_id` int unsigned COMMENT 'FK to SQL Task',
+  `start_date` datetime NOT NULL COMMENT 'Start date of execution',
+  `end_date` datetime NULL COMMENT 'End date of execution',
+  `runtime` int unsigned NULL COMMENT 'Task runtime in milliseconds',
+  `input` longtext NULL COMMENT 'Task input',
+  `log` longtext NULL COMMENT 'Task result log',
+  `files` longtext NULL COMMENT 'Task result files (JSON)',
+  `error_count` int unsigned NULL COMMENT 'Task execution error count',
+  `created_id` int unsigned NULL COMMENT 'Contact ID of task executor',
+  PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
 

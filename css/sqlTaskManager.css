@@ -103,13 +103,15 @@
   background: #EFEFEF;
 }
 
-.sql-task-info-display-counter {
+.sql-task-info-display-counter, .sql-task-info-view-logs {
   padding: 10px;
   display: inline-block;
 }
 
 .sql-task-info-panel {
   padding: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .sql-task-manager-preloader {
@@ -139,4 +141,9 @@
 
 .sql-task-manager-new-task-panel div.content select {
   min-width: 300px;
+}
+
+.sql-task-manager-override-shadow {
+  box-shadow: none !important;
+  border: 1px solid rgb(232 238 240) !important;
 }

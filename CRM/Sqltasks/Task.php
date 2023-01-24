@@ -49,6 +49,7 @@ class CRM_Sqltasks_Task {
   protected $status;
   protected $error_count;
   protected $log_messages;
+  protected $detailedTaskLogs;
   protected $log_to_file = FALSE;
 
   /** @var array generated, sregistered files */
@@ -188,13 +189,36 @@ class CRM_Sqltasks_Task {
    * Append log messages
    *
    * @param $message
+   * @param $type
+   * @param bool $skipRegularLog
    */
-  public function log($message) {
+  public function log($message, $type = 'info', $skipRegularLog = FALSE) {
+    $this->detailedTaskLogs[] = $this->prepareDetailedTaskLogs($message, $type);
+
+    if ($skipRegularLog) {
+      return;
+    }
+
     $message = "[Task {$this->getID()}] {$message}";
-    $this->log_messages[] = $message;
+    $this->log_messages[] = (!is_null($type) ? $type . ': ' : '') . $message;
     if ($this->log_to_file) {
       CRM_Core_Error::debug_log_message($message, FALSE, 'sqltasks');
     }
+  }
+
+  /**
+   * @param $message
+   * @param $type
+   * @return array
+   */
+  private function prepareDetailedTaskLogs($message, $type) {
+    $microseconds = microtime(TRUE);
+
+    return [
+      'message' => $message,
+      'message_type' => $type,
+      'timestamp_in_microseconds' => $microseconds,
+    ];
   }
 
   /**
@@ -334,14 +358,21 @@ class CRM_Sqltasks_Task {
     if (!empty($params['log_to_file'])) {
       $this->log_to_file = TRUE;
     }
+
+    $taskStartDate = date('Y-m-d H:i:s');
+    $inputValue = NULL;
     $this->status = 'running';
     $this->error_count = 0;
     $this->reset();
     $task_timestamp = microtime(TRUE) * 1000;
+    $this->log('Start running task!', 'info', TRUE);
 
     if ($this->isArchived()) {
+      $this->error_count += 1;
       $this->status = 'error';
-      $this->log("Task is archived. Execution skipped.");
+      $this->log("Task is archived. Execution skipped.", 'error');
+      $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+      $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -349,7 +380,9 @@ class CRM_Sqltasks_Task {
     $is_still_running = CRM_Core_DAO::singleValueQuery("SELECT running_since FROM `civicrm_sqltasks` WHERE id = {$this->task_id} AND parallel_exec != 2");
     if ($is_still_running) {
       $this->status = 'error';
-      $this->log("Task is still running. Execution skipped.");
+      $this->log("Task is still running. Execution skipped.", 'error');
+      $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+      $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
       return $this->log_messages;
     }
 
@@ -358,13 +391,14 @@ class CRM_Sqltasks_Task {
       $lock->acquire();
       if (!$lock->isAcquired()) {
         $this->status = 'error';
-        $this->log("Task is locked. Execution skipped.");
+        $this->log("Task is locked. Execution skipped.", 'error');
+        $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
+        $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
         return $this->log_messages;
       }
     }
 
-
-    $this->log("Starting task execution.");
+    $this->log("Starting task execution.", 'info');
     // commit any pending transactions to ensure consistent behaviour
     CRM_Core_DAO::executeQuery("COMMIT");
     // set last_execution and running_since
@@ -376,7 +410,9 @@ class CRM_Sqltasks_Task {
       'random'  => CRM_Utils_String::createRandom(16, CRM_Utils_String::ALPHANUMERIC),
     ];
     if ($this->getAttribute('input_required') && !empty($params['input_val'])) {
-      $context['input_val'] = $params['input_val'];
+      $inputValue = $params['input_val'];
+      $context['input_val'] = $inputValue;
+      $this->log("Set input val to '{$inputValue}'.", 'info', TRUE);
     }
     foreach ($actions as $action) {
       $action_name = $action->getName();
@@ -386,7 +422,7 @@ class CRM_Sqltasks_Task {
         && $this->getAttribute("abort_on_error")
         && get_class($action) !== "CRM_Sqltasks_Action_ErrorHandler"
       ) {
-        $this->log("Skipped '$action_name' due to previous error");
+        $this->log("Skipped '$action_name' due to previous error", 'info');
         continue;
       }
 
@@ -398,7 +434,7 @@ class CRM_Sqltasks_Task {
         $action->checkConfiguration();
       } catch (Exception $e) {
         $this->error_count += 1;
-        $this->log("Configuration Error '{$action_name}': " . $e -> getMessage());
+        $this->log("Configuration Error '{$action_name}': " . $e -> getMessage(), 'error');
         continue;
       }
 
@@ -406,10 +442,10 @@ class CRM_Sqltasks_Task {
       try {
         $action->execute();
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
-        $this->log("Action '{$action_name}' executed in {$runtime}s.");
+        $this->log("Action '{$action_name}' executed in {$runtime}s.", 'info');
       } catch (Exception $e) {
         $this->error_count += 1;
-        $this->log("Error in action '{$action_name}': " . $e -> getMessage());
+        $this->log("Error in action '{$action_name}': " . $e -> getMessage(), 'error');
       }
     }
 
@@ -425,7 +461,28 @@ class CRM_Sqltasks_Task {
       $this->status = 'success';
     }
 
+    $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
+
     return $this->log_messages;
+  }
+
+  /**
+   * Logs the data after while execution
+   *
+   * @return void
+   */
+  public function logExecutionTask($taskRuntime, $taskStartDate, $inputValue) {
+    CRM_Sqltasks_BAO_SqltasksExecution::create([
+      'sqltask_id' => $this->getID(),
+      'start_date' => $taskStartDate,
+      'end_date' => date('Y-m-d H:i:s'),
+      'runtime' => $taskRuntime,
+      'input' => $inputValue,
+      'log' => json_encode($this->detailedTaskLogs),
+      'files' => json_encode(self::$files),
+      'error_count' => $this->error_count,
+      'created_id' => CRM_Core_Session::getLoggedInContactID(),
+    ]);
   }
 
   /**
@@ -436,7 +493,7 @@ class CRM_Sqltasks_Task {
    */
   protected function executeSQLScript($script, $script_name) {
     if (empty($script)) {
-      $this->log("No '{$script_name}' given.");
+      $this->log("No '{$script_name}' given.", 'info');
       return;
     }
 
@@ -455,14 +512,14 @@ class CRM_Sqltasks_Task {
       }
 
       $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
-      $this->log("Script '{$script_name}' executed in {$runtime}s.");
+      $this->log("Script '{$script_name}' executed in {$runtime}s.", 'info');
     } catch (Exception $e) {
       $this->error_count += 1;
       $message = $e->getMessage();
       if ($e instanceof PEAR_Exception && $e->getCause() instanceof DB_Error) {
         $message .= ' Details: ' . $e->getCause()->getUserInfo();
       }
-      $this->log("Script '{$script_name}' failed: " . $message);
+      $this->log("Script '{$script_name}' failed: " . $message, 'error');
     }
   }
 
@@ -530,6 +587,22 @@ class CRM_Sqltasks_Task {
     }
 
     return $tasksOrder;
+  }
+
+  /**
+   * Get tasks options prepared for html select
+   *
+   * @return array
+   */
+  public static function getTaskOptions() {
+    $dao = CRM_Core_DAO::executeQuery('SELECT * FROM civicrm_sqltasks');
+    $tasksOptions = [];
+
+    while ($dao->fetch()) {
+      $tasksOptions[$dao->id] = $dao->name;
+    }
+
+    return $tasksOptions;
   }
 
   /**
@@ -656,7 +729,7 @@ class CRM_Sqltasks_Task {
         'download_link' => CRM_Utils_System::url("civicrm/file", "reset=1&id={$file['id']}&filename={$base_name}&mime-type={$mime_type}", TRUE),
     ];
     self::$files[] = $file_entry;
-    $this->log("Published file '$filename' with URL {$file_entry['download_link']}");
+    $this->log("Published file '$filename' with URL {$file_entry['download_link']}", 'info');
   }
 
 
@@ -724,7 +797,7 @@ class CRM_Sqltasks_Task {
     // check if the user has at least one of them
     $is_allowed = CRM_Core_Permission::check([$run_permissions]);
     if (!$is_allowed) {
-      $this->log("User does not have enough permissions to run task [{$this->getID()}]");
+      $this->log("User does not have enough permissions to run task [{$this->getID()}]", 'error');
     }
     return $is_allowed;
   }
