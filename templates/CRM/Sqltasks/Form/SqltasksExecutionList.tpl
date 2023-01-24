@@ -29,12 +29,7 @@
 
                 <div class="sql-task__search-item-row">
                   <div class="sql-task__search-item">
-                      {$form.is_has_errors.label}<br/>
-                      {$form.is_has_errors.html}
-                  </div>
-                  <div class="sql-task__search-item">
-                      {$form.is_has_no_errors.label}<br/>
-                      {$form.is_has_no_errors.html}
+                      {$form.error_status.html}
                   </div>
                 </div>
               </div>
@@ -94,7 +89,7 @@
 
           {if $sqltasksExecutions}
             <div class="sql-task__execution-list-count-message">
-              <div>Have found {$sqltasksExecutionsCount} executions.</div>
+              <div>{$sqltasksExecutionsCount} Executions</div>
             </div>
 
             {include file="CRM/Sqltasks/Chank/SqltasksExecutionListPagination.tpl"}
@@ -102,13 +97,16 @@
             <div class="sql-task__execution-list-table">
               <table class="dataTable">
                 <tr>
-                  <th>task id</th>
-                  <th>error count</th>
-                  <th>Start date</th>
-                  <th>End date</th>
-                  <th>Task runtime(milliseconds)</th>
+                  <th>Task Id</th>
+                  <th>Error Count</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>
+                    Task Runtime
+                    <p class="sql-task__runtime-summary">Avg: {$summary.avg/1000|round:3}s | Min: {$summary.min/1000|round:3}s | Max: {$summary.max/1000|round:3}s</p>
+                  </th>
                   <th>Executor</th>
-                  <th>actions</th>
+                  <th>Actions</th>
                 </tr>
                   {foreach from=$sqltasksExecutions item=sqltasksExecution}
                     <tr class="{if $sqltasksExecution.is_has_errors}sql-task__error-execution{else}sql-task__success-execution{/if}">
@@ -212,6 +210,14 @@
 
 .sql-task__execution-list-wrap .crm-accordion-header {
   padding: 5px 20px !important;
+}
+
+.sql-task__runtime-summary {
+  line-height: normal;
+  font-size: 11px;
+  font-weight: normal;
+  text-transform: none;
+  margin: 0;
 }
 
 </style>

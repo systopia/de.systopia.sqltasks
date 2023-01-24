@@ -8,13 +8,16 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
   protected $searchParams = [
     'order_by' => ['id' => 'DESC'],//ASC DESC
+    'error_status' => 'all',
   ];
 
   public function preProcess() {
     $this->setTitle(E::ts('Sqltasks Execution List'));
     $this->setSearchParams();
     $this->assign('sqltasksExecutions', CRM_Sqltasks_BAO_SqltasksExecution::getAll($this->searchParams));
-    $sqltasksExecutionsCount = CRM_Sqltasks_BAO_SqltasksExecution::getCount($this->searchParams);
+    $summary = CRM_Sqltasks_BAO_SqltasksExecution::getSummary($this->searchParams);
+    $this->assign('summary', $summary);
+    $sqltasksExecutionsCount = $summary['count'];
     $this->assign('sqltasksExecutionsCount', $sqltasksExecutionsCount);
     $this->assign('pagination', $this->generatePaginationData($this->searchParams, $sqltasksExecutionsCount));
   }
@@ -24,10 +27,13 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
   }
 
   public function buildQuickForm() {
-    $this->add('select', 'sqltask_id', E::ts('Sqltask id'), CRM_Sqltasks_Task::getTaskOptions(), FALSE, ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]);
-    $this->add('text', 'input', ts('Input value'), ['class' => 'medium', 'placeholder' => 'input value']);
-    $this->add('checkbox', 'is_has_errors', ts('Is has errors?'));
-    $this->add('checkbox', 'is_has_no_errors', ts('Is has no errors?'));
+    $this->add('select', 'sqltask_id', E::ts('SQL Task ID'), CRM_Sqltasks_Task::getTaskOptions(), FALSE, ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]);
+    $this->add('text', 'input', E::ts('Input value'), ['class' => 'medium', 'placeholder' => 'input value']);
+    $this->addRadio('error_status', E::ts('Error Status'), [
+      'all' => 'Show all executions',
+      'only_errors' => 'With errors',
+      'no_errors' => 'No errors',
+    ]);
     $this->addEntityRef('created_id', E::ts('Contact ID of task executor'), ['class' => 'huge', 'placeholder' => '- any -']);
     $this->add('datepicker', 'from_start_date', E::ts('From start date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
     $this->add('datepicker', 'to_start_date', E::ts('To start date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
@@ -52,12 +58,6 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     if (!empty($inputValue)) {
       $this->searchParams['input'] = $inputValue;
     }
-
-    $isHasErrors = CRM_Utils_Request::retrieve('is_has_errors', 'Integer');
-    if (!empty($isHasErrors) && $isHasErrors === 1) {
-      $this->searchParams['is_has_errors'] = 1;
-    }
-
     $createdId = CRM_Utils_Request::retrieve('created_id', 'Integer');
     if (!empty($createdId)) {
       $this->searchParams['created_id'] = $createdId;
@@ -97,9 +97,9 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
       $this->searchParams['end_date'] = $endDate;
     }
 
-    $isHasNoErrors = CRM_Utils_Request::retrieve('is_has_no_errors', 'Integer');
-    if (!empty($isHasNoErrors) && $isHasNoErrors === 1) {
-      $this->searchParams['is_has_no_errors'] = $isHasNoErrors;
+    $error_status = CRM_Utils_Request::retrieve('error_status', 'String');
+    if (!empty($error_status)) {
+      $this->searchParams['error_status'] = $error_status;
     }
   }
 

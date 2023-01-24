@@ -77,11 +77,11 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       }
     }
 
-    if (!empty($params['is_has_errors'])) {
+    if (!empty($params['error_status']) && $params['error_status'] == 'only_errors') {
       $api->addWhere('error_count', '>', 0);
     }
 
-    if (!empty($params['is_has_no_errors'])) {
+    if (!empty($params['error_status']) && $params['error_status'] == 'no_errors') {
       $api->addWhere('error_count', '=', 0);
     }
 
@@ -164,16 +164,21 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return $items;
   }
 
-  public static function getCount($params = []) {
+  public static function getSummary($params = []) {
     unset($params['page_number']);
     unset($params['limit_per_page']);
     unset($params['limit']);
     unset($params['offset']);
 
     $api = CRM_Sqltasks_BAO_SqltasksExecution::buildApiQuery($params);
-    $api->addSelect('COUNT(id) AS count');
+    $api->setSelect([
+      'COUNT(id) AS count',
+      'AVG(runtime) AS avg',
+      'MIN(runtime) AS min',
+      'MAX(runtime) AS max',
+    ]);
 
-    return $api->execute()->first()['count'];
+    return $api->execute()->first();
   }
 
   /**
