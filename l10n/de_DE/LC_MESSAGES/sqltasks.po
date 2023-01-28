@@ -542,7 +542,7 @@ msgstr "-"
 
 #: CRM/Sqltasks/Page/Mytasks.php
 msgid "Available SQL Tasks"
-msgstr "Für Sie verfügebare SQL Tasks"
+msgstr "Für Sie verfügbare SQL-Tasks"
 
 #: CRM/Sqltasks/Page/Runner.php
 msgid "Running SQL task '%1'"
