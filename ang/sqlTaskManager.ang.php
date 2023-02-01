@@ -10,6 +10,7 @@ return [
     ],
   'css' => [
     0 => 'css/sqlTaskManager.css',
+    1 => 'css/sqlTaskHideCiviUi.css',
   ],
   'partials' => [
     0 => 'ang/sqlTaskManager',

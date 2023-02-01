@@ -21,6 +21,10 @@
   ]);
 
   angular.module(moduleName).service('loaderService', function() {
+    setTimeout(function() {
+      CRM.$('body').addClass('sql-task-manager-angular-page-wrapper');
+    }, 0);
+
     //loader for execution block
     this.executionBlock = {
       'isLoaded' : false,
