@@ -433,6 +433,8 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
    */
   public function upgrade_0250() {
     $this->executeSqlFile('sql/civicrm_sqltasks_execution.sql');
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
     return true;
   }
 
