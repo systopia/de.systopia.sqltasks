@@ -55,6 +55,11 @@ class CRM_Sqltasks_Task {
   protected static $files = [];
 
   /**
+   * @var array Return key pair from ReturnValue Action
+   */
+  protected static $return_values = [];
+
+  /**
    * Constructor
    *
    * @param $task_id
@@ -405,6 +410,9 @@ class CRM_Sqltasks_Task {
       // run action
       try {
         $action->execute();
+        if (get_class($action) == "CRM_Sqltasks_Action_ReturnValue") {
+          self::$return_values[$action->return_key] = $action->return_value;
+        }
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.");
       } catch (Exception $e) {
@@ -892,6 +900,10 @@ class CRM_Sqltasks_Task {
    */
   public static function getLastFile() {
     return end(self::$files);
+  }
+
+  public static function getReturnValues() {
+    return self::$return_values;
   }
 
   /**
