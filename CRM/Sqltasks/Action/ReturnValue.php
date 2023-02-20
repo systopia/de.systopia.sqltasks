@@ -100,6 +100,8 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
 
     $this->return_key = $this->getConfigValue('parameter');
     $this->return_value = $query->fetchValue();
+
+    $this->log("Set return value as '{$this->return_key}' => '{$this->return_value}'");
   }
 
 }
