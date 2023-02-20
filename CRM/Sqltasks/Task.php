@@ -411,6 +411,9 @@ class CRM_Sqltasks_Task {
       try {
         $action->execute();
         if (get_class($action) == "CRM_Sqltasks_Action_ReturnValue") {
+          if (!empty($this->return_values[$action->return_key])) {
+            $this->log("WARNING: Overwrite existing key '{$action->return_key}'");
+          }
           $this->return_values[$action->return_key] = $action->return_value;
         }
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
