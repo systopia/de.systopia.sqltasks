@@ -8,30 +8,17 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
 
-  /**
-   * Log only
-   * Is default
-   * (this is setting option which set how to handle API errors)
-   */
-  const LOG_ONLY = 'log_only';
-
-  /**
-   * Report task error and continue API calls
-   * (this is setting option which set how to handle API errors)
-   */
-  const REPORT_ERROR_AND_CONTINUE = 'report_error_and_continue';
-
-  /**
-   * Report task error and abort API calls
-   * (this is setting option which set how to handle API errors)
-   */
-  const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
-
   const API_RESULT_COLUMN = 'value';
 
+  /**
+   * ReturnValue Key
+   */
   public $return_key;
-  public $return_value;
 
+  /**
+   * ReturnValue Value
+   */
+  public $return_value;
 
   /**
    * Get identifier string
@@ -66,7 +53,7 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Get the table with the contact_id column
+   * Get the table with "API_RESULT_COLUMN" column
    */
   protected function getDataTable() {
     $table_name = $this->getConfigValue('table');
@@ -108,53 +95,11 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
    * @throws \Exception
    */
   public function execute() {
-    $handle_api_errors = $this->getHandleApiErrors();
-
-    // API Call specs
-    //$this->resetHasExecuted();
-
     $data_table = $this->getDataTable();
     $query = CRM_Core_DAO::executeQuery("SELECT `". self::API_RESULT_COLUMN ."` FROM `{$data_table}`");
 
     $this->return_key = $this->getConfigValue('parameter');
     $this->return_value = $query->fetchValue();
-  }
-
-  /**
-   * Get all possible options of handling API errors
-   *
-   * @return array
-   */
-  public static function getHandleApiErrorsOptions() {
-    return [
-      self::LOG_ONLY => E::ts('Log only'),
-      self::REPORT_ERROR_AND_CONTINUE => E::ts('Report task error and continue API calls'),
-      self::REPORT_ERROR_AND_ABORT => E::ts('Report task error and abort API calls'),
-    ];
-  }
-
-  /**
-   * Gets handle Api errors value
-   * If the value is empty or not valid it returns default value
-   *
-   * @return string
-   */
-  private function getHandleApiErrors() {
-    $handle_api_errors = $this->getConfigValue('handle_api_errors');
-    if (key_exists($handle_api_errors, self::getHandleApiErrorsOptions())) {
-      return $handle_api_errors;
-    }
-
-    return self::LOG_ONLY;
-  }
-
-  /**
-   * Report API call error
-   *
-   */
-  protected function reportError() {
-    $this->task->incrementErrorCounter();
-    $this->task->setErrorStatus();
   }
 
 }
