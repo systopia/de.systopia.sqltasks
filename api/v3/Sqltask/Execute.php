@@ -35,8 +35,8 @@ function civicrm_api3_sqltask_execute($params) {
         "files"   => CRM_Sqltasks_Task::getAllFiles(),
         'runtime' => microtime(TRUE) - $timestamp,
       ];
-      if (!empty(CRM_Sqltasks_Task::getReturnValues())) {
-        foreach (CRM_Sqltasks_Task::getReturnValues() as $key => $value) {
+      if (!empty($task->getReturnValues())) {
+        foreach ($task->getReturnValues() as $key => $value) {
           $success_data[$key] = $value;
         }
       }
