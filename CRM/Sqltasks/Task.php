@@ -364,7 +364,7 @@ class CRM_Sqltasks_Task {
     $this->status = 'running';
     $this->error_count = 0;
     $this->reset();
-    $task_timestamp = microtime(TRUE) * 1000;
+    $task_timestamp = (int) (microtime(TRUE) * 1000);
     $this->log('Start running task!', 'info', TRUE);
 
     if ($this->isArchived()) {
