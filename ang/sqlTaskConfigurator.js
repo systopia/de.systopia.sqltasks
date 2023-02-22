@@ -1409,13 +1409,6 @@
         $scope.removeItemFromArray = removeItemFromArray;
         $scope.getBooleanFromNumber = getBooleanFromNumber;
         $scope.onInfoPress = onInfoPress;
-        $scope.onPhpCodePress = function() {
-          CRM.help("PHP Code", {
-            id: "id-return-value-table",
-            file: "CRM/Sqltasks/Action/ReturnValue"
-          });
-          return false;
-        };
       }
     };
   });
