@@ -56,6 +56,11 @@ class CRM_Sqltasks_Task {
   protected static $files = [];
 
   /**
+   * @var array Return key pair from ReturnValue Action
+   */
+  protected $return_values = [];
+
+  /**
    * Constructor
    *
    * @param $task_id
@@ -441,6 +446,12 @@ class CRM_Sqltasks_Task {
       // run action
       try {
         $action->execute();
+        if (get_class($action) == "CRM_Sqltasks_Action_ReturnValue") {
+          if (!empty($this->return_values[$action->return_key])) {
+            $this->log("WARNING: Overwrite existing key '{$action->return_key}'");
+          }
+          $this->return_values[$action->return_key] = $action->return_value;
+        }
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.", 'info');
       } catch (Exception $e) {
@@ -965,6 +976,10 @@ class CRM_Sqltasks_Task {
    */
   public static function getLastFile() {
     return end(self::$files);
+  }
+
+  public function getReturnValues() {
+    return $this->return_values;
   }
 
   /**

@@ -442,6 +442,8 @@
             return ts("Segmentation Export");
           case "CRM_Sqltasks_Action_RunPHP":
             return ts("Run PHP Code");
+          case "CRM_Sqltasks_Action_ReturnValue":
+            return ts("Return Value");
           default:
             return "";
         }
@@ -1398,6 +1400,24 @@
           });
           return false;
         };
+      }
+    };
+  });
+
+  angular.module(moduleName).directive("returnValue", function() {
+    return {
+      restrict: "E",
+      templateUrl: "~/sqlTaskConfigurator/ReturnValue.html",
+      scope: {
+        model: "=",
+        index: "<",
+        actionTemplates: "="
+      },
+      controller: function($scope) {
+        $scope.ts = CRM.ts();
+        $scope.removeItemFromArray = removeItemFromArray;
+        $scope.getBooleanFromNumber = getBooleanFromNumber;
+        $scope.onInfoPress = onInfoPress;
       }
     };
   });
