@@ -815,7 +815,7 @@ class CRM_Sqltasks_Task {
           $errorCount++;
         }
 
-        if ($maxFailsNumber !== 0 && $errorCount > $maxFailsNumber) {
+        if ($maxFailsNumber !== 0 && $errorCount >= $maxFailsNumber) {
           Settings::disabledDispatcher();
           $results[] = ['Executions stopped, rich the task max fails number(' . $maxFailsNumber . '). Dispatcher is disabled.'];
           $skippedCount++;
