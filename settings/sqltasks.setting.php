@@ -41,4 +41,14 @@ return [
     'is_contact'  => 0,
     'description' => ts('Maximum number of fails before dispatcher is disabled. Defaults to 0 (no limit)'),
   ],
+  'sqltasks_sftp_max_retries' => [
+    'name'        => 'sqltasks_sftp_max_retries',
+    'type'        => 'Integer',
+    'default'     => 5,
+    'html_type'   => 'text',
+    'title'       => ts('SQL Tasks sftp max retries'),
+    'is_domain'   => 1,
+    'is_contact'  => 0,
+    'description' => ts('Maximum retries for sftp upload from SQL Tasks.'),
+  ],
 ];
