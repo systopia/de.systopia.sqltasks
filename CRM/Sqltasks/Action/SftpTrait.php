@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait for Action classes that send out email
+ * Trait for Action classes that upload file with sftp
  */
 trait CRM_Sqltasks_Action_SftpTrait {
 
