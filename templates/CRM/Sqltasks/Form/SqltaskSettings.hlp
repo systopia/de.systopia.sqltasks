@@ -1,0 +1,9 @@
+{htxt id='sqltasks_is_dispatcher_disabled'}
+    <p>{ts domain="de.systopia.sqltasks"}Is sqltask dispatcher disabled?{/ts}</p>
+    <p>{ts domain="de.systopia.sqltasks"}It stops all tasks which dispatcher usually run{/ts}</p>
+{/htxt}
+
+{htxt id='sqltasks_max_fails_number'}
+    <p>{ts domain="de.systopia.sqltasks"}Max fails number for sqltask executions.</p>{/ts}
+    <p>{ts domain="de.systopia.sqltasks"}Ex: A value of 5 should stop execution after 5 failed tasks, 0 - never stop execution. If executions is stopped, sqltask extension disables dispatcher. And to enable it need to do it manually in this page.{/ts}</p>
+{/htxt}

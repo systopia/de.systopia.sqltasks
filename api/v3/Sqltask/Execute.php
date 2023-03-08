@@ -29,9 +29,9 @@ function civicrm_api3_sqltask_execute($params) {
 
     if (empty($params['check_permissions']) || $task->allowedToRun()) {
       $timestamp = microtime(TRUE);
-      $result = $task->execute($exec_params);
+      $taskExecutionResult = $task->execute($exec_params);
       $success_data = [
-        "log"     => $result,
+        "log"     => $taskExecutionResult['logs'],
         "files"   => CRM_Sqltasks_Task::getAllFiles(),
         'runtime' => microtime(TRUE) - $timestamp,
       ];

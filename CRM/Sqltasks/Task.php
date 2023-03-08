@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Utils\Settings;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -378,7 +379,7 @@ class CRM_Sqltasks_Task {
       $this->log("Task is archived. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-      return $this->log_messages;
+      return $this->getTasksExecutionResult();
     }
 
     // 0. mark task as started
@@ -388,7 +389,7 @@ class CRM_Sqltasks_Task {
       $this->log("Task is still running. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-      return $this->log_messages;
+      return $this->getTasksExecutionResult();
     }
 
     if ($this->getAttribute('parallel_exec') != '2') {
@@ -399,7 +400,7 @@ class CRM_Sqltasks_Task {
         $this->log("Task is locked. Execution skipped.", 'error');
         $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
         $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-        return $this->log_messages;
+        return $this->getTasksExecutionResult();
       }
     }
 
@@ -474,7 +475,18 @@ class CRM_Sqltasks_Task {
 
     $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
 
-    return $this->log_messages;
+    return $this->getTasksExecutionResult();
+  }
+
+  /**
+   * @return array
+   */
+  public function getTasksExecutionResult() {
+    return [
+      'logs' => $this->log_messages,
+      'status' => $this->status,
+      'error_count' => $this->error_count,
+    ];
   }
 
   /**
@@ -757,7 +769,12 @@ class CRM_Sqltasks_Task {
    * @return array
    */
   public static function runDispatcher($params = []) {
-    $results = array();
+    $results = [];
+
+    if (Settings::isDispatcherDisabled()) {
+      $results[] = ['The dispatcher is currently <strong>disabled</strong> due to task execution errors.'];
+      return $results;
+    }
 
     // FIRST reset timed out tasks (after 23 hours)
     CRM_Core_DAO::executeQuery("
@@ -774,21 +791,46 @@ class CRM_Sqltasks_Task {
     if (!$still_running) {
       // NORMAL DISPATCH
       $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
-      foreach ($tasks as $task) {
-        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
-          $results[] = $task->execute($params);
-        }
-      }
-
     } else {
       // PARALLEL DISPATCH: only run tasks flagged as parallel
       $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
-      foreach ($tasks as $task) {
-        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
-          $results[] = $task->execute($params);
+    }
+
+    $maxFailsNumber = Settings::getMaxFailsNumber();
+    $errorCount = 0;
+    $successCount = 0;
+    $skippedCount = 0;
+
+    foreach ($tasks as $task) {
+      if (Settings::isDispatcherDisabled()) {
+        $skippedCount++;
+        continue;
+      }
+
+      if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
+        $taskExecutionResult = $task->execute();
+        $results[] = $taskExecutionResult['logs'];
+
+        if ($taskExecutionResult['error_count'] > 0) {
+          $errorCount++;
         }
+
+        if ($maxFailsNumber !== 0 && $errorCount > $maxFailsNumber) {
+          Settings::disabledDispatcher();
+          $results[] = ['Executions stopped, rich the task max fails number(' . $maxFailsNumber . '). Dispatcher is disabled.'];
+          $skippedCount++;
+        }
+      } else {
+        $skippedCount++;
       }
     }
+
+    $results[] = [
+      'Tasks count - ' . count($tasks) . '.' ,
+      'Execution tasks with errors - ' . $errorCount . '. ' ,
+      'Success tasks execution - ' . $successCount . '.',
+      'Skipped execution tasks - ' . $skippedCount . '.',
+    ];
 
     return $results;
   }
