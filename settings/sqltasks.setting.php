@@ -1,7 +1,5 @@
 <?php
 
-use Civi\Utils\Settings;
-
 return [
   'sqltasks_global_tokens' => [
     'name'        => 'sqltasks_global_tokens',
@@ -23,8 +21,8 @@ return [
     'is_contact'  => 0,
     'description' => ts('Default configuration (ID) for new SQL Tasks.'),
   ],
-  Settings::SQLTASKS_IS_DISPATCHER_DISABLED => [
-    'name'            => Settings::SQLTASKS_IS_DISPATCHER_DISABLED,
+  'sqltasks_is_dispatcher_disabled' => [
+    'name'            => 'sqltasks_is_dispatcher_disabled',
     'type'            => 'Boolean',
     'html_type'       => 'text',
     'default'         => '0',
@@ -33,8 +31,8 @@ return [
     'is_contact'      => 0,
     'description'     => ts('Is sqltasks dispatcher disabled?'),
   ],
-  Settings::SQLTASKS_MAX_FAILS_NUMBER => [
-    'name'        => Settings::SQLTASKS_MAX_FAILS_NUMBER,
+  'sqltasks_max_fails_number' => [
+    'name'        => 'sqltasks_max_fails_number',
     'type'        => 'String',
     'default'     => '0',
     'html_type'   => 'text',
