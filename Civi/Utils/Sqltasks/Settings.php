@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Utils;
+namespace Civi\Utils\Sqltasks;
 
 use Civi;
 

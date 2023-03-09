@@ -9,7 +9,7 @@
  */
 function civicrm_api3_sqltask_execute($params) {
   $exec_params = [
-    'log_to_file' => $params['log_to_file'],
+    'log_to_file' => $params['log_to_file'] ?? 0,
     'input_val' => $params['input_val'],
   ];
   // If task_id given run only this one task
@@ -50,11 +50,15 @@ function civicrm_api3_sqltask_execute($params) {
   // DEFAULT MODE:
   //   run all enabled tasks according to schedule
   $results = CRM_Sqltasks_Task::runDispatcher($exec_params);
+  $tasks = $results['tasks'];
   if (!empty($params['log_to_file'])) {
     // don't return logs if we're logging to file, return count instead
-    $results = count($results);
+    $tasks = count($tasks);
   }
-  return civicrm_api3_create_success($results);
+  $dao = NULL;
+  return civicrm_api3_create_success($tasks, [], NULL, NULL, $dao, [
+    'summary' => $results['summary'],
+  ]);
 }
 
 /**

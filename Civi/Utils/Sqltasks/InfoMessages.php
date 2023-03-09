@@ -1,8 +1,9 @@
 <?php
 
-namespace Civi\Utils;
+namespace Civi\Utils\Sqltasks;
 
 use Civi;
+use Civi\Utils\CiviCRM_API3_Exception;
 use CRM_Utils_System;
 
 class InfoMessages {
@@ -28,15 +29,15 @@ class InfoMessages {
     }
 
     if ($dispatcherData['is_active'] != 1) {
-      $this->addMessage('The dispatcher is currently <strong>disabled</strong> none of the tasks will be executed automatically.');
+      $this->addMessage('The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.');
       return;
     }
 
     if (Settings::isDispatcherDisabled()) {
       $settingsLink = CRM_Utils_System::url('civicrm/sqltask/settings', 'reset=1');
-      $message = 'The dispatcher is currently <strong>disabled</strong> due to task execution errors.';
-      $message .= 'To enable it got to the ';
-      $message .= '<a class="crm-link" target="_blank" href="' . $settingsLink . '" >Sqltask Settings</a>';
+      $message = 'The dispatcher is currently <strong>disabled</strong> due to task execution errors. ';
+      $message .= 'To enable it, got to the ';
+      $message .= '<a class="crm-link" target="_blank" href="' . $settingsLink . '" >SQL Task Settings</a>';
       $message .= ' page.';
       $this->addMessage($message, 'error');
       return;

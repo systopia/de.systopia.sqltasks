@@ -206,7 +206,7 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
   ]);
 
   _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', [
-    'label'      => E::ts('Settings'),
+    'label'      => E::ts('SQL Task Settings'),
     'name'       => 'sqltasks_settings',
     'url'        => 'civicrm/sqltask/settings',
     'permission' => 'administer CiviCRM',

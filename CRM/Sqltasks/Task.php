@@ -13,7 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Utils\Settings;
+use Civi\Utils\Sqltasks\Settings;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -771,11 +771,6 @@ class CRM_Sqltasks_Task {
   public static function runDispatcher($params = []) {
     $results = [];
 
-    if (Settings::isDispatcherDisabled()) {
-      $results[] = ['The dispatcher is currently <strong>disabled</strong> due to task execution errors.'];
-      return $results;
-    }
-
     // FIRST reset timed out tasks (after 23 hours)
     CRM_Core_DAO::executeQuery("
       UPDATE `civicrm_sqltasks`
@@ -800,6 +795,10 @@ class CRM_Sqltasks_Task {
     $errorCount = 0;
     $successCount = 0;
     $skippedCount = 0;
+    $notes = [];
+    if (Settings::isDispatcherDisabled()) {
+      $notes[] = 'Dispatcher is disabled. Skipping all task executions.';
+    }
 
     foreach ($tasks as $task) {
       if (Settings::isDispatcherDisabled()) {
@@ -814,25 +813,29 @@ class CRM_Sqltasks_Task {
         if ($taskExecutionResult['error_count'] > 0) {
           $errorCount++;
         }
+        else {
+          $successCount++;
+        }
 
         if ($maxFailsNumber !== 0 && $errorCount >= $maxFailsNumber) {
           Settings::disableDispatcher();
-          $results[] = ['Executions stopped, rich the task max fails number(' . $maxFailsNumber . '). Dispatcher is disabled.'];
-          $skippedCount++;
+          $notes[] = 'Dispatcher disabled after ' . $errorCount . ' errors';
         }
       } else {
         $skippedCount++;
       }
     }
 
-    $results[] = [
-      'Tasks count - ' . count($tasks) . '.' ,
-      'Execution tasks with errors - ' . $errorCount . '. ' ,
-      'Success tasks execution - ' . $successCount . '.',
-      'Skipped execution tasks - ' . $skippedCount . '.',
+    return [
+      'tasks' => $results,
+      'summary' => [
+        'tasks' => count($tasks),
+        'errors' => $errorCount,
+        'success' => $successCount,
+        'skipped' => $skippedCount,
+        'notes' => $notes,
+      ],
     ];
-
-    return $results;
   }
 
   /**

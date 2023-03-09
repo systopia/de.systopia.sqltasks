@@ -1,6 +1,6 @@
 <?php
 
-use Civi\Utils\InfoMessages;
+use Civi\Utils\Sqltasks\InfoMessages;
 
 /**
  * Get all info messages for sqltask manager

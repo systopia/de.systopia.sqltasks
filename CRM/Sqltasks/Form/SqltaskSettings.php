@@ -1,14 +1,14 @@
 <?php
 
-use Civi\Utils\Settings;
+use Civi\Utils\Sqltasks\Settings;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Form_SqltaskSettings extends CRM_Core_Form {
 
   public function buildQuickForm() {
-    $this->setTitle(E::ts('Sqltasks Settings'));
-    $this->add('checkbox', Settings::SQLTASKS_IS_DISPATCHER_DISABLED, E::ts('IS sqltask dispatcher disabled?'));
-    $this->add('number', Settings::SQLTASKS_MAX_FAILS_NUMBER, E::ts('Max fails number for sqltask executions'), null, TRUE);
+    $this->setTitle(E::ts('SQL Task Settings'));
+    $this->add('checkbox', Settings::SQLTASKS_IS_DISPATCHER_DISABLED, E::ts('SQL Task Dispatcher disabled?'));
+    $this->add('number', Settings::SQLTASKS_MAX_FAILS_NUMBER, E::ts('Maximum number of fails before dispatcher is disabled'), null, TRUE);
     $this->addButtons([[
       'type' => 'submit',
       'name' => E::ts('Save'),

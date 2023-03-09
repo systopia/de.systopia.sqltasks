@@ -70,7 +70,7 @@
   <item>
     <path>civicrm/sqltask/settings</path>
     <page_callback>CRM_Sqltasks_Form_SqltaskSettings</page_callback>
-    <title>SqltaskSettings</title>
+    <title>SQL Task Settings</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
 </menu>
