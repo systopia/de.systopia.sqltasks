@@ -31,9 +31,9 @@ class CRM_Sqltasks_Form_SqltaskSettings extends CRM_Core_Form {
     $values = $this->exportValues();
 
     if (!empty($values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED]) && $values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED] == 1) {
-      Settings::disabledDispatcher();
+      Settings::disableDispatcher();
     } else {
-      Settings::enabledDispatcher();
+      Settings::enableDispatcher();
     }
 
     if (!empty($values[Settings::SQLTASKS_MAX_FAILS_NUMBER])) {

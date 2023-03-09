@@ -14,11 +14,11 @@ class Settings {
         return Civi::settings()->get(Settings::SQLTASKS_IS_DISPATCHER_DISABLED) == 1;
     }
 
-    public static function disabledDispatcher() {
+    public static function disableDispatcher() {
         Civi::settings()->set(Settings::SQLTASKS_IS_DISPATCHER_DISABLED, 1);
     }
 
-    public static function enabledDispatcher() {
+    public static function enableDispatcher() {
         Civi::settings()->set(Settings::SQLTASKS_IS_DISPATCHER_DISABLED, 0);
     }
 
