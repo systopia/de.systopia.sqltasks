@@ -34,7 +34,7 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
   protected function createAndExecuteTask(array $data, array $params = []) {
     $task = new CRM_Sqltasks_Task(NULL, $data);
     $task->store();
-    $taskExecutionResult = $task->execute();
+    $taskExecutionResult = $task->execute($params);
     $this->log = $taskExecutionResult['logs'];
 
     return $task;
