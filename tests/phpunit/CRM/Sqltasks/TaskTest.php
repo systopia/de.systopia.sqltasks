@@ -13,7 +13,7 @@ use Civi\Test\TransactionalInterface;
 class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
 
   public function setUp() {
-    CRM_Core_DAO::executeQuery('TRUNCATE TABLE civicrm_sqltasks');
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_sqltasks');
     parent::setUp();
   }
 

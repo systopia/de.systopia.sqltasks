@@ -22,6 +22,7 @@
     .module(moduleName)
     .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
       $scope.url = CRM.url;
+      $scope.infoMessages = [];
       $scope.taskIdWithOpenPanel = null;
       $scope.tasks = [];
       $scope.displayTasks = [];
@@ -31,7 +32,6 @@
       $scope.getNumberFromString = function(stringValue) {return Number(stringValue);};
       $scope.showPanelForTaskId = function(taskId) {$scope.taskIdWithOpenPanel = taskId;};
       $scope.ts = CRM.ts();
-      $scope.dispatcher_frequency = null;
       $scope.resourceBaseUrl = CRM.config.resourceBase;
       $scope.tasksDisplayPreferences = {
         'isShowArchivedTask' : '0',
@@ -40,11 +40,20 @@
       };
       $scope.templateOptions = [];
       $scope.selectTemplateModel = { templateId: undefined };
+      $scope.getInfoMessages = function() {
+        CRM.api3('Sqltask', 'get_info_messages').then(function(result) {
+          $scope.infoMessages = result.values;
+          $scope.$apply();
+        }, function(error) {
+          console.error('Sqltask.get_info_messages error: error');
+          console.error(error);
+        });
+      };
 
       getAllTasks();
       getAllTemplates();
       getDefaultTemplate();
-      getCurrentDispatcherFrequency();
+      $scope.getInfoMessages();
 
       function getAllTasks() {
         $scope.isTasksLoading = true;
@@ -273,41 +282,6 @@
       $scope.addNewTask = function () {
         $location.url(`/sqltasks/configure/0?template=${$scope.selectTemplateModel.templateId}`);
       };
-
-      function getCurrentDispatcherFrequency() {
-        CRM.api3("Job", "get", {
-          sequential: 1,
-          api_entity: "Sqltask",
-          api_action: "execute",
-          is_active: 1
-        }).done(function(result) {
-          var jobs = result.values;
-          if (jobs.length > 0) {
-            jobs.forEach(job => {
-              switch (job.run_frequency) {
-                case "Always":
-                  $scope.dispatcher_frequency = "Always";
-                  break;
-                case "Hourly":
-                  if ($scope.dispatcher_frequency === null || $scope.dispatcher_frequency === "Daily") {
-                    $scope.dispatcher_frequency = "Hourly";
-                  }
-                  break;
-                case "Daily":
-                  if ($scope.dispatcher_frequency === null) {
-                    $scope.dispatcher_frequency = "Daily";
-                  }
-                  break;
-                default:
-                  console.log(`Unexpected run frequency: ${job.run_frequency}`);
-                  break;
-              }
-            });
-            $scope.$apply();
-          }
-        });
-      }
-
     });
 
   angular.module(moduleName).directive("select2", () => ({

@@ -438,4 +438,14 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
     return true;
   }
 
+    /**
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0300() {
+        $this->ctx->log->info('Clear cache to activate new settings.');
+        CRM_Core_Invoke::rebuildMenuAndCaches();
+        return TRUE;
+    }
+
 }

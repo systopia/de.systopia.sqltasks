@@ -78,7 +78,8 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
         continue;
       }
       // all good: execute!
-      $logs = $task->execute();
+      $taskExecutionResult = $task->execute();
+      $logs = $taskExecutionResult['logs'];
       // log results from child task
       foreach ($logs as $log) {
         $this->log($log);
