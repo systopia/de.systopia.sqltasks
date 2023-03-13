@@ -51,4 +51,14 @@ return [
     'is_contact'  => 0,
     'description' => ts('Maximum retries for sftp upload from SQL Tasks.'),
   ],
+  'sqltasks_sftp_retry_initial_wait' => [
+    'name'        => 'sqltasks_sftp_retry_initial_wait',
+    'type'        => 'Integer',
+    'default'     => 1,
+    'html_type'   => 'text',
+    'title'       => ts('SQL Tasks sftp initial wait'),
+    'is_domain'   => 1,
+    'is_contact'  => 0,
+    'description' => ts('Initial wait for retry sftp upload from SQL Tasks.'),
+  ],
 ];

@@ -355,7 +355,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         function() use ($filename, $filepath) {
           return $this->uploadSftp($filename, $filepath);
         },
-        Civi::settings()->get("sqltasks_sftp_max_retries")
+        Civi::settings()->get("sqltasks_sftp_max_retries"),
+        Civi::settings()->get("sqltasks_sftp_retry_initial_wait")
       );
     }
   }

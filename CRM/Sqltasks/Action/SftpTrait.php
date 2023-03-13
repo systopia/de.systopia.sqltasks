@@ -67,13 +67,13 @@ trait CRM_Sqltasks_Action_SftpTrait {
    *
    * @param callable $callable
    * @param int $maxRetries
+   * @param int $initialWait
    * @param array $expectedErrors
-   * @param float $initialWait
    * @param int $exponent
    * @return mixed
    * @throws Exception
    */
-  function retrySftp(callable $callable, int $maxRetries = 5, array $expectedErrors = [Exception::class], float $initialWait = 1.0, int $exponent = 2)
+  function retrySftp(callable $callable, int $maxRetries = 5, int $initialWait = 1, array $expectedErrors = [Exception::class], int $exponent = 2)
   {
     try {
       return call_user_func($callable);
@@ -89,7 +89,7 @@ trait CRM_Sqltasks_Action_SftpTrait {
 
       // exponential backoff
       if ((int)$maxRetries > 0) {
-        $this->log("Sftp upload {$maxRetries} retries remaining");
+        $this->log("Error during SFTP Upload (retrying): " . $e->getMessage(), 'error');
 
         usleep($initialWait * 1E6);
         return $this->retrySftp($callable, $maxRetries - 1, $expectedErrors, $initialWait * $exponent, $exponent);
