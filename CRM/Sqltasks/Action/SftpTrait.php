@@ -92,7 +92,7 @@ trait CRM_Sqltasks_Action_SftpTrait {
         $this->log("Error during SFTP Upload (retrying): " . $e->getMessage(), 'error');
 
         usleep($initialWait * 1E6);
-        return $this->retrySftp($callable, $maxRetries - 1, $expectedErrors, $initialWait * $exponent, $exponent);
+        return $this->retrySftp($callable, $maxRetries - 1, $initialWait * $exponent, $expectedErrors, $exponent);
       }
 
       // max retries reached
