@@ -142,11 +142,10 @@ class CRM_Sqltasks_Config_Format {
     $main_sql = substr($config, ($start_main + $len_main), ($start_post - $start_main - $len_main));
     $post_sql = substr($config, ($start_post + $len_post));
 
-    return [
-      'config' => json_decode($data, TRUE),
+    return array_merge(json_decode($data, TRUE), [
       'main_sql' => $main_sql,
       'post_sql' => $post_sql,
-    ];
+    ]);
   }
 
 }

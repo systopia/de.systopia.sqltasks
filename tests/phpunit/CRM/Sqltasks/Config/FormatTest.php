@@ -83,7 +83,7 @@ sample post script';
                 "entity_table": "civicrm_contact",
                 "enabled": "1",
                 "contact_table": "temp_foo",
-                "tag_id": "13"
+                "tag_id": "123"
             }
         ],
         "scheduled_hour": "0",
@@ -138,11 +138,11 @@ sample post script
   }
 
   /**
-   * Test that the entity_table field is added in SyncTag actions
+   * Test that task actions are added
    *
    * @throws \Exception
    */
-  public function testEntityTableIsAdded() {
+  public function testTaskActionsAreAdded() {
     $samplesToTest = [
       json_decode(self::SAMPLE_V1, TRUE),
       self::SAMPLE_V1,
@@ -153,13 +153,24 @@ sample post script
       $config = CRM_Sqltasks_Config_Format::toLatest(
         $sample
       )['config'];
-      $entity_table = NULL;
+      $entity_table = $tag_id = $contact_table = $enabled = NULL;
       foreach ($config['actions'] as $action) {
         if ($action['type'] == 'CRM_Sqltasks_Action_SyncTag') {
           $entity_table = $action['entity_table'];
+          $tag_id = $action['tag_id'];
+          $contact_table = $action['contact_table'];
+          $enabled = $action['enabled'];
+        }
+        if ($action['type'] == 'CRM_Sqltasks_Action_RunSQL') {
+          $script = $action['script'];
         }
       }
       $this->assertEquals('civicrm_contact', $entity_table);
+      $this->assertEquals('123', $tag_id);
+      $this->assertEquals('temp_foo', $contact_table);
+      $this->assertEquals('1', $enabled);
+      $this->assertEquals('sample main script', $script);
+
     }
   }
 
