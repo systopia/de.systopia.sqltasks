@@ -265,9 +265,9 @@ function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
     return;
   }
 
-  // To apply those setting need turn off and then turn on logging at the setting page(civicrm/admin/setting/misc)
-  // Tt recreates triggers at database and creates log tables if needed.
-  // If exclude table form logs by 'alterLogTables' hook, it doesn't delete log table.
+  // To apply those settings need turn off and then turn on logging at the setting page(civicrm/admin/setting/misc)
+  // It recreates triggers at database and creates log tables if needed.
+  // If exclude table form logs by 'alterLogTables' hook, it doesn't delete logs tables.
   // This logic works on CiviCRM 5.51.3.
   $excludedLogItems = [
     'tables' => [
