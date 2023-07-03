@@ -193,7 +193,7 @@ class CRM_Sqltasks_Task {
     $message = "[Task {$this->getID()}] {$message}";
     $this->log_messages[] = $message;
     if ($this->log_to_file) {
-      CRM_Core_Error::debug_log_message($message, FALSE, 'sqltasks');
+      Civi::log()->debug($message);
     }
   }
 
