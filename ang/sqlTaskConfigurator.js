@@ -86,7 +86,7 @@
 
       $scope.onInfoPress = onInfoPress;
       $scope.fixTaskOptionRunPermissions = function () {
-        if ($scope.taskOptions.run_permissions === '') {
+        if ($scope.taskOptions.run_permissions === '' || $scope.taskOptions.run_permissions === null) {
           $scope.taskOptions.run_permissions = [];
         } else {
           $scope.taskOptions.run_permissions = $scope.taskOptions.run_permissions.split(",");
