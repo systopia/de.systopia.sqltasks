@@ -59,6 +59,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
 
     // generate query for task selection
     $query = "SELECT * FROM `civicrm_sqltasks` WHERE  ";
+    $query .= " archive_date IS NULL AND ";
     if (!$isExecuteDisabledTasks) {
       $query .= " enabled=1 AND ";
     }

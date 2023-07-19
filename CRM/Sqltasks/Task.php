@@ -563,14 +563,41 @@ class CRM_Sqltasks_Task {
    *
    * @return array
    */
-  public static function getExecutionTaskListOptions() {
-    $preparedTasksOptions = array();
-    $task_search = CRM_Core_DAO::executeQuery('SELECT `id`, `name` FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
-    while ($task_search->fetch()) {
-      $preparedTasksOptions[$task_search->id] = "[{$task_search->id}] " . $task_search->name;
+  public static function getExecutionTaskListOptions($params) {
+    $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
+    if ($params['isShowDisabledTasks'] == 0) {
+      $query .= ' WHERE enabled = 1 ';
     }
 
-    return $preparedTasksOptions;
+    //TODO: Remove or use this code:
+    // if ($params['isShowDisabledTasks'] == 1) {
+    //   $query .= ' WHERE archive_date IS NULL ';
+    // }
+
+    $query .= ' ORDER BY weight ASC, id ASC';
+
+    $options = [];
+    $task = CRM_Core_DAO::executeQuery($query);
+    while ($task->fetch()) {
+
+      $isTaskArchived = !empty($task->archive_date);
+      if ($isTaskArchived) {
+        $icon = 'fa-ban';
+        $color = '#fcdebd';
+      } else {
+        $icon = ($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-off';
+        $color = ($task->enabled == 1) ? '#d3f5ac' : '#EFEFEF';
+      }
+
+      $options[] = [
+        'name' => "[{$task->id}] " . $task->name,
+        'value' => $task->id,
+        'icon' => $icon,
+        'color' => $color,
+      ];
+    }
+
+    return $options;
   }
 
   /**
