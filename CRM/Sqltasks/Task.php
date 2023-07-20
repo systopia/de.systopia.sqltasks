@@ -567,37 +567,72 @@ class CRM_Sqltasks_Task {
     $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
     if ($params['isShowDisabledTasks'] == 0) {
       $query .= ' WHERE enabled = 1 ';
+    } else {
+      $query .= ' WHERE archive_date IS NULL ';
     }
-
-    //TODO: Remove or use this code:
-    // if ($params['isShowDisabledTasks'] == 1) {
-    //   $query .= ' WHERE archive_date IS NULL ';
-    // }
-
     $query .= ' ORDER BY weight ASC, id ASC';
 
     $options = [];
     $task = CRM_Core_DAO::executeQuery($query);
     while ($task->fetch()) {
-
-      $isTaskArchived = !empty($task->archive_date);
-      if ($isTaskArchived) {
-        $icon = 'fa-ban';
-        $color = '#fcdebd';
-      } else {
-        $icon = ($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-off';
-        $color = ($task->enabled == 1) ? '#d3f5ac' : '#EFEFEF';
-      }
+      $icon = 'sql-task-custom-toggle-icon ' . (($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-on fa-flip-horizontal');
 
       $options[] = [
         'name' => "[{$task->id}] " . $task->name,
         'value' => $task->id,
         'icon' => $icon,
-        'color' => $color,
       ];
     }
 
     return $options;
+  }
+
+  /**
+   * Fix config at 'CallTask' action:
+   * Clears task which not allow to run
+   *
+   * @return void
+   */
+  public function fixConfigAtCallTaskAction() {
+    if (empty($this->config) || !is_array($this->config) || empty($this->config['actions'])) {
+      return;
+    }
+
+    foreach ($this->config['actions'] as $key => $action) {
+      if ($action['type'] === CRM_Sqltasks_Action_CallTask::class && !empty($action['tasks']) && is_array($action['tasks'])) {
+
+        $isExecuteDisabledTasks = false;
+        if (!empty($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1) {
+          $isExecuteDisabledTasks = true;
+        }
+
+        $cleanedTasks = [];
+        foreach ($action['tasks'] as $taskId) {
+          $task = CRM_Core_DAO::executeQuery(
+            "SELECT `id`, `enabled`, `archive_date` FROM civicrm_sqltasks WHERE `id` = %1 LIMIT 1;",
+            [1 => [$taskId, "Integer"]]
+          );
+
+          while ($task->fetch()) {
+            $isTaskArchived = !empty($task->archive_date);
+            $isTaskDisabled = $task->enabled == 0;
+
+            if ($isTaskArchived) {
+              continue;
+            }
+
+            if (!$isExecuteDisabledTasks && $isTaskDisabled) {
+              continue;
+            }
+
+            $cleanedTasks[] = $taskId;
+          }
+
+          $this->config['actions'][$key] = $cleanedTasks;
+        }
+      }
+    }
+
   }
 
   /**

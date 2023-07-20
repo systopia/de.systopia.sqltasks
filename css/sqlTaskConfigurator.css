@@ -204,3 +204,11 @@ select.pixelInput {
   border-bottom: 1px solid grey;
   margin-bottom: 20px;
 }
+
+.sql-task-multiple-select2 i.crm-i.fa-toggle-on.sql-task-custom-toggle-icon {
+  color: #0ac60a;
+}
+
+i.crm-i.fa-toggle-on.fa-flip-horizontal.sql-task-custom-toggle-icon {
+  color: #ff0000;
+}
