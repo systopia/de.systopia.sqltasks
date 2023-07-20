@@ -54,7 +54,6 @@ function civicrm_api3_sqltask_create($params) {
       $newParams += $params['config'];
     }
     $task = new CRM_Sqltasks_Task($params['id'], $newParams);
-    $task->fixConfigAtCallTaskAction();
     $task->store();
   } else {
     $task = CRM_Sqltasks_Task::getTask($params['id']);

@@ -168,11 +168,13 @@ class CRM_Sqltasks_Task {
    * @param $config
    * @param bool $writeTrough
    *
-   * @return mixed
+   * @return array
    * @throws Exception
    */
   public function setConfiguration($config, $writeTrough = FALSE) {
     $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
+    $config = CRM_Sqltasks_Task::fixConfigAtCallTaskAction($config);
+
     if ($writeTrough && $this->task_id) {
       $this->attributes["last_modified"] = date("Y-m-d H:i:s");
 
@@ -591,14 +593,14 @@ class CRM_Sqltasks_Task {
    * Fix config at 'CallTask' action:
    * Clears task which not allow to run
    *
-   * @return void
+   * @return array
    */
-  public function fixConfigAtCallTaskAction() {
-    if (empty($this->config) || !is_array($this->config) || empty($this->config['actions'])) {
-      return;
+  public static function fixConfigAtCallTaskAction($config) {
+    if (empty($config) || !is_array($config) || empty($config['actions'])) {
+      return $config;
     }
 
-    foreach ($this->config['actions'] as $key => $action) {
+    foreach ($config['actions'] as $key => $action) {
       if ($action['type'] === CRM_Sqltasks_Action_CallTask::class && !empty($action['tasks']) && is_array($action['tasks'])) {
 
         $isExecuteDisabledTasks = false;
@@ -628,11 +630,12 @@ class CRM_Sqltasks_Task {
             $cleanedTasks[] = $taskId;
           }
 
-          $this->config['actions'][$key] = $cleanedTasks;
+          $config['actions'][$key]['tasks'] = $cleanedTasks;
         }
       }
     }
 
+    return $config;
   }
 
   /**

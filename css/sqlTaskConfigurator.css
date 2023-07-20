@@ -205,7 +205,7 @@ select.pixelInput {
   margin-bottom: 20px;
 }
 
-.sql-task-multiple-select2 i.crm-i.fa-toggle-on.sql-task-custom-toggle-icon {
+i.crm-i.fa-toggle-on.sql-task-custom-toggle-icon {
   color: #0ac60a;
 }
 
