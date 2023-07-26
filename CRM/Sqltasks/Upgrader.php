@@ -157,7 +157,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
           $scheduled_vars = array('', '', '', '', '');
           break;
       }
-      list($scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute) = $scheduled_vars;
+      [$scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute] = $scheduled_vars;
 
       $config = $task->getConfiguration();
       $config['scheduled_month']   = CRM_Utils_Array::value('scheduled_month',   $config, $scheduled_month);
@@ -446,6 +446,17 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
         $this->ctx->log->info('Clear cache to activate new settings.');
         CRM_Core_Invoke::rebuildMenuAndCaches();
         return TRUE;
+    }
+
+    /**
+     * Update logging triggers to apply log exclusions
+     *
+     * @return true
+     */
+    public function upgrade_0310() {
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+      return TRUE;
     }
 
 }

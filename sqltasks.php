@@ -254,3 +254,45 @@ function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = ar
     }
   }
 }
+
+/**
+ * Implements hook_alterLogTables().
+ *
+ * @param array $logTableSpec
+ */
+function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
+  if (empty($logTableSpec) && is_array($logTableSpec)) {
+    return;
+  }
+
+  // To apply those settings need turn off and then turn on logging at the setting page(civicrm/admin/setting/misc)
+  // It recreates triggers at database and creates log tables if needed.
+  // If exclude table form logs by 'alterLogTables' hook, it doesn't delete logs tables.
+  // This logic works on CiviCRM 5.51.3.
+  $excludedLogItems = [
+    'tables' => [
+      'civicrm_sqltasks_execution',
+    ],
+    'columns' => [
+      'civicrm_sqltasks' => ['last_execution', 'running_since', 'last_runtime'],
+    ]
+  ];
+
+  foreach ($excludedLogItems['tables'] as $excludedLogTable) {
+    if (isset($logTableSpec[$excludedLogTable])) {
+      unset($logTableSpec[$excludedLogTable]);
+    }
+  }
+
+  foreach ($excludedLogItems['columns'] as $tableName => $columnNames) {
+    if (isset($logTableSpec[$tableName])) {
+      if (isset($logTableSpec[$tableName]['exceptions']) && is_array($logTableSpec[$tableName]['exceptions'])) {
+        foreach ($columnNames as $columnName) {
+          $logTableSpec[$tableName][] = $columnName;
+        }
+      } else {
+        $logTableSpec[$tableName]['exceptions'] = $columnNames;
+      }
+    }
+  }
+}
