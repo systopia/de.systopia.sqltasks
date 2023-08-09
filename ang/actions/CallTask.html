@@ -16,6 +16,7 @@
             <action-template-select
                 model='model'
                 action-templates='actionTemplates'
+                on-apply-template-callback="onApplyTemplateCallback"
                 action-template='actionTemplate'>
             </action-template-select>
             <div class="clear"></div>
@@ -28,10 +29,17 @@
         <div class="sql-tasks">
             <action-additional-info model='model' fieldPrefix="'call_task'" index='index'></action-additional-info>
 
+            <check-box model="model['is_execute_disabled_tasks']" fieldlabel="ts('Execute disabled tasks')"
+                       fieldid="'is_execute_disabled_tasks' + index"
+                       checkbox-change="executeDisabledTasksOnChange(value)"
+            >
+            </check-box>
+
             <multiple-select2
                 isrequired="getBooleanFromNumber(model['enabled']) && !isDataExists(model['categories']) && !isDataExists(model['tasks'])"
                 model="model['tasks']" fieldlabel="ts('SQL Tasks')" fieldid="'task_tasks_' + index" inputMaxWidth="'300px'"
                 optionsArray="tasksData" isdataloaded="isDataLoaded('task_tasks_' + index)"
+                refresh-select="refreshSelectSqlTasks"
                 helpaction='onInfoPress("Tasks", "id-task-tasks", "CRM\/Sqltasks\/Action\/CallTask")' showHelpIcon=true>
             </multiple-select2>
 
@@ -40,6 +48,7 @@
                 model="model['categories']" fieldlabel="ts('SQL Task Categories')"
                 fieldid="'task_categories_' + index" optionsArray="categoriesData" inputMaxWidth="'300px'"
                 helpaction='onInfoPress("Categories", "id-task-categories", "CRM\/Sqltasks\/Action\/CallTask")'
+                refresh-select="refreshSelectSqlTaskCategories"
                 showHelpIcon=true isdataloaded="isDataLoaded('task_categories_' + index)">
             </multiple-select2>
         </div>

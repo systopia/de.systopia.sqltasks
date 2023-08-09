@@ -168,11 +168,13 @@ class CRM_Sqltasks_Task {
    * @param $config
    * @param bool $writeTrough
    *
-   * @return mixed
+   * @return array
    * @throws Exception
    */
   public function setConfiguration($config, $writeTrough = FALSE) {
     $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
+    $config = CRM_Sqltasks_Task::fixConfigAtCallTaskAction($config);
+
     if ($writeTrough && $this->task_id) {
       $this->attributes["last_modified"] = date("Y-m-d H:i:s");
 
@@ -563,14 +565,77 @@ class CRM_Sqltasks_Task {
    *
    * @return array
    */
-  public static function getExecutionTaskListOptions() {
-    $preparedTasksOptions = array();
-    $task_search = CRM_Core_DAO::executeQuery('SELECT `id`, `name` FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
-    while ($task_search->fetch()) {
-      $preparedTasksOptions[$task_search->id] = "[{$task_search->id}] " . $task_search->name;
+  public static function getExecutionTaskListOptions($params) {
+    $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
+    if ($params['isShowDisabledTasks'] == 0) {
+      $query .= ' WHERE enabled = 1 ';
+    } else {
+      $query .= ' WHERE archive_date IS NULL ';
+    }
+    $query .= ' ORDER BY weight ASC, id ASC';
+
+    $options = [];
+    $task = CRM_Core_DAO::executeQuery($query);
+    while ($task->fetch()) {
+      $icon = 'sql-task-custom-toggle-icon ' . (($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-on fa-flip-horizontal');
+
+      $options[] = [
+        'name' => "[{$task->id}] " . $task->name,
+        'value' => $task->id,
+        'icon' => $icon,
+      ];
     }
 
-    return $preparedTasksOptions;
+    return $options;
+  }
+
+  /**
+   * Fix config at 'CallTask' action:
+   * Clears task which not allow to run
+   *
+   * @return array
+   */
+  public static function fixConfigAtCallTaskAction($config) {
+    if (empty($config) || !is_array($config) || empty($config['actions'])) {
+      return $config;
+    }
+
+    foreach ($config['actions'] as $key => $action) {
+      if ($action['type'] === CRM_Sqltasks_Action_CallTask::class && !empty($action['tasks']) && is_array($action['tasks'])) {
+
+        $isExecuteDisabledTasks = false;
+        if (!empty($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1) {
+          $isExecuteDisabledTasks = true;
+        }
+
+        $cleanedTasks = [];
+        foreach ($action['tasks'] as $taskId) {
+          $task = CRM_Core_DAO::executeQuery(
+            "SELECT `id`, `enabled`, `archive_date` FROM civicrm_sqltasks WHERE `id` = %1 LIMIT 1;",
+            [1 => [$taskId, "Integer"]]
+          );
+
+          while ($task->fetch()) {
+            $isTaskArchived = !empty($task->archive_date);
+            $isTaskDisabled = $task->enabled == 0;
+
+            if ($isTaskArchived) {
+              continue;
+            }
+
+            if (!$isExecuteDisabledTasks && $isTaskDisabled) {
+              continue;
+            }
+
+            $cleanedTasks[] = $taskId;
+          }
+
+          $config['actions'][$key]['tasks'] = $cleanedTasks;
+        }
+      }
+    }
+
+    return $config;
   }
 
   /**
