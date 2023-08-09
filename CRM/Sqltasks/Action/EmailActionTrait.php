@@ -28,13 +28,26 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
       $to_email = explode(',', $to_email);
     }
 
-    foreach ($to_email as $email) {
-      $email = trim($email);
-      civicrm_api3('MessageTemplate', 'send', array_merge(
-        $templateParams,
-        ['to_email' => $email],
-      ));
-      $this->log("Sent {$this->id} message to '{$email}'");
+    if (count($to_email) > 0) {
+      $toEmail = '';
+      $ccEmails = [];
+      $emailNumber = 1;
+
+      foreach ($to_email as $email) {
+        if ($emailNumber === 1) {
+          $toEmail = trim($email);
+        } else {
+          $ccEmails[] = trim($email);
+        }
+        $emailNumber++;
+      }
+
+      civicrm_api3('MessageTemplate', 'send', array_merge($templateParams, [
+        'cc' => implode(',', $ccEmails),
+        'to_email' => $toEmail
+      ]));
+
+      $this->log("Sent {$this->id} message to '{$email}' with cc: " . implode(',', $ccEmails) . ".");
     }
   }
 
