@@ -103,7 +103,6 @@
 }
 
 .sql-task-info-display-counter {
-  padding: 10px 0 10px 0;
   display: flex;
   gap: 5px;
 }
@@ -121,6 +120,7 @@
   justify-content: space-between;
   color: #464354;
   background: #f3f6f7;
+  align-items: center;
 }
 
 .sql-task-manager-preloader {
@@ -160,6 +160,10 @@
   border: 1px solid #e8eef0;
 }
 
+.sql-task-manager-dashboard__item.sql-task-manager-dashboard__item-info {
+  flex-grow: 1;
+}
+
 .sql-task-manager-dashboard__item-tile {
   border-bottom: 1px solid #d3dee2;
   border-radius: 2px 2px 0 0;
@@ -187,12 +191,13 @@
 }
 
 .sql-task-preference-info {
-  padding-bottom: 10px;
+  padding-right: 10px;
 }
 
 .sql-task-preference-item-wrap {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .sql-task-manager-dashboard__ico {
