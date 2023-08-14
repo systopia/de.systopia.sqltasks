@@ -77,6 +77,7 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
   $params['input_val'] = array(
     'name'         => 'input_val',
     'api.required' => 0,
+    'api.default'  => '',
     'type'         => CRM_Utils_Type::T_STRING,
     'title'        => 'Input Value',
     'description'  => 'Input value with execution context. Will be forwarded to all actions',
