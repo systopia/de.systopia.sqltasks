@@ -273,6 +273,16 @@ class CRM_Sqltasks_Task {
    * @throws Exception
    */
   public function setAttribute($attribute_name, $value, $writeTrough = FALSE) {
+    if ($attribute_name === 'enabled') {
+      if ($value == 1) {
+        $this->enableTask($writeTrough);
+      } else {
+        $this->disableTask($writeTrough);
+      }
+
+      return;
+    }
+
     if (isset(self::$main_attributes[$attribute_name])) {
       $this->attributes[$attribute_name] = $value;
       $this->setDefaultAttributes();
@@ -284,6 +294,46 @@ class CRM_Sqltasks_Task {
       }
     } else {
       throw new Exception("Attribute '{$attribute_name}' unknown", 1);
+    }
+  }
+
+  /**
+   * @param $writeTrough
+   * @return void
+   */
+  public function disableTask($writeTrough = FALSE) {
+    $this->attributes['enabled'] = 0;
+
+    if (empty($this->task_id)) {
+      return;
+    }
+
+    if (!empty(CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($this->task_id))) {
+      return;
+    }
+
+    if ($writeTrough) {
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `enabled` = 0 WHERE id = %1 ",
+        [1 => [$this->task_id, 'Integer']]
+      );
+    }
+  }
+
+  /**
+   * @param $writeTrough
+   * @return void
+   */
+  public function enableTask($writeTrough = FALSE) {
+    $this->attributes['enabled'] = 1;
+
+    if (empty($this->task_id)) {
+      return;
+    }
+
+    if ($writeTrough) {
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `enabled` = 1 WHERE id = %1 ",
+        [1 => [$this->task_id, 'Integer']]
+      );
     }
   }
 
@@ -1214,6 +1264,46 @@ class CRM_Sqltasks_Task {
    */
   private function getLockName() {
     return 'civicrm_de_systopia_sqltasks_task_id_' . $this->getID();
+  }
+
+  /**
+   * Returns task ids which uses this tasks in config(json) field
+   *
+   * @param $taskId
+   * @return array
+   */
+  public static function findTaskIdsWhichUsesTask($taskId) {
+    if (empty($taskId)) {
+      return [];
+    }
+
+    $query = "
+        SELECT id FROM civicrm_sqltasks
+        WHERE FIND_IN_SET(
+            " . $taskId . ",
+            REPLACE(REPLACE(REPLACE(REPLACE(JSON_UNQUOTE(JSON_EXTRACT(config, '$.actions[*].tasks')), '[', ''), ']', ''), '\"', ''), ' ', '')
+        );
+    ";
+
+    $taskIds = [];
+    $task = CRM_Core_DAO::executeQuery($query);
+
+    while ($task->fetch()) {
+      $taskIds[] = $task->id;
+    }
+
+    return $taskIds;
+  }
+
+  /**
+   * @return string
+   */
+  public function getConfigureTaksLink() {
+    if (empty($this->getID())) {
+      return '';
+    }
+
+    return CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$this->getID()}");
   }
 
 }

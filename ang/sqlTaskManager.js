@@ -18,9 +18,70 @@
     }
   ]);
 
+  angular.module(moduleName).service('warningMessageService', function() {
+    this.doAction = function(action, context, actionData, continueCallback, cancelCallback) {
+      CRM.api3('Sqltask', 'get_warning_message', {
+        "action": action,
+        "context": context,
+        "action_data": actionData
+      }).then(function(result) {
+        if (result.is_error === 1) {
+          CRM.status('Error via trying to do "' + action + '"', 'error');
+          console.error('Sqltask->get_warning_message error:');
+          console.error(result.error_message);
+        } else {
+          if (result['values']['isAllowDoAction']) {
+            continueCallback();
+          } else {
+            showWarningModalWindow(result, continueCallback, cancelCallback);
+          }
+        }
+      }, function(error) {
+        console.error('Sqltask->get_warning_message error:');
+        console.error(error);
+      });
+    }
+
+    var showWarningModalWindow = function(result, continueCallback, cancelCallback) {
+      var warningWindow = result['values']['warningWindow'];
+      var buttonSettings = [
+        {
+          text: warningWindow['noButtonText'],
+          icon: warningWindow['noButtonIcon'],
+          class: warningWindow['noButtonClasses'],
+          click: function () {
+            cancelCallback();
+            $(this).dialog("close");
+          }
+        }
+      ];
+      if (warningWindow['isShowYesButton']) {
+        buttonSettings.push({
+          text: warningWindow['yesButtonText'],
+          icon: warningWindow['yesButtonIcon'],
+          class: warningWindow['yesButtonClasses'],
+          click: function () {
+            continueCallback();
+            $(this).dialog("close");
+          }
+        })
+      }
+
+      CRM.confirm({
+        title: warningWindow['title'],
+        message: warningWindow['message'],
+        options: {yes: warningWindow['yesButtonText'], no: warningWindow['noButtonText']},
+        open: function(event, ui) {
+          //hide 'close' button, because cannot run 'cancelCallback' when user click on 'close' button
+          $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+        },
+      }).dialog("option", "buttons", buttonSettings);
+    };
+  });
+
   angular
     .module(moduleName)
-    .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
+    .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout, warningMessageService) {
       $scope.url = CRM.url;
       $scope.infoMessages = [];
       $scope.taskIdWithOpenPanel = null;
@@ -235,6 +296,14 @@
       };
 
       $scope.onToggleEnablePress = function(taskId, value) {
+        var action = value === 1 ? 'enableTask' : 'disableTask';
+        warningMessageService.doAction(action,'sqlTaskManager',{'taskId': taskId}, function () {
+          $scope.onToggleEnablePressApiCall(taskId, value);
+        },
+        function () {});
+      };
+
+      $scope.onToggleEnablePressApiCall = function(taskId, value) {
         CRM.api3("Sqltask", "create", {
           id: taskId,
           enabled: value
@@ -247,7 +316,7 @@
             CRM.alert(result.error_message, ts('Error ' + (isEnabling ? 'enabling' : 'disabling' + ' task'), "error"));
           }
         });
-      };
+      }
 
       $scope.onUnarchivePress = function(taskId) {
         CRM.api3("Sqltask", "unarchive", {id: taskId}).done(function(result) {
@@ -260,7 +329,7 @@
         });
       };
 
-      $scope.onArchivePress = function(taskId) {
+      $scope.onArchivePressApiCall = function(taskId) {
         CRM.api3("Sqltask", "archive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
             CRM.alert(ts('Task was successfully archived'), ts("Archiving task"), "success");
@@ -271,8 +340,29 @@
         });
       };
 
-      $scope.onDeletePress = function(taskId) {
+      $scope.onArchivePress = function(taskId) {
+        warningMessageService.doAction('archiveTask','sqlTaskManager',{'taskId': taskId}, function () {
+            $scope.onArchivePressApiCall(taskId);
+          },
+          function () {});
+      };
+
+      $scope.showWhereTaskIsUsed = function(taskId) {
+        warningMessageService.doAction('showWhereTaskIsUsed','sqlTaskManager',
+          {'taskId': taskId},
+          function () {},
+          function () {});
+      };
+
+      $scope.onDeletePressRedirect = function(taskId) {
         $location.path("/sqltasks/delete/" + taskId);
+      };
+
+      $scope.onDeletePress = function(taskId) {
+        warningMessageService.doAction('deleteTask','sqlTaskManager',{'taskId': taskId}, function () {
+            $scope.onDeletePressRedirect(taskId);
+          },
+          function () {});
       };
 
       $scope.onExecutePress = function(taskId) {
