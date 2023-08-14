@@ -45,8 +45,8 @@ class Base {
     return [
       'isAllowDoAction' => false,
       'warningWindow' => [
-        'title' => $this->rawParams['action'],
-        'message' => 'Do "' . $this->rawParams['action'] . '" action?',
+        'title' => $this->params['action'],
+        'message' => 'Do "' . $this->params['action'] . '" action?',
         'yesButtonText' => 'Continue',
         'yesButtonClasses' => '',
         'isShowYesButton' => true,
