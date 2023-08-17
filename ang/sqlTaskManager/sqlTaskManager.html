@@ -64,14 +64,22 @@
                 <div class="sql-task-manager-dashboard__title-text">Info</div>
             </div>
             <div class="sql-task-manager-dashboard__content">
-                <a class="sql-task-info-view-logs" href="{{url('civicrm/sqltasks-execution/list');}}"
-                   target="_blank"
-                   title="{{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
+                <div class="sql-task-manager-dashboard__links-wrap">
+                  <a class="sql-task-info-view-logs" href="{{url('civicrm/sqltasks-execution/list');}}"
+                     target="_blank"
+                     title="{{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
                     <div class="sql-task-manager-dashboard__ico">
-                        <i class="crm-i fa-bars"></i>
+                      <i class="crm-i fa-bars"></i>
                     </div>
                     {{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}
-                </a>
+                  </a>
+                  <a class="sql-task-info-view-logs" href="{{url('civicrm/sqltasks/global-token-manager');}}"
+                     target="_blank"
+                     title="{{ts('Global Token Manager', {'domain' : 'de.systopia.sqltasks'})}}">
+                    <span class="crm-i fa-book"></span>
+                    <span>{{ts('Global Token Manager', {'domain' : 'de.systopia.sqltasks'})}}</span>
+                  </a>
+                </div>
 
               <ul class="sql-task-manager-dashboard__dispatcher-info-messages">
                 <li ng-repeat="message in infoMessages" ng-bind-html="message.text" class="sql-task-manager-dashboard__dispatcher-info-message sql-task-manager-dashboard__dispatcher-info-message-type-{{message.type}}" ></li>

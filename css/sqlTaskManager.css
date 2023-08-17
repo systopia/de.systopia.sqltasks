@@ -1,6 +1,7 @@
 .sql-task-manager-dashboard__dispatcher-info-messages {
     margin-right: 0 !important;
     margin-left: 0 !important;
+    padding-left: 0 !important;
     list-style-position: inside !important;
 }
 
@@ -86,6 +87,7 @@
   vertical-align: middle;
   padding:  10px 10px 10px 25px;
   cursor: pointer;
+  margin: 0 !important;
 }
 
 .sql-task-preference-item-input {
@@ -203,6 +205,11 @@
 
 .sql-task-manager-dashboard__content {
   padding: 10px 10px 20px 10px;
+}
+
+.sql-task-manager-dashboard__links-wrap {
+  display: flex;
+  gap: 15px;
 }
 
 .sql-task-manager-result-footer-info-wrap {

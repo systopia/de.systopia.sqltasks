@@ -23,7 +23,7 @@
     .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
       //to add ability to use styles only for this page
       setTimeout(function() {
-        CRM.$('body').addClass('sql-task-manager-angular-page-wrapper');
+        CRM.$('body').addClass('sql-task-body-page-wrapper');
       }, 0);
 
       $scope.url = CRM.url;

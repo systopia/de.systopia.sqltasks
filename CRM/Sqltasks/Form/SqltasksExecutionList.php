@@ -42,6 +42,9 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $this->add('datepicker', 'end_date', E::ts('End date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
     $this->add('number', 'limit_per_page', ts('Limit per page'), ['class' => 'medium'], FALSE);
     $this->addButtons([['type' => 'submit', 'name' => E::ts('Submit'), 'isDefault' => TRUE]]);
+
+    CRM_Core_Resources::singleton()->addStyleFile('de.systopia.sqltasks', 'css/sqlTaskGeneral.css');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/AddBodyClass.js', 1000, 'html-header');
   }
 
   public function postProcess() {

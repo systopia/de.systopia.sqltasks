@@ -1,4 +1,15 @@
 <div class="global-token__page">
+
+  <div class="sql-task__button-wrap">
+    <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
+       href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts}Go to the SQL Task Manager{/ts}">
+      <span class="crm-i fa-list"></span>
+      <span>{ts}Go to the SQL Task Manager{/ts}</span>
+    </a>
+  </div>
+
+  <div class="clear"></div>
+
   <div class="crm-block crm-form-block page-civicrm-admin">
     <div class="crm-content-block crm-block">
 

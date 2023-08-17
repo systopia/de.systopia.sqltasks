@@ -17,6 +17,10 @@ class CRM_Sqltasks_Form_SqltaskSettings extends CRM_Core_Form {
 
     $this->assign('settingsNames', [Settings::SQLTASKS_IS_DISPATCHER_DISABLED, Settings::SQLTASKS_MAX_FAILS_NUMBER]);
     $this->assign('SqltaskManagerLink', CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/manage"));
+
+    CRM_Core_Resources::singleton()->addStyleFile('de.systopia.sqltasks', 'css/sqlTaskGeneral.css');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/AddBodyClass.js', 1000, 'html-header');
+
     parent::buildQuickForm();
   }
 

@@ -20,7 +20,7 @@
 
   angular.module(moduleName).controller("taskRunnerCtrl", function($scope, $location, taskId) {
     setTimeout(function() {
-      CRM.$('body').addClass('sql-task-manager-angular-page-wrapper');
+      CRM.$('body').addClass('sql-task-body-page-wrapper');
     }, 0);
 
     $scope.taskId = taskId;
