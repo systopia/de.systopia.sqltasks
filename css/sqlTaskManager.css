@@ -1,3 +1,22 @@
+.sql-task-manager-dashboard__dispatcher-info-messages {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    list-style-position: inside !important;
+}
+
+.sql-task-manager-dashboard__dispatcher-info-message-type-info {
+    background: #f1f8eb;
+}
+
+.sql-task-manager-dashboard__dispatcher-info-message-type-error {
+    background: #f8ebee;
+    color: #8c2e0b;
+}
+
+.sql-task-manager-dashboard__dispatcher-info-message {
+    padding: 10px 10px 10px 5px;
+}
+
 .page-civicrm-a.page-civicrm-a table:not(.form-layout-compressed) .tasks-table tr.even-row.enabled  {
   background: #d3f5ac;
 }

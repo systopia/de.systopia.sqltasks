@@ -73,30 +73,9 @@
                     {{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}
                 </a>
 
-                <div class="sql-task-manager-dashboard__dispatcher-info">
-                    <div ng-switch on="dispatcher_frequency">
-                        <div ng-switch-when="Daily">
-                            {{ts('The dispatcher is run')}}
-                            <strong>{{ts('every day')}}</strong>
-                            {{ts('after midnight. This is effectively the maximum frequency these tasks are being executed with.')}}
-                        </div>
-                        <div ng-switch-when="Hourly">
-                            {{ts('The dispatcher is run')}}
-                            <strong>{{ts('every hour')}}</strong>
-                            {{ts('on the hour. This is effectively the maximum frequency these tasks are being executed with.')}}
-                        </div>
-                        <div ng-switch-when="Always">
-                            {{ts('The dispatcher (and therefore all active tasks) will be triggered')}}
-                            <strong>{{ts('with every cron-run')}}</strong>.
-                            {{ts('Ask your administrator how often that is, in order to know the effective maximum frequency these tasks are being executed with.')}}
-                        </div>
-                        <div ng-switch-default>
-                            {{ts('The dispatcher is currently')}}
-                            <strong>{{ts('disabled')}}</strong>,
-                            {{ts('none of the tasks will be executed automatically.')}}
-                        </div>
-                    </div>
-                </div>
+              <ul class="sql-task-manager-dashboard__dispatcher-info-messages">
+                <li ng-repeat="message in infoMessages" ng-bind-html="message.text" class="sql-task-manager-dashboard__dispatcher-info-message sql-task-manager-dashboard__dispatcher-info-message-type-{{message.type}}" ></li>
+              </ul>
             </div>
         </div>
     </div>

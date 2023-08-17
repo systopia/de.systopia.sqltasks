@@ -52,12 +52,18 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
 
     $tasks = $this->getConfigValue('tasks');
     $categories = $this->getConfigValue('categories');
+    $isExecuteDisabledTasks = $this->getConfigValue('is_execute_disabled_tasks') == 1;
     if (empty($tasks) && empty($categories)) {
       return;
     }
 
     // generate query for task selection
-    $query = "SELECT * FROM `civicrm_sqltasks` WHERE enabled=1 AND ";
+    $query = "SELECT * FROM `civicrm_sqltasks` WHERE  ";
+    $query .= " archive_date IS NULL AND ";
+    if (!$isExecuteDisabledTasks) {
+      $query .= " enabled=1 AND ";
+    }
+
     $or_clauses = array();
     if (!empty($tasks)) {
       $or_clauses[] = '`id` IN (' . implode(',', $tasks) . ')';
@@ -78,7 +84,8 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
         continue;
       }
       // all good: execute!
-      $logs = $task->execute();
+      $taskExecutionResult = $task->execute();
+      $logs = $taskExecutionResult['logs'];
       // log results from child task
       foreach ($logs as $log) {
         $this->log($log);

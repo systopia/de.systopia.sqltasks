@@ -18,7 +18,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
+class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
 
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
@@ -157,7 +157,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
           $scheduled_vars = array('', '', '', '', '');
           break;
       }
-      list($scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute) = $scheduled_vars;
+      [$scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute] = $scheduled_vars;
 
       $config = $task->getConfiguration();
       $config['scheduled_month']   = CRM_Utils_Array::value('scheduled_month',   $config, $scheduled_month);
@@ -433,7 +433,30 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
    */
   public function upgrade_0250() {
     $this->executeSqlFile('sql/civicrm_sqltasks_execution.sql');
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
     return true;
   }
+
+    /**
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0300() {
+        $this->ctx->log->info('Clear cache to activate new settings.');
+        CRM_Core_Invoke::rebuildMenuAndCaches();
+        return TRUE;
+    }
+
+    /**
+     * Update logging triggers to apply log exclusions
+     *
+     * @return true
+     */
+    public function upgrade_0310() {
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+      return TRUE;
+    }
 
 }

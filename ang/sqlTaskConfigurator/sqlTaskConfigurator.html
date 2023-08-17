@@ -430,6 +430,9 @@
                                 <div ng-switch-when="CRM_Sqltasks_Action_RunPHP">
                                   <run-php model='action' index='$index' action-templates='actionTemplates'></run-php>
                                 </div>
+                                <div ng-switch-when="CRM_Sqltasks_Action_ReturnValue">
+                                  <return-value model='action' index='$index' action-templates='actionTemplates'></return-value>
+                                </div>
                                 <div ng-switch-default></div>
                             </div>
                         </div>

@@ -25,6 +25,7 @@ use League\Csv\Writer;
  */
 class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   use CRM_Sqltasks_Action_EmailActionTrait;
+  use CRM_Sqltasks_Action_SftpTrait;
 
   /**
    * Types of CSV field enclosure
@@ -100,23 +101,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       $encodings[$mb_encoding] = $mb_encoding;
     }
     return $encodings;
-  }
-
-  /**
-   * Parse the credentials
-   * @return FALSE if nothing is entered, 'ERROR' if it cannot be parsed
-   */
-  protected function getCredentials() {
-    $credentials = $this->getConfigValue('upload');
-    if (!empty($credentials)) {
-      $credentials = trim($credentials);
-      if (preg_match('#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#', $credentials, $match)) {
-        return $match;
-      } else {
-        return 'ERROR';
-      }
-    }
-    return FALSE;
   }
 
   /**
@@ -367,35 +351,13 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     // 3) UPLOAD
     if ($this->getConfigValue('upload')) {
-      $credentials = $this->getCredentials();
-      if ($credentials && $credentials != 'ERROR') {
-        define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
-        // connect
-        if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
-          $sftp = new phpseclib\Net\SFTP($credentials['host']);
-          $mode = phpseclib\Net\SFTP::SOURCE_LOCAL_FILE;
-        }
-        else {
-          // used for legacy versions of phpseclib
-          require_once('Net/SFTP.php');
-          $sftp = new Net_SFTP($credentials['host']);
-          $mode = NET_SFTP_LOCAL_FILE;
-        }
-        if (!$sftp->login($credentials['user'], $credentials['password'])) {
-          throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
-        }
-
-        // upload
-        $target_file = $credentials['remote_path'] . '/' . $filename;
-        if (!$sftp->put($target_file, $filepath, $mode)) {
-          throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
-        }
-
-        $this->log("Uploaded file '{$filename}' to {$credentials['host']}/{$target_file}");
-
-      } else {
-        throw new Exception("Upload failed, couldn't parse credentials", 1);
-      }
+      $this->retrySftp(
+        function() use ($filename, $filepath) {
+          return $this->uploadSftp($filename, $filepath);
+        },
+        Civi::settings()->get("sqltasks_sftp_max_retries"),
+        Civi::settings()->get("sqltasks_sftp_retry_initial_wait")
+      );
     }
   }
 }

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Utils\Sqltasks\Settings;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -54,6 +55,11 @@ class CRM_Sqltasks_Task {
 
   /** @var array generated, sregistered files */
   protected static $files = [];
+
+  /**
+   * @var array Return key pair from ReturnValue Action
+   */
+  protected $return_values = [];
 
   /**
    * Constructor
@@ -162,11 +168,13 @@ class CRM_Sqltasks_Task {
    * @param $config
    * @param bool $writeTrough
    *
-   * @return mixed
+   * @return array
    * @throws Exception
    */
   public function setConfiguration($config, $writeTrough = FALSE) {
     $config['version'] = CRM_Sqltasks_Config_Format::getVersion($config);
+    $config = CRM_Sqltasks_Task::fixConfigAtCallTaskAction($config);
+
     if ($writeTrough && $this->task_id) {
       $this->attributes["last_modified"] = date("Y-m-d H:i:s");
 
@@ -364,7 +372,7 @@ class CRM_Sqltasks_Task {
     $this->status = 'running';
     $this->error_count = 0;
     $this->reset();
-    $task_timestamp = microtime(TRUE) * 1000;
+    $task_timestamp = (int) (microtime(TRUE) * 1000);
     $this->log('Start running task!', 'info', TRUE);
 
     if ($this->isArchived()) {
@@ -373,7 +381,7 @@ class CRM_Sqltasks_Task {
       $this->log("Task is archived. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-      return $this->log_messages;
+      return $this->getTasksExecutionResult();
     }
 
     // 0. mark task as started
@@ -383,7 +391,7 @@ class CRM_Sqltasks_Task {
       $this->log("Task is still running. Execution skipped.", 'error');
       $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
       $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-      return $this->log_messages;
+      return $this->getTasksExecutionResult();
     }
 
     if ($this->getAttribute('parallel_exec') != '2') {
@@ -394,7 +402,7 @@ class CRM_Sqltasks_Task {
         $this->log("Task is locked. Execution skipped.", 'error');
         $task_runtime = (int) (microtime(TRUE) * 1000) - $task_timestamp;
         $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
-        return $this->log_messages;
+        return $this->getTasksExecutionResult();
       }
     }
 
@@ -441,6 +449,12 @@ class CRM_Sqltasks_Task {
       // run action
       try {
         $action->execute();
+        if (get_class($action) == "CRM_Sqltasks_Action_ReturnValue") {
+          if (!empty($this->return_values[$action->return_key])) {
+            $this->log("WARNING: Overwrite existing key '{$action->return_key}'");
+          }
+          $this->return_values[$action->return_key] = $action->return_value;
+        }
         $runtime = sprintf("%.3f", (microtime(TRUE) - $timestamp));
         $this->log("Action '{$action_name}' executed in {$runtime}s.", 'info');
       } catch (Exception $e) {
@@ -463,7 +477,18 @@ class CRM_Sqltasks_Task {
 
     $this->logExecutionTask($task_runtime, $taskStartDate, $inputValue);
 
-    return $this->log_messages;
+    return $this->getTasksExecutionResult();
+  }
+
+  /**
+   * @return array
+   */
+  public function getTasksExecutionResult() {
+    return [
+      'logs' => $this->log_messages,
+      'status' => $this->status,
+      'error_count' => $this->error_count,
+    ];
   }
 
   /**
@@ -540,14 +565,77 @@ class CRM_Sqltasks_Task {
    *
    * @return array
    */
-  public static function getExecutionTaskListOptions() {
-    $preparedTasksOptions = array();
-    $task_search = CRM_Core_DAO::executeQuery('SELECT `id`, `name` FROM civicrm_sqltasks WHERE enabled=1 ORDER BY weight ASC, id ASC');
-    while ($task_search->fetch()) {
-      $preparedTasksOptions[$task_search->id] = "[{$task_search->id}] " . $task_search->name;
+  public static function getExecutionTaskListOptions($params) {
+    $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
+    if ($params['isShowDisabledTasks'] == 0) {
+      $query .= ' WHERE enabled = 1 ';
+    } else {
+      $query .= ' WHERE archive_date IS NULL ';
+    }
+    $query .= ' ORDER BY weight ASC, id ASC';
+
+    $options = [];
+    $task = CRM_Core_DAO::executeQuery($query);
+    while ($task->fetch()) {
+      $icon = 'sql-task-custom-toggle-icon ' . (($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-on fa-flip-horizontal');
+
+      $options[] = [
+        'name' => "[{$task->id}] " . $task->name,
+        'value' => $task->id,
+        'icon' => $icon,
+      ];
     }
 
-    return $preparedTasksOptions;
+    return $options;
+  }
+
+  /**
+   * Fix config at 'CallTask' action:
+   * Clears task which not allow to run
+   *
+   * @return array
+   */
+  public static function fixConfigAtCallTaskAction($config) {
+    if (empty($config) || !is_array($config) || empty($config['actions'])) {
+      return $config;
+    }
+
+    foreach ($config['actions'] as $key => $action) {
+      if ($action['type'] === CRM_Sqltasks_Action_CallTask::class && !empty($action['tasks']) && is_array($action['tasks'])) {
+
+        $isExecuteDisabledTasks = false;
+        if (!empty($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1) {
+          $isExecuteDisabledTasks = true;
+        }
+
+        $cleanedTasks = [];
+        foreach ($action['tasks'] as $taskId) {
+          $task = CRM_Core_DAO::executeQuery(
+            "SELECT `id`, `enabled`, `archive_date` FROM civicrm_sqltasks WHERE `id` = %1 LIMIT 1;",
+            [1 => [$taskId, "Integer"]]
+          );
+
+          while ($task->fetch()) {
+            $isTaskArchived = !empty($task->archive_date);
+            $isTaskDisabled = $task->enabled == 0;
+
+            if ($isTaskArchived) {
+              continue;
+            }
+
+            if (!$isExecuteDisabledTasks && $isTaskDisabled) {
+              continue;
+            }
+
+            $cleanedTasks[] = $taskId;
+          }
+
+          $config['actions'][$key]['tasks'] = $cleanedTasks;
+        }
+      }
+    }
+
+    return $config;
   }
 
   /**
@@ -746,7 +834,7 @@ class CRM_Sqltasks_Task {
    * @return array
    */
   public static function runDispatcher($params = []) {
-    $results = array();
+    $results = [];
 
     // FIRST reset timed out tasks (after 23 hours)
     CRM_Core_DAO::executeQuery("
@@ -763,23 +851,56 @@ class CRM_Sqltasks_Task {
     if (!$still_running) {
       // NORMAL DISPATCH
       $tasks = CRM_Sqltasks_Task::getExecutionTaskList();
-      foreach ($tasks as $task) {
-        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
-          $results[] = $task->execute($params);
-        }
-      }
-
     } else {
       // PARALLEL DISPATCH: only run tasks flagged as parallel
       $tasks = CRM_Sqltasks_Task::getParallelExecutionTaskList();
-      foreach ($tasks as $task) {
-        if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
-          $results[] = $task->execute($params);
+    }
+
+    $maxFailsNumber = Settings::getMaxFailsNumber();
+    $errorCount = 0;
+    $successCount = 0;
+    $skippedCount = 0;
+    $notes = [];
+    if (Settings::isDispatcherDisabled()) {
+      $notes[] = 'Dispatcher is disabled. Skipping all task executions.';
+    }
+
+    foreach ($tasks as $task) {
+      if (Settings::isDispatcherDisabled()) {
+        $skippedCount++;
+        continue;
+      }
+
+      if (!$task->isArchived() && $task->allowedToRun() && $task->shouldRun()) {
+        $taskExecutionResult = $task->execute();
+        $results[] = $taskExecutionResult['logs'];
+
+        if ($taskExecutionResult['error_count'] > 0) {
+          $errorCount++;
         }
+        else {
+          $successCount++;
+        }
+
+        if ($maxFailsNumber !== 0 && $errorCount >= $maxFailsNumber) {
+          Settings::disableDispatcher();
+          $notes[] = 'Dispatcher disabled after ' . $errorCount . ' errors';
+        }
+      } else {
+        $skippedCount++;
       }
     }
 
-    return $results;
+    return [
+      'tasks' => $results,
+      'summary' => [
+        'tasks' => count($tasks),
+        'errors' => $errorCount,
+        'success' => $successCount,
+        'skipped' => $skippedCount,
+        'notes' => $notes,
+      ],
+    ];
   }
 
   /**
@@ -965,6 +1086,10 @@ class CRM_Sqltasks_Task {
    */
   public static function getLastFile() {
     return end(self::$files);
+  }
+
+  public function getReturnValues() {
+    return $this->return_values;
   }
 
   /**
