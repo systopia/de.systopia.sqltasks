@@ -21,7 +21,7 @@
               <span>{{ts('This task was archived at %1 and cannot be changed. Please unarchive the task to change it.', { '1' : taskOptions.archive_date })}}</span>
             </div>
 
-            <div class="sql-tasks-basic-information-block">
+            <div class="sql-tasks-basic-information-block border-bottom">
                 <h3>{{ts('Basic Information')}}:</h3>
                 <div class="spacer"></div>
                 <div class="crm-section">
@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div class="sql-tasks-execution-block" ng-class="{'loading' : !isExecutionBlockLoaded()}" id="sqlTasksExecutionBlock">
+            <div class="sql-tasks-execution-block border-bottom" ng-class="{'loading' : !isExecutionBlockLoaded()}" id="sqlTasksExecutionBlock">
                 <h3>{{ts('Execution')}}:</h3>
                 <div class="spacer"></div>
                 <div class="sql-task-preloader-wrap">
@@ -438,11 +438,13 @@
                         </div>
                     </div>
                     <br />
-                    <div class="help">
-                        <strong>{{ts('Caution!')}}</strong>
-                        {{ts('Be aware that these tasks can execute arbitrary SQL statements, which')}}
-                        <i>{{ts('can potentially destroy your database')}}</i>.
-                        {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}
+                    <div class="sql-task-footer-help">
+                        <div class="help">
+                          <strong>{{ts('Caution!')}}</strong>
+                          {{ts('Be aware that these tasks can execute arbitrary SQL statements, which')}}
+                          <i>{{ts('can potentially destroy your database')}}</i>.
+                          {{ts('Only use this if you really know what you\'re doing, and always keep a backup of your database before experimenting.', {'domain' : 'de.systopia.sqltasks'})}}
+                        </div>
                     </div>
                 </div>
             </div>

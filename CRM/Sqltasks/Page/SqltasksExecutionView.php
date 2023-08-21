@@ -25,6 +25,9 @@ class CRM_Sqltasks_Page_SqltasksExecutionView extends CRM_Core_Page {
     $this->assign('sqltasksExecution', $sqltasksExecution);
     $this->assign('logsTaskExecution', $sqltasksExecution['decoded_logs']);
 
+    CRM_Core_Resources::singleton()->addStyleFile('de.systopia.sqltasks', 'css/sqlTaskGeneral.css');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/AddBodyClass.js', 1000, 'html-header');
+
     parent::run();
   }
 

@@ -10,6 +10,7 @@ return [
     ],
   'css' => [
     0 => 'css/taskRunner.css',
+    1 => 'css/sqlTaskGeneral.css',
   ],
   'partials' => [
     0 => 'ang/taskRunner',

@@ -163,7 +163,7 @@
 .sql-task__search-block {
   display: flex;
   gap: 20px;
-  padding-top: 10px;
+  padding: 10px;
 }
 
 .sql-task__search-buttons {

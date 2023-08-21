@@ -4,12 +4,13 @@
 // http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
 return [
   'requires' => ['ngRoute', 'ui.sortable'],
-  'js' => [ 
+  'js' => [
     0 => 'ang/sqlTaskConfigurator.js',
     1 => 'ang/actions/*.js',
   ],
   'css' => [
     0 => 'css/sqlTaskConfigurator.css',
+    1 => 'css/sqlTaskGeneral.css',
   ],
   'partials' => [
     0 => 'ang/sqlTaskConfigurator',

@@ -48,6 +48,10 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
    * @return array
    */
   public static function prepareLogs($logsString) {
+    if (empty($logsString)) {
+      return [];
+    }
+
     $logs = json_decode($logsString, true);
 
     foreach ($logs as $key => $log) {

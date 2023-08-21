@@ -1,6 +1,7 @@
 .sql-task-manager-dashboard__dispatcher-info-messages {
     margin-right: 0 !important;
     margin-left: 0 !important;
+    padding-left: 0 !important;
     list-style-position: inside !important;
 }
 
@@ -77,29 +78,29 @@
 }
 
 .sql-task-preference-item {
-  display: inline-block;
-  padding: 10px 15px 10px 10px;
-}
-
-.sql-task-preference-item:first-child {
-  display: inline-block;
-  padding-left: 0;
+  padding: 0;
+  position: relative;
 }
 
 .sql-task-preference-item-label {
-  display: inline-block;
+  display: block !important;
   vertical-align: middle;
-  padding-right: 2px;
+  padding:  10px 10px 10px 25px;
+  cursor: pointer;
+  margin: 0 !important;
 }
 
 .sql-task-preference-item-input {
   display: inline-block;
   vertical-align: middle;
+  position: absolute;
+  left: 5px;
+  top: 12px;
 }
 
 .sql-task-preference-item-label-text {
-  display: inline-block;
-  vertical-align: middle;
+  display: block;
+  color: #292929;
 }
 
 .sql-task-preference-item-color {
@@ -110,27 +111,37 @@
   vertical-align: middle;
 }
 
-.sql-task-preference-item-color.archived {
+.sql-task-preference-item-label.archived {
   background: #fcdebd;
 }
 
-.sql-task-preference-item-color.enabled {
+.sql-task-preference-item-label.enabled {
   background: #d3f5ac;
 }
 
-.sql-task-preference-item-color.disabled {
+.sql-task-preference-item-label.disabled {
   background: #EFEFEF;
 }
 
-.sql-task-info-display-counter, .sql-task-info-view-logs {
-  padding: 10px;
-  display: inline-block;
+.sql-task-info-display-counter {
+  display: flex;
+  gap: 5px;
+}
+
+.sql-task-info-view-logs {
+  padding-bottom: 10px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .sql-task-info-panel {
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  color: #464354;
+  background: #f3f6f7;
+  align-items: center;
 }
 
 .sql-task-manager-preloader {
@@ -148,21 +159,113 @@
   height: 130px;
 }
 
-.sql-task-manager-new-task-panel div.content {
-  padding: 20px;
-  padding-top: 10px;
-}
-
-.sql-task-manager-new-task-panel div.content p {
-  margin: 0px;
-  margin-bottom: 15px;
-}
-
-.sql-task-manager-new-task-panel div.content select {
+.sql-task-manager-new-task-panel select {
   min-width: 300px;
 }
 
 .sql-task-manager-override-shadow {
   box-shadow: none !important;
   border: 1px solid rgb(232 238 240) !important;
+}
+
+.sql-task-manager-dashboard__wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+  gap: 10px;
+  padding-bottom: 10px;
+}
+
+.sql-task-manager-dashboard__item {
+  width: 500px;
+  border: 1px solid #e8eef0;
+}
+
+.sql-task-manager-dashboard__item.sql-task-manager-dashboard__item-info {
+  flex-grow: 1;
+}
+
+.sql-task-manager-dashboard__item-tile {
+  border-bottom: 1px solid #d3dee2;
+  border-radius: 2px 2px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 10px;
+  box-shadow: none;
+  margin: 0 0 10px 0;
+  display: flex;
+  gap: 5px;
+  color: #464354;
+  background: #f3f6f7;
+}
+
+.sql-task-manager-new-task-panel-text {
+  padding-bottom: 10px;
+}
+
+.sql-task-manager-dashboard__content {
+  padding: 10px 10px 20px 10px;
+}
+
+.sql-task-manager-dashboard__links-wrap {
+  display: flex;
+  gap: 15px;
+}
+
+.sql-task-manager-result-footer-info-wrap {
+  padding: 30px 0 10px 0;
+}
+
+.sql-task-preference-info {
+  padding-right: 10px;
+}
+
+.sql-task-preference-item-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.sql-task-manager-dashboard__ico {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+}
+
+.sql-task-manager-dashboard__ico > i {
+  line-height: 20px !important;
+}
+
+.sql-task-manager-dashboard__ico.blue-ico {
+  color: #1871bd;
+}
+
+.sql-task-manager-dashboard__ico.big-ico {
+  width: 30px;
+  height: 30px;
+  font-size: 28px;
+}
+
+.sql-task-manager-dashboard__ico.big-ico > i {
+  line-height: 30px !important;
+}
+
+.sql-task-manager-dashboard__create-task-btn {
+  display: flex !important;
+  gap: 5px;
+  align-items: center;
+  padding-bottom: 5px !important;
+  padding-top: 5px !important;
+  padding-left: 5px !important;
+  min-width: 0 !important;
+}
+
+.sql-task-manager-new-task-panel-adding-block {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
