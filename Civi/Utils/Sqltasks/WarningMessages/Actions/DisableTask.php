@@ -12,8 +12,9 @@ class DisableTask extends Base {
   ];
 
   public function handleWarningWindowData($data) {
-    $disableTaskData = CRM_Sqltasks_Task::getDataAboutIfAllowToDisableTask($this->params['action_data']['taskId']);
-    if ($disableTaskData['isAllowToDisableTask']) {
+    $toggleTaskData = CRM_Sqltasks_Task::getDataAboutIfAllowToToggleTask($this->params['action_data']['taskId']);
+    $disableTaskData = $toggleTaskData['disabling'];
+    if ($disableTaskData['isAllow']) {
       $data['isAllowDoAction'] = true;
       return $data;
     }

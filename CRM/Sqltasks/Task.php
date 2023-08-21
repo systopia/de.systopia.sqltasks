@@ -308,8 +308,8 @@ class CRM_Sqltasks_Task {
       return;
     }
 
-    $data = CRM_Sqltasks_Task::getDataAboutIfAllowToDisableTask($this->task_id);
-    if (!$data['isAllowToDisableTask']) {
+    $data = CRM_Sqltasks_Task::getDataAboutIfAllowToToggleTask($this->task_id);
+    if (!$data['disabling']['isAllow']) {
       return;
     }
 
@@ -1332,16 +1332,29 @@ class CRM_Sqltasks_Task {
     return $taskObjects;
   }
 
+  public static function getDataAboutIfAllowToDisableTask($taskId) {
+    return [];
+
+}
+
   /**
    * @param $taskId
    * @return array
    */
-  public static function getDataAboutIfAllowToDisableTask($taskId) {
+  public static function getDataAboutIfAllowToToggleTask($taskId) {
     $data = [
-      'isAllowToDisableTask' => true,
-      'allRelatedTasks' => [],
-      'skippedRelatedTasks' => [],
-      'notSkippedRelatedTasks' => [],
+      'enabling' => [
+        'isAllow' => true,
+        'allRelatedTasks' => [],
+        'skippedRelatedTasks' => [],
+        'notSkippedRelatedTasks' => [],
+      ],
+      'disabling' => [
+        'isAllow' => true,
+        'allRelatedTasks' => [],
+        'skippedRelatedTasks' => [],
+        'notSkippedRelatedTasks' => [],
+      ],
     ];
 
     if (empty($taskId)) {
@@ -1378,15 +1391,23 @@ class CRM_Sqltasks_Task {
       }
 
       if ($isNeedToSkipTask) {
-        $data['skippedRelatedTasks'][] = $task;
+        $data['enabling']['skippedRelatedTasks'][] = $task;
+        $data['disabling']['skippedRelatedTasks'][] = $task;
       } else {
-        $data['notSkippedRelatedTasks'][] = $task;
+        $data['enabling']['notSkippedRelatedTasks'][] = $task;
+        $data['disabling']['notSkippedRelatedTasks'][] = $task;
       }
-      $data['allRelatedTasks'] = $taskObjects;
+
+      $data['enabling']['allRelatedTasks'] = $taskObjects;
+      $data['disabling']['allRelatedTasks'] = $taskObjects;
     }
 
-    if (!empty($data['notSkippedRelatedTasks'])) {
-      $data['isAllowToDisableTask'] = false;
+    if (!empty($data['disabling']['notSkippedRelatedTasks'])) {
+      $data['disabling']['isAllow'] = false;
+    }
+
+    if (!empty($data['enabling']['notSkippedRelatedTasks'])) {
+      $data['enabling']['isAllow'] = false;
     }
 
     return $data;

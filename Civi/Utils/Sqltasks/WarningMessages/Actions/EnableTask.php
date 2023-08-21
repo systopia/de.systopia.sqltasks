@@ -12,11 +12,9 @@ class EnableTask extends Base {
   ];
 
   public function handleWarningWindowData($data) {
-    // TODO: only trigger this warning if:
-    // - the task is used by another task, AND
-    // - the other task uses is_execute_disabled_tasks = 0
-    $taskIds = CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($this->params['action_data']['taskId']);
-    if (empty($taskIds)) {
+    $toggleTaskData = CRM_Sqltasks_Task::getDataAboutIfAllowToToggleTask($this->params['action_data']['taskId']);
+    $enableTaskData = $toggleTaskData['enabling'];
+    if ($enableTaskData['isAllow']) {
       $data['isAllowDoAction'] = true;
       return $data;
     }
@@ -24,7 +22,7 @@ class EnableTask extends Base {
     $data['warningWindow']['title'] = 'Enabling task';
     $data['warningWindow']['isShowYesButton'] = true;
     $data['warningWindow']['message'] = '<p>When you enable this task, it may be executed automatically by the following task(s):</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::getTaskObjectsByIds($taskIds));
+    $data['warningWindow']['message'] .= $this->prepareTaskLinks($enableTaskData['notSkippedRelatedTasks']);
 
     return $data;
   }
