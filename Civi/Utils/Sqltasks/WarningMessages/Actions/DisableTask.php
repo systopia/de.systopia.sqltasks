@@ -23,12 +23,12 @@ class DisableTask extends Base {
     $data['warningWindow']['isShowYesButton'] = false;
 
     if (!empty($disableTaskData['notSkippedRelatedTasks'])) {
-      $data['warningWindow']['message'] .= '<p>You cannon disable this task. This task is used in another tasks. Please remove this task from another tasks:</p>';
+      $data['warningWindow']['message'] .= '<p>This task is used by another task. Please remove the task from the following task(s) before disabling it:</p>';
       $data['warningWindow']['message'] .= $this->prepareTaskLinks($disableTaskData['notSkippedRelatedTasks']);
     }
 
     if (!empty($disableTaskData['skippedRelatedTasks'])) {
-      $data['warningWindow']['message'] .= '<p>This task is used in another tasks, but can be left at task below. In those tasks current task will be executed even task are disabled.</p>';
+      $data['warningWindow']['message'] .= '<p>This task is used by another task. But you can continue ...</p>';
       $data['warningWindow']['message'] .= $this->prepareTaskLinks($disableTaskData['skippedRelatedTasks']);
     }
 

@@ -1318,7 +1318,7 @@ class CRM_Sqltasks_Task {
    * @param $taskIds
    * @return array
    */
-  public static function gerTaskObjectsByIds($taskIds) {
+  public static function getTaskObjectsByIds($taskIds) {
     if (empty($taskIds)) {
       return [];
     }
@@ -1349,7 +1349,7 @@ class CRM_Sqltasks_Task {
     }
 
     $taskIds = CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($taskId);
-    $taskObjects = CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds);
+    $taskObjects = CRM_Sqltasks_Task::getTaskObjectsByIds($taskIds);
 
     foreach ($taskObjects as $task) {
       $configuration = $task->getConfiguration();
@@ -1360,6 +1360,9 @@ class CRM_Sqltasks_Task {
       }
 
       foreach ($configuration['actions'] as $action) {
+        if ($action['type'] != 'CRM_Sqltasks_Action_CallTask') {
+          continue;
+        }
         $isExecuteDisabledTasks = (isset($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1);
         if ($isExecuteDisabledTasks) {
           continue;

@@ -24,8 +24,8 @@ class ArchiveTask extends Base {
 
     $data['warningWindow']['title'] = 'Archiving task';
     $data['warningWindow']['isShowYesButton'] = false;
-    $data['warningWindow']['message'] = '<p>You cannon archive this task. This task is used in another tasks. Please remove this task from another tasks:</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds));
+    $data['warningWindow']['message'] = '<p>This task is used by another task. Please remove the task from the following task(s) before archiving it:</p>';
+    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::getTaskObjectsByIds($taskIds));
 
     return $data;
   }

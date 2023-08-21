@@ -19,12 +19,12 @@ class ShowWhereTaskIsUsed extends Base {
     $data['warningWindow']['noButtonText'] = 'Back';
 
     if (empty($taskIds)) {
-      $data['warningWindow']['message'] = "<p style='width: 300px;'>This task doesn't use by another tasks.</p>";
+      $data['warningWindow']['message'] = "<p style='width: 300px;'>This task is not used by other tasks.</p>";
       return $data;
     }
 
-    $data['warningWindow']['message'] = '<p style="width: 300px;">This task is used by tasks:</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds));
+    $data['warningWindow']['message'] = '<p style="width: 300px;">This task is used by the following task(s):</p>';
+    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::getTaskObjectsByIds($taskIds));
 
     return $data;
   }

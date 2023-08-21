@@ -53,7 +53,7 @@ class Base {
         'yesButtonIcon' => 'fa-check',
         'noButtonText' => 'Cancel',
         'noButtonClasses' => '',
-        'noButtonIcon' => 'fa-arrow-left',
+        'noButtonIcon' => 'fa-times',
       ]
     ];
   }
@@ -96,7 +96,7 @@ class Base {
     $linksHtml = '<ul>';
     foreach ($taskObjects as $task) {
       $linksHtml .= '<li><a target="_blank" href="' . $task->getConfigureTaksLink() . '">';
-      $linksHtml .=  'Id=' . $task->getID() . ', '. $task->getAttribute('name');
+      $linksHtml .=  '[' . $task->getID() . '] ' . $task->getAttribute('name');
       $linksHtml .= '</a></li>';
     }
     $linksHtml .= '</ul>';
