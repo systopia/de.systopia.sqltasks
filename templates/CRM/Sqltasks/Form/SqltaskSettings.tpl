@@ -2,10 +2,13 @@
   <div class="crm-block crm-form-block">
 
     <div class="sql-task__settings-buttons-wrap">
-      <a class="sql-task__settings-button button crm-button" crm-icon="fa-list" href="{$SqltaskManagerLink}" title="Back to Manager">
-        <i class="crm-i fa-list" aria-hidden="true"></i>
-        <span>SQL Task Manager</span>
-      </a>
+      <div class="sql-task__button-wrap">
+        <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
+           href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts}Go to the SQL Task Manager{/ts}">
+          <span class="crm-i fa-list"></span>
+          <span>{ts}Go to the SQL Task Manager{/ts}</span>
+        </a>
+      </div>
     </div>
 
     <div class="sql-task__settings">
