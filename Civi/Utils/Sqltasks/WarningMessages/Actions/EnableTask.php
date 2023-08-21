@@ -21,7 +21,7 @@ class EnableTask extends Base {
     $data['warningWindow']['title'] = 'Disabling task';
     $data['warningWindow']['isShowYesButton'] = true;
     $data['warningWindow']['message'] = '<p>Be careful, this task is used in another tasks. When you enable this task, it can be executed automatically by tasks:</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks($taskIds);
+    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds));
 
     return $data;
   }

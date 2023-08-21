@@ -308,7 +308,8 @@ class CRM_Sqltasks_Task {
       return;
     }
 
-    if (!empty(CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($this->task_id))) {
+    $data = CRM_Sqltasks_Task::getDataAboutIfAllowToDisableTask($this->task_id);
+    if (!$data['isAllowToDisableTask']) {
       return;
     }
 
@@ -616,16 +617,23 @@ class CRM_Sqltasks_Task {
    * @return array
    */
   public static function getExecutionTaskListOptions($params) {
+    $queryParams = [];
     $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
     if ($params['isShowDisabledTasks'] == 0) {
       $query .= ' WHERE enabled = 1 ';
     } else {
       $query .= ' WHERE archive_date IS NULL ';
     }
+
+    if (!empty($params['excludedTaskId'])) {
+      $query .= ' AND id <> %1 ';
+      $queryParams[1] = [$params['excludedTaskId'], 'Integer'];
+    }
+
     $query .= ' ORDER BY weight ASC, id ASC';
 
     $options = [];
-    $task = CRM_Core_DAO::executeQuery($query);
+    $task = CRM_Core_DAO::executeQuery($query, $queryParams);
     while ($task->fetch()) {
       $icon = 'sql-task-custom-toggle-icon ' . (($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-on fa-flip-horizontal');
 
@@ -1304,6 +1312,81 @@ class CRM_Sqltasks_Task {
     }
 
     return CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$this->getID()}");
+  }
+
+  /**
+   * @param $taskIds
+   * @return array
+   */
+  public static function gerTaskObjectsByIds($taskIds) {
+    if (empty($taskIds)) {
+      return [];
+    }
+
+    $taskObjects = [];
+
+    foreach ($taskIds as $taskId) {
+      $taskObjects[] = CRM_Sqltasks_Task::getTask($taskId);
+    }
+
+    return $taskObjects;
+  }
+
+  /**
+   * @param $taskId
+   * @return array
+   */
+  public static function getDataAboutIfAllowToDisableTask($taskId) {
+    $data = [
+      'isAllowToDisableTask' => true,
+      'allRelatedTasks' => [],
+      'skippedRelatedTasks' => [],
+      'notSkippedRelatedTasks' => [],
+    ];
+
+    if (empty($taskId)) {
+      return $data;
+    }
+
+    $taskIds = CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($taskId);
+    $taskObjects = CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds);
+
+    foreach ($taskObjects as $task) {
+      $configuration = $task->getConfiguration();
+      $isNeedToSkipTask = true;
+
+      if (empty($configuration['actions'])) {
+        continue;
+      }
+
+      foreach ($configuration['actions'] as $action) {
+        $isExecuteDisabledTasks = (isset($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1);
+        if ($isExecuteDisabledTasks) {
+          continue;
+        }
+
+        if (!empty($action['tasks']) && is_array($action['tasks'])) {
+          foreach ($action['tasks'] as $actionTaskId) {
+            if ($actionTaskId == $taskId) {
+              $isNeedToSkipTask = false;
+            }
+          }
+        }
+      }
+
+      if ($isNeedToSkipTask) {
+        $data['skippedRelatedTasks'][] = $task;
+      } else {
+        $data['notSkippedRelatedTasks'][] = $task;
+      }
+      $data['allRelatedTasks'] = $taskObjects;
+    }
+
+    if (!empty($data['notSkippedRelatedTasks'])) {
+      $data['isAllowToDisableTask'] = false;
+    }
+
+    return $data;
   }
 
 }

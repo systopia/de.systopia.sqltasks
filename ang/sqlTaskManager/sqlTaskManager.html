@@ -233,7 +233,7 @@
                               </a>
                           </li>
                           <li>
-                              <a ng-click="onDeletePress(task.id)" class="action-item crm-hover-button small-popup"
+                              <a ng-click="onDeletePress(task.id, $location)" class="action-item crm-hover-button small-popup"
                                   title="{{ts('Delete Task', {'domain' : 'de.systopia.sqltasks'})}}"
                                   crm-icon="fa-trash">
                                   {{ts('Delete', {'domain' : 'de.systopia.sqltasks'})}}

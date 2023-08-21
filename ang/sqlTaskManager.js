@@ -85,6 +85,7 @@
       $scope.url = CRM.url;
       $scope.infoMessages = [];
       $scope.taskIdWithOpenPanel = null;
+      $scope.$location = $location;
       $scope.tasks = [];
       $scope.displayTasks = [];
       $scope.previousTaskOrder = [];
@@ -356,6 +357,7 @@
 
       $scope.onDeletePressRedirect = function(taskId) {
         $location.path("/sqltasks/delete/" + taskId);
+        $scope.$apply();
       };
 
       $scope.onDeletePress = function(taskId) {

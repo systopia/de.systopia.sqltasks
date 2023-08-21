@@ -89,13 +89,12 @@ class Base {
   }
 
   /**
-   * @param $taskIds
+   * @param array $taskObjects
    * @return string
    */
-  protected function prepareTaskLinks($taskIds) {
+  protected function prepareTaskLinks($taskObjects) {
     $linksHtml = '<ul>';
-    foreach ($taskIds as $taskId) {
-      $task = CRM_Sqltasks_Task::getTask($taskId);
+    foreach ($taskObjects as $task) {
       $linksHtml .= '<li><a target="_blank" href="' . $task->getConfigureTaksLink() . '">';
       $linksHtml .=  'Id=' . $task->getID() . ', '. $task->getAttribute('name');
       $linksHtml .= '</a></li>';

@@ -12,16 +12,25 @@ class DisableTask extends Base {
   ];
 
   public function handleWarningWindowData($data) {
-    $taskIds = CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($this->params['action_data']['taskId']);
-    if (empty($taskIds)) {
+    $disableTaskData = CRM_Sqltasks_Task::getDataAboutIfAllowToDisableTask($this->params['action_data']['taskId']);
+    if ($disableTaskData['isAllowToDisableTask']) {
       $data['isAllowDoAction'] = true;
       return $data;
     }
 
     $data['warningWindow']['title'] = 'Disabling task';
+    $data['warningWindow']['message'] = '';
     $data['warningWindow']['isShowYesButton'] = false;
-    $data['warningWindow']['message'] = '<p>You cannon disable this task. This task is used in another tasks. Please remove this task from another tasks:</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks($taskIds);
+
+    if (!empty($disableTaskData['notSkippedRelatedTasks'])) {
+      $data['warningWindow']['message'] .= '<p>You cannon disable this task. This task is used in another tasks. Please remove this task from another tasks:</p>';
+      $data['warningWindow']['message'] .= $this->prepareTaskLinks($disableTaskData['notSkippedRelatedTasks']);
+    }
+
+    if (!empty($disableTaskData['skippedRelatedTasks'])) {
+      $data['warningWindow']['message'] .= '<p>This task is used in another tasks, but can be left at task below. In those tasks current task will be executed even task are disabled.</p>';
+      $data['warningWindow']['message'] .= $this->prepareTaskLinks($disableTaskData['skippedRelatedTasks']);
+    }
 
     return $data;
   }

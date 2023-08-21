@@ -1309,6 +1309,7 @@
       scope: {
         model: "=",
         index: "<",
+        taskId: "<",
         actionTemplates: "="
       },
       controller: function($scope, loaderService) {
@@ -1362,6 +1363,7 @@
         $scope.loadTasks = function(callback) {
           CRM.api3("Sqltaskfield", "getexecutiontasks", {
             'is_show_disabled_tasks' : $scope.model['is_execute_disabled_tasks'],
+            'excluded_task_id' : $scope.taskId,
           }).done(function(result) {
             tasksData = [];
             if (!result.is_error) {

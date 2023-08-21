@@ -24,7 +24,7 @@ class ShowWhereTaskIsUsed extends Base {
     }
 
     $data['warningWindow']['message'] = '<p style="width: 300px;">This task is used by tasks:</p>';
-    $data['warningWindow']['message'] .= $this->prepareTaskLinks($taskIds);
+    $data['warningWindow']['message'] .= $this->prepareTaskLinks(CRM_Sqltasks_Task::gerTaskObjectsByIds($taskIds));
 
     return $data;
   }
