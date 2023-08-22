@@ -273,6 +273,16 @@ class CRM_Sqltasks_Task {
    * @throws Exception
    */
   public function setAttribute($attribute_name, $value, $writeTrough = FALSE) {
+    if ($attribute_name === 'enabled') {
+      if ($value == 1) {
+        $this->enableTask($writeTrough);
+      } else {
+        $this->disableTask($writeTrough);
+      }
+
+      return;
+    }
+
     if (isset(self::$main_attributes[$attribute_name])) {
       $this->attributes[$attribute_name] = $value;
       $this->setDefaultAttributes();
@@ -284,6 +294,47 @@ class CRM_Sqltasks_Task {
       }
     } else {
       throw new Exception("Attribute '{$attribute_name}' unknown", 1);
+    }
+  }
+
+  /**
+   * @param $writeTrough
+   * @return void
+   */
+  public function disableTask($writeTrough = FALSE) {
+    $this->attributes['enabled'] = 0;
+
+    if (empty($this->task_id)) {
+      return;
+    }
+
+    $data = CRM_Sqltasks_Task::getDataAboutIfAllowToToggleTask($this->task_id);
+    if (!$data['disabling']['isAllow']) {
+      return;
+    }
+
+    if ($writeTrough) {
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `enabled` = 0 WHERE id = %1 ",
+        [1 => [$this->task_id, 'Integer']]
+      );
+    }
+  }
+
+  /**
+   * @param $writeTrough
+   * @return void
+   */
+  public function enableTask($writeTrough = FALSE) {
+    $this->attributes['enabled'] = 1;
+
+    if (empty($this->task_id)) {
+      return;
+    }
+
+    if ($writeTrough) {
+      CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `enabled` = 1 WHERE id = %1 ",
+        [1 => [$this->task_id, 'Integer']]
+      );
     }
   }
 
@@ -566,16 +617,23 @@ class CRM_Sqltasks_Task {
    * @return array
    */
   public static function getExecutionTaskListOptions($params) {
+    $queryParams = [];
     $query = 'SELECT `id`, `name`, `enabled`, `archive_date` FROM civicrm_sqltasks ';
     if ($params['isShowDisabledTasks'] == 0) {
       $query .= ' WHERE enabled = 1 ';
     } else {
       $query .= ' WHERE archive_date IS NULL ';
     }
+
+    if (!empty($params['excludedTaskId'])) {
+      $query .= ' AND id <> %1 ';
+      $queryParams[1] = [$params['excludedTaskId'], 'Integer'];
+    }
+
     $query .= ' ORDER BY weight ASC, id ASC';
 
     $options = [];
-    $task = CRM_Core_DAO::executeQuery($query);
+    $task = CRM_Core_DAO::executeQuery($query, $queryParams);
     while ($task->fetch()) {
       $icon = 'sql-task-custom-toggle-icon ' . (($task->enabled == 1) ? 'fa-toggle-on' : 'fa-toggle-on fa-flip-horizontal');
 
@@ -1214,6 +1272,145 @@ class CRM_Sqltasks_Task {
    */
   private function getLockName() {
     return 'civicrm_de_systopia_sqltasks_task_id_' . $this->getID();
+  }
+
+  /**
+   * Returns task ids which uses this tasks in config(json) field
+   *
+   * @param $taskId
+   * @return array
+   */
+  public static function findTaskIdsWhichUsesTask($taskId) {
+    if (empty($taskId)) {
+      return [];
+    }
+
+    $query = "
+        SELECT id FROM civicrm_sqltasks
+        WHERE FIND_IN_SET(
+            " . $taskId . ",
+            REPLACE(REPLACE(REPLACE(REPLACE(JSON_UNQUOTE(JSON_EXTRACT(config, '$.actions[*].tasks')), '[', ''), ']', ''), '\"', ''), ' ', '')
+        );
+    ";
+
+    $taskIds = [];
+    $task = CRM_Core_DAO::executeQuery($query);
+
+    while ($task->fetch()) {
+      $taskIds[] = $task->id;
+    }
+
+    return $taskIds;
+  }
+
+  /**
+   * @return string
+   */
+  public function getConfigureTaksLink() {
+    if (empty($this->getID())) {
+      return '';
+    }
+
+    return CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$this->getID()}");
+  }
+
+  /**
+   * @param $taskIds
+   * @return array
+   */
+  public static function getTaskObjectsByIds($taskIds) {
+    if (empty($taskIds)) {
+      return [];
+    }
+
+    $taskObjects = [];
+
+    foreach ($taskIds as $taskId) {
+      $taskObjects[] = CRM_Sqltasks_Task::getTask($taskId);
+    }
+
+    return $taskObjects;
+  }
+
+  public static function getDataAboutIfAllowToDisableTask($taskId) {
+    return [];
+
+}
+
+  /**
+   * @param $taskId
+   * @return array
+   */
+  public static function getDataAboutIfAllowToToggleTask($taskId) {
+    $data = [
+      'enabling' => [
+        'isAllow' => true,
+        'allRelatedTasks' => [],
+        'skippedRelatedTasks' => [],
+        'notSkippedRelatedTasks' => [],
+      ],
+      'disabling' => [
+        'isAllow' => true,
+        'allRelatedTasks' => [],
+        'skippedRelatedTasks' => [],
+        'notSkippedRelatedTasks' => [],
+      ],
+    ];
+
+    if (empty($taskId)) {
+      return $data;
+    }
+
+    $taskIds = CRM_Sqltasks_Task::findTaskIdsWhichUsesTask($taskId);
+    $taskObjects = CRM_Sqltasks_Task::getTaskObjectsByIds($taskIds);
+
+    foreach ($taskObjects as $task) {
+      $configuration = $task->getConfiguration();
+      $isNeedToSkipTask = true;
+
+      if (empty($configuration['actions'])) {
+        continue;
+      }
+
+      foreach ($configuration['actions'] as $action) {
+        if ($action['type'] != 'CRM_Sqltasks_Action_CallTask') {
+          continue;
+        }
+        $isExecuteDisabledTasks = (isset($action['is_execute_disabled_tasks']) && $action['is_execute_disabled_tasks'] == 1);
+        if ($isExecuteDisabledTasks) {
+          continue;
+        }
+
+        if (!empty($action['tasks']) && is_array($action['tasks'])) {
+          foreach ($action['tasks'] as $actionTaskId) {
+            if ($actionTaskId == $taskId) {
+              $isNeedToSkipTask = false;
+            }
+          }
+        }
+      }
+
+      if ($isNeedToSkipTask) {
+        $data['enabling']['skippedRelatedTasks'][] = $task;
+        $data['disabling']['skippedRelatedTasks'][] = $task;
+      } else {
+        $data['enabling']['notSkippedRelatedTasks'][] = $task;
+        $data['disabling']['notSkippedRelatedTasks'][] = $task;
+      }
+
+      $data['enabling']['allRelatedTasks'] = $taskObjects;
+      $data['disabling']['allRelatedTasks'] = $taskObjects;
+    }
+
+    if (!empty($data['disabling']['notSkippedRelatedTasks'])) {
+      $data['disabling']['isAllow'] = false;
+    }
+
+    if (!empty($data['enabling']['notSkippedRelatedTasks'])) {
+      $data['enabling']['isAllow'] = false;
+    }
+
+    return $data;
   }
 
 }

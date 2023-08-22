@@ -416,7 +416,7 @@
                                     <segmentation-export model='action' index='$index' action-templates='actionTemplates'></segmentation-export>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_CallTask">
-                                    <call-task model='action' index='$index' action-templates='actionTemplates'></call-task>
+                                    <call-task model='action' task-id="taskId" index='$index' action-templates='actionTemplates'></call-task>
                                 </div>
                                 <div ng-switch-when="CRM_Sqltasks_Action_PostSQL">
                                     <post-sql model='action' index='$index' action-templates='actionTemplates'></post-sql>

@@ -277,6 +277,14 @@
                                   {{ts('Unarchive', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                             </li>
+                            <li>
+                                <a ng-click="showWhereTaskIsUsed(task.id)"
+                                   class="action-item crm-hover-button small-popup"
+                                   title="{{ts('Show where task is used', {'domain' : 'de.systopia.sqltasks'})}}"
+                                   crm-icon="fa-link">
+                                    {{ts('Show where task is used', {'domain' : 'de.systopia.sqltasks'})}}
+                                </a>
+                            </li>
                         </ul>
                     </span>
                 </td>

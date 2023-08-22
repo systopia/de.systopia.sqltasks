@@ -14,9 +14,15 @@ function civicrm_api3_sqltaskfield_getexecutiontasks($params) {
     $isShowDisabledTasks = 1;
   }
 
-  $taskOptions = CRM_Sqltasks_Task::getExecutionTaskListOptions([
-      'isShowDisabledTasks' => $isShowDisabledTasks
-  ]);
+  $searchParams = [
+    'isShowDisabledTasks' => $isShowDisabledTasks
+  ];
+
+  if (!empty($params['excluded_task_id'])) {
+    $searchParams['excludedTaskId'] = (int) $params['excluded_task_id'];
+  }
+
+  $taskOptions = CRM_Sqltasks_Task::getExecutionTaskListOptions($searchParams);
 
   return civicrm_api3_create_success([$taskOptions]);
 }
@@ -36,5 +42,18 @@ function _civicrm_api3_sqltaskfield_getexecutiontasks_spec(&$params) {
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Current task ID',
     'description'  => 'Current task ID',
+  ];
+  $params['excluded_task_id'] = [
+    'name'         => 'excluded_task_id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Excluded_task_id',
+    'description'  => 'Removes this tasks from result',
+  ];
+  $params['is_show_disabled_tasks'] = [
+    'name'         => 'is_show_disabled_tasks',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Is show disabled tasks?',
   ];
 }
