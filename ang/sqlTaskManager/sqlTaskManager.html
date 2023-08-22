@@ -245,7 +245,7 @@
                                  class="action-item crm-hover-button small-popup"
                                  title="{{ts('Show all execution logs', {'domain' : 'de.systopia.sqltasks'})}}"
                                  crm-icon="fa-bars">
-                                  {{ts('Execution logs', {'domain' : 'de.systopia.sqltasks'})}}
+                                  {{ts('Show Execution logs', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
                             </li>
                             <li>
@@ -255,6 +255,14 @@
                                  crm-icon="fa-eye">
                                   {{ts('Show latest execution', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
+                            </li>
+                            <li>
+                                <a ng-click="showWhereTaskIsUsed(task.id)"
+                                   class="action-item crm-hover-button small-popup"
+                                   title="{{ts('Show all tasks which contain a reference to this task', {'domain' : 'de.systopia.sqltasks'})}}"
+                                   crm-icon="fa-link">
+                                    {{ts('Show References', {'domain' : 'de.systopia.sqltasks'})}}
+                                </a>
                             </li>
                             <li>
                               <a ng-click="onDeletePress(task.id)" class="action-item crm-hover-button small-popup"
@@ -276,14 +284,6 @@
                                  crm-icon="fa-undo">
                                   {{ts('Unarchive', {'domain' : 'de.systopia.sqltasks'})}}
                               </a>
-                            </li>
-                            <li>
-                                <a ng-click="showWhereTaskIsUsed(task.id)"
-                                   class="action-item crm-hover-button small-popup"
-                                   title="{{ts('Show where task is used', {'domain' : 'de.systopia.sqltasks'})}}"
-                                   crm-icon="fa-link">
-                                    {{ts('Show where task is used', {'domain' : 'de.systopia.sqltasks'})}}
-                                </a>
                             </li>
                         </ul>
                     </span>
