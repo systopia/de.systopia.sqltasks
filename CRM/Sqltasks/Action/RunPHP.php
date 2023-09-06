@@ -40,7 +40,7 @@ class CRM_Sqltasks_Action_RunPHP extends CRM_Sqltasks_Action {
    *
    * @return int
    */
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return 900;
   }
 

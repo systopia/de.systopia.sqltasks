@@ -62,7 +62,7 @@ abstract class CRM_Sqltasks_Action {
    *
    * @return int
    */
-  abstract public function getDefaultOrder();
+  abstract public static function getDefaultOrder();
 
   /**
    * log to the task (during execution)

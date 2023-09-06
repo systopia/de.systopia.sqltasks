@@ -65,7 +65,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    *
    * @return int
    */
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return 300;
   }
 
