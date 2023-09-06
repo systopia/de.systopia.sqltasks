@@ -37,25 +37,13 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
   }
 
   /**
-   * Build the configuration UI
+   * Get default template order
+   *
+   * @return int
    */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'select',
-      $this->getID() . '_group_id',
-      E::ts('Synchronise Group'),
-      $this->getEligibleGroups()
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_use_api',
-      E::ts('Use API (slow)')
-    );
+  public function getDefaultOrder() {
+    return 600;
   }
-
 
   /**
    * RUN this action
@@ -219,9 +207,9 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     $group_query = civicrm_api3('Group', 'get', array(
       'is_enabled'   => 1,
       'option.limit' => 0,
-      'return'       => 'id,name'))['values'];
+      'return'       => 'id,title'))['values'];
     foreach ($group_query as $group) {
-      $group_list[$group['id']] = CRM_Utils_Array::value('name', $group, "Group {$group['id']}");
+      $group_list[$group['id']] = CRM_Utils_Array::value('title', $group, 'Group') . ' [' . $group['id'] . ']';
     }
     return $group_list;
   }

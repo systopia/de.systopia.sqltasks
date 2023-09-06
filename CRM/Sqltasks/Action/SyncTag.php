@@ -37,30 +37,12 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
   }
 
   /**
-   * Build the configuration UI
+   * Get default template order
+   *
+   * @return int
    */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'select',
-      $this->getID() . '_tag_id',
-      E::ts('Synchronise Tag'),
-      $this->getEligibleTags()
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_entity_table',
-      E::ts('Choose Entity'),
-      $this->getEligibleEntities()
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_use_api',
-      E::ts('Use API (slow)')
-    );
+  public function getDefaultOrder() {
+    return 500;
   }
 
   /**
@@ -87,28 +69,36 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     $excludeSqlWhere = '';
     if ($this->_columnExists($contact_table, 'exclude')) {
       $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
-      $excludeSqlWhere = 'WHERE (exclude IS NULL OR exclude != 1)';
+      $excludeSqlWhere = 'AND (exclude IS NULL OR exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
     }
 
     // first: remove the contacts that are NOT tagged
     CRM_Core_DAO::executeQuery("
-      DELETE FROM civicrm_entity_tag
-       WHERE tag_id = {$tag_id}
-         AND entity_table = '{$entity_table}'
-         AND entity_id NOT IN (SELECT contact_id FROM `{$contact_table}` {$excludeSqlWhere})");
+      DELETE civicrm_entity_tag
+      FROM civicrm_entity_tag
+      LEFT JOIN `{$contact_table}` ON `{$contact_table}`.contact_id = civicrm_entity_tag.entity_id {$excludeSqlWhere}
+       WHERE civicrm_entity_tag.tag_id = {$tag_id}
+         AND civicrm_entity_tag.entity_table = '{$entity_table}'
+         AND `{$contact_table}`.contact_id IS NULL");
 
     // then: add all missing contacts
+    // this uses ON DUPLICATE KEY UPDATE rather than SELECT DISTINCT as it
+    // seems to perform better in most scenarios
     CRM_Core_DAO::executeQuery("
       INSERT INTO civicrm_entity_tag (entity_table, entity_id, tag_id)
         (SELECT
           '{$entity_table}'  AS entity_table,
-          contact_id         AS entity_id,
+          {$contact_table}.contact_id         AS entity_id,
           {$tag_id}          AS tag_id
         FROM {$contact_table}
-        WHERE contact_id IS NOT NULL {$excludeSql})
+        LEFT JOIN civicrm_entity_tag et ON et.tag_id = {$tag_id}
+                                            AND et.entity_table = '{$entity_table}'
+                                            AND et.entity_id = {$contact_table}.contact_id
+        WHERE contact_id IS NOT NULL AND et.entity_id IS NULL {$excludeSql})
         ON DUPLICATE KEY UPDATE
-          civicrm_entity_tag.id = civicrm_entity_tag.id");
+            civicrm_entity_tag.id = civicrm_entity_tag.id
+    ");
   }
 
   /**
@@ -168,15 +158,15 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
       'option.limit' => 0,
       'return'       => 'id,name'))['values'];
     foreach ($tag_query as $tag) {
-      $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, "Tag {$tag['id']}");
+      $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, 'Tag') . ' [' . $tag['id'] . ']';
     }
     return $tag_list;
   }
 
   /**
-   * get a list of eligible groups
+   * Get a list of eligible groups
    */
-  protected function getEligibleEntities() {
+  public static function getEligibleEntities() {
     return array(
       'civicrm_contact'      => E::ts("Contacts"),
       'civicrm_activity'     => E::ts("Activities"),

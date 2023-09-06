@@ -2,8 +2,8 @@
 
 ## Requirements
 
--  PHP v5.6+
-- CiviCRM 4.6+
+- PHP v7.2+
+- CiviCRM 5.39+
 
 ## Installation (Web UI)
 

@@ -39,27 +39,44 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
     ))['id'];
     $tmp = tempnam(sys_get_temp_dir(), 'seg');
     $data = [
-      'main_sql'                                => "DROP TABLE IF EXISTS tmp_test_action_segmentationexport;
-                                                    CREATE TABLE tmp_test_action_segmentationexport AS " . self::TEST_CONTACT_SQL,
-      'post_sql'                                => 'DROP TABLE IF EXISTS tmp_test_action_segmentationexport;',
-      'segmentation_assign_enabled'             => '1',
-      'segmentation_assign_table'               => 'tmp_test_action_segmentationexport',
-      'segmentation_assign_campaign_id'         => $campaignId,
-      'segmentation_assign_segment_name'        => 'testSegmentationExport',
-      'segmentation_assign_start'               => 'leave',
-      'segmentation_assign_segment_order'       => '',
-      'segmentation_assign_segment_order_table' => '',
-      'segmentation_export_enabled'             => '1',
-      'segmentation_export_campaign_id'         => $campaignId,
-      'segmentation_export_segments'            => [$segmentId],
-      'segmentation_export_exporter'            => [2],
-      'segmentation_export_date_from'           => '',
-      'segmentation_export_date_to'             => '',
-      'segmentation_export_filename'            => basename($tmp),
-      'segmentation_export_path'                => dirname($tmp),
-      'segmentation_export_email'               => '',
-      'segmentation_export_email_template'      => '1',
-      'segmentation_export_upload'              => '',
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => "DROP TABLE IF EXISTS tmp_test_action_segmentationexport;
+                        CREATE TABLE tmp_test_action_segmentationexport AS " . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'                => 'CRM_Sqltasks_Action_SegmentationAssign',
+          'enabled'             => TRUE,
+          'table'               => 'tmp_test_action_segmentationexport',
+          'campaign_id'         => $campaignId,
+          'segment_name'        => 'testSegmentationExport',
+          'start'               => 'leave',
+          'segment_order'       => '',
+          'segment_order_table' => '',
+        ],
+        [
+          'type'           => 'CRM_Sqltasks_Action_SegmentationExport',
+          'enabled'        => TRUE,
+          'campaign_id'    => $campaignId,
+          'segments'       => [$segmentId],
+          'exporter'       => [2],
+          'date_from'      => '',
+          'date_to'        => '',
+          'filename'       => basename($tmp),
+          'path'           => dirname($tmp),
+          'email'          => '',
+          'email_template' => '1',
+          'upload'         => '',
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_segmentationexport;',
+        ],
+      ],
     ];
     $this->createAndExecuteTask($data);
 

@@ -14,6 +14,9 @@
 +--------------------------------------------------------*/
 
 use CRM_Sqltasks_ExtensionUtil as E;
+use League\Csv\CharsetConverter;
+use League\Csv\EncloseField;
+use League\Csv\Writer;
 
 /**
  * This actions allows you to synchronise
@@ -21,6 +24,14 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_Action_EmailActionTrait;
+
+  /**
+   * Types of CSV field enclosure
+   */
+  const ENCLOSURE_NONE = "none";
+  const ENCLOSURE_PARTIAL = "partial";
+  const ENCLOSURE_FULL = "full";
 
   /**
    * Get identifier string
@@ -37,111 +48,31 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Build the configuration UI
+   * Get default template order
+   *
+   * @return int
    */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'text',
-      $this->getID() . '_table',
-      E::ts('Export Table'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_encoding',
-      E::ts('File Encoding'),
-      $this->getEncodingOptions()
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_delimiter',
-      E::ts('Delimiter'),
-      $this->getDelimiterOptions()
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_delimiter_other',
-      E::ts('Other delimiter'),
-      ['style' => 'width: 50px; font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'textarea',
-      $this->getID() . '_headers',
-      E::ts('Columns'),
-      array('rows' => 8, 'cols' => 40, 'style' => 'font-family: monospace, monospace !important')
-    );
-
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_zip',
-      E::ts('ZIP File')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_filename',
-      E::ts('File Name'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_path',
-      E::ts('File Path'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_email',
-      E::ts('Email to'),
-      array('class' => 'huge')
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_downloadURL',
-      E::ts('Send URL to download file instead of attachment')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_email_template',
-      E::ts('Email Template'),
-      $this->getAllTemplates()
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_upload',
-      E::ts('Upload to'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_discard_empty',
-      E::ts('Discard empty file?')
-    );
+  public function getDefaultOrder() {
+    return 400;
   }
 
   /**
    * get all possible delimiters
    */
-  protected function getDelimiterOptions() {
+  public static function getDelimiterOptions() {
     return array(
       ';' => E::ts('Semicolon (;)'),
       ',' => E::ts('Comma (,)'),
       '|' => E::ts('Vertical bar (|)'),
       '' => E::ts('other'),
     );
+  }
+
+  /**
+   * get a list of CSV field enclosure options
+   */
+  public static function getEnclosureModes () {
+    return [self::ENCLOSURE_NONE, self::ENCLOSURE_PARTIAL, self::ENCLOSURE_FULL];
   }
 
   /**
@@ -160,9 +91,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   }
 
   /**
-   * get all possible encodings
+   * Get all possible encodings
    */
-  protected function getEncodingOptions() {
+  public static function getEncodingOptions() {
     $encodings = array();
     $mb_list = mb_list_encodings();
     foreach ($mb_list as $mb_encoding) {
@@ -301,18 +232,38 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // if (!file_exists($filepath)) {
     //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
     // }
-    $out = fopen($filepath, 'w');
+
+    $out = Writer::createFromString("");
 
     // then: run the query
     $export_table = $this->getExportTable();
     $column_specs = $this->getColumnSpecs();
+
+    // Set field delimiter
     $delimiter = $this->getConfigValue('delimiter');
     $delimiter_other = $this->getConfigValue('delimiter_other');
+
     if(empty($delimiter) && !empty($delimiter_other)){
       $delimiter = $delimiter_other;
     }
 
-    $encoding  = $this->getConfigValue('encoding');
+    $out->setDelimiter($delimiter);
+
+    // Set output encoding
+    $encConfig  = $this->getConfigValue('encoding');
+    $encoding = empty($encConfig) ? "UTF-8" : $encConfig;
+    CharsetConverter::addTo($out, "UTF-8", $encoding);
+
+    // Set field enclosure
+    $enclosureMode = $this->getConfigValue("enclosure_mode");
+
+    if ($enclosureMode === self::ENCLOSURE_NONE) {
+      $out->setEnclosure(chr(0));
+    }
+
+    if ($enclosureMode === self::ENCLOSURE_NONE || $enclosureMode === self::ENCLOSURE_FULL) {
+      EncloseField::addTo($out, "\t\x1f");
+    }
 
     // parse specs
     $headers = array();
@@ -323,7 +274,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // write headers
-    $this->writeLine($out, $headers, $delimiter, $encoding);
+    $out->insertOne($headers);
 
     // write the records
     $count = 0;
@@ -343,11 +294,20 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         // TODO: formatting?
         $record[] = isset($query->$column) ? $query->$column : '';
       }
-      $this->writeLine($out, $record, $delimiter, $encoding);
+      $out->insertOne($record);
       $count++;
     }
     $query->free();
-    fclose($out);
+
+    $csvOutput = $out->getContent();
+
+    if ($enclosureMode === self::ENCLOSURE_NONE) {
+      mb_internal_encoding($encoding);
+      $csvOutput = mb_ereg_replace(chr(0), "", $csvOutput);
+      mb_internal_encoding("UTF-8");
+    }
+
+    file_put_contents($filepath, $csvOutput);
     $this->log("Written {$count} records to '{$filepath}'");
 
     // CONTINUE WITH EMPTY FILES?
@@ -388,47 +348,46 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      // add all the variables
-      $email_list = $this->getConfigValue('email');
-      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-
-      // and send the template via email
-      $email = array(
-          'id'        => $this->getConfigValue('email_template'),
-          'to_email'  => $this->getConfigValue('email'),
-          'from'      => "SQL Tasks <{$domainEmailAddress}>",
-          'reply_to'  => "do-not-reply@{$emailDomain}",
-          'contactId' => CRM_Core_Session::getLoggedInContactID() // sluc: if contactId param is empty, it won't get into hook_civicrm_tokenValues()
-        );
-
+      // send the template via email
+      $email = [
+          'id' => $this->getConfigValue('email_template'),
+          'to_email' => $this->getConfigValue('email'),
+      ];
       // add file as attachment or setup URL token
-      if(!$config_offer_link){
-        $attachment = array('fullPath'  => $filepath,
-                            'mime_type' => $mime_type,
-                            'cleanName' => basename($filepath));
+      if (!$config_offer_link) {
+        $attachment = [
+          'fullPath'  => $filepath,
+          'mime_type' => $mime_type,
+          'cleanName' => basename($filepath)
+        ];
         $email['attachments'] = [$attachment];
       }
-
-      civicrm_api3('MessageTemplate', 'send', $email);
-      $this->log("Sent file to '{$email_list}'");
+      $this->sendEmailMessage($email);
     }
 
     // 3) UPLOAD
     if ($this->getConfigValue('upload')) {
       $credentials = $this->getCredentials();
       if ($credentials && $credentials != 'ERROR') {
-        // connect
-        require_once('Net/SFTP.php');
         define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
-        $sftp = new Net_SFTP($credentials['host']);
+        // connect
+        if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
+          $sftp = new phpseclib\Net\SFTP($credentials['host']);
+          $mode = phpseclib\Net\SFTP::SOURCE_LOCAL_FILE;
+        }
+        else {
+          // used for legacy versions of phpseclib
+          require_once('Net/SFTP.php');
+          $sftp = new Net_SFTP($credentials['host']);
+          $mode = NET_SFTP_LOCAL_FILE;
+        }
         if (!$sftp->login($credentials['user'], $credentials['password'])) {
           throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
         }
 
         // upload
         $target_file = $credentials['remote_path'] . '/' . $filename;
-        if (!$sftp->put($target_file, $filepath, NET_SFTP_LOCAL_FILE)) {
+        if (!$sftp->put($target_file, $filepath, $mode)) {
           throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
         }
 
@@ -437,22 +396,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       } else {
         throw new Exception("Upload failed, couldn't parse credentials", 1);
       }
-    }
-  }
-
-  /**
-   *
-   * @todo: configure more of fputcsv ( resource $handle , array $fields [, string $delimiter = "," [, string $enclosure = '"' [, string $escape_char = "\" ]]] )
-   */
-  protected function writeLine($out, $record, $delimiter, $encoding = NULL) {
-    if ($encoding) {
-      $encoded_record = array();
-      foreach ($record as $value) {
-        $encoded_record[] = mb_convert_encoding($value, $encoding);
-      }
-      fputcsv($out, $encoded_record, $delimiter);
-    } else {
-      fputcsv($out, $record, $delimiter);
     }
   }
 }

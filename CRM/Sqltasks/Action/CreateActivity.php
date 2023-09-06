@@ -21,6 +21,11 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
+  use CRM_Sqltasks_TempTableAlterations;
+
+  const ACTIVITY_ID_COLUMN = 'sqltask_activity_id';
+
+  private $contact_table_ai_col;
 
   /**
    * Get identifier string
@@ -37,129 +42,31 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
   }
 
   /**
-   * Build the configuration UI
+   * Get default template order
+   *
+   * @return int
    */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_use_api',
-      E::ts('Use API (slow)')
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_individual',
-      E::ts('Individual Activities')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_activity_type_id',
-      E::ts('Activity Type'),
-      $this->getOptions('activity_type')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_status_id',
-      E::ts('Status'),
-      $this->getOptions('activity_status')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_subject',
-      E::ts('Subject'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'textarea',
-      $this->getID() . '_details',
-      E::ts('Details'),
-      array('rows' => 4, 'cols' => 60, 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_activity_date_time',
-      E::ts('Timestamp'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_campaign_id',
-      E::ts('Campaign'),
-      $this->getEligibleCampaigns(TRUE),
-      FALSE,
-      array('class' => 'crm-select2 huge')
-    );
-
-    $form->addEntityRef(
-      $this->getID() . '_source_contact_id',
-      E::ts('Source Contact')
-    );
-
-    $form->addEntityRef(
-      $this->getID() . '_assigned_to',
-      E::ts('Assigned To'),
-      [
-        'multiple' => TRUE
-      ]
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_medium_id',
-      E::ts('Activity Medium'),
-      $this->getOptions('encounter_medium')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_source_record_id',
-      E::ts('Source Record ID'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_priority_id',
-      E::ts('Priority'),
-      $this->getOptions('priority')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_engagement_level',
-      E::ts('Engagement Index'),
-      $this->getOptions('engagement_index')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_location',
-      E::ts('Location'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_duration',
-      E::ts('Duration'),
-      ['style' => 'font-family: monospace, monospace !important']
-    );
+  public function getDefaultOrder() {
+    return 200;
   }
-
 
   /**
    * RUN this action
    */
   public function execute() {
     $this->resetHasExecuted();
+
+    if ($this->getConfigValue('store_activity_ids')) {
+      $contact_table = $this->getContactTable();
+
+      if (strpos($contact_table, 'civicrm_') === 0) {
+        throw new CRM_Core_Exception("Cannot alter table $contact_table");
+      }
+
+      $this->contact_table_ai_col = self::addAutoIncrementColumn($contact_table);
+      $this->addActivityIdColumn($contact_table);
+    }
+
     $individual = $this->getConfigValue('individual');
     if ($individual) {
       $this->createIndividualActivities();
@@ -173,8 +80,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
    * Generate individual activities
    */
   public function createMassActivity() {
-    $use_api       = $this->getConfigValue('use_api');
-    $contact_table = $this->getContactTable();
+    $use_api            = $this->getConfigValue('use_api');
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+    $contact_table      = $this->getContactTable();
 
     // load one line for the tokens
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} LIMIT 1;");
@@ -213,11 +121,20 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
     }
     $activity = civicrm_api3('Activity', 'create', $activity_data);
+    $activity_id = (int) $activity['id'];
 
     $excludeSql = '';
     if ($this->_columnExists($contact_table, 'exclude')) {
       $excludeSql = 'AND (exclude IS NULL OR exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
+    }
+
+    if ($store_activity_ids) {
+      $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+      CRM_Core_DAO::executeQuery(
+        "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE 1 $excludeSql"
+      );
     }
 
     if ($use_api) {
@@ -248,13 +165,13 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
   }
 
-
   /**
    * Generate individual activities
    */
   public function createIndividualActivities() {
-    $use_api       = $this->getConfigValue('use_api');
-    $contact_table = $this->getContactTable();
+    $use_api            = $this->getConfigValue('use_api');
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+    $contact_table      = $this->getContactTable();
 
     // static activity parameters
     $activity_template = array(
@@ -309,11 +226,22 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
           unset($activity[$field]);
         }
       }
-      if ($use_api) {
-        civicrm_api3('Activity', 'create', $activity);
 
+      if ($use_api) {
+        $activity_id = (int) civicrm_api3('Activity', 'create', $activity)['id'];
       } else {
-        $this->createActivitySQL($activity);
+        $activity_id = $this->createActivitySQL($activity);
+      }
+
+      // Set the activity_id in the temporary contact table
+      if ($store_activity_ids) {
+        $contact_table_ai_col = $this->contact_table_ai_col;
+        $record_id = (int) $record->$contact_table_ai_col;
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `$contact_table_ai_col` = $record_id"
+        );
       }
     }
   }
@@ -323,11 +251,14 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     if (!$this->_columnExists($contact_table, 'exclude')) {
       return;
     }
+
+    $store_activity_ids = $this->getConfigValue('store_activity_ids');
+
     $count = CRM_Core_DAO::singleValueQuery("
       SELECT
         COUNT(*) AS contact_count
       FROM {$contact_table}
-      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND campaign_id = %0
+      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND civicrm_segmentation_exclude.campaign_id = %0
       WHERE exclude = 1", [[$this->getConfigValue('campaign_id'), 'Integer']]);
     if ($count > 0) {
       $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} WHERE exclude = 1 LIMIT 1")->fetch();
@@ -357,6 +288,16 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
         }
       }
       $activity = civicrm_api3('Activity', 'create', $activity_data);
+
+      if ($store_activity_ids) {
+        $activity_id = (int) $activity['id'];
+        $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+        CRM_Core_DAO::executeQuery(
+          "UPDATE `$contact_table` SET `$activity_id_column` = $activity_id WHERE `exclude` = 1"
+        );
+      }
+
       $query = "INSERT IGNORE INTO civicrm_activity_contact
                    (SELECT
                       NULL               AS id,
@@ -377,6 +318,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
   /**
    * use SQL to create that activity
+   *
+   * @return int $activity_id   ID of the newly created activity
    */
   protected function createActivitySQL($data) {
     // use the BAO
@@ -420,7 +363,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       }
     }
 
+    $activity_id = (int) $activity->id;
     $activity->free();
+    return $activity_id;
   }
 
   /**
@@ -432,6 +377,29 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     return date('YmdHis', strtotime($string));
+  }
+
+  /**
+   * Add a column to the temporary contact table in which the IDs of the
+   * created activities will be stored
+   *
+   * @param string $contact_table - Name of the table
+   *
+   * @return void
+   */
+  protected function addActivityIdColumn(string $contact_table) {
+    $activity_id_column = self::ACTIVITY_ID_COLUMN;
+
+    $columnsResult = CRM_Core_DAO::executeQuery(
+      "SHOW COLUMNS FROM `$contact_table` LIKE '$activity_id_column'"
+    );
+
+    if ($columnsResult->fetch()) {
+      $this->log("WARNING: Overwriting existing values for '$activity_id_column' in '$contact_table'");
+      return;
+    }
+
+    CRM_Core_DAO::executeQuery("ALTER TABLE `$contact_table` ADD `$activity_id_column` INT");
   }
 
 }

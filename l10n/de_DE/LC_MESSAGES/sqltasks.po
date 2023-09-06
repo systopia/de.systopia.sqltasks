@@ -542,7 +542,7 @@ msgstr "-"
 
 #: CRM/Sqltasks/Page/Mytasks.php
 msgid "Available SQL Tasks"
-msgstr "Für Sie verfügebare SQL Tasks"
+msgstr "Für Sie verfügbare SQL-Tasks"
 
 #: CRM/Sqltasks/Page/Runner.php
 msgid "Running SQL task '%1'"
@@ -1194,19 +1194,19 @@ msgstr "Konfigurieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Disable for scheduled execution"
-msgstr "Turnusmäßige Ausführung aktivieren"
-
-#: templates/CRM/Sqltasks/Page/Manager.tpl
-msgid "Disable"
-msgstr "Aktivieren"
-
-#: templates/CRM/Sqltasks/Page/Manager.tpl
-msgid "Enable for scheduled execution"
 msgstr "Turnusmäßige Ausführung deaktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
-msgid "Enable"
+msgid "Disable"
 msgstr "Deaktivieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Enable for scheduled execution"
+msgstr "Turnusmäßige Ausführung aktivieren"
+
+#: templates/CRM/Sqltasks/Page/Manager.tpl
+msgid "Enable"
+msgstr "Aktivieren"
 
 #: templates/CRM/Sqltasks/Page/Manager.tpl
 msgid "Delete Task"

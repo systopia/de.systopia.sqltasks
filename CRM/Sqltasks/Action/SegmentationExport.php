@@ -22,6 +22,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  * @see https://github.com/systopia/de.systopia.segmentation
  */
 class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
+  use CRM_Sqltasks_Action_EmailActionTrait;
 
   /**
    * Get identifier string
@@ -38,116 +39,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   }
 
   /**
-   * Build the configuration UI
+   * Get default template order
+   *
+   * @return int
    */
-  public function buildForm(&$form) {
-    parent::buildForm($form);
-
-    $form->add(
-      'select',
-      $this->getID() . '_campaign_id',
-      E::ts('Campaign'),
-      $this->getEligibleCampaigns(),
-      FALSE,
-      array('class' => 'crm-select2 huge')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_segments',
-      E::ts('Segments'),
-      array(), // no segements to choose from initially
-      FALSE,
-      array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
-    );
-    // store current value so we can set it when the segments are loaded
-    $form->assign('segmentation_export_segments_current', json_encode($this->getSelectedSegments()));
-
-    $form->add(
-      'select',
-      $this->getID() . '_exporter',
-      E::ts('Exporter'),
-      CRM_Segmentation_Exporter::getExporterList(),
-      FALSE,
-      array('class' => 'crm-select2 huge', 'multiple' => 'multiple')
-    );
-
-    // don't use date fields, so we can have tokens:
-
-    // $form->addDate(
-    //   $this->getID() . '_date_from',
-    //   E::ts('Assignment not before'),
-    //   FALSE,
-    //   array('formatType' => 'activityDateTime'));
-
-    // $form->addDate(
-    //   $this->getID() . '_date_to',
-    //   E::ts('Assignment not after'),
-    //   FALSE,
-    //   array('formatType' => 'activityDateTime'));
-
-    $form->add(
-      'text',
-      $this->getID() . '_date_from',
-      E::ts('Assignment not before'),
-      array()
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_date_to',
-      E::ts('Assignment not after'),
-      array()
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_date_current',
-      E::ts('Current Assignment')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_filename',
-      E::ts('File Name'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_path',
-      E::ts('File Path'),
-      array('class' => 'huge', 'style' => 'font-family: monospace, monospace !important')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_email',
-      E::ts('Email to'),
-      array('class' => 'huge')
-    );
-
-    $form->add(
-      'select',
-      $this->getID() . '_email_template',
-      E::ts('Email Template'),
-      $this->getAllTemplates(),
-      FALSE,
-      array('class' => 'crm-select2 huge')
-    );
-
-    $form->add(
-      'text',
-      $this->getID() . '_upload',
-      E::ts('Upload to'),
-      array('class' => 'huge')
-    );
-
-    $form->add(
-      'checkbox',
-      $this->getID() . '_discard_empty',
-      E::ts('Discard empty file?')
-    );
+  public function getDefaultOrder() {
+    return 700;
   }
 
   /**
@@ -401,41 +298,43 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      // add all the variables
-      $email_list = $this->getConfigValue('email');
-      list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
-      $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-      $attachment  = array('fullPath'  => $filepath,
-                           'mime_type' => 'application/zip',
-                           'cleanName' => basename($filepath));
-      // and send the template via email
-      $email = array(
+      $attachment  = [
+        'fullPath'  => $filepath,
+        'mime_type' => 'application/zip',
+        'cleanName' => basename($filepath)
+      ];
+      // send the template via email
+      $email = [
         'id'              => $this->getConfigValue('email_template'),
-        // 'to_name'         => $this->getConfigValue('email'),
         'to_email'        => $this->getConfigValue('email'),
-        'from'            => "SQL Tasks <{$domainEmailAddress}>",
-        'reply_to'        => "do-not-reply@{$emailDomain}",
-        'attachments'     => array($attachment),
-        );
-      civicrm_api3('MessageTemplate', 'send', $email);
-      $this->log("Sent file to '{$email_list}'");
+        'attachments'     => [$attachment],
+      ];
+      $this->sendEmailMessage($email);
     }
 
     // PROCESS 2: UPLOAD
     if ($this->getConfigValue('upload')) {
       $credentials = $this->getCredentials();
       if ($credentials && $credentials != 'ERROR') {
-        // connect
-        require_once('Net/SFTP.php');
         define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
-        $sftp = new Net_SFTP($credentials['host']);
+        // connect
+        if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
+          $sftp = new phpseclib\Net\SFTP($credentials['host']);
+          $mode = phpseclib\Net\SFTP::SOURCE_LOCAL_FILE;
+        }
+        else {
+          // used for legacy versions of phpseclib
+          require_once('Net/SFTP.php');
+          $sftp = new Net_SFTP($credentials['host']);
+          $mode = NET_SFTP_LOCAL_FILE;
+        }
         if (!$sftp->login($credentials['user'], $credentials['password'])) {
           throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
         }
 
         // upload
         $target_file = $credentials['remote_path'] . '/' . $filename;
-        if (!$sftp->put($target_file, $filepath, NET_SFTP_LOCAL_FILE)) {
+        if (!$sftp->put($target_file, $filepath, $mode)) {
           throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
         }
 
@@ -446,4 +345,9 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       }
     }
   }
+
+  public static function isSupported() {
+    return CRM_Sqltasks_Utils::isSegmentationInstalled();
+  }
+
 }
