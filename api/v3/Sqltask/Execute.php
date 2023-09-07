@@ -9,8 +9,8 @@
  */
 function civicrm_api3_sqltask_execute($params) {
   $exec_params = [
-    'log_to_file' => $params['log_to_file'],
-    'input_val' => $params['input_val'],
+    'log_to_file' => $params['log_to_file'] ?? NULL,
+    'input_val' => $params['input_val'] ?? NULL,
   ];
   // If task_id given run only this one task
   if (!empty($params['id'])) {

@@ -18,7 +18,7 @@ function civicrm_api3_sqltaskfield_getmessagetemplates() {
 
   if (!empty($messageTemplate['values'])) {
     foreach ($messageTemplate['values'] as $template) {
-      $messageTemplates[$template['id']] = $template['msg_title'];
+      $messageTemplates[$template['id']] = $template['msg_title'] ?? NULL;
     }
   }
 
