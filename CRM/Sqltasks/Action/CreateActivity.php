@@ -46,7 +46,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
    *
    * @return int
    */
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return 200;
   }
 

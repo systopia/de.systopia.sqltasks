@@ -29,7 +29,7 @@ class CRM_Sqltasks_Action_SuccessHandler extends CRM_Sqltasks_Action_ResultHandl
    *
    * @return int
    */
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return 9000;
   }
 

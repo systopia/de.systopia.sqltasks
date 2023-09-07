@@ -80,7 +80,7 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
     return ExtensionUtil::ts(self::ACTION_NAME);
   }
 
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return self::DEFAULT_TEMPLATE_ORDER;
   }
 

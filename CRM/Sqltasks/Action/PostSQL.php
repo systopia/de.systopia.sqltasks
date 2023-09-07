@@ -40,7 +40,7 @@ class CRM_Sqltasks_Action_PostSQL extends CRM_Sqltasks_Action_RunSQL {
    *
    * @return int
    */
-  public function getDefaultOrder() {
+  public static function getDefaultOrder() {
     return 8000;
   }
 
