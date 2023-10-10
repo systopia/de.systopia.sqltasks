@@ -65,21 +65,7 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
       'operator'   => 'OR',
       'separator'  => 0,
   ));
-
-  // also add to Automation section
-  if (!_sqltasks_menu_exists($menu, 'Administer/automation')) {
-    _sqltasks_civix_insert_navigation_menu($menu, 'Administer', [
-        'label'      => E::ts('Automation'),
-        'name'       => 'automation',
-        'url'        => NULL,
-        'permission' => 'administer CiviCRM',
-        'operator'   => NULL,
-        'separator'  => 0,
-    ]);
-  }
   _sqltasks_add_admin_items($menu, 'Administer/System Settings');
-  _sqltasks_add_admin_items($menu, 'Administer/automation');
-
   _sqltasks_civix_navigationMenu($menu);
 }
 
