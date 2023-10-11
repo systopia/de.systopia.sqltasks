@@ -123,8 +123,7 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
   }
 
   private function reportError() {
-    $this->task->incrementErrorCounter();
-    $this->task->setErrorStatus();
+    $this->context['execution']->reportError();
   }
 
   private function substitueParameterVariables($params, $record) {
