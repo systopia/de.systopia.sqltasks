@@ -28,18 +28,13 @@
               <p>{{ts('This value will be passed to the @input variable in task.')}}</p>
           </div>
 
-          <div class="str__executing-loader" ng-if="isTaskRunning">
-            <p>{{ts('Executing...')}}</p>
-          </div>
-
-          <div class="str__logs" ng-if="!isTaskRunning && isShowLogs">
-              <div ng-if="!isTaskReturnsEmptyLogs">
+          <div class="str__logs" ng-if="isShowLogs">
+              <div>
                   <p>{{ts('Logs:')}}</p>
                   <ul>
                       <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
                   </ul>
               </div>
-              <p ng-if="isTaskReturnsEmptyLogs">{{ts('Task returns empty logs.')}}</p>
           </div>
 
           <div ng-show="errors.length >= 1" class="str__errors crm-error">
