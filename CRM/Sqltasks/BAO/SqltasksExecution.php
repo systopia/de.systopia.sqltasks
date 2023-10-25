@@ -12,11 +12,15 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
 
   static private $file_entries = [];
 
-  public function __construct(&$params = []) {
+  public function __construct($params = []) {
     parent::__construct();
+
+    unset($params['execution_id']);
 
     $this->log_to_file = $params['log_to_file'] ?? FALSE;
     unset($params['log_to_file']);
+
+    $this->copyValues($params);
   }
 
   /**
@@ -89,11 +93,10 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       'log_to_file' => !empty($params['log_to_file']),
       'runtime'     => 0,
       'sqltask_id'  => $params['sqltask_id'],
-      'start_date'  => date('Y-m-d H:i:s'),
+      'start_date'  => CRM_Utils_Array::value('start_date', $params, date('Y-m-d H:i:s')),
     ];
 
     $instance = new self($params);
-    $instance->copyValues($params);
     $instance->save();
 
     self::$file_entries = [];
@@ -358,7 +361,9 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   }
 
   public function start() {
+    $this->start_date = date('Y-m-d H:i:s');
     $this->start_timestamp = (int) (microtime(TRUE) * 1000);
+    $this->save();
   }
 
   public function stop() {

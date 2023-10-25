@@ -9,8 +9,9 @@
  */
 function civicrm_api3_sqltask_execute($params) {
   $exec_params = [
-    'input_val'   => $params['input_val'] ?? NULL,
-    'log_to_file' => $params['log_to_file'] ?? 0,
+    'execution_id' => $params['execution_id'] ?? NULL,
+    'input_val'    => $params['input_val'] ?? NULL,
+    'log_to_file'  => $params['log_to_file'] ?? 0,
   ];
 
   // If task_id given run only this one task
@@ -82,6 +83,13 @@ function _civicrm_api3_sqltask_execute_spec(&$params) {
     'type'         => CRM_Utils_Type::T_BOOLEAN,
     'title'        => 'Async (background execution)',
     'description'  => 'Execute the task in a background queue?',
+  );
+  $params['execution_id'] = array(
+    'name'         => 'execution_id',
+    'api.required' => FALSE,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Execution ID',
+    'description'  => 'ID of an existing SQLTask Execution',
   );
   $params['log_to_file'] = array(
     'name'         => 'log_to_file',

@@ -459,4 +459,22 @@ class CRM_Sqltasks_Upgrader extends CRM_Sqltasks_Upgrader_Base {
       return TRUE;
     }
 
+    /**
+     * Make column `civicrm_sqltasks_execution.start_date` nullable
+     *
+     * @return true
+     */
+    public function upgrade_0320() {
+      $this->ctx->log->info("Make column `civicrm_sqltasks_execution.start_date` nullable");
+
+      CRM_Core_DAO::executeQuery("
+        ALTER TABLE `civicrm_sqltasks_execution`
+        MODIFY `start_date` datetime COMMENT 'Start date of execution'
+      ");
+
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+      return TRUE;
+    }
+
 }

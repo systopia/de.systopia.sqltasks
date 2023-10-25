@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `civicrm_sqltasks_execution` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique SqltasksExecution ID',
   `sqltask_id` int unsigned COMMENT 'FK to SQL Task',
-  `start_date` datetime NOT NULL COMMENT 'Start date of execution',
+  `start_date` datetime COMMENT 'Start date of execution',
   `end_date` datetime NULL COMMENT 'End date of execution',
   `runtime` int unsigned NULL COMMENT 'Task runtime in milliseconds',
   `input` longtext NULL COMMENT 'Task input',

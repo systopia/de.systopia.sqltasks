@@ -181,11 +181,16 @@ class CRM_Sqltasks_Task {
   public function execute($params = []) {
     $input_value = $params['input_val'] ?? NULL;
 
-    $execution = CRM_Sqltasks_BAO_SqltasksExecution::create([
-      'input'       => $input_value,
-      'log_to_file' => !empty($params['log_to_file']),
-      'sqltask_id'  => $this->task_id,
-    ]);
+    if (empty($params['execution_id'])) {
+      $execution = CRM_Sqltasks_BAO_SqltasksExecution::create([
+        'input'       => $input_value,
+        'log_to_file' => !empty($params['log_to_file']),
+        'sqltask_id'  => $this->task_id,
+      ]);
+    } else {
+      $exec_props = CRM_Sqltasks_BAO_SqltasksExecution::getById($params['execution_id']);
+      $execution = new CRM_Sqltasks_BAO_SqltasksExecution($exec_props);
+    }
 
     $execution->start();
     $execution->logInfo('Start running task!');
@@ -288,6 +293,13 @@ class CRM_Sqltasks_Task {
   public function executeAsync($params = []) {
     $task_id = $this->task_id;
 
+    $execution = CRM_Sqltasks_BAO_SqltasksExecution::create([
+      'input'       => $params['input_val'] ?? NULL,
+      'log_to_file' => !empty($params['log_to_file']),
+      'sqltask_id'  => $this->task_id,
+      'start_date'  => NULL,
+    ]);
+
     $queue = Civi::queue("sqltask-$task_id", [
       'error'  => 'delete',
       'reset'  => FALSE,
@@ -299,10 +311,11 @@ class CRM_Sqltasks_Task {
       ['CRM_Sqltasks_Task', 'callSqltaskExecute'],
       [
         [
-          'async'       => FALSE,
-          'id'          => $task_id,
-          'input_val'   => $params['input_val'],
-          'log_to_file' => $params['log_to_file'],
+          'async'        => FALSE,
+          'execution_id' => $execution->id,
+          'id'           => $task_id,
+          'input_val'    => $params['input_val'],
+          'log_to_file'  => $params['log_to_file'],
         ],
       ],
       "SQL Task $task_id"
@@ -315,7 +328,7 @@ class CRM_Sqltasks_Task {
 
     $queue->createItem($queue_task);
 
-    return [];
+    return [ 'execution_id' => $execution->id ];
   }
 
   /**
