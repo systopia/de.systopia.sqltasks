@@ -321,7 +321,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // store/register the generated file file
     $config_offer_link = $this->getConfigValue('downloadURL');
     $mime_type = $this->getConfigValue('zip') ? 'application/zip' : 'text/csv';
-    $this->task->addGeneratedFile(
+
+    $this->context['execution']->addGeneratedFile(
         E::ts("%1 CSV Export", [1 => $this->task->getAttribute('name')]),
         $filename,
         $filepath,

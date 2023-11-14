@@ -1,63 +1,85 @@
 <div class="str__sql-task-runner">
   <div class="crm-form-block">
-      <div class="str__content-wrap">
-          <h1 crm-page-title>{{ts('Run SQL task:')}} {{task.name}}</h1>
+    <div class="str__content-wrap">
+      <h1>{{ts('Run SQL task:')}} {{task.name}}</h1>
 
-          <div class="str__loader" ng-if="isTaskLoading">
-              loading ...
-          </div>
-
-          <div ng-show="loadingErrors.length >= 1" class="str__errors crm-error">
-              <div ng-repeat="errorMessage in loadingErrors">{{errorMessage}}</div>
-          </div>
-
-          <p ng-if="isTaskSuccessfullyLoaded" class="help str__no-margin">
-              <span ng-if="!isShowLogs">{{ts('Are you sure you want to execute "%1"?', {1: task.name})}}</span>
-              <span ng-if="isShowLogs">{{ts('Task "%1" has been executed. Please use "Run again" below if you want to execute again.', {1: task.name})}}</span>
-          </p>
-
-          <div ng-show="isTaskSuccessfullyLoaded && isInputValueRequired()" >
-              <div class="str__input-value-wrap">
-                  <label>
-                      <span>{{ts('Input value:')}}</span>
-                      <span class="crm-marker" title="This field is required.">*</span>
-                      <input type="text" ng-model="inputValue">
-                  </label>
-              </div>
-
-              <p>{{ts('This value will be passed to the @input variable in task.')}}</p>
-          </div>
-
-          <div class="str__executing-loader" ng-if="isTaskRunning">
-            <p>{{ts('Executing...')}}</p>
-          </div>
-
-          <div class="str__logs" ng-if="!isTaskRunning && isShowLogs">
-              <div ng-if="!isTaskReturnsEmptyLogs">
-                  <p>{{ts('Logs:')}}</p>
-                  <ul>
-                      <li ng-repeat="log in resultLogs track by $index">{{log}}</li>
-                  </ul>
-              </div>
-              <p ng-if="isTaskReturnsEmptyLogs">{{ts('Task returns empty logs.')}}</p>
-          </div>
-
-          <div ng-show="errors.length >= 1" class="str__errors crm-error">
-              <div ng-repeat="errorMessage in errors">{{errorMessage}}</div>
-          </div>
-
-          <div class="str__buttons-wrap crm-submit-buttons">
-              <a class="button" crm-icon="fa-list" ng-href="#/sqltasks/manage" title="{{ts('Back to Manager')}}">
-                  {{ts('Back to Manager')}}
-              </a>
-              <a ng-show="isTaskSuccessfullyLoaded" class="button" crm-icon="fa-play-circle" ng-disabled="isTaskRunning || (isTaskSuccessfullyLoaded && isInputValueRequired() && inputValue.length === 0)" ng-click='runTask()' title="{{runButtonText}}">
-                  {{runButtonText}}
-              </a>
-              <a ng-show="isTaskSuccessfullyLoaded" class="button" crm-icon="fa-pencil" ng-href="#/sqltasks/configure/{{taskId}}" title="{{ts('Configure task')}}">
-                  {{ts('Configure task')}}
-              </a>
-          </div>
+      <div class="str__loader" ng-if="state === 'loading'">
+        loading ...
       </div>
+
+      <div class="help str__no-margin" ng-if="state === 'loaded' || state === 'done'">
+        <span ng-if="state === 'loaded'">
+          {{ts('Are you sure you want to execute "%1"?', {1: task.name})}}
+        </span>
+
+        <span ng-if="state === 'done'">
+          {{ts('Task "%1" has been executed. Please use "Run again" below if you want to execute again.', {1: task.name})}}
+        </span>
+      </div>
+
+      <div
+        class="help str__no-margin"
+        ng-if="state === 'running'"
+        style="background-color:#ece7bc; border:solid 1px #cbbc44">
+        <span>{{ts('Task "%1" is running ...', {1: task.name})}}</span>
+      </div>
+
+      <div class="str__errors crm-error" ng-if="state === 'error'">
+        <ul>
+          <li ng-repeat="error in errors">{{error.message}}</li>
+        </ul>
+      </div>
+
+      <div ng-show="inputRequired" >
+        <div class="str__input-value-wrap">
+          <label>
+            <span>{{ts('Input value:')}}</span>
+            <span class="crm-marker" title="This field is required.">*</span>
+            <input type="text" ng-model="inputValue">
+          </label>
+        </div>
+
+        <p>{{ts('This value will be passed to the @input variable in task.')}}</p>
+      </div>
+
+      <div class="str__logs" ng-if="logs.length > 0">
+        <div>
+          <p>{{ts('Logs:')}}</p>
+          <ul>
+            <li ng-repeat="log in logs track by $index">{{log}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="str__buttons-wrap crm-submit-buttons">
+        <a
+          class="button"
+          crm-icon="fa-list"
+          ng-href="#/sqltasks/manage"
+          title="{{ts('Back to Manager')}}">
+          {{ts('Back to Manager')}}
+        </a>
+
+        <a
+          class="button"
+          crm-icon="fa-play-circle"
+          ng-click='runTask()'
+          ng-disabled="!allowedToRun()"
+          ng-show="task !== null"
+          title="{{runButtonLabel}}">
+          {{runButtonLabel}}
+        </a>
+
+        <a
+          class="button"
+          crm-icon="fa-pencil"
+          ng-href="#/sqltasks/configure/{{taskId}}"
+          ng-show="task !== null"
+          title="{{ts('Configure task')}}">
+          {{ts('Configure task')}}
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 

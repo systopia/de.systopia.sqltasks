@@ -115,7 +115,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ];
 
-      $task = $this->createAndExecuteTask($config);
+      $exec_result = $this->createAndExecuteTask($config);
 
       switch ($errorHandling) {
         case 'log_only': {
@@ -125,8 +125,9 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
             "$rowCount API call(s) FAILED with message: 'Api Contact no_such_action version 4 does not exist.'"
           );
 
-          $this->assertFalse(
-            $task->hasExecutionErrors(),
+          $this->assertEquals(
+            'success',
+            $exec_result['status'],
             'Execution errors should not have been reported'
           );
 
@@ -140,8 +141,9 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
             "$rowCount API call(s) FAILED with message: 'Api Contact no_such_action version 4 does not exist.'"
           );
 
-          $this->assertTrue(
-            $task->hasExecutionErrors(),
+          $this->assertEquals(
+            'error',
+            $exec_result['status'],
             'Execution errors should have been reported'
           );
 
@@ -159,8 +161,9 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
 
           $this->assertLogContains("$expectedSkipped API call(s) SKIPPED due to previous error.");
 
-          $this->assertTrue(
-            $task->hasExecutionErrors(),
+          $this->assertEquals(
+            'error',
+            $exec_result['status'],
             'Execution errors should have been reported'
           );
 

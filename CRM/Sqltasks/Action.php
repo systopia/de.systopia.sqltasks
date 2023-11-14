@@ -70,7 +70,7 @@ abstract class CRM_Sqltasks_Action {
    * @param $message
    */
   public function log($message, $type = 'info') {
-    $this->task->log($message, $type);
+    $this->context['execution']->logGeneric($type, $message);
   }
 
 

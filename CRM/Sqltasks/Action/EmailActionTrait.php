@@ -47,7 +47,7 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
         'to_email' => $toEmail
       ]));
 
-      $this->log("Sent {$this->id} message to '{$email}' with cc: " . implode(',', $ccEmails) . ".");
+      $this->log("Sent {$this->getID()} message to '{$email}' with cc: " . implode(',', $ccEmails) . ".");
     }
   }
 

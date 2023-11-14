@@ -112,7 +112,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
    */
   public function shouldErrorHandlerRun($actions) {
     // is there recorded errors?
-    if ($this->task->hasExecutionErrors()) {
+    if ($this->context['execution']->hasErrors()) {
       return TRUE;
     }
 
@@ -164,7 +164,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       $attach_log = $this->getConfigValue('attach_log');
       if ($attach_log) {
         // write out log
-        $logfile = $this->task->writeLogfile();
+        $logfile = $this->context['execution']->writeLogfile();
 
         // attach it
         $email['attachments'][] = [

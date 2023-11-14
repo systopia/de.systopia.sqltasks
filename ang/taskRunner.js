@@ -20,103 +20,155 @@
 
   angular.module(moduleName).controller("taskRunnerCtrl", function($scope, $location, taskId) {
     setTimeout(function() {
-      CRM.$('body').addClass('sql-task-body-page-wrapper');
+      CRM.$("body").addClass("sql-task-body-page-wrapper");
     }, 0);
 
-    $scope.taskId = taskId;
-    $scope.ts = CRM.ts();
-    $scope.resultLogs = [];
-    $scope.isTaskReturnsEmptyLogs = false;
-    $scope.isShowLogs = false;
-    $scope.isTaskRunning = false;
-    $scope.isTaskLoading = true;
-    $scope.isTaskSuccessfullyLoaded = false;
-    $scope.runButtonText = $scope.ts('Run task');
-    $scope.task = null;
-    $scope.inputValue = '';
+    $scope.backgroundQueueEnabled = false;
     $scope.errors = [];
+    $scope.inputRequired = false;
+    $scope.inputValue = "";
+    $scope.logs = [];
+    $scope.runButtonLabel = "Run Task";
+    $scope.state = null;
+    $scope.taskId = taskId;
+    $scope.task = null;
+    $scope.ts = CRM.ts();
 
-    $scope.loadTask = function() {
-      CRM.api3("Sqltask", "get", {
+    $scope.allowedToRun = () => {
+      return $scope.task !== null
+        && !["loading", "running"].includes($scope.state)
+        && (!$scope.inputRequired || $scope.inputValue.length > 0);
+    }
+
+    $scope.api3 = (entity, action, params) => new Promise((resolve, reject) => {
+      CRM.api3(entity, action, params).done(resolve).fail(reject);
+    });
+
+    $scope.checkBackgroundQueueEnabled = () => {
+      return CRM.api4("Setting", "get", {
+        select: ["enableBackgroundQueue"]
+      }).catch((error) => {
+        console.error(error);
+        return [];
+      }).then((result) => {
+        $scope.backgroundQueueEnabled = result.at(0)?.value == 1;
+      });
+    };
+
+    $scope.loadTask = () => {
+      $scope.state = "loading";
+
+      return $scope.api3("Sqltask", "get", {
+        id: $scope.taskId,
         sequential: 1,
-        id: $scope.taskId
-      }).done(function(result) {
-        if (!result.is_error) {
-          $scope.task = Object.assign({}, result.values);
-          $scope.isTaskSuccessfullyLoaded = true;
+      }).then((result) => {
+        if (result.is_error) {
+          throw new Error(result.error_message);
         } else {
-          $scope.showError('Getting task api returns error: ' + result.error_message);
+          $scope.state = "loaded";
+          $scope.task = structuredClone(result.values);
+          $scope.inputRequired = [1, "1"].includes($scope.task["input_required"]);
         }
-
-        $scope.isTaskLoading = false;
-        $scope.$apply();
+      }).catch((error) => {
+        CRM.alert("Failed to load task", "Error", "error");
+        $scope.state = "error";
+        $scope.errors.push(error);
       });
     }
 
-    $scope.runTask = function() {
-      $scope.cleanErrors();
+    $scope.runTask = async () => {
+      $scope.errors = [];
+      $scope.logs = [];
+      $scope.state = "running";
 
-      if ($scope.isInputValueRequired()) {
-        if ($scope.inputValue.length === 0) {
-          $scope.showError('Input value is required');
-        }
-      }
-
-      if ($scope.errors.length > 0 ) {
+      if ($scope.inputRequired && $scope.inputValue.length < 1) {
+        $scope.state = "error";
+        $scope.errors.push(new Error("Input value is required"));
+        // $scope.$apply();
         return;
       }
 
-      var data = {}
-      data['task_id'] = taskId;
+      const taskExecResult = await $scope.api3("Sqltask", "execute", {
+        async: $scope.backgroundQueueEnabled,
+        input_val: $scope.inputValue,
+        task_id: taskId,
+      }).then((result) => {
+        if (result.is_error) throw new Error(result.error_message);
+        return result;
+      }).catch((error) => {
+        console.error(error);
+        $scope.state = "error";
+        $scope.errors.push(error);
+      });
 
-      if ($scope.isInputValueRequired()) {
-        data['input_val'] = $scope.inputValue;
+      if ($scope.state === "error") {
+        CRM.alert("Task execution failed", "Task execution", "error");
+        $scope.runButtonLabel = "Run again";
+        $scope.$apply();
+        return;
+      } else if (!$scope.backgroundQueueEnabled){
+        if (taskExecResult.values.error_count > 0) {
+          CRM.alert(
+            "Task execution encountered errors. See execution logs for more details",
+            "Task execution",
+            "error"
+          );
+        } else {
+          CRM.alert("Task execution completed", "Task execution", "success");
+        }
+
+        $scope.state = "done";
+        $scope.logs = taskExecResult.values.logs;
+        $scope.runButtonLabel = "Run again";
+        $scope.$apply();
+        return;
       }
 
-      CRM.alert("Task execution has started", "Task execution", 'info');
-      $scope.isTaskRunning = true;
+      while ($scope.state === "running") {
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-      CRM.api3("Sqltask", "execute", data).done(function(result) {
-        if (result.values && !result.is_error) {
-          if (result.values.log !== undefined && Array.isArray(result.values.log)) {
-            $scope.resultLogs = result.values.log;
-            $scope.isTaskReturnsEmptyLogs = $scope.resultLogs.length  === 0;
-          } else {
-            $scope.isTaskReturnsEmptyLogs = true;
-          }
-          $scope.isTaskRunning = false;
-          $scope.isShowLogs = true;
-          CRM.alert("Task execution completed", "Task execution", 'success');
-        } else {
-          CRM.alert(result.error_message, ts("Error task execution"), "error");
-          $scope.resultLogs = [ts('Task returns error: ') + result.error_message];
-          $scope.isTaskRunning = false;
-          $scope.isShowLogs = true;
+        const execution = await CRM.api4("SqltasksExecution", "get", {
+          where: [[ "id", "=", taskExecResult.values.execution_id ]],
+          limit: 1,
+        }).then((result) => {
+          return result.at(0);
+        }).catch(({ error_message }) => {
+          $scope.state = "error";
+          $scope.errors.push(new Error(error_message));
+        });
+
+        if ($scope.state === "error") {
+          CRM.alert("Failed to load execution logs", "Error", "error");
+          $scope.runButtonLabel = "Run again";
+          $scope.$apply();
+          break;
         }
-        $scope.runButtonText = $scope.ts('Run again');
+
+        $scope.logs = JSON
+          .parse(execution.log)
+          .map(({ message, message_type: type }) => `${type}: [Task ${taskId}] ${message}`);
+
+        $scope.state = execution.end_date === null ? "running" : "done";
+        $scope.runButtonLabel = $scope.state === "done" ? "Run again" : $scope.runButtonLabel;
         $scope.$apply();
-      }).fail(function() {
-        $scope.runButtonText = $scope.ts('Run again');
-        $scope.resultLogs = ["An unknown error occurred during task execution. Please check your server logs for details before proceeding."];
-        $scope.isTaskRunning = false;
-        $scope.isShowLogs = true;
-        $scope.$apply();
-        CRM.alert("Task failed to execute", "Task execution", 'error');
-      });
+
+        if ($scope.state === "done") {
+          if (execution.error_count > 0) {
+            CRM.alert(
+              "Task execution encountered errors. See execution logs for more details",
+              "Task execution",
+              "error"
+            );
+          } else {
+            CRM.alert("Task execution completed", "Task execution", "success");
+          }
+        }
+      }
     };
 
-    $scope.showError = function(message) {
-      $scope.errors.push(message);
-    };
-
-    $scope.cleanErrors = function() {
-      $scope.errors = [];
-    };
-
-    $scope.isInputValueRequired = function() {
-      return $scope.task['input_required'] === 1 || $scope.task['input_required'] === '1';
-    }
-
-    $scope.loadTask();
+    Promise.all([
+      $scope.checkBackgroundQueueEnabled(),
+      $scope.loadTask(),
+    ]).then(() => $scope.$apply());
   });
 })(angular, CRM.$, CRM._);
