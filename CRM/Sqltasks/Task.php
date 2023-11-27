@@ -318,8 +318,8 @@ class CRM_Sqltasks_Task {
           'async'        => FALSE,
           'execution_id' => $execution->id,
           'id'           => $task_id,
-          'input_val'    => $params['input_val'],
-          'log_to_file'  => $params['log_to_file'],
+          'input_val'    => $params['input_val'] ?? NULL,
+          'log_to_file'  => $params['log_to_file'] ?? 0,
         ],
       ],
       "SQL Task $task_id"
