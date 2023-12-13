@@ -349,7 +349,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return array_merge([
       'error_count' => $this->error_count,
       'logs'        => array_map(fn ($entry) => $this->renderLogMessage($entry), $this->log_entries),
-      'runtime'     => sprintf("%.3fs", $this->runtime / 1000),
+      'runtime'     => $this->runtime / 1000,
       'status'      => $this->error_count < 1 ? 'success' : 'error',
     ], $this->return_values);
   }
