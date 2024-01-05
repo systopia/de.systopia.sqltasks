@@ -27,8 +27,17 @@ The extension also features a simple ex- and import of your task, and we plan to
 create a little repository of common tasks, see
 [here](https://github.com/systopia/de.systopia.sqltasks/tree/master/tasks/readme.md).
 
-Be aware that this extension is still under development.
-
 Also be aware that this extension will run any SQL script you enter in your
 task - there is no filters! It is quite easy to break your system if you don't
 know what you're doing.
+
+## Documentation
+Read the full documenation [here](https://docs.civicrm.org/sqltasks/en/latest/).
+
+## We need your support
+This CiviCRM extension is provided as Free and Open Source Software, and we are happy if you find it useful. However, we have put a lot of work into it (and continue to do so), much of it unpaid for. So if you benefit from our software, please consider making a financial contribution so we can continue to maintain and develop it further.
+
+If you are willing to support us in developing this CiviCRM extension, please send an email to info@systopia.de to get an invoice or agree a different payment method. Thank you! 
+
+## Credits
+Greenpeace Central And Eastern Europe did a huge job developing most of the functionality that was merged into version 2.0. Thank you!
