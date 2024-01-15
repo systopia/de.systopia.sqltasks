@@ -20,6 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `civicrm_sqltasks_template`;
 DROP TABLE IF EXISTS `civicrm_sqltasks_execution`;
 DROP TABLE IF EXISTS `civicrm_sqltasks_action_template`;
+DROP TABLE IF EXISTS `civicrm_sqltasks`;
 
 SET FOREIGN_KEY_CHECKS=1;
 -- /*******************************************************
@@ -27,6 +28,35 @@ SET FOREIGN_KEY_CHECKS=1;
 -- * Create new tables
 -- *
 -- *******************************************************/
+
+-- /*******************************************************
+-- *
+-- * civicrm_sqltasks
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_sqltasks` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique SqlTask ID',
+  `name` varchar(255) NULL COMMENT 'Name of the task',
+  `description` text NULL COMMENT 'Description of the task',
+  `category` varchar(64) NULL COMMENT 'Category of the task',
+  `scheduled` varchar(256) NULL COMMENT 'Regular execution frequency (\"daily\", \"weekly\", \"monthly\" etc.)',
+  `enabled` int unsigned NULL COMMENT 'Is the task enabled?',
+  `weight` int unsigned NULL COMMENT 'Defines execution order',
+  `last_execution` datetime NULL COMMENT 'Date/time of the last task execution',
+  `running_since` datetime NULL COMMENT 'Start time of the current execution (if the task is running)',
+  `run_permissions` varchar(256) NULL COMMENT 'Required permissions to run this task',
+  `input_required` int unsigned NOT NULL DEFAULT 0 COMMENT 'Does the task require input data?',
+  `archive_date` datetime NULL COMMENT 'Date/time the task was archived',
+  `last_runtime` int unsigned NULL COMMENT 'Duration of the last execution in milliseconds',
+  `parallel_exec` int unsigned NOT NULL DEFAULT 0 COMMENT 'Should this task be executed in parallel?',
+  `main_sql` text NULL COMMENT 'Main SQL script',
+  `post_sql` text NULL COMMENT 'Cleanup SQL script',
+  `config` text NULL COMMENT 'Task configuration (JSON)',
+  `abort_on_error` int unsigned NOT NULL DEFAULT 0 COMMENT 'Should task execution abort in case of an error?',
+  `last_modified` datetime NULL COMMENT 'Date/time of the latest change to the task configuration',
+  PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB;
 
 -- /*******************************************************
 -- *
@@ -49,7 +79,7 @@ ENGINE=InnoDB;
 -- *
 -- * civicrm_sqltasks_execution
 -- *
--- * FIXME
+-- * SQL Task execution history
 -- *
 -- *******************************************************/
 CREATE TABLE `civicrm_sqltasks_execution` (
@@ -63,7 +93,9 @@ CREATE TABLE `civicrm_sqltasks_execution` (
   `files` longtext NULL COMMENT 'Task result files (JSON)',
   `error_count` int unsigned NULL COMMENT 'Task execution error count',
   `created_id` int unsigned NULL COMMENT 'Contact ID of task executor',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_civicrm_sqltasks_execution_sqltask_id FOREIGN KEY (`sqltask_id`) REFERENCES `civicrm_sqltasks`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_sqltasks_execution_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
 )
 ENGINE=InnoDB;
 

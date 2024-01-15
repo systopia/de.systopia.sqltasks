@@ -19,6 +19,8 @@ return function ($mixInfo, $bootCache) {
    * @see CRM_Utils_Hook::entityTypes()
    */
   Civi::dispatcher()->addListener('hook_civicrm_entityTypes', function ($e) use ($mixInfo) {
+    dump('$mixInfo', $mixInfo);
+
     // When deactivating on a polyfill/pre-mixin system, listeners may not cleanup automatically.
     if (!$mixInfo->isActive() || !is_dir($mixInfo->getPath('xml/schema/CRM'))) {
       return;
