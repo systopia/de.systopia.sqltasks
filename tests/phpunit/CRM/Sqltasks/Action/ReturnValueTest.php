@@ -13,7 +13,7 @@ class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractAc
   }
 
   public function testReturnValue() {
-    $data = [
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -36,7 +36,8 @@ class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractAc
         ],
       ]
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Return Value' executed in", 'Return Value action should have succeeded');
 

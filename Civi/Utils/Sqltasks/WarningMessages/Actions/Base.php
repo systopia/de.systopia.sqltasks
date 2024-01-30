@@ -2,7 +2,9 @@
 
 namespace Civi\Utils\Sqltasks\WarningMessages\Actions;
 
-use CRM_Sqltasks_Task;
+use Civi\Api4;
+use CRM_Sqltasks_BAO_SqlTask;
+use CRM_Utils_System;
 use CRM_Utils_Type;
 use Exception;
 
@@ -89,19 +91,28 @@ class Base {
   }
 
   /**
-   * @param array $taskObjects
+   * @param array $task_ids
    * @return string
    */
-  protected function prepareTaskLinks($taskObjects) {
-    $linksHtml = '<ul>';
-    foreach ($taskObjects as $task) {
-      $linksHtml .= '<li><a target="_blank" href="' . $task->getConfigureTaksLink() . '">';
-      $linksHtml .=  '[' . $task->getID() . '] ' . $task->getAttribute('name');
-      $linksHtml .= '</a></li>';
-    }
-    $linksHtml .= '</ul>';
+  protected function prepareTaskLinks($task_ids) {
+    $links_html = '';
 
-    return $linksHtml;
+    $tasks = Api4\SqlTask::get()
+      ->addSelect('id', 'name')
+      ->addWhere('id', 'IN', $task_ids)
+      ->execute();
+
+    foreach ($tasks as $task) {
+      $task_id = $task['id'];
+      $task_name = $task['name'];
+      $config_url = CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/$task_id");
+
+      $links_html .= '<li><a target="_blank" href="' . $config_url . '">';
+      $links_html .= "[$task_id] $task_name";
+      $links_html .= '</a></li>';
+    }
+
+    return "<ul>$links_html</ul>";
   }
 
 }

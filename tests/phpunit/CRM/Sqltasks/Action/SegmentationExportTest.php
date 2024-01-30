@@ -38,7 +38,8 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
       'title'      => 'testSegmentationExport',
     ))['id'];
     $tmp = tempnam(sys_get_temp_dir(), 'seg');
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -78,7 +79,8 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Exporter 'Selektion (Excel)' to file", 'Should have exported file');
     $this->assertLogContains('Zipped file into', 'Should have zipped file');

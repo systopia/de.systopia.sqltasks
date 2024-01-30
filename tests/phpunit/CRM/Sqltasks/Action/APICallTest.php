@@ -8,7 +8,7 @@
 class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
   public function testAPICall() {
-    $data = [
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -32,7 +32,8 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
         ],
       ]
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
     $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
@@ -48,7 +49,8 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       'contact_type' => 'Individual',
       'email'        => 'jane.doe@example.com',
     ])['id'];
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -74,7 +76,8 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains('Column "exclude" exists, might skip some rows', '"exclude" column should have been detected');
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
@@ -125,7 +128,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       ],
     ];
 
-    $this->createAndExecuteTask($config);
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $queryResult = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"

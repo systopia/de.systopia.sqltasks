@@ -171,7 +171,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     $use_last_assignment = $this->getConfigValue('date_current');
     if ($use_last_assignment) {
-      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->getID());
+      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->id);
       if (!$timestamp) {
         throw new Exception("Restrict export to current assignemnt requested, but no current assignemnt detected. Activate the 'Assign to Campaign' task!", 1);
       }
@@ -206,7 +206,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     $use_last_assignment = $this->getConfigValue('date_current');
     if ($use_last_assignment) {
       // take values from 'Assign to campaign'
-      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->getID());
+      $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->id);
       if ($timestamp) {
         $params['start_date'] = $timestamp;
         $params['end_date']   = $timestamp;

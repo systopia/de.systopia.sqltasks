@@ -16,12 +16,11 @@ class CRM_Sqltasks_Page_SqltasksExecutionView extends CRM_Core_Page {
       throw new Exception('Cannot find the sqltasksExecution.');
     }
 
-    $task = CRM_Sqltasks_Task::getTask($sqltasksExecution['sqltask_id']);
+    $task = CRM_Sqltasks_BAO_SqlTask::findById($sqltasksExecution['sqltask_id']);
     $manageSqlTaskUrl = CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$sqltasksExecution['sqltask_id']}");
 
     $this->assign('manageSqlTaskUrl', $manageSqlTaskUrl);
-    $this->assign('task', $task->getAttributes());
-    $this->assign('taskId', $task->getID());
+    $this->assign('task', $task->toArray());
     $this->assign('sqltasksExecution', $sqltasksExecution);
     $this->assign('logsTaskExecution', $sqltasksExecution['decoded_logs']);
 

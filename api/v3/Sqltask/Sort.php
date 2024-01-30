@@ -9,13 +9,19 @@
  * @return array API result descriptor
  */
 function civicrm_api3_sqltask_sort($params) {
-  if ($params['before_sort_tasks_order'] != CRM_Sqltasks_Task::getOrderedTasks()) {
-    return civicrm_api3_create_error('Task order can\'t be modified. Task order on database must be equal with entered task order.');
+  $before_order = $params['before_sort_tasks_order'];
+  $after_order = $params['after_sort_tasks_order'];
+
+  if ($before_order != CRM_Sqltasks_BAO_SqlTask::getTaskOrder()) {
+    return civicrm_api3_create_error(
+      'Task order can\'t be modified. ' .
+      'Task order in database must be equal to entered task order.'
+    );
   }
 
-  CRM_Sqltasks_Task::updateTasksOrder($params['after_sort_tasks_order']);
+  CRM_Sqltasks_BAO_SqlTask::updateTaskOrder($after_order);
 
-  return civicrm_api3_create_success(['Task order have successfully modified.']);
+  return civicrm_api3_create_success(['Task order has successfully been modified.']);
 }
 
 /**

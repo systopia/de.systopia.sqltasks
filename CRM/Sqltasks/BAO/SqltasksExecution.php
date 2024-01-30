@@ -304,27 +304,20 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   }
 
   /**
-   * @param $logsString
+   * Parse a JSON object containing execution log entries
+   *
+   * @param string $logsString
    * @return array
    */
   public static function prepareLogs($logsString) {
-    if (empty($logsString)) {
-      return [];
-    }
+    if (empty($logsString)) return [];
 
     $logs = json_decode($logsString, true);
 
     foreach ($logs as $key => $log) {
-      if (!empty($log['timestamp_in_microseconds'])) {
-        $dateTimeObj = DateTime::createFromFormat('U.u', $log['timestamp_in_microseconds']);
-        if (!empty($dateTimeObj)) {
-          $logs[$key]['date_time_obj'] = $dateTimeObj;
-        } else {
-          $logs[$key]['date_time_obj'] = (new DateTime())->setTimestamp(0);
-        }
-      } else {
-        $logs[$key]['date_time_obj'] = (new DateTime())->setTimestamp(0);
-      }
+      $microseconds = $log['timestamp_in_microseconds'] ?? 0;
+      $datetime = DateTime::createFromFormat('U.u', $microseconds);
+      $logs[$key]['date_time_obj'] = $datetime ? $datetime : DateTime::createFromFormat('U', '0');
     }
 
     return $logs;

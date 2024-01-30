@@ -124,14 +124,54 @@
 
       function getAllTasks() {
         $scope.isTasksLoading = true;
-        CRM.api3("Sqltask", "getalltasks").done(function(result) {
-          $scope.tasks = result.values;
+
+        CRM.api4('SqlTask', 'get', {
+          select: ["*"]
+        }).then(tasks => {
+          $scope.tasks = tasks.map(task => {
+            const desc = task.description ?? "";
+            const lastExec = task.last_execution ?? "never";
+
+            return {
+              ...task,
+              last_executed: lastExec,
+              last_runtime: renderDuration(task.last_runtime),
+              schedule_label: mapToScheduleLabel(task.scheduled),
+              short_desc: desc.length > 64 ? `${desc.substring(0, 64)}...` : desc,
+            };
+          });
+
           $scope.redrawTaskList();
           $scope.updatePreviousTaskOrder();
           $scope.isTasksLoading = false;
           $scope.$apply();
           $scope.handleHighlightTask(highlightTaskId);
         });
+      }
+
+      function mapToScheduleLabel(scheduled) {
+        switch (scheduled) {
+          case "always": return "always";
+          case "hourly": return "every hour";
+          case "daily": return "every day (after midnight)";
+          case "weekly": return "every week";
+          case "monthly": return "every month";
+          case "yearly": return "annually";
+          default: return "never";
+        }
+      }
+
+      function renderDuration(milliseconds) {
+        if (milliseconds === null) return "n/a";
+
+        if (milliseconds < 60e3) {
+          const seconds = (milliseconds / 1000).toFixed(3);
+          return `${seconds}s`;
+        }
+
+        const minutes = Math.floor(milliseconds / 60e3);
+        const seconds = Math.floor((milliseconds % 60e3) / 1000).toString(10).padStart(2, "0");
+        return `${minutes}:${seconds} min`;
       }
 
       function getAllTemplates () {
