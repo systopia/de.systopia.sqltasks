@@ -16,6 +16,7 @@
 require_once 'sqltasks.civix.php';
 require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Implements hook_civicrm_config().
@@ -295,4 +296,8 @@ function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
       }
     }
   }
+}
+
+function sqltasks_civicrm_container(ContainerBuilder $container) {
+  $container->addCompilerPass(new Civi\Sqltasks\CompilerPass());
 }

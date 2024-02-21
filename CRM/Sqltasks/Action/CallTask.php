@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -50,48 +51,140 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   public function execute() {
     $this->resetHasExecuted();
 
-    $tasks = $this->getConfigValue('tasks');
-    $categories = $this->getConfigValue('categories');
-    $isExecuteDisabledTasks = $this->getConfigValue('is_execute_disabled_tasks') == 1;
-    if (empty($tasks) && empty($categories)) {
-      return;
-    }
+    $task_ids = $this->getConfigValue('tasks') ?? [];
+    $categories = $this->getConfigValue('categories') ?? [];
+    $execute_disabled_tasks = $this->getConfigValue('is_execute_disabled_tasks') == 1;
 
-    // generate query for task selection
-    $query = "SELECT * FROM `civicrm_sqltasks` WHERE  ";
-    $query .= " archive_date IS NULL AND ";
-    if (!$isExecuteDisabledTasks) {
-      $query .= " enabled=1 AND ";
-    }
+    $execute_in_parallel =
+      $this->getConfigValue('execute_in_parallel') == 1
+      && self::backgroundQueueEnabled();
 
-    $or_clauses = array();
-    if (!empty($tasks)) {
-      $or_clauses[] = '`id` IN (' . implode(',', $tasks) . ')';
-    }
-    if (!empty($categories)) {
-      $escaped_categories = array();
-      foreach ($categories as $category) {
-        $escaped_categories[] = "'" . CRM_Core_DAO::escapeString($category) . "'";
-      }
-      $or_clauses[] = '`category` IN (' . implode(',', $escaped_categories) . ')';
-    }
-    $query .= '((' . implode(') OR (', $or_clauses). '))';
-    $query .= ' ORDER BY weight ASC';
-    $tasks2run = CRM_Sqltasks_Task::getTasks($query);
+    if (empty($task_ids) && empty($categories)) return;
 
-    foreach ($tasks2run as $task) {
-      if ($task->getID() == $this->task->getID()) {
+    $tasks_2_run = self::findTasks([
+      'categories'             => $categories,
+      'execute_disabled_tasks' => $execute_disabled_tasks,
+      'task_ids'               => $task_ids,
+    ]);
+
+    $queued_execs = [];
+    $error_count = 0;
+
+    foreach ($tasks_2_run as $task) {
+      $task_id = $task->getID();
+      $task_name = $task->getAttribute('name');
+
+      if ($task_id == $this->task->getID()) continue;
+
+      if ($execute_in_parallel) {
+        $queued_execs[] = $task->executeAsync()['execution_id'];
+        $this->log("Queued task '$task_name' [$task_id] for execution");
         continue;
       }
-      // all good: execute!
-      $taskExecutionResult = $task->execute();
-      $logs = $taskExecutionResult['logs'];
-      // log results from child task
-      foreach ($logs as $log) {
+
+      $exec_result = $task->execute();
+
+      foreach ($exec_result['logs'] as $log) {
         $this->log($log);
       }
-      $this->log("Executed task '" . $task->getAttribute('name') . "' [" . $task->getID() . ']');
+
+      $this->log("Executed task '$task_name' [$task_id]");
     }
+
+    while (!empty($queued_execs)) {
+      $queued_execs_copy = $queued_execs;
+
+      foreach ($queued_execs_copy as $i => $exec_id) {
+        if (self::executionHasEnded($exec_id)) {
+          unset($queued_execs[$i]);
+          $error_count += self::getErrorCount($exec_id);
+        }
+      }
+
+      sleep(1);
+    }
+
+    if ($error_count > 0) {
+      throw new Exception("Execution of task $task_id encountered errors.");
+    }
+  }
+
+  /**
+   * Check whether task execution in background queues is enabled
+   *
+   * @return bool
+   */
+  private static function backgroundQueueEnabled() {
+    $setting = Api4\Setting::get()
+      ->addSelect('enableBackgroundQueue')
+      ->execute()
+      ->first();
+
+    return $setting['value'] == '1';
+  }
+
+  /**
+   * Check whether a task execution has ended
+   *
+   * @param int $execution_id
+   * @return bool
+   */
+  private static function executionHasEnded($execution_id) {
+    $end_date = CRM_Core_DAO::singleValueQuery(
+      'SELECT end_date FROM civicrm_sqltasks_execution WHERE id = %1',
+      [ 1 => [$execution_id, 'Integer'] ]
+    );
+
+    return !is_null($end_date);
+  }
+
+  /**
+   * Select SQL Tasks by ID/category
+   *
+   * @param array $params
+   * @return CRM_Sqltasks_Task[]
+   */
+  private static function findTasks($params) {
+    $archived_clause = "archive_date IS NULL";
+    $enabled_clause = $params['execute_disabled_tasks'] ? '1' : 'enabled = 1';
+
+    $id_list = implode(',', $params['task_ids']);
+    $id_clause = empty($params['task_ids']) ? '0' : "id IN ($id_list)";
+
+    $category_list = implode(',',
+      array_map(fn($c) => "'" . CRM_Core_DAO::escapeString($c) . "'", $params['categories'])
+    );
+
+    $category_clause = empty($params['categories']) ? '0' : "category IN ($category_list)";
+
+    $query = "
+      SELECT * FROM `civicrm_sqltasks`
+      WHERE
+        $archived_clause
+        AND $enabled_clause
+        AND (
+          $id_clause
+          OR $category_clause
+        )
+      ORDER BY weight ASC
+    ";
+
+    return CRM_Sqltasks_Task::getTasks($query);
+  }
+
+  /**
+   * Get error count of a task execution
+   *
+   * @param int $execution_id
+   * @return int
+   */
+  private static function getErrorCount($execution_id) {
+    $error_count = CRM_Core_DAO::singleValueQuery(
+      'SELECT error_count FROM civicrm_sqltasks_execution WHERE id = %1',
+      [ 1 => [$execution_id, 'Integer'] ]
+    );
+
+    return (int) $error_count;
   }
 
   /**

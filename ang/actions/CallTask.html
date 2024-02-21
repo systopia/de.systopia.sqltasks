@@ -29,10 +29,19 @@
         <div class="sql-tasks">
             <action-additional-info model='model' fieldPrefix="'call_task'" index='index'></action-additional-info>
 
-            <check-box model="model['is_execute_disabled_tasks']" fieldlabel="ts('Execute disabled tasks')"
-                       fieldid="'is_execute_disabled_tasks' + index"
-                       checkbox-change="executeDisabledTasksOnChange(value)"
-            >
+            <check-box
+                checkbox-change="executeDisabledTasksOnChange(value)"
+                fieldid="'is_execute_disabled_tasks' + index"
+                fieldlabel="ts('Execute disabled tasks')"
+                model="model['is_execute_disabled_tasks']">
+            </check-box>
+
+            <check-box
+                checkbox-change=""
+                fieldid="'execute_in_parallel' + index"
+                fieldlabel="ts('Parallel execution')"
+                model="model['execute_in_parallel']"
+                showHelpIcon="true">
             </check-box>
 
             <multiple-select2

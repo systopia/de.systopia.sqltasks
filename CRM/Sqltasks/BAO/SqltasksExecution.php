@@ -84,11 +84,13 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   public static function create($params) {
     CRM_Utils_Hook::pre('create', 'SqltasksExecution', NULL, $params);
 
+    $input_value = is_array($params['input']) ? json_encode($params['input']) : $params['input'];
+
     $params = [
       'created_id'  => CRM_Core_Session::getLoggedInContactID(),
       'error_count' => 0,
       'files'       => '[]',
-      'input'       => $params['input'],
+      'input'       => $input_value,
       'log'         => '[]',
       'log_to_file' => !empty($params['log_to_file']),
       'runtime'     => 0,

@@ -181,6 +181,10 @@ class CRM_Sqltasks_Task {
   public function execute($params = []) {
     $input_value = $params['input_val'] ?? NULL;
 
+    if (is_array($input_value)) {
+      $input_value = json_encode($input_value);
+    }
+
     if (empty($params['execution_id'])) {
       $execution = CRM_Sqltasks_BAO_SqltasksExecution::create([
         'input'       => $input_value,
@@ -314,8 +318,8 @@ class CRM_Sqltasks_Task {
           'async'        => FALSE,
           'execution_id' => $execution->id,
           'id'           => $task_id,
-          'input_val'    => $params['input_val'],
-          'log_to_file'  => $params['log_to_file'],
+          'input_val'    => $params['input_val'] ?? NULL,
+          'log_to_file'  => $params['log_to_file'] ?? 0,
         ],
       ],
       "SQL Task $task_id"
