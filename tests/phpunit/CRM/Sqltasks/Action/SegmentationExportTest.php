@@ -87,11 +87,11 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
     $this->assertLogContains("Action 'Segmentation Export' executed in", 'Segmentation Export action should have succeeded');
     $zip = new ZipArchive();
     $zip->open($tmp);
-    $this->assertContains(
+    $this->assertStringContainsString(
       'contact_id;titel;anrede;vorname;nachname;geburtsdatum;strasse;plz;ort;land;zielgruppe ID;zielgruppe;telefon;mobilnr;email;paket;textbaustein',
       $zip->getFromIndex(0)
     );
-    $this->assertContains(
+    $this->assertStringContainsString(
       "{$this->contactId};;An;John;Doe;;;;;;{$segmentId};testSegmentationExport;;;john.doe@example.com;;",
       $zip->getFromIndex(0)
     );

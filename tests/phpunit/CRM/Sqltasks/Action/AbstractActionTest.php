@@ -17,7 +17,7 @@ abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_Abstr
    */
   protected $contactId;
 
-  public function setUp() {
+  public function setUp(): void {
     $this->contactId = $this->callApiSuccess('Contact', 'create', [
       'first_name'   => 'John',
       'last_name'    => 'Doe',

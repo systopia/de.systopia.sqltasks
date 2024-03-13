@@ -12,12 +12,12 @@ use Civi\Test\TransactionalInterface;
  */
 class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
 
-  public function setUp() {
+  public function setUp(): void {
     CRM_Core_DAO::executeQuery('DELETE FROM civicrm_sqltasks');
     parent::setUp();
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_execute');
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_execute_post');
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_input_value');
@@ -71,9 +71,9 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertEquals('Test Task Category', $query->category);
     $this->assertEquals('monthly', $query->scheduled);
     $this->assertEquals(0, $query->parallel_exec);
-    $this->assertContains('DROP TABLE IF EXISTS tmp_test_task', $query->config);
-    $this->assertContains('CREATE TABLE IF NOT EXISTS tmp_test_task AS SELECT 1 AS contact_id', $query->config);
-    $this->assertContains('DROP TABLE IF EXISTS tmp_test_task', $query->config);
+    $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task', $query->config);
+    $this->assertStringContainsString('CREATE TABLE IF NOT EXISTS tmp_test_task AS SELECT 1 AS contact_id', $query->config);
+    $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task', $query->config);
   }
 
   /**
@@ -141,8 +141,8 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertEquals('Test Task Category 2', $query->category);
     $this->assertEquals('daily', $query->scheduled);
     $this->assertEquals(1, $query->parallel_exec);
-    $this->assertContains('CREATE TABLE IF NOT EXISTS tmp_test_task_2 AS SELECT 1 AS contact_id', $query->config);
-    $this->assertContains('DROP TABLE IF EXISTS tmp_test_task_2', $query->config);
+    $this->assertStringContainsString('CREATE TABLE IF NOT EXISTS tmp_test_task_2 AS SELECT 1 AS contact_id', $query->config);
+    $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task_2', $query->config);
   }
 
   /**

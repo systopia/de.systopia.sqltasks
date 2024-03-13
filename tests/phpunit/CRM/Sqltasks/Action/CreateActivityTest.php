@@ -8,7 +8,7 @@
 class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_AbstractActionTest {
   public $campaignID;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $campaignResult = $this->callAPISuccess('Campaign', 'create', [
@@ -30,7 +30,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
     );
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `civicrm_segmentation_exclude`");
     parent::tearDown();
   }

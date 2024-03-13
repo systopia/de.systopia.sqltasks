@@ -4,7 +4,7 @@ commands:
     description: "Setup environment"
     steps:
       - run: |
-          composer self-update --1
+          composer self-update --2
   install_civicrm:
     description: "Install CiviCRM"
     parameters:
@@ -50,7 +50,7 @@ commands:
         type: string
         default: master
     steps:
-      - run: su - buildkit -c "cd /buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext/$CIRCLE_PROJECT_REPONAME && phpunit7"
+      - run: su - buildkit -c "cd /buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext/$CIRCLE_PROJECT_REPONAME && phpunit8"
   run_all:
     description: "Run all steps"
     parameters:
@@ -102,8 +102,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.39
-          version: "5.39"
+          build_name: civi-5.69
+          version: "5.69"
           url: http://localhost:8081
   build_mariadb_10_2:
     executor: civicrm
@@ -124,8 +124,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.39
-          version: "5.39"
+          build_name: civi-5.69
+          version: "5.69"
           url: http://localhost:8081
   build_mariadb_10_3:
     executor: civicrm
@@ -146,8 +146,8 @@ jobs:
       - checkout
       - run_all
       - run_all:
-          build_name: civi-5.39
-          version: "5.39"
+          build_name: civi-5.69
+          version: "5.69"
           url: http://localhost:8081
 
 workflows:

@@ -279,7 +279,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return $this->logGeneric('error', $message);
   }
 
-  public function logGeneric($type = 'info', $message) {
+  public function logGeneric($type = 'info', $message = '') {
     $this->log_entries[] = [
       'message'                   => $message,
       'message_type'              => $type,

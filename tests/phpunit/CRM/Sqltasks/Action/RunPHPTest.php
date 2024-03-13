@@ -7,7 +7,7 @@
  */
 class CRM_Sqltasks_Action_RunPHPTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_action_php');
     parent::tearDown();
   }
