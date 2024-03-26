@@ -125,29 +125,31 @@
       function getAllTasks() {
         $scope.isTasksLoading = true;
 
-        CRM.api4('SqlTask', 'get', {
+        CRM.api4("SqlTask", "get", {
           select: ["*"],
           orderBy: { "weight": "ASC" },
         }).then(tasks => {
-          $scope.tasks = tasks.map(task => {
-            const desc = task.description ?? "";
-            const lastExec = task.last_execution ?? "never";
-
-            return {
-              ...task,
-              last_executed: lastExec,
-              last_runtime: renderDuration(task.last_runtime),
-              schedule_label: mapToScheduleLabel(task.scheduled),
-              short_desc: desc.length > 64 ? `${desc.substring(0, 64)}...` : desc,
-            };
-          });
-
+          $scope.tasks = tasks.map(formatTaskData);
           $scope.redrawTaskList();
           $scope.updatePreviousTaskOrder();
           $scope.isTasksLoading = false;
           $scope.$apply();
           $scope.handleHighlightTask(highlightTaskId);
         });
+      }
+
+      function formatTaskData(task) {
+        const desc = task.description ?? "";
+        const lastExec = task.last_execution ?? "never";
+
+        return {
+          ...task,
+          is_archived: task.archive_date !== null,
+          last_executed: lastExec,
+          last_runtime: renderDuration(task.last_runtime),
+          schedule_label: mapToScheduleLabel(task.scheduled),
+          short_desc: desc.length > 64 ? `${desc.substring(0, 64)}...` : desc,
+        };
       }
 
       function mapToScheduleLabel(scheduled) {
@@ -219,19 +221,19 @@
 
       $scope.getDisplayedTasks = function() {
         return $scope.tasks.filter(function(task) {
-          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived == 1) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived) {
             return true;
           }
 
-          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled == 1) {
+          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled) {
             return true;
           }
 
-          if (!($scope.tasksDisplayPreferences.isShowArchivedTask === '1')) {
-            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0 && task.is_archived != 1) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask !== '1') {
+            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && !task.enabled && !task.is_archived) {
               return true;
             }
-          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0) {
+          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && !task.enabled) {
             return true;
           }
 
@@ -245,7 +247,7 @@
 
       $scope.updateTaskData = function(taskId, taskData) {
         var indexTasks = $scope.tasks.findIndex(task => task.id === taskId);
-        $scope.tasks[indexTasks] = taskData;
+        $scope.tasks[indexTasks] = formatTaskData(taskData);
         $scope.redrawTaskList();
         $scope.$apply();
       };
@@ -351,17 +353,24 @@
       };
 
       $scope.onToggleEnablePressApiCall = function(taskId, value) {
-        CRM.api3("Sqltask", "create", {
-          id: taskId,
-          enabled: value
-        }).done(function(result) {
-          var isEnabling = value === 1;
-          if (result.values && !result.is_error) {
-            CRM.alert(ts('Task has successfully ' + (isEnabling ? 'enabled' : 'disabled')), ts((isEnabling ? 'Enabling' : 'Disabling') + ' task'), "success");
-            $scope.updateTaskData(taskId, result.values);
-          } else {
-            CRM.alert(result.error_message, ts('Error ' + (isEnabling ? 'enabling' : 'disabling' + ' task'), "error"));
-          }
+        CRM.api4("SqlTask", "update", {
+          reload: true,
+          values: { "enabled": value },
+          where: [["id", "=", taskId]],
+        }).then((results) => {
+          $scope.updateTaskData(taskId, results[0]);
+
+          CRM.alert(
+            ts(`Task has successfully been ${value ? "enabled" : "disabled"}`),
+            ts(`${value ? "Enabled" : "Disabled"} task`),
+            "success",
+          );
+        }).catch((error) => {
+          CRM.alert(
+            error?.error_message ?? "",
+            ts(`Error ${value ? "enabling" : "disabling"} task`),
+            "error",
+          );
         });
       }
 

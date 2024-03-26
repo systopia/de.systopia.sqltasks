@@ -249,17 +249,29 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @return array
    */
   public function exportData($attributes = []) {
+    $archive_date = is_null($this->archive_date)
+      ? NULL
+      : date('Y-m-d H:i:s', strtotime($this->archive_date));
+
+    $last_execution = is_null($this->last_execution)
+      ? NULL
+      : date('Y-m-d H:i:s', strtotime($this->last_execution));
+
+    $last_modified = is_null($this->last_modified)
+      ? NULL
+      : date('Y-m-d H:i:s', strtotime($this->last_modified));
+
     $task_data = [
       'abort_on_error'  => (bool) $this->abort_on_error,
-      'archive_date'    => $this->archive_date,
+      'archive_date'    => $archive_date,
       'category'        => $this->category,
       'config'          => json_decode($this->config, TRUE),
       'description'     => $this->description,
       'enabled'         => !empty($this->enabled),
       'id'              => (int) $this->id,
       'input_required'  => (bool) $this->input_required,
-      'last_execution'  => $this->last_execution,
-      'last_modified'   => $this->last_modified,
+      'last_execution'  => $last_execution,
+      'last_modified'   => $last_modified,
       'last_runtime'    => (int) $this->last_runtime,
       'name'            => $this->name,
       'parallel_exec'   => $this->parallel_exec,
