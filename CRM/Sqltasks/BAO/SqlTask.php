@@ -544,7 +544,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
     foreach ($params as $key => $value) {
       if (in_array($value, [NULL, ''], TRUE) && !self::fields()[$key]['required']) {
-        $this->$key = NULL;
+        $this->$key = 'null';
         continue;
       }
 
@@ -630,20 +630,11 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     }
 
     if ($save) {
-      // Temporarily change DB_DataObject configuration to enable saving of NULL values
-      global $_DB_DATAOBJECT;
-      $disable_null_strings = $_DB_DATAOBJECT['CONFIG']['disable_null_strings'] ?? NULL;
-      $_DB_DATAOBJECT['CONFIG']['disable_null_strings'] = 'full';
-
-      // Write changes to the databases
       if ($update_mod_timestamp) {
         $this->last_modified = date('Y-m-d H:i:s');
       }
 
       $this->save();
-
-      // Reset DB_DataObject configuration
-      $_DB_DATAOBJECT['CONFIG']['disable_null_strings'] = $disable_null_strings;
     }
   }
 
