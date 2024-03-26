@@ -299,7 +299,7 @@
         scroll: true,
         update: $scope.updatePreviousTaskOrder,
         stop: function(event, helper) {
-          var movedTaskId = helper.item.context.getAttribute("data-task-id");
+          var movedTaskId = parseInt(helper.item.context.getAttribute("data-task-id"));
           var moveToTaskId = $scope.previousTaskOrder[$scope.displayTasks.findIndex(task => task.id === movedTaskId)];
           $scope.applySortingTasks(movedTaskId, moveToTaskId);
         }
