@@ -101,6 +101,8 @@
           var task = Object.assign({}, result.values);
           $scope.config = Object.assign({}, task.config);
           delete task["config"];
+          task.enabled = task.enabled === "" ? false : task.enabled;
+          task.input_required = task.input_required === "" ? false : task.input_required;
           $scope.taskOptions = task;
           $scope.fixTaskOptionRunPermissions();
           $scope.$apply();
