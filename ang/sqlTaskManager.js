@@ -126,7 +126,8 @@
         $scope.isTasksLoading = true;
 
         CRM.api4('SqlTask', 'get', {
-          select: ["*"]
+          select: ["*"],
+          orderBy: { "weight": "ASC" },
         }).then(tasks => {
           $scope.tasks = tasks.map(task => {
             const desc = task.description ?? "";
