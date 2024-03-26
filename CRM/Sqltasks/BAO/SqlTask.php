@@ -25,7 +25,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    */
   public function __construct($params = []) {
     parent::__construct();
-    $this->updateAttributes($params, FALSE);
+    $this->updateAttributes($params, [ 'save' => FALSE ]);
   }
 
   /**
@@ -161,7 +161,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     $this->updateAttributes([
       'last_execution' => date('Y-m-d H:i:s'),
       'running_since'  => date('Y-m-d H:i:s'),
-    ]);
+    ], [ 'update_mod_timestamp' => FALSE ]);
 
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
 
@@ -219,7 +219,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     $this->updateAttributes([
       'last_runtime'  => $execution->runtime,
       'running_since' => NULL,
-    ]);
+    ], [ 'update_mod_timestamp' => FALSE ]);
 
     if (!$parallel_exec_allowed) {
       $lock->release();
@@ -535,10 +535,13 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * Update task data
    *
    * @param array $params
-   * @param bool $save
+   * @param array $options
    * @return void
    */
-  public function updateAttributes($params, $save = TRUE) {
+  public function updateAttributes($params, $options = []) {
+    $save = $options['save'] ?? TRUE;
+    $update_mod_timestamp = $options['update_mod_timestamp'] ?? TRUE;
+
     foreach ($params as $key => $value) {
       if (in_array($value, [NULL, ''], TRUE) && !self::fields()[$key]['required']) {
         $this->$key = NULL;
@@ -633,7 +636,10 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       $_DB_DATAOBJECT['CONFIG']['disable_null_strings'] = 'full';
 
       // Write changes to the databases
-      $this->last_modified = date('Y-m-d H:i:s');
+      if ($update_mod_timestamp) {
+        $this->last_modified = date('Y-m-d H:i:s');
+      }
+
       $this->save();
 
       // Reset DB_DataObject configuration
