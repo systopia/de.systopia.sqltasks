@@ -581,7 +581,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
         case 'last_runtime':
         case 'weight': {
-          if (!self::isPositiveInt($value)) {
+          if (!CRM_Utils_Rule::positiveInteger($value)) {
             throw new Exception("Attribute '$key' must be a positive integer");
           }
 
@@ -662,20 +662,6 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 /* --- Private methods -------------------------------------------------------------------------- */
 
   /**
-   * Check whether a given value is (or can be interpreted as) a positive integer
-   *
-   * @param mixed $value
-   * @return bool
-   */
-  private static function isPositiveInt($value) {
-    if (is_string($value) && preg_match('/^\d+$/', $value)) {
-      $value = (int) $value;
-    }
-
-    return is_int($value) && $value >= 0;
-  }
-
-  /**
    * Get the name for a database lock depending on the task ID
    *
    * @return string
@@ -691,7 +677,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @param array $config
    * @return array
    */
-  public static function validateConfiguration($config) {
+  private static function validateConfiguration($config) {
     if (!is_array($config)) {
       throw new Exception("Task configuration must be an associative array");
     }
