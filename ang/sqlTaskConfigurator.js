@@ -1393,7 +1393,7 @@
         });
 
         $scope.loadTasks = function(callback) {
-          const onlyEnabled = $scope.model["is_execute_disabled_tasks"] === "0";
+          const onlyEnabled = $scope.model["is_execute_disabled_tasks"] !== "1";
 
           CRM.api4("SqlTask", "get", {
             select: ["name", "enabled"],
