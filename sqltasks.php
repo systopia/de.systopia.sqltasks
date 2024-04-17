@@ -42,24 +42,6 @@ function sqltasks_civicrm_install() {
 }
 
 /**
- * Implements hook_civicrm_postInstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
- */
-function sqltasks_civicrm_postInstall() {
-  _sqltasks_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function sqltasks_civicrm_uninstall() {
-  _sqltasks_civix_civicrm_uninstall();
-}
-
-/**
  * Implements hook_civicrm_enable().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
@@ -67,35 +49,6 @@ function sqltasks_civicrm_uninstall() {
 function sqltasks_civicrm_enable() {
   _sqltasks_civix_civicrm_enable();
   CRM_Sqltasks_Config::installScheduledJob();
-}
-
-/**
- * Implements hook_civicrm_disable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function sqltasks_civicrm_disable() {
-  _sqltasks_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function sqltasks_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _sqltasks_civix_civicrm_upgrade($op, $queue);
-}
-
-/**
- * Implements hook_civicrm_entityTypes().
- *
- * Declare entity types provided by this module.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
- */
-function sqltasks_civicrm_entityTypes(&$entityTypes) {
-  _sqltasks_civix_civicrm_entityTypes($entityTypes);
 }
 
 /**
