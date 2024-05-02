@@ -27,7 +27,7 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
   /**
    * The setup() method is executed before the test is executed (optional).
    */
-  public function setUp() {
+  public function setUp(): void {
     $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('SqltasksActionTemplate');
     $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'SqltasksActionTemplate' . ' not found.');
     parent::setUp();
@@ -37,7 +37,7 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
    * The tearDown() method is executed after the test was executed (optional)
    * This can be used for cleanup.
    */
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
   }
 

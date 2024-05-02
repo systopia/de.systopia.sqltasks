@@ -24,7 +24,7 @@ abstract class CRM_Sqltasks_Action {
 
   protected static $_campaign_list = NULL;
 
-  /** @var CRM_Sqltasks_Task */
+  /** @var CRM_Sqltasks_BAO_SqlTask */
   protected $task = NULL;
   protected $config = NULL;
   protected $has_executed = TRUE;
@@ -33,10 +33,10 @@ abstract class CRM_Sqltasks_Action {
   /**
    * CRM_Sqltasks_Action constructor.
    *
-   * @param $task CRM_Sqltasks_Task task
+   * @param $task CRM_Sqltasks_BAO_SqlTask task
    * @param array $config
    */
-  public function __construct(CRM_Sqltasks_Task $task, array $config) {
+  public function __construct(CRM_Sqltasks_BAO_SqlTask $task, array $config) {
     $this->task = $task;
     $this->config = $config;
     $this->has_executed = TRUE;
@@ -237,16 +237,19 @@ abstract class CRM_Sqltasks_Action {
   /**
    * Get all actions based on the task config
    *
-   * @param CRM_Sqltasks_Task $task
+   * @param CRM_Sqltasks_BAO_SqlTask $task
    *
    * @return array action instances
    * @throws \Exception
    */
-  public static function getTaskActions(CRM_Sqltasks_Task $task) {
+  public static function getTaskActions($task) {
+    $task_config = json_decode($task->config, TRUE);
     $actions = [];
-    foreach ($task->getConfiguration()['actions'] as $action) {
+
+    foreach ($task_config['actions'] as $action) {
       $actions[] = self::getActionInstance($action, $task);
     }
+
     return $actions;
   }
 
@@ -254,12 +257,12 @@ abstract class CRM_Sqltasks_Action {
    * Create an action instance based on its config and a task
    *
    * @param array $config action config
-   * @param \CRM_Sqltasks_Task $task
+   * @param \CRM_Sqltasks_BAO_SqlTask $task
    *
    * @return \CRM_Sqltasks_Action
    * @throws \Exception
    */
-  public static function getActionInstance(array $config, CRM_Sqltasks_Task $task) {
+  public static function getActionInstance(array $config, CRM_Sqltasks_BAO_SqlTask $task) {
     $className = $config['type'];
     if (!class_exists($className)) {
       throw new Exception("Unknown action type '{$className}'");
@@ -284,7 +287,7 @@ abstract class CRM_Sqltasks_Action {
    */
   public static function getAllActions() {
     $actions = [];
-    $dummyTask = new CRM_Sqltasks_Task(NULL);
+    $dummyTask = new CRM_Sqltasks_BAO_SqlTask();
     foreach (glob(__DIR__ . '/Action/*.php') as $filename) {
       $className = 'CRM_Sqltasks_Action_' . pathinfo($filename)['filename'];
       if (class_exists($className)) {

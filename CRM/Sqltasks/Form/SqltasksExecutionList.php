@@ -1,5 +1,6 @@
 <?php
 
+use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
@@ -27,7 +28,14 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
   }
 
   public function buildQuickForm() {
-    $this->add('select', 'sqltask_id', E::ts('SQL Task ID'), CRM_Sqltasks_Task::getTaskOptions(), FALSE, ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]);
+    $task_options = [];
+    $tasks = Api4\SqlTask::get()->addSelect('name')->execute();
+
+    foreach ($tasks as [ 'id' => $task_id, 'name' => $task_name ]) {
+      $task_options[$task_id] = $task_name;
+    }
+
+    $this->add('select', 'sqltask_id', E::ts('SQL Task ID'), $task_options, FALSE, ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]);
     $this->add('text', 'input', E::ts('Input value'), ['class' => 'medium', 'placeholder' => 'input value']);
     $this->addRadio('error_status', E::ts('Error Status'), [
       'all' => 'Show all executions',

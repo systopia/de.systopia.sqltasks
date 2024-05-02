@@ -58,7 +58,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask($config);
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     foreach ($tableRows as $row) {
       $contactID = $row['contact_id'];
@@ -115,7 +115,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ];
 
-      $exec_result = $this->createAndExecuteTask($config);
+      $exec_result = $this->createAndExecuteTask([ 'config' => $config ]);
 
       switch ($errorHandling) {
         case 'log_only': {
@@ -208,7 +208,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask($config);
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $query = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result` FROM `$tmpContactTable`"
@@ -251,34 +251,33 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
 
     $randomChars = bin2hex(random_bytes(8));
 
-    $config = [
-      'version'        => CRM_Sqltasks_Config_Format::CURRENT,
+    $data = [
       'input_required' => TRUE,
-      'actions'        => [
-        self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
-        [
-          'type'       => 'CRM_Sqltasks_Action_APIv4Call',
-          'table'      => $tmpContactTable,
-          'enabled'    => TRUE,
-          'entity'     => 'Note',
-          'action'     => 'create',
-          'parameters' => json_encode([
-            'values' => [
-              'entity_table' => 'civicrm_contact',
-              'entity_id'    => '{contact_id}',
-              'subject'      => 'CRM_Sqltasks_Action_APIv4CallTest::testInputValues',
-              'note'         => '123 {context.input_val} 456',
-            ],
-          ]),
+      'config' => [
+        'version'        => CRM_Sqltasks_Config_Format::CURRENT,
+        'actions'        => [
+          self::getCreateTempContactTableAction($tmpContactTable, $tableRows),
+          [
+            'type'       => 'CRM_Sqltasks_Action_APIv4Call',
+            'table'      => $tmpContactTable,
+            'enabled'    => TRUE,
+            'entity'     => 'Note',
+            'action'     => 'create',
+            'parameters' => json_encode([
+              'values' => [
+                'entity_table' => 'civicrm_contact',
+                'entity_id'    => '{contact_id}',
+                'subject'      => 'CRM_Sqltasks_Action_APIv4CallTest::testInputValues',
+                'note'         => '123 {context.input_val} 456',
+              ],
+            ]),
+          ],
+          self::getDropTempContactTableAction($tmpContactTable),
         ],
-        self::getDropTempContactTableAction($tmpContactTable),
       ],
     ];
 
-    $this->createAndExecuteTask(
-      $config,
-      [ 'input_val' => $randomChars ]
-    );
+    $this->createAndExecuteTask($data, [ 'input_val' => $randomChars ]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')
@@ -332,7 +331,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask($config);
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')
@@ -384,7 +383,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask($config);
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')

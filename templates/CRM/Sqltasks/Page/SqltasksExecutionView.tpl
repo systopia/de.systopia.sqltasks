@@ -18,7 +18,7 @@
 
       <div>
         <div>
-          <div><b>Task: [{$taskId}] {$task.name}</b></div>
+          <div><b>Task: [{$task.id}] {$task.name}</b></div>
           <div class="sql-task__description">{$task.description}</div>
         </div>
 

@@ -101,6 +101,8 @@
           var task = Object.assign({}, result.values);
           $scope.config = Object.assign({}, task.config);
           delete task["config"];
+          task.enabled = task.enabled === "" ? false : task.enabled;
+          task.input_required = task.input_required === "" ? false : task.input_required;
           $scope.taskOptions = task;
           $scope.fixTaskOptionRunPermissions();
           $scope.$apply();
@@ -322,8 +324,8 @@
       });
 
       CRM.api3("Sqltaskfield", "getschedulingoptions").done(function(result) {
-        $scope.schedulingOptions = result.values[0];
-        var defaultOption = Object.keys(result.values[0])[0];
+        $scope.schedulingOptions = $scope.mapSchedulingOptions(result.values);
+        var defaultOption = result.values[0];
         if (defaultOption === "always" && $scope.isCreatingNewSqlTask()) {
           if ($scope.isTemplateIdExist()) {
             $scope.taskOptions.enabled = 0;
@@ -342,6 +344,24 @@
         }
         loaderService.updateExecutionBlock();
         $scope.$apply();
+      });
+
+      CRM.api4("Job", "get", {
+        select: ["run_frequency"],
+        where: [
+          ["api_entity", "=", "Sqltask"],
+          ["api_action", "=", "execute"],
+          ["is_active", "=", true]],
+        limit: 25,
+      }).then((jobs) => {
+        $scope.dispatcherFrequency = jobs.reduce((result, { run_frequency: freq }) => {
+          switch (freq) {
+            case "Always": return "always";
+            case "Daily": return result === "disabled" ? "daily" : result;
+            case "Hourly": return ["disabled", "daily"].includes(result) ? "hourly" : result;
+            default: return result;
+          }
+        }, "disabled");
       });
 
       // action templates data
@@ -452,6 +472,18 @@
             return "";
         }
       };
+
+      $scope.mapSchedulingOptions = (keys) =>
+        keys.reduce((result, key) => {
+          switch (key) {
+            case "always": return Object.assign(result, { [key]: ts("always") });
+            case "hourly": return Object.assign(result, { [key]: ts("every hour") });
+            case "daily": return Object.assign(result, { [key]: ts("every day (after midnight)") });
+            case "weekly": return Object.assign(result, { [key]: ts("every week") });
+            case "monthly": return Object.assign(result, { [key]: ts("every month") });
+            case "yearly": return Object.assign(result, { [key]: ts("annually") });
+          }
+        }, {});
 
       $scope.shouldShowTimeFieldsByName = function(fieldName) {
         if (!$scope.taskOptions.scheduled) {
@@ -1346,32 +1378,44 @@
         };
 
         var tasksData = [];
-        var categoriesData = [];
 
-        CRM.api3("Sqltaskfield", "gettaskcategories").done(function(result) {
-          categoriesData = [];
-          Object.keys(result.values[0]).map(key => {
-            var category = result.values[0][key];
-            if (key) {
-              categoriesData.push({
-                value: key,
-                name: category
-              });
-            }
-          });
-          $scope.categoriesData = categoriesData;
+        CRM.api4("SqlTask", "get", {
+          select: ["category"],
+          groupBy: ["category"]
+        }).then(result => {
+          $scope.categoriesData = result
+            .filter(({category}) => category !== null)
+            .map(({category}) => ({
+              value: category,
+              name: category,
+            }));
+
           loaderService.setDataLoaded('task_categories_' + $scope.index);
           $scope.$apply();
         });
 
         $scope.loadTasks = function(callback) {
-          CRM.api3("Sqltaskfield", "getexecutiontasks", {
-            'is_show_disabled_tasks' : $scope.model['is_execute_disabled_tasks'],
-            'excluded_task_id' : $scope.taskId,
-          }).done(function(result) {
+          const onlyEnabled = $scope.model["is_execute_disabled_tasks"] !== "1";
+
+          CRM.api4("SqlTask", "get", {
+            select: ["name", "enabled"],
+            where: [
+              ["archive_date", "IS NULL"],
+              ["id", "<>", $scope.taskId],
+              ...(onlyEnabled ? [["enabled", "=", 1]] : []),
+            ],
+            orderBy: { "weight": "ASC", "id": "ASC" },
+          }).then(result => {
             tasksData = [];
+
             if (!result.is_error) {
-              $scope.tasksData = result.values[0];
+              $scope.tasksData = result.map(({ id, name, enabled }) => ({
+                name: `[${id}] ${name}`,
+                value: id,
+                icon: "sql-task-custom-toggle-icon " +
+                      (enabled ? "fa-toggle-on" : "fa-toggle-on fa-flip-horizontal"),
+              }));
+
               loaderService.setDataLoaded('task_tasks_' + $scope.index);
               $scope.$apply();
               callback();

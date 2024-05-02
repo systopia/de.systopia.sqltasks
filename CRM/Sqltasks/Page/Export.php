@@ -22,14 +22,27 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
    * @throws \CRM_Core_Exception
    */
   public function run() {
-    $taskId = CRM_Utils_Request::retrieve('id', 'Integer');
-    if ($taskId) {
-      $task = CRM_Sqltasks_Task::getTask($taskId);
-      $config = $task->exportConfiguration();
-      CRM_Utils_System::download(
-        preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->getAttribute('name')) . '.sqltask',
-        'application/json',
-        $config);
+    $task_id = CRM_Utils_Request::retrieve('id', 'Integer');
+
+    if ($task_id) {
+      $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
+
+      $task_data = $task->exportData([
+        'abort_on_error',
+        'config',
+        'category',
+        'description',
+        'input_required',
+        'last_modified',
+        'parallel_exec',
+        'run_permissions',
+        'scheduled',
+      ]);
+
+      $file_name = preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->name) . '.sqltask';
+      $file_content = json_encode($task_data, JSON_PRETTY_PRINT);
+
+      CRM_Utils_System::download($file_name, 'application/json', $file_content);
     }
   }
 

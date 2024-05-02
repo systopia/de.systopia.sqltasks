@@ -28,7 +28,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   protected $id;
   protected $name;
 
-  public function __construct(CRM_Sqltasks_Task $task, array $config, $id, $name) {
+  public function __construct(CRM_Sqltasks_BAO_SqlTask $task, array $config, $id, $name) {
     parent::__construct($task, $config);
     $this->id   = $id;
     $this->name = $name;

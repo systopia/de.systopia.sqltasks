@@ -7,13 +7,13 @@
  */
 class CRM_Sqltasks_Action_RunPHPTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_action_php');
     parent::tearDown();
   }
 
   public function testRunPHP() {
-    $data = [
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -29,7 +29,8 @@ class CRM_Sqltasks_Action_RunPHPTest extends CRM_Sqltasks_Action_AbstractActionT
         ],
       ]
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Run PHP Code' executed in", 'Run PHP action should have succeeded');
     $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(1) FROM tmp_test_action_php");

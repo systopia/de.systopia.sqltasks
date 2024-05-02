@@ -82,9 +82,26 @@
                             </label>
                         </div>
                         <div class="content">
+                            <div>
+                                <span ng-if="dispatcherFrequency == 'hourly'">
+                                    <i class="crm-i fa-clock-o" />
+                                    {{ts('Currently triggered hourly')}}
+                                </span>
+
+                                <span ng-if="dispatcherFrequency == 'daily'">
+                                    <i class="crm-i fa-calendar" />
+                                    {{ts('Currently triggered daily')}}
+                                </span>
+
+                                <span ng-if="dispatcherFrequency == 'disabled'">
+                                    <i class="crm-i fa-warning" style="color:red" />
+                                    {{ts('Dispatcher currently disabled')}}
+                                </span>
+                            </div>
+
                             <select name="scheduled" id="scheduled" ng-change="onSchedulingOptionChange()"
                                 class="crm-form-select required" ng-model="taskOptions.scheduled">
-                                <option ng-repeat="(attribute, value) in schedulingOptions" value="{{attribute}}">{{value}}</option>
+                                <option ng-repeat="(value, label) in schedulingOptions" value="{{value}}">{{label}}</option>
                             </select>
                         </div>
                         <div class="clear"></div>

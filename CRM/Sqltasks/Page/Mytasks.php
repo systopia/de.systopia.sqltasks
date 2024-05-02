@@ -25,24 +25,20 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
   public function run() {
     CRM_Utils_System::setTitle(E::ts("Available SQL Tasks"));
 
-    // get the list of tasks
     $allowed_tasks = [];
-    $all_tasks = CRM_Sqltasks_Task::getAllTasks();
-    foreach ($all_tasks as $task) {
-      /** @var $task CRM_Sqltasks_Task */
 
-      // only list tasks that have permissions set
-      $run_permissions = $task->getAttribute('run_permissions');
-      if (!empty($run_permissions) && $task->allowedToRun() && !$task->isArchived()) {
-        $allowed_tasks[$task->getID()] = [
-          'id'              => $task->getID(),
-          'name'            => $task->getAttribute('name'),
-          'last_runtime'    => sprintf("%.3f", ($task->getAttribute('last_runtime') / 1000.0)),
-          'description'     => $task->getAttribute('description'),
-          'input_required'  => $task->getAttribute('input_required'),
-        ];
-      }
+    foreach (CRM_Sqltasks_BAO_SqlTask::generator() as $task) {
+      if (!$task->allowedToRun() || !is_null($task->archive_date)) continue;
+
+      $allowed_tasks[$task->id] = [
+        'id'              => $task->id,
+        'name'            => $task->name,
+        'last_runtime'    => sprintf("%.3f", ($task->last_runtime / 1000.0)),
+        'description'     => $task->description,
+        'input_required'  => $task->input_required,
+      ];
     }
+
     $this->assign('tasks', $allowed_tasks);
 
     CRM_Core_Resources::singleton()->addStyleFile('de.systopia.sqltasks', 'css/sqltasks.css');

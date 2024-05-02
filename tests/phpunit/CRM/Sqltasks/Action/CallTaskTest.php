@@ -7,7 +7,7 @@
  */
 class CRM_Sqltasks_Action_CallTaskTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_action_calltask');
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_test_action_calltask_called');
     parent::tearDown();
@@ -17,19 +17,23 @@ class CRM_Sqltasks_Action_CallTaskTest extends CRM_Sqltasks_Action_AbstractActio
     $data = [
       'name'     => 'calledTask',
       'enabled'  => 1,
-      'version'  => CRM_Sqltasks_Config_Format::CURRENT,
-      'actions'  => [
-        [
-          'type'    => 'CRM_Sqltasks_Action_RunSQL',
-          'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_calltask_called;
-                        CREATE TABLE tmp_test_action_calltask_called AS " . self::TEST_CONTACT_SQL,
+      'config' => [
+        'version'  => CRM_Sqltasks_Config_Format::CURRENT,
+        'actions'  => [
+          [
+            'type'    => 'CRM_Sqltasks_Action_RunSQL',
+            'enabled' => TRUE,
+            'script'  => "DROP TABLE IF EXISTS tmp_test_action_calltask_called;
+                          CREATE TABLE tmp_test_action_calltask_called AS " . self::TEST_CONTACT_SQL,
+          ],
         ],
-      ]
+      ],
     ];
-    $calledTask = new CRM_Sqltasks_Task(NULL, $data);
-    $calledTask->store();
-    $data = [
+
+    $calledTask = new CRM_Sqltasks_BAO_SqlTask($data);
+    $calledTask->save();
+
+    $config = [
       'version'  => CRM_Sqltasks_Config_Format::CURRENT,
       'actions'  => [
         [
@@ -41,14 +45,13 @@ class CRM_Sqltasks_Action_CallTaskTest extends CRM_Sqltasks_Action_AbstractActio
         [
           'type'       => 'CRM_Sqltasks_Action_CallTask',
           'enabled'    => TRUE,
-          'tasks'      => [
-            $calledTask->getID(),
-          ],
+          'tasks'      => [$calledTask->id],
           'categories' => [],
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains(
       "Executed task 'calledTask'",

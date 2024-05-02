@@ -8,7 +8,8 @@
  * @return array
  */
 function civicrm_api3_sqltask_deletetask($params) {
-  CRM_Sqltasks_Task::delete($params['id']);
+  $task = CRM_Sqltasks_BAO_SqlTask::findById($params['id']);
+  $task->delete();
 
   return civicrm_api3_create_success(['Task doesn\'t exist anymore.']);
 }

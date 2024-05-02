@@ -7,13 +7,13 @@
  */
 class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
-  public function tearDown() {
+  public function tearDown(): void {
     CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS tmp_return');
     parent::tearDown();
   }
 
   public function testReturnValue() {
-    $data = [
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -36,7 +36,8 @@ class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractAc
         ],
       ]
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Return Value' executed in", 'Return Value action should have succeeded');
 

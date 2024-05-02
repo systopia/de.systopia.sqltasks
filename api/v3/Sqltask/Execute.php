@@ -8,56 +8,46 @@
  * @return array
  */
 function civicrm_api3_sqltask_execute($params) {
-  $exec_params = [
-    'execution_id' => $params['execution_id'] ?? NULL,
-    'input_val'    => $params['input_val'] ?? NULL,
-    'log_to_file'  => $params['log_to_file'] ?? 0,
-  ];
+  $params['execution_id'] = $params['execution_id'] ?? NULL;
+  $params['input_val'] = $params['input_val'] ?? NULL;
+  $params['log_to_file'] = $params['log_to_file'] ?? 0;
 
-  // If task_id given run only this one task
-  if (!empty($params['id'])) {
-    $task_id = $params['id'];
-    $task = CRM_Sqltasks_Task::getTask($task_id);
+  if (empty($params['id'])) {
+    // Run all enabled tasks according to schedule
+    $results = CRM_Sqltasks_BAO_SqlTask::runDispatcher($params);
 
-    if (empty($task)) {
-      return civicrm_api3_create_error("Task(id=$task_id) does not exist.");
-    }
-
-    if ($task->isArchived()) {
-      return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not execute Task.");
-    }
-
-    if ($task->inputRequired() && empty($params['input_val'])) {
-      return civicrm_api3_create_error('Input value is required.');
-    }
-
-    if (!empty($params['check_permissions']) && !$task->allowedToRun()) {
-      return civicrm_api3_create_error("Insufficient permissions to run task [$task_id].");
-    }
-
-    if (!empty($params['async'])) {
-      $exec_result = $task->executeAsync($exec_params);
-    } else {
-      $exec_result = $task->execute($exec_params);
-    }
-
-    return civicrm_api3_create_success($exec_result);
-  }
-
-  // Run all enabled tasks according to schedule
-  $results = CRM_Sqltasks_Task::runDispatcher($exec_params);
-  $tasks = $results['tasks'];
-
-  if (!empty($params['log_to_file'])) {
     // Don't return logs if we're logging to file, return count instead
-    $tasks = count($tasks);
+    $tasks = empty($params['log_to_file']) ? $results['tasks'] : count($results['tasks']);
+
+    $dao = NULL;
+
+    return civicrm_api3_create_success($tasks, [], NULL, NULL, $dao, [
+      'summary' => $results['summary'],
+    ]);
   }
 
-  $dao = NULL;
+  $task_id = $params['id'];
+  $task = CRM_Sqltasks_BAO_SqlTask::findById($params['id']);
 
-  return civicrm_api3_create_success($tasks, [], NULL, NULL, $dao, [
-    'summary' => $results['summary'],
-  ]);
+  if (!is_null($task->archive_date)) {
+    return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not execute Task.");
+  }
+
+  if ($task->input_required && empty($params['input_val'])) {
+    return civicrm_api3_create_error('Input value is required.');
+  }
+
+  if (!empty($params['check_permissions']) && !$task->allowedToRun()) {
+    return civicrm_api3_create_error("Insufficient permissions to run task [$task_id].");
+  }
+
+  if (!empty($params['async'])) {
+    $result = $task->enqueue($params);
+  } else {
+    $result = $task->execute($params);
+  }
+
+  return civicrm_api3_create_success($result);
 }
 
 /**
