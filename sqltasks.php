@@ -109,8 +109,12 @@ function sqltasks_civicrm_tokens(&$tokens) {
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
  */
 function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
+
   if (is_array($cids) && !empty($tokens['sqltasks'])) {
     $files     = CRM_Sqltasks_Task::getAllFiles();
+    if (!$files) {
+      return;
+    }
     $last_file = CRM_Sqltasks_Task::getLastFile();
     foreach ($cids as $cid) {
       $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
