@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4;
+
 if (class_exists('CRM_Civirules_Action')) {
 
   /**
@@ -66,12 +68,15 @@ if (class_exists('CRM_Civirules_Action')) {
      */
     public function userFriendlyConditionParams() {
       $params = $this->getActionParameters();
-      if (!empty($params['sqltask_id'])) {
-        return CRM_Sqltasks_Task::getTask($params['sqltask_id'])
-          ->getAttribute('name');
-      }
 
-      return '';
+      if (empty($params['sqltask_id'])) return '';
+
+      return CRM_Sqltasks_DAO_SqlTask::getFieldValue(
+        'CRM_Sqltasks_DAO_SqlTask',
+        $params['sqltask_id'],
+        'name',
+        'id'
+      );
     }
 
   }

@@ -32,14 +32,17 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
   }
 
   protected function createAndExecuteTask(array $data, array $params = []) {
-    $task = new CRM_Sqltasks_Task(NULL, $data);
-    $task->store();
-    $this->log = $task->execute($params);
-    return $task;
+    $task = new CRM_Sqltasks_BAO_SqlTask();
+    $task->updateAttributes($data);
+
+    $taskExecutionResult = $task->execute($params);
+    $this->log = $taskExecutionResult['logs'];
+
+    return array_merge($taskExecutionResult, [ 'task' => $task ]);
   }
 
   protected function assertLogContains($expected, $message = '') {
-    $this->assertContains($expected, implode("\n", $this->log), $message);
+    $this->assertStringContainsString($expected, implode("\n", $this->log), $message);
   }
 
 }

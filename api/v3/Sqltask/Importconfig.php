@@ -9,35 +9,25 @@
  * @throws \Exception
  */
 function civicrm_api3_sqltask_importconfig($params) {
-  $task = CRM_Sqltasks_Task::getTask($params['id']);
+  $task_id = $params['id'];
+  $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
+
   if (empty($task)) {
-    return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
+    return civicrm_api3_create_error("Task(id=$task_id) does not exist.");
   }
 
-  if ($task->isArchived()) {
-    return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not import config.');
+  if (!is_null($task->archive_date)) {
+    return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not import config.");
   }
 
-  $data = NULL;
-  if (!empty($params['import_json_data']) && is_array($params['import_json_data'])) {
-    $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
+  if (empty($params['import_json_data']) || !is_array($params['import_json_data'])) {
+    return civicrm_api3_create_error(ts("Can't parse config file."));
   }
-  elseif (!empty($params['import_data'])) {
-    $data = CRM_Sqltasks_Config_Format::toLatest($params['import_data']);
-  }
-  else {
-    return civicrm_api3_create_error(ts('Can\'t parse config file.'));
-  }
-  foreach ($data as $key => $value) {
-    if ($key == 'config') {
-      $task->setConfiguration($value);
-    } else {
-      $task->setAttribute($key, $value);
-    }
-  }
-  $task->store();
 
-  return civicrm_api3_create_success($task->getPreparedTask());
+  $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
+  $task->updateAttributes($data);
+
+  return civicrm_api3_create_success($task->exportData());
 }
 
 /**

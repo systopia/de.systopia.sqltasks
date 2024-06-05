@@ -29,12 +29,14 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
         'The de.systopia.segmentation extension is not available.'
       );
     }
+
     $campaignId = $this->callApiSuccess('Campaign', 'create', array(
       'sequential' => 1,
       'name'       => 'testCampaign',
       'title'      => 'testCampaign',
     ))['id'];
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -60,7 +62,8 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains('Resolved 1 segment(s).', 'Should have resolved one segment');
     $this->assertLogContains("Assigned 1 new contacts to segment 'testSegmentationAssign'.", 'Should have assigned one contact to segment "testSegmentationAssign"');

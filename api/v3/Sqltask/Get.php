@@ -8,12 +8,9 @@
  * @return array
  */
 function civicrm_api3_sqltask_get($params) {
-  $task = CRM_Sqltasks_Task::getTask($params['id']);
-  if (empty($task)) {
-    return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
-  }
+  $task = CRM_Sqltasks_BAO_SqlTask::findById($params['id']);
 
-  return civicrm_api3_create_success($task->getPreparedTask());
+  return civicrm_api3_create_success($task->exportData());
 }
 
 /**

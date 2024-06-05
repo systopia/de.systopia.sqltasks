@@ -9,86 +9,49 @@
  * @throws \Exception
  */
 function civicrm_api3_sqltask_create($params) {
-  $taskParamNames = [
-    'name', 'description', 'category', 'scheduled', 'parallel_exec',
-    'input_required','enabled', 'weight', 'run_permissions', 'abort_on_error'
-  ];
+  $task = new CRM_Sqltasks_BAO_SqlTask();
 
-  $booleanParams = ['input_required', 'enabled', 'abort_on_error'];
-  foreach ($booleanParams as $booleanParam) {
-    if (array_key_exists($booleanParam, $params) && !($params[$booleanParam] == '1' || $params[$booleanParam] == '0')) {
-      return civicrm_api3_create_error('Field \'' . $booleanParam . '\' must be \'0\' or \'1\'.');
+  // Load task data if it is an update
+  if (!empty($params['id'])) {
+    $task->id = $params['id'];
+    $found = (bool) $task->find(TRUE);
+
+    if (!$found) {
+      return civicrm_api3_create_error("Task(id={$task->id}) does not exist.");
     }
+
+    unset($params['id']);
   }
 
-  $taskParams = [];
-
-  foreach ($taskParamNames as $name) {
-    if (array_key_exists($name, $params)) {
-      $taskParams[$name] = $params[$name];
-    }
+  // Reject update if task is archived
+  if (!is_null($task->archive_date)) {
+    return civicrm_api3_create_error(
+      "Task(id={$task->id}) is archived. " .
+      "Cannot update any fields. " .
+      "To update fields please unarchive the task."
+    );
   }
 
-  //validate config field:
-  if (isset($params['config']) && !is_array($params['config'])) {
-    return civicrm_api3_create_error('Config must be array type.');
+  // Prevent concurrent changes
+  if (
+    isset($params["last_modified"])
+    && isset($task->last_modified)
+    && strtotime($params["last_modified"]) !== strtotime($task->last_modified)
+  ) {
+    $last_modified_fmt = date('H:i:s, j M Y', strtotime($task->last_modified));
+
+    return civicrm_api3_create_error(
+      "This task has been modified by another user at $last_modified_fmt",
+      [ "error_type" => "CONCURRENT_CHANGES" ]
+    );
+
+    unset($params['last_modified']);
   }
 
-  if (isset($params['config'])) {
-    $requiredConfigFields = ['actions'];
-    $configNotExistFields = [];
-    foreach ($requiredConfigFields as $field) {
-      if (!isset($params['config'][$field])) {
-        $configNotExistFields[] = $field;
-      }
-    }
-  }
+  // Update the task
+  $task->updateAttributes($params);
 
-  if (!empty($configNotExistFields)) {
-    return civicrm_api3_create_error('Config error!. Required fields: ' . implode(', ', $configNotExistFields));
-  }
-
-  if (empty($params['id'])) {
-    $newParams = $taskParams;
-    if (array_key_exists('config', $params)) {
-      $newParams += $params['config'];
-    }
-    $task = new CRM_Sqltasks_Task($params['id'], $newParams);
-    $task->store();
-  } else {
-    $task = CRM_Sqltasks_Task::getTask($params['id']);
-    if (empty($task)) {
-      return civicrm_api3_create_error('Task(id=' . $params['id'] . ') does not exist.');
-    }
-
-    if ($task->isArchived()) {
-      return civicrm_api3_create_error('Task(id=' . $params['id'] . ') is archived. Can not update any fields. To update any fields please unarchive the task.');
-    }
-
-    // Compare last_modified timestamps to prevent unintended concurrent changes
-    if (
-      !empty($params["last_modified"])
-      && !empty($task->getAttribute("last_modified"))
-      && $params["last_modified"] !== $task->getAttribute("last_modified")
-    ) {
-      $lastModifiedFormatted = date("H:i:s, j M Y", strtotime($task->getAttribute("last_modified")));
-
-      return civicrm_api3_create_error(
-        "This task has been modified by another user at {$lastModifiedFormatted}",
-        [ "error_type" => "CONCURRENT_CHANGES" ]
-      );
-    }
-
-    foreach ($taskParams as $name => $value) {
-      $task->setAttribute($name, $value, TRUE);
-    }
-
-    if (isset($params['config'])) {
-      $task->setConfiguration($params['config'], TRUE);
-    }
-  }
-
-  return civicrm_api3_create_success($task->getPreparedTask());
+  return civicrm_api3_create_success($task->exportData());
 }
 
 /**
