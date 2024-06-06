@@ -20,11 +20,14 @@ function civicrm_api3_sqltask_importconfig($params) {
     return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not import config.");
   }
 
-  if (empty($params['import_json_data']) || !is_array($params['import_json_data'])) {
+  if (!empty($params['import_json_data']) && is_array($params['import_json_data'])) {
+    $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
+  } else if (!empty($params['import_data'])) {
+    $data = CRM_Sqltasks_Config_Format::toLatest($params['import_data']);
+  } else {
     return civicrm_api3_create_error(ts("Can't parse config file."));
   }
 
-  $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
   $task->updateAttributes($data);
 
   return civicrm_api3_create_success($task->exportData());
