@@ -7,7 +7,9 @@ return [
   'js' => [
     0 => 'ang/*.js',
   ],
-  'css' => [],
+  'css' => [
+    0 => 'css/sqlTaskGeneral.css',
+  ],
   'partials' => [
     0 => 'ang/configImport',
   ],

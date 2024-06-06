@@ -1,23 +1,34 @@
-<div id="crm-main-content-wrapper">
+<div class="crm-form-block">
+  <div class="sql-task__form-wrap">
     <h1 crm-page-title>{{ts('Delete Task') + ' "' + taskData.name + '"'}}</h1>
-    <h3>{{ts('Delete Task')}} <span ng-if="taskData">"{{taskData.name}}"</span></h3>
     <div>
+
+      <div class="sql-task-delete-page-content">
         <p ng-if="taskData">
-            {{ts('You are about to delete plugin')}} "{{taskData.name}}" [{{taskData.id}}]. {{ts('You should consider simply
-            disabling it, since all data
-            will be lost.')}}
+          {{ts('You are about to delete plugin')}} "{{taskData.name}}" [{{taskData.id}}]. {{ts('You should consider simply
+          disabling it, since all data
+          will be lost.')}}
         </p>
         <p ng-if="!taskData">
-            {{ts("Task doesn't exist or not created.")}}
+          {{ts("Task doesn't exist or not created.")}}
         </p>
-        <a class="button" href="javascript:;" ng-if="taskData" ng-click="onTaskDelete()">
-            <span>
-                <span class="icon ui-icon-trash css_left"></span>
-                <span>{{ts('Delete')}}</span>
-            </span>
+      </div>
+
+      <div class="sql-task__button-wrap">
+        <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
+           ng-click="onTaskDelete()"
+           href="javascript:;" title="{{ts('Delete')}}">
+          <span class="crm-i fa-trash"></span>
+          <span>{{ts('Delete')}}</span>
         </a>
-        <a class="button" href="javascript:;" ng-click="onBackPress()">
-            <span>{{ts('Back')}}</span>
+
+        <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
+           ng-click="onBackPress()"
+           href="javascript:;" title="{{ts('Back')}}">
+          <span class="crm-i fa-list"></span>
+          <span>{{ts('Back')}}</span>
         </a>
+      </div>
     </div>
+  </div>
 </div>

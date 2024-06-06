@@ -14,6 +14,9 @@ class CRM_Sqltasks_Page_Templates extends CRM_Core_Page {
 
     $this->assign("defaultTemplateId", Civi::settings()->get("sqltasks_default_template"));
 
+    CRM_Core_Resources::singleton()->addStyleFile('de.systopia.sqltasks', 'css/sqlTaskGeneral.css');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.sqltasks', 'js/AddBodyClass.js', 1000, 'html-header');
+
     parent::run();
   }
 

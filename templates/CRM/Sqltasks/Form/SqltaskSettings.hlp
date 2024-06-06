@@ -1,0 +1,9 @@
+{htxt id='sqltasks_is_dispatcher_disabled'}
+    <p>{ts domain="de.systopia.sqltasks"}Is SQL Task Dispatcher disabled?{/ts}</p>
+    <p>{ts domain="de.systopia.sqltasks"}If the SQL Task Dispatcher is disabled, scheduled tasks will not be executed when a cronjob runs. Tasks that are started manually, via the API or by other extensions may still be executed.{/ts}</p>
+{/htxt}
+
+{htxt id='sqltasks_max_fails_number'}
+    <p>{ts domain="de.systopia.sqltasks"}Maximum number of fails before dispatcher is disabled</p>{/ts}
+    <p>{ts domain="de.systopia.sqltasks"}The maximum number of tasks that can encounter an error during execution via dispatcher. If this number is reached, task execution will be stopped and the dispatcher will be disabled until it is manually re-enabled. A value of 0 (default) means dispatcher execution will continue regardless of the number of errors.{/ts}</p>
+{/htxt}

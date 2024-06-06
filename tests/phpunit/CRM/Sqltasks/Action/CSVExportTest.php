@@ -9,7 +9,8 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
 
   public function testFileExport() {
     $tmp = tempnam(sys_get_temp_dir(), 'csv');
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -38,7 +39,8 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains('Written 1 records to', 'Records should have been written to CSV');
     $this->assertLogContains("Action 'CSV Export' executed in", 'CSV Export action should have succeeded');
@@ -52,7 +54,7 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
       $outputFilename = tempnam(sys_get_temp_dir(), "csv-$mode-");
       $tmpTable = "tmp_test_action_csvexport";
 
-      $taskConfig = [
+      $config = [
         "version" => CRM_Sqltasks_Config_Format::CURRENT,
         "actions" => [
           [
@@ -88,7 +90,7 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ];
 
-      $this->createAndExecuteTask($taskConfig);
+      $this->createAndExecuteTask([ 'config' => $config ]);
 
       $this->assertFileEquals(
         __DIR__ . "/../../../../fixtures/csvexport_enclosure_${mode}.csv",

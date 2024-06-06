@@ -1,0 +1,100 @@
+/*
+    General styles for all sqltask pages
+*/
+
+body.sql-task-body-page-wrapper #page-title {
+    margin: 0 0 0 15px !important;
+}
+
+body.sql-task-body-page-wrapper #crm-main-content-wrapper {
+    margin-bottom: 300px !important;
+}
+
+body.sql-task-body-page-wrapper .crm-container .crm-accordion-header {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  box-shadow: none !important;
+}
+
+body.sql-task-body-page-wrapper .crm-container .crm-accordion-body {
+  border: 1px solid #e8eef0;
+  box-shadow: none !important;
+}
+
+body.sql-task-body-page-wrapper, body.sql-task-body-page-wrapper.page-civicrm, body.sql-task-body-page-wrapper#page {
+    background: white !important;
+}
+
+body.sql-task-body-page-wrapper #header,
+body.sql-task-body-page-wrapper #breadcrumb,
+body.sql-task-body-page-wrapper #branding,
+body.sql-task-body-page-wrapper #main-content,
+body.sql-task-body-page-wrapper .tabs,
+body.sql-task-body-page-wrapper #content > .section .tabs,
+body.sql-task-body-page-wrapper .column.sidebar,
+body.sql-task-body-page-wrapper #sidebar-first,
+body.sql-task-body-page-wrapper #branding,
+body.sql-task-body-page-wrapper #toolbar,
+body.sql-task-body-page-wrapper #crm-main-content-wrapper > .messages.status  {
+    display: none !important;
+}
+
+body.sql-task-body-page-wrapper {
+    background: white !important;
+}
+
+body.sql-task-body-page-wrapper #main, #content {
+    width: 100% !important;
+    margin: 10px 0 0 0!important;
+}
+
+body.sql-task-body-page-wrapper #page {
+    margin-right : 0 !important;
+    margin-left : 0 !important;
+    padding : 0 !important;
+}
+body.sql-task-body-page-wrapper.crm-menubar-visible.crm-menubar-over-cms-menu.crm-menubar-wrapped {
+    padding-top: 0 !important;
+}
+
+.page-civicrm #crm-container #crm-main-content-wrapper {
+    background: #ffffff !important;
+}
+
+.crm-container .crm-form-block {
+    background: white !important;
+}
+
+body.sql-task-body-page-wrapper .sql-task__button {
+  float: none !important;
+  margin: 0 !important;
+}
+
+body.sql-task-body-page-wrapper .sql-task__button-wrap {
+  padding: 10px 0;
+  gap: 10px;
+  display: flex;
+}
+
+body.sql-task-body-page-wrapper .crm-form-block {
+  box-shadow: none !important;
+  border: 1px solid #e8eef0;
+}
+
+body.sql-task-body-page-wrapper .dataTable {
+  box-shadow: none !important;
+  border: 1px solid #e8eef0;
+}
+
+body.sql-task-body-page-wrapper h3::before {
+  box-shadow: none !important;
+}
+
+body.sql-task-body-page-wrapper .sql-task__form-wrap {
+  padding: 10px;
+}
+
+body.sql-task-body-page-wrapper .sql-task-delete-page-content {
+  padding-top: 30px;
+  padding-bottom: 60px;
+}

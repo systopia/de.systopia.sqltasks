@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Sqltasks</base>
+  <class>SqltasksExecution</class>
+  <name>civicrm_sqltasks_execution</name>
+  <comment>SQL Task execution history</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique SqltasksExecution ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>sqltask_id</name>
+    <type>int unsigned</type>
+    <comment>FK to SQL Task</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <foreignKey>
+    <name>sqltask_id</name>
+    <table>civicrm_sqltasks</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>start_date</name>
+    <title>Start Date</title>
+    <type>datetime</type>
+    <required>true</required>
+    <comment>Start date of execution</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>end_date</name>
+    <title>End Date</title>
+    <type>datetime</type>
+    <required>false</required>
+    <comment>End date of execution</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>runtime</name>
+    <title>Runtime (ms)</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Task runtime in milliseconds</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>input</name>
+    <title>Input</title>
+    <type>longtext</type>
+    <required>false</required>
+    <comment>Task input</comment>
+    <html>
+      <type>TextArea</type>
+    </html>
+  </field>
+
+  <field>
+    <name>log</name>
+    <title>Log</title>
+    <type>longtext</type>
+    <required>false</required>
+    <comment>Task result log</comment>
+    <html>
+      <type>TextArea</type>
+    </html>
+  </field>
+
+  <field>
+    <name>files</name>
+    <title>Files</title>
+    <type>longtext</type>
+    <required>false</required>
+    <comment>Task result files (JSON)</comment>
+    <html>
+      <type>TextArea</type>
+    </html>
+  </field>
+
+  <field>
+    <name>error_count</name>
+    <title>Error Count</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Task execution error count</comment>
+    <html>
+      <html>
+        <type>Number</type>
+      </html>
+    </html>
+  </field>
+
+  <field>
+    <name>created_id</name>
+    <title>Created ID</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Contact ID of task executor</comment>
+    <html>
+      <label>Created By</label>
+      <html>
+        <type>Number</type>
+      </html>
+    </html>
+  </field>
+  <foreignKey>
+    <name>created_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+
+</table>

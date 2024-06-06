@@ -11,7 +11,7 @@
     <div class="content">
         <select ng-model="componentModel" multiple name="{{fieldId}}" id="{{fieldId}}"
                 class="crm-form-select pixelInput" ng-required="isRequired">
-            <option ng-repeat="option in optionsArray" value="{{option.value}}">{{option.name}}</option>
+            <option ng-attr-data-description="{{option['description']}}" ng-attr-data-color="{{option['color']}}" ng-attr-data-icon="{{option['icon']}}"  ng-repeat="option in optionsArray" value="{{option.value}}">{{option.name}}</option>
         </select>
     </div>
     <div class="clear"></div>

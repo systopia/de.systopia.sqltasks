@@ -112,41 +112,53 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->addArchiveDateColumn();
     $this->addAbortOnErrorColumn();
     $this->addLastModifiedColumn();
-    $tasks = CRM_Sqltasks_Task::getAllTasks();
-    foreach ($tasks as $task) {
-      $scheduled = $task->getAttribute('scheduled');
-      $scheduled_vars = array();
+
+    foreach (CRM_Sqltasks_BAO_SqlTask::generator() as $task) {
+      $scheduled = $task->scheduled;
+      $scheduled_vars = [];
+
       switch ($scheduled) {
         case 'hourly':
-          $scheduled_vars = array('', '', '', '', '0');
+          $scheduled_vars = ['', '', '', '', '0'];
           break;
+
         case 'daily':
-          $scheduled_vars = array('', '', '', '0', '0');
+          $scheduled_vars = ['', '', '', '0', '0'];
           break;
+
         case 'weekly':
-          $scheduled_vars = array('', '1', '', '0', '0');
+          $scheduled_vars = ['', '1', '', '0', '0'];
           break;
+
         case 'monthly':
-          $scheduled_vars = array('', '', '1', '0', '0');
+          $scheduled_vars = ['', '', '1', '0', '0'];
           break;
+
         case 'yearly':
-          $scheduled_vars = array('1', '', '1', '0', '0');
+          $scheduled_vars = ['1', '', '1', '0', '0'];
           break;
+
         case 'always':
         default:
-          $scheduled_vars = array('', '', '', '', '');
+          $scheduled_vars = ['', '', '', '', ''];
           break;
       }
-      [$scheduled_month, $scheduled_weekday, $scheduled_day, $scheduled_hour, $scheduled_minute] = $scheduled_vars;
 
-      $config = $task->getConfiguration();
-      $config['scheduled_month']   = CRM_Utils_Array::value('scheduled_month',   $config, $scheduled_month);
-      $config['scheduled_weekday'] = CRM_Utils_Array::value('scheduled_weekday', $config, $scheduled_weekday);
-      $config['scheduled_day']     = CRM_Utils_Array::value('scheduled_day',     $config, $scheduled_day);
-      $config['scheduled_hour']    = CRM_Utils_Array::value('scheduled_hour',    $config, $scheduled_hour);
-      $config['scheduled_minute']  = CRM_Utils_Array::value('scheduled_minute',  $config, $scheduled_minute);
-      $task->setConfiguration($config);
-      $task->store();
+      $scheduled_keys = [
+        'scheduled_month',
+        'scheduled_weekday',
+        'scheduled_day',
+        'scheduled_hour',
+        'scheduled_minute',
+      ];
+
+      $config = json_decode($task->config, TRUE);
+
+      foreach ($schedules_keys as $i => $key) {
+        $config[$key] = CRM_Utils_Array::value($key, $config, $scheduled_vars[$i]);
+      }
+
+      $task->updateAttributes([ 'config' => $config ]);
     }
 
     return TRUE;
@@ -232,24 +244,44 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
   public function upgrade_0100() {
     $this->addLastModifiedColumn();
     $this->ctx->log->info('Adding default values for parallel_exec, input_required');
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `parallel_exec` = 0 WHERE `parallel_exec` IS NULL");
-    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `parallel_exec` `parallel_exec` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'should this task be executed in parallel?'");
-    CRM_Core_DAO::executeQuery("UPDATE `civicrm_sqltasks` SET `input_required` = 0 WHERE `input_required` IS NULL");
-    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `input_required` `input_required` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'should have a mandatory form field?'");
-    // we need task files without appended scripts while migrating
-    $originalAppendSetting = Civi::settings()->get('sqltask_export_append_scripts');
-    Civi::settings()->set('sqltask_export_append_scripts', FALSE);
-    $this->ctx->log->info('Upgrading task configuration to latest format');
-    foreach (CRM_Sqltasks_Task::getAllTasks() as $task) {
 
-      $task->setConfiguration(
-        CRM_Sqltasks_Config_Format::toLatest(
-          json_decode($task->exportConfiguration(), TRUE)
-        )['config'],
-        TRUE
-      );
+    CRM_Core_DAO::executeQuery("
+      UPDATE `civicrm_sqltasks`
+      SET `parallel_exec` = 0
+      WHERE `parallel_exec` IS NULL
+    ");
+
+    CRM_Core_DAO::executeQuery("
+      ALTER TABLE `civicrm_sqltasks`
+      CHANGE COLUMN `parallel_exec`
+        `parallel_exec` TINYINT(4)
+        NOT NULL
+        DEFAULT 0
+        COMMENT 'should this task be executed in parallel?'
+    ");
+
+    CRM_Core_DAO::executeQuery("
+      UPDATE `civicrm_sqltasks`
+      SET `input_required` = 0
+      WHERE `input_required` IS NULL
+    ");
+
+    CRM_Core_DAO::executeQuery("
+      ALTER TABLE `civicrm_sqltasks`
+      CHANGE COLUMN `input_required`
+        `input_required` TINYINT(4)
+        NOT NULL
+        DEFAULT 0
+        COMMENT 'should have a mandatory form field?'
+    ");
+
+    $this->ctx->log->info('Upgrading task configuration to latest format');
+
+    foreach (CRM_Sqltasks_BAO_SqlTask::generator() as $task) {
+      $config = CRM_Sqltasks_Config_Format::toLatest(json_decode($task->config, TRUE))['config'];
+      $task->updateAttributes([ 'config' => $config ]);
     }
-    Civi::settings()->set('sqltask_export_append_scripts', $originalAppendSetting);
+
     return TRUE;
   }
 
@@ -408,7 +440,7 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return bool
    * @throws \Exception
    */
-  public function upgrade_0200 () {
+  public function upgrade_0200() {
     $this->createActionTemplatesTable();
     return true;
   }
@@ -431,4 +463,55 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     CRM_Core_Invoke::rebuildMenuAndCaches();
     return TRUE;
   }
+
+  /**
+   * @return bool
+   * @throws \Exception
+   */
+  public function upgrade_0250() {
+    $this->executeSqlFile('sql/civicrm_sqltasks_execution.sql');
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
+    return true;
+  }
+
+    /**
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0300() {
+        $this->ctx->log->info('Clear cache to activate new settings.');
+        CRM_Core_Invoke::rebuildMenuAndCaches();
+        return TRUE;
+    }
+
+    /**
+     * Update logging triggers to apply log exclusions
+     *
+     * @return true
+     */
+    public function upgrade_0310() {
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+      return TRUE;
+    }
+
+    /**
+     * Make column `civicrm_sqltasks_execution.start_date` nullable
+     *
+     * @return true
+     */
+    public function upgrade_0320() {
+      $this->ctx->log->info("Make column `civicrm_sqltasks_execution.start_date` nullable");
+
+      CRM_Core_DAO::executeQuery("
+        ALTER TABLE `civicrm_sqltasks_execution`
+        MODIFY `start_date` datetime COMMENT 'Start date of execution'
+      ");
+
+      $logging = new CRM_Logging_Schema();
+      $logging->fixSchemaDifferences();
+      return TRUE;
+    }
+
 }

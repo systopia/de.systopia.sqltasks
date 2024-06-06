@@ -9,5 +9,5 @@
  * @throws \Exception
  */
 function civicrm_api3_sqltaskfield_getschedulingoptions($params) {
-    return civicrm_api3_create_success([CRM_Sqltasks_Task::getSchedulingOptions()]);
+    return civicrm_api3_create_success(CRM_Sqltasks_BAO_SqlTask::getSchedulingOptions());
 }

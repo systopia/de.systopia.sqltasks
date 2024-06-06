@@ -1,5 +1,6 @@
 <?php
 
+use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 if (class_exists('CRM_CivirulesActions_Form_Form')) {
@@ -16,11 +17,16 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
      * @access protected
      */
     protected function getSQLTasks() {
-      $sqlTasks = CRM_Sqltasks_Task::getAllTasks();
+      $sqlTasks = Api4\SqlTask::get()
+        ->addSelect('id', 'name')
+        ->addOrderBy('weight', 'ASC')
+        ->addOrderBy('id', 'ASC')
+        ->execute();
+
       $options = [];
 
-      foreach ($sqlTasks as $id => $sqlTask) {
-        $options[$sqlTask->getID()] = '[' . $sqlTask->getID() . '] ' . $sqlTask->getAttribute('name');
+      foreach ($sqlTasks as $sqlTask) {
+        $options[$sqlTask['id']] = '[' . $sqlTask['id'] . '] ' . $sqlTask['name'];
       }
 
       return $options;

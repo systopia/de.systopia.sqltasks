@@ -18,11 +18,79 @@
     }
   ]);
 
+  angular.module(moduleName).service('warningMessageService', function() {
+    this.doAction = function(action, context, actionData, continueCallback, cancelCallback) {
+      CRM.api3('Sqltask', 'get_warning_message', {
+        "action": action,
+        "context": context,
+        "action_data": actionData
+      }).then(function(result) {
+        if (result.is_error === 1) {
+          CRM.status('Error via trying to do "' + action + '"', 'error');
+          console.error('Sqltask->get_warning_message error:');
+          console.error(result.error_message);
+        } else {
+          if (result['values']['isAllowDoAction']) {
+            continueCallback();
+          } else {
+            showWarningModalWindow(result, continueCallback, cancelCallback);
+          }
+        }
+      }, function(error) {
+        console.error('Sqltask->get_warning_message error:');
+        console.error(error);
+      });
+    }
+
+    var showWarningModalWindow = function(result, continueCallback, cancelCallback) {
+      var warningWindow = result['values']['warningWindow'];
+      var buttonSettings = [
+        {
+          text: warningWindow['noButtonText'],
+          icon: warningWindow['noButtonIcon'],
+          class: warningWindow['noButtonClasses'],
+          click: function () {
+            cancelCallback();
+            $(this).dialog("close");
+          }
+        }
+      ];
+      if (warningWindow['isShowYesButton']) {
+        buttonSettings.push({
+          text: warningWindow['yesButtonText'],
+          icon: warningWindow['yesButtonIcon'],
+          class: warningWindow['yesButtonClasses'],
+          click: function () {
+            continueCallback();
+            $(this).dialog("close");
+          }
+        })
+      }
+
+      CRM.confirm({
+        title: warningWindow['title'],
+        message: warningWindow['message'],
+        options: {yes: warningWindow['yesButtonText'], no: warningWindow['noButtonText']},
+        open: function(event, ui) {
+          //hide 'close' button, because cannot run 'cancelCallback' when user click on 'close' button
+          $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+        },
+      }).dialog("option", "buttons", buttonSettings);
+    };
+  });
+
   angular
     .module(moduleName)
-    .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout) {
+    .controller("sqlTaskManagerCtrl", function($scope, $location, highlightTaskId, $timeout, warningMessageService) {
+      //to add ability to use styles only for this page
+      setTimeout(function() {
+        CRM.$('body').addClass('sql-task-body-page-wrapper');
+      }, 0);
+
       $scope.url = CRM.url;
+      $scope.infoMessages = [];
       $scope.taskIdWithOpenPanel = null;
+      $scope.$location = $location;
       $scope.tasks = [];
       $scope.displayTasks = [];
       $scope.previousTaskOrder = [];
@@ -31,7 +99,6 @@
       $scope.getNumberFromString = function(stringValue) {return Number(stringValue);};
       $scope.showPanelForTaskId = function(taskId) {$scope.taskIdWithOpenPanel = taskId;};
       $scope.ts = CRM.ts();
-      $scope.dispatcher_frequency = null;
       $scope.resourceBaseUrl = CRM.config.resourceBase;
       $scope.tasksDisplayPreferences = {
         'isShowArchivedTask' : '0',
@@ -40,22 +107,74 @@
       };
       $scope.templateOptions = [];
       $scope.selectTemplateModel = { templateId: undefined };
+      $scope.getInfoMessages = function() {
+        CRM.api3('Sqltask', 'get_info_messages').then(function(result) {
+          $scope.infoMessages = result.values;
+          $scope.$apply();
+        }, function(error) {
+          console.error('Sqltask.get_info_messages error: error');
+          console.error(error);
+        });
+      };
 
       getAllTasks();
       getAllTemplates();
       getDefaultTemplate();
-      getCurrentDispatcherFrequency();
+      $scope.getInfoMessages();
 
       function getAllTasks() {
         $scope.isTasksLoading = true;
-        CRM.api3("Sqltask", "getalltasks").done(function(result) {
-          $scope.tasks = result.values;
+
+        CRM.api4("SqlTask", "get", {
+          select: ["*"],
+          orderBy: { "weight": "ASC" },
+        }).then(tasks => {
+          $scope.tasks = tasks.map(formatTaskData);
           $scope.redrawTaskList();
           $scope.updatePreviousTaskOrder();
           $scope.isTasksLoading = false;
           $scope.$apply();
           $scope.handleHighlightTask(highlightTaskId);
         });
+      }
+
+      function formatTaskData(task) {
+        const desc = task.description ?? "";
+        const lastExec = task.last_execution ?? "never";
+
+        return {
+          ...task,
+          is_archived: task.archive_date !== null,
+          last_executed: lastExec,
+          last_runtime: renderDuration(task.last_runtime),
+          schedule_label: mapToScheduleLabel(task.scheduled),
+          short_desc: desc.length > 64 ? `${desc.substring(0, 64)}...` : desc,
+        };
+      }
+
+      function mapToScheduleLabel(scheduled) {
+        switch (scheduled) {
+          case "always": return "always";
+          case "hourly": return "every hour";
+          case "daily": return "every day (after midnight)";
+          case "weekly": return "every week";
+          case "monthly": return "every month";
+          case "yearly": return "annually";
+          default: return "never";
+        }
+      }
+
+      function renderDuration(milliseconds) {
+        if (milliseconds === null) return "n/a";
+
+        if (milliseconds < 60e3) {
+          const seconds = (milliseconds / 1000).toFixed(3);
+          return `${seconds}s`;
+        }
+
+        const minutes = Math.floor(milliseconds / 60e3);
+        const seconds = Math.floor((milliseconds % 60e3) / 1000).toString(10).padStart(2, "0");
+        return `${minutes}:${seconds} min`;
       }
 
       function getAllTemplates () {
@@ -102,19 +221,19 @@
 
       $scope.getDisplayedTasks = function() {
         return $scope.tasks.filter(function(task) {
-          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived == 1) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask === '1' && task.is_archived) {
             return true;
           }
 
-          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled == 1) {
+          if ($scope.tasksDisplayPreferences.isShowEnabledTask === '1' && task.enabled) {
             return true;
           }
 
-          if (!($scope.tasksDisplayPreferences.isShowArchivedTask === '1')) {
-            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0 && task.is_archived != 1) {
+          if ($scope.tasksDisplayPreferences.isShowArchivedTask !== '1') {
+            if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && !task.enabled && !task.is_archived) {
               return true;
             }
-          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && task.enabled == 0) {
+          } else if ($scope.tasksDisplayPreferences.isShowDisabledTask === '1' && !task.enabled) {
             return true;
           }
 
@@ -128,7 +247,7 @@
 
       $scope.updateTaskData = function(taskId, taskData) {
         var indexTasks = $scope.tasks.findIndex(task => task.id === taskId);
-        $scope.tasks[indexTasks] = taskData;
+        $scope.tasks[indexTasks] = formatTaskData(taskData);
         $scope.redrawTaskList();
         $scope.$apply();
       };
@@ -180,7 +299,7 @@
         scroll: true,
         update: $scope.updatePreviousTaskOrder,
         stop: function(event, helper) {
-          var movedTaskId = helper.item.context.getAttribute("data-task-id");
+          var movedTaskId = parseInt(helper.item.context.getAttribute("data-task-id"));
           var moveToTaskId = $scope.previousTaskOrder[$scope.displayTasks.findIndex(task => task.id === movedTaskId)];
           $scope.applySortingTasks(movedTaskId, moveToTaskId);
         }
@@ -226,19 +345,34 @@
       };
 
       $scope.onToggleEnablePress = function(taskId, value) {
-        CRM.api3("Sqltask", "create", {
-          id: taskId,
-          enabled: value
-        }).done(function(result) {
-          var isEnabling = value === 1;
-          if (result.values && !result.is_error) {
-            CRM.alert(ts('Task has successfully ' + (isEnabling ? 'enabled' : 'disabled')), ts((isEnabling ? 'Enabling' : 'Disabling') + ' task'), "success");
-            $scope.updateTaskData(taskId, result.values);
-          } else {
-            CRM.alert(result.error_message, ts('Error ' + (isEnabling ? 'enabling' : 'disabling' + ' task'), "error"));
-          }
-        });
+        var action = value === 1 ? 'enableTask' : 'disableTask';
+        warningMessageService.doAction(action,'sqlTaskManager',{'taskId': taskId}, function () {
+          $scope.onToggleEnablePressApiCall(taskId, value);
+        },
+        function () {});
       };
+
+      $scope.onToggleEnablePressApiCall = function(taskId, value) {
+        CRM.api4("SqlTask", "update", {
+          reload: true,
+          values: { "enabled": value },
+          where: [["id", "=", taskId]],
+        }).then((results) => {
+          $scope.updateTaskData(taskId, results[0]);
+
+          CRM.alert(
+            ts(`Task has successfully been ${value ? "enabled" : "disabled"}`),
+            ts(`${value ? "Enabled" : "Disabled"} task`),
+            "success",
+          );
+        }).catch((error) => {
+          CRM.alert(
+            error?.error_message ?? "",
+            ts(`Error ${value ? "enabling" : "disabling"} task`),
+            "error",
+          );
+        });
+      }
 
       $scope.onUnarchivePress = function(taskId) {
         CRM.api3("Sqltask", "unarchive", {id: taskId}).done(function(result) {
@@ -251,7 +385,7 @@
         });
       };
 
-      $scope.onArchivePress = function(taskId) {
+      $scope.onArchivePressApiCall = function(taskId) {
         CRM.api3("Sqltask", "archive", {id: taskId}).done(function(result) {
           if (result.values && !result.is_error) {
             CRM.alert(ts('Task was successfully archived'), ts("Archiving task"), "success");
@@ -262,8 +396,34 @@
         });
       };
 
-      $scope.onDeletePress = function(taskId) {
+      $scope.onArchivePress = function(taskId) {
+        warningMessageService.doAction('archiveTask','sqlTaskManager',{'taskId': taskId}, function () {
+            $scope.onArchivePressApiCall(taskId);
+          },
+          function () {});
+      };
+
+      $scope.showWhereTaskIsUsed = function(taskId) {
+        warningMessageService.doAction('showWhereTaskIsUsed','sqlTaskManager',
+          {'taskId': taskId},
+          function () {},
+          function () {});
+      };
+
+      $scope.onDeletePressRedirect = function(taskId) {
         $location.path("/sqltasks/delete/" + taskId);
+        $scope.$apply();
+      };
+
+      $scope.onDeletePress = function(taskId) {
+        warningMessageService.doAction('deleteTask','sqlTaskManager',{'taskId': taskId}, function () {
+            $scope.onDeletePressRedirect(taskId);
+          },
+          function () {});
+      };
+
+      $scope.onExecutePress = function(taskId) {
+        $location.path("/sqltasks/run/" + taskId);
       };
 
       $scope.onExecutePress = function(taskId) {
@@ -273,41 +433,6 @@
       $scope.addNewTask = function () {
         $location.url(`/sqltasks/configure/0?template=${$scope.selectTemplateModel.templateId}`);
       };
-
-      function getCurrentDispatcherFrequency() {
-        CRM.api3("Job", "get", {
-          sequential: 1,
-          api_entity: "Sqltask",
-          api_action: "execute",
-          is_active: 1
-        }).done(function(result) {
-          var jobs = result.values;
-          if (jobs.length > 0) {
-            jobs.forEach(job => {
-              switch (job.run_frequency) {
-                case "Always":
-                  $scope.dispatcher_frequency = "Always";
-                  break;
-                case "Hourly":
-                  if ($scope.dispatcher_frequency === null || $scope.dispatcher_frequency === "Daily") {
-                    $scope.dispatcher_frequency = "Hourly";
-                  }
-                  break;
-                case "Daily":
-                  if ($scope.dispatcher_frequency === null) {
-                    $scope.dispatcher_frequency = "Daily";
-                  }
-                  break;
-                default:
-                  console.log(`Unexpected run frequency: ${job.run_frequency}`);
-                  break;
-              }
-            });
-            $scope.$apply();
-          }
-        });
-      }
-
     });
 
   angular.module(moduleName).directive("select2", () => ({

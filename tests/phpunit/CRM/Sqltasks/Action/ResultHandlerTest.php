@@ -9,7 +9,8 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
 
   public function testSuccessHandler() {
     $mailUtils = new CiviMailUtils($this, TRUE);
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -44,7 +45,8 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Create Activity' executed in", 'Create Activity action should have succeeded');
     $mailUtils->checkMailLog([
@@ -55,8 +57,9 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
 
   public function testErrorHandler() {
     $mailUtils = new CiviMailUtils($this, TRUE);
-    // contains invalid activity_activity_type_id, should cause error
-    $data = [
+
+    // Contains invalid activity_activity_type_id, should cause error
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -91,7 +94,8 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Error in action 'Create Activity'", 'Create Activity action should have failed');
     $mailUtils->checkMailLog([

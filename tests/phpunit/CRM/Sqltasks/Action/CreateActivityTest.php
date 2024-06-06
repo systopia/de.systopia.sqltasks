@@ -36,7 +36,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
   }
 
   public function testCreateActivity() {
-    $data = [
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -65,7 +65,8 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Create Activity' executed in", 'Create Activity action should have succeeded');
     $activityCount = $this->callApiSuccess('Phone', 'getcount', [
@@ -123,7 +124,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         ],
       ];
 
-      $this->createAndExecuteTask($config);
+      $this->createAndExecuteTask([ 'config' => $config ]);
 
       $activityResult = $this->callApiSuccess('Activity', 'getsingle', [
         'subject' => $activitySubject,
@@ -212,7 +213,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         ],
       ];
 
-      $this->createAndExecuteTask($config);
+      $this->createAndExecuteTask([ 'config' => $config ]);
 
       $queryResult = CRM_Core_DAO::executeQuery(
         "SELECT `sqltask_activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"

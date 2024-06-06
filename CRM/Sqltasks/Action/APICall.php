@@ -289,8 +289,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    *
    */
   protected function reportError() {
-    $this->task->incrementErrorCounter();
-    $this->task->setErrorStatus();
+    $this->context['execution']->reportError();
   }
 
 }

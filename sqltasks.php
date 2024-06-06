@@ -16,6 +16,7 @@
 require_once 'sqltasks.civix.php';
 require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Implements hook_civicrm_config().
@@ -80,6 +81,33 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
   _sqltasks_add_admin_items($menu, 'Administer/System Settings');
   _sqltasks_add_admin_items($menu, 'Administer/automation');
 
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', array(
+    'label'      => E::ts('Templates'),
+    'name'       => 'templates',
+    'url'        => 'civicrm/sqltasks/templates',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', [
+    'label'      => E::ts('Execution Logs'),
+    'name'       => 'sqltasks_execution_list',
+    'url'        => 'civicrm/sqltasks-execution/list',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ]);
+
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', [
+    'label'      => E::ts('SQL Task Settings'),
+    'name'       => 'sqltasks_settings',
+    'url'        => 'civicrm/sqltask/settings',
+    'permission' => 'administer CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ]);
+
   _sqltasks_civix_navigationMenu($menu);
 }
 
@@ -109,16 +137,14 @@ function sqltasks_civicrm_tokens(&$tokens) {
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
  */
 function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
-  if (is_array($cids) && !empty($tokens['sqltasks'])) {
-    $files     = CRM_Sqltasks_Task::getAllFiles();
-    $last_file = CRM_Sqltasks_Task::getLastFile();
-    foreach ($cids as $cid) {
-      $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
-      $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
-      foreach ($files as $index => $file) {
-        $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
-        $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
-      }
+  $files     = CRM_Sqltasks_BAO_SqltasksExecution::getAllFiles();
+  $last_file = CRM_Sqltasks_BAO_SqltasksExecution::getLastFile();
+  foreach ($cids as $cid) {
+    $values[$cid]['sqltasks.downloadURL']   = $last_file['download_link'];
+    $values[$cid]['sqltasks.downloadTitle'] = $last_file['title'];
+    foreach ($files as $index => $file) {
+      $values[$cid]["sqltasks.downloadURL_{$index}"]   = $file['download_link'];
+      $values[$cid]["sqltasks.downloadTitle_{$index}"] = $file['title'];
     }
   }
 }
@@ -184,4 +210,50 @@ function _sqltasks_add_admin_items(&$menu, $path) {
     'operator'   => 'OR',
     'separator'  => 0,
   ));
+}
+
+/**
+ * Implements hook_alterLogTables().
+ *
+ * @param array $logTableSpec
+ */
+function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
+  if (empty($logTableSpec) && is_array($logTableSpec)) {
+    return;
+  }
+
+  // To apply those settings need turn off and then turn on logging at the setting page(civicrm/admin/setting/misc)
+  // It recreates triggers at database and creates log tables if needed.
+  // If exclude table form logs by 'alterLogTables' hook, it doesn't delete logs tables.
+  // This logic works on CiviCRM 5.51.3.
+  $excludedLogItems = [
+    'tables' => [
+      'civicrm_sqltasks_execution',
+    ],
+    'columns' => [
+      'civicrm_sqltasks' => ['last_execution', 'running_since', 'last_runtime'],
+    ]
+  ];
+
+  foreach ($excludedLogItems['tables'] as $excludedLogTable) {
+    if (isset($logTableSpec[$excludedLogTable])) {
+      unset($logTableSpec[$excludedLogTable]);
+    }
+  }
+
+  foreach ($excludedLogItems['columns'] as $tableName => $columnNames) {
+    if (isset($logTableSpec[$tableName])) {
+      if (isset($logTableSpec[$tableName]['exceptions']) && is_array($logTableSpec[$tableName]['exceptions'])) {
+        foreach ($columnNames as $columnName) {
+          $logTableSpec[$tableName][] = $columnName;
+        }
+      } else {
+        $logTableSpec[$tableName]['exceptions'] = $columnNames;
+      }
+    }
+  }
+}
+
+function sqltasks_civicrm_container(ContainerBuilder $container) {
+  $container->addCompilerPass(new Civi\Sqltasks\CompilerPass());
 }

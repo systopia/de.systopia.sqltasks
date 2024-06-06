@@ -38,27 +38,29 @@
                     <td class="crm-editable" data-field="config">{$template.config}</td>
 
                     <td>
-                        <button
-                            class="crm-button download"
-                            data-template-id="{$template.id}"
-                        >
-                            <i class="crm-i fa-download"></i>
-                            <span>{ts}Download{/ts}</span>
-                        </button>
+                        <div class="sql-task__button-wrap">
+                            <button
+                                class="crm-button download sql-task__button"
+                                data-template-id="{$template.id}"
+                            >
+                                <i class="crm-i fa-download"></i>
+                                <span>{ts}Download{/ts}</span>
+                            </button>
 
-                        <button
-                            class="crm-button set-default"
-                            data-template-id="{$template.id}"
-                            {if $defaultTemplateId == $template.id}disabled{/if}
-                        >
-                            <i class="crm-i fa-check-circle"></i>
-                            <span>{ts}Set as default{/ts}</span>
-                        </button>
+                            <button
+                                class="crm-button set-default sql-task__button"
+                                data-template-id="{$template.id}"
+                                {if $defaultTemplateId == $template.id}disabled{/if}
+                            >
+                                <i class="crm-i fa-check-circle"></i>
+                                <span>{ts}Set as default{/ts}</span>
+                            </button>
 
-                        <button class="crm-button delete" data-template-id="{$template.id}">
-                            <i class="crm-i fa-trash"></i>
-                            <span>{ts}Delete{/ts}</span>
-                        </button>
+                            <button class="crm-button delete sql-task__button" data-template-id="{$template.id}">
+                                <i class="crm-i fa-trash"></i>
+                                <span>{ts}Delete{/ts}</span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             {/foreach}
@@ -66,10 +68,18 @@
     </table>
 
     <div class="crm-form-block">
-        <button class="crm-button" id="open-form">
-            <i class="crm-i fa-plus"></i>
-            <span>{ts}New Template{/ts}</span>
-        </button>
+        <div class="sql-task__button-wrap">
+            <button class="sql-task__button crm-button" id="open-form">
+                <i class="crm-i fa-plus"></i>
+                <span>{ts}New Template{/ts}</span>
+            </button>
+
+            <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
+               href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts}Go to the SQL Task Manager{/ts}">
+              <span class="crm-i fa-list"></span>
+              <span>{ts}Go to the SQL Task Manager{/ts}</span>
+            </a>
+        </div>
 
         <form id="new-template" class="hidden">
             <div class="form-field">
@@ -88,17 +98,19 @@
             </div>
 
             <div class="form-controls">
-                <button id="submit-new-template" class="crm-button" type="submit">
-                    {ts}Submit{/ts}
-                </button>
+                <div class="sql-task__button-wrap">
+                    <button id="submit-new-template" class="crm-button sql-task__button" type="submit">
+                        {ts}Submit{/ts}
+                    </button>
 
-                <button id="clear-form" class="crm-button" type="button">
-                    {ts}Clear{/ts}
-                </button>
+                    <button id="clear-form" class="crm-button sql-task__button" type="button">
+                        {ts}Clear{/ts}
+                    </button>
 
-                <button id="cancel" class="crm-button" type="button">
-                    <span>{ts}Cancel{/ts}</span>
-                </button>
+                    <button id="cancel" class="crm-button sql-task__button" type="button">
+                      <span>{ts}Cancel{/ts}</span>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
