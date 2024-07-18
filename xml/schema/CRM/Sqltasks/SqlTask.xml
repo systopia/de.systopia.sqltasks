@@ -157,26 +157,6 @@
   </field>
 
   <field>
-    <name>main_sql</name>
-    <comment>Main SQL script</comment>
-    <type>text</type>
-    <required>false</required>
-    <html>
-      <type>TextArea</type>
-    </html>
-  </field>
-
-  <field>
-    <name>post_sql</name>
-    <comment>Cleanup SQL script</comment>
-    <type>text</type>
-    <required>false</required>
-    <html>
-      <type>TextArea</type>
-    </html>
-  </field>
-
-  <field>
     <name>config</name>
     <comment>Task configuration (JSON)</comment>
     <type>text</type>

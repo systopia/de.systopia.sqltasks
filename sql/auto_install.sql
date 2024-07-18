@@ -49,8 +49,6 @@ CREATE TABLE `civicrm_sqltasks` (
   `archive_date` datetime NULL COMMENT 'Date/time the task was archived',
   `last_runtime` int unsigned NULL COMMENT 'Duration of the last execution in milliseconds',
   `parallel_exec` int unsigned NOT NULL DEFAULT 0 COMMENT 'Should this task be executed in parallel?',
-  `main_sql` text NULL COMMENT 'Main SQL script',
-  `post_sql` text NULL COMMENT 'Cleanup SQL script',
   `config` text NULL COMMENT 'Task configuration (JSON)',
   `abort_on_error` int unsigned NOT NULL DEFAULT 0 COMMENT 'Should task execution abort in case of an error?',
   `last_modified` datetime NULL COMMENT 'Date/time of the latest change to the task configuration',
