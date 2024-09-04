@@ -25,7 +25,8 @@
       </div>
 
       <div class="str__errors crm-error" ng-if="state === 'error'">
-        <ul>
+        <span ng-if="errors.length == 1">{{errors[0].message}}</span>
+        <ul ng-if="errors.length > 1">
           <li ng-repeat="error in errors">{{error.message}}</li>
         </ul>
       </div>

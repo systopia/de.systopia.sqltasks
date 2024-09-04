@@ -113,11 +113,13 @@
             "Task execution",
             "error"
           );
+          $scope.errors.push(new Error("Task execution encountered errors. See execution logs for more details"));
+          $scope.state = "error";
         } else {
           CRM.alert("Task execution completed", "Task execution", "success");
+          $scope.state = "done";
         }
 
-        $scope.state = "done";
         $scope.logs = taskExecResult.values.logs;
         $scope.runButtonLabel = "Run again";
         $scope.$apply();
@@ -154,6 +156,9 @@
 
         if ($scope.state === "done") {
           if (execution.error_count > 0) {
+            $scope.state = "error";
+            $scope.errors.push(new Error("Task execution encountered errors. See execution logs for more details"));
+            $scope.$apply();
             CRM.alert(
               "Task execution encountered errors. See execution logs for more details",
               "Task execution",
