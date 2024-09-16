@@ -28,33 +28,20 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
 
     if ($task_id) {
       $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
-
-      $task_data = $task->exportData([
-        'abort_on_error',
-        'config',
-        'category',
-        'description',
-        'input_required',
-        'last_modified',
-        'parallel_exec',
-        'run_permissions',
-        'scheduled',
-      ]);
-
-      $file_name = preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->name) . '.sqltask';
-      $file_content = json_encode($task_data, JSON_PRETTY_PRINT);
+      $file_name = $this->getTaskFileName($task);
+      $file_content = $this->getTaskFileContent($task);
 
       CRM_Utils_System::download($file_name, 'application/json', $file_content);
     }
     else {
-      $tasks = CRM_Sqltasks_Task::getAllTasks();
+      $tasks = CRM_Sqltasks_BAO_SqlTask::generator();
       if (!empty($tasks)) {
         $zip = new ZipArchive();
         $fileURL = CRM_Core_Config::singleton()->uploadDir . "sqltasks_" . date('Ymd') . ".zip";
         if ($zip->open($fileURL, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE) {
           foreach ($tasks as $task) {
-            $taskFileName = preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->getAttribute('name')) . '.sqltask';
-            $zip->addFromString($taskFileName, $task->exportConfiguration());
+            $taskFileName = $this->getTaskFileName($task);
+            $zip->addFromString($taskFileName, $this->getTaskFileContent($task));
           }
           $zip->close();
           $null = NULL;
@@ -77,6 +64,25 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
         CRM_Core_Session::setStatus(E::ts('There are no Tasks to be exported'), E::ts('Error'), 'error');
       }
     }
+  }
+
+  private function getTaskFileContent(CRM_Sqltasks_BAO_SqlTask $task) {
+    $task_data = $task->exportData([
+      'abort_on_error',
+      'config',
+      'category',
+      'description',
+      'input_required',
+      'last_modified',
+      'parallel_exec',
+      'run_permissions',
+      'scheduled',
+    ]);
+    return json_encode($task_data, JSON_PRETTY_PRINT);
+  }
+
+  private function getTaskFileName(CRM_Sqltasks_BAO_SqlTask $task) {
+    return preg_replace('/[^A-Za-z0-9_\- ]/', '', $task->name) . '.sqltask';
   }
 
 }
