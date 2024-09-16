@@ -170,7 +170,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
         $email['attachments'][] = [
           'fullPath'  => $logfile,
           'mime_type' => 'application/zip',
-          'cleanName' => $this->task->getAttribute('name') . '-execution.log'
+          'cleanName' => $this->task->name . '-execution.log'
         ];
       }
       $this->sendEmailMessage($email);
