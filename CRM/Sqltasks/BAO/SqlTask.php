@@ -132,7 +132,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       return $execution->result();
     }
 
-    $parallel_exec_allowed = $this->parallel_exec !== self::PARALLEL_EXEC_ALLOWED;
+    $parallel_exec_allowed = $this->parallel_exec == self::PARALLEL_EXEC_ALLOWED;
 
     if (isset($this->running_since) && !$parallel_exec_allowed) {
       $execution->reportError('Task is still running. Execution skipped.');
