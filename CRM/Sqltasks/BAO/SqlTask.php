@@ -500,24 +500,24 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
         break;
 
       case 'weekly':
-        $scheduled_date->setISODate($year, $week, $scheduled_weekday);
-        $scheduled_date->setTime($scheduled_hour, $scheduled_minute);
+        $schedule_date->setISODate($year, $week, $scheduled_weekday);
+        $schedule_date->setTime($scheduled_hour, $scheduled_minute);
         break;
 
       case 'monthly':
-        $scheduled_date->setDate($year, $month, $scheduled_day);
-        $scheduled_date->setTime($scheduled_hour, $scheduled_minute);
+        $schedule_date->setDate($year, $month, $scheduled_day);
+        $schedule_date->setTime($scheduled_hour, $scheduled_minute);
         break;
 
       case 'yearly':
-        $scheduled_date->setDate($year, $scheduled_month, $scheduled_day);
-        $scheduled_date->setTime($scheduled_hour, $scheduled_minute);
+        $schedule_date->setDate($year, $scheduled_month, $scheduled_day);
+        $schedule_date->setTime($scheduled_hour, $scheduled_minute);
         break;
     }
 
     $last_exec_ts = $last_execution->getTimestamp();
     $now_ts = $now->getTimestamp();
-    $scheduled_ts = $scheduled_date->getTimestamp();
+    $scheduled_ts = $schedule_date->getTimestamp();
 
     return $scheduled_ts < $now_ts && $last_exec_ts < $scheduled_ts;
   }
