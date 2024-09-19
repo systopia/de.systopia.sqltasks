@@ -323,7 +323,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return $logs;
   }
 
-  private function renderLogMessage($log_entry) {
+  public function renderLogMessage($log_entry) {
     $message = $log_entry['message'] ?? '';
     $type = $log_entry['message_type'] ?? '';
 

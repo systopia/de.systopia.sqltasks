@@ -76,13 +76,14 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
 
       if ($task_id == $this->task->id) continue;
 
+      $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
+
       if ($execute_in_parallel) {
-        $queued_execs[] = $this->task->enqueue($task_id)['execution_id'];
+        $queued_execs[] = $task->enqueue()['execution_id'];
         $this->log("Queued task '$task_name' [$task_id] for execution");
         continue;
       }
 
-      $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
       $exec_result = $task->execute();
 
       foreach ($exec_result['logs'] as $log) {
@@ -90,6 +91,10 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       }
 
       $this->log("Executed task '$task_name' [$task_id]");
+    }
+
+    if (!empty($queued_execs)) {
+      $this->log('Waiting for queued tasks to complete');
     }
 
     while (!empty($queued_execs)) {
@@ -103,15 +108,15 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
         $exec_logs = CRM_Sqltasks_BAO_SqltasksExecution::prepareLogs($execution->log);
 
         foreach ($exec_logs as $log_entry) {
-          $this->log($log_entry['message']);
+          $this->log($execution->renderLogMessage($log_entry));
         }
 
         if ((int) $execution->error_count < 1) continue;
 
         throw new Exception("Execution of task {$execution->sqltask_id} encountered errors.");
       }
-
-      sleep(1);
+      // sleep 0.2s
+      usleep(200000);
     }
   }
 
