@@ -40,7 +40,7 @@
     <name>start_date</name>
     <title>Start Date</title>
     <type>datetime</type>
-    <required>true</required>
+    <required>false</required>
     <comment>Start date of execution</comment>
     <html>
       <type>Select Date</type>
