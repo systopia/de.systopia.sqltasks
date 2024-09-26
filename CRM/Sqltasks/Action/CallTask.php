@@ -156,7 +156,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
    * @return array
    */
   private static function findTasks($params) {
-    $query = Api4\SqlTask::get()->addSelect('id', 'name');
+    $query = Api4\SqlTask::get(FALSE)->addSelect('id', 'name');
 
     $query->addWhere('archive_date', 'IS NULL');
 
