@@ -103,6 +103,7 @@
           delete task["config"];
           task.enabled = task.enabled === "" ? false : task.enabled;
           task.input_required = task.input_required === "" ? false : task.input_required;
+          task.is_archived = typeof task.archive_date === "string" && task.archive_date.length > 0;
           $scope.taskOptions = task;
           $scope.fixTaskOptionRunPermissions();
           $scope.$apply();
