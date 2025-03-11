@@ -316,7 +316,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     if ($this->getConfigValue('upload')) {
       $credentials = $this->getCredentials();
       if ($credentials && $credentials != 'ERROR') {
-        define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
         // connect
         if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
           $sftp = new phpseclib\Net\SFTP($credentials['host']);
