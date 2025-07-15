@@ -55,7 +55,7 @@
 {/htxt}
 
 {htxt id='id-run-permissions'}
-  <p>{ts domain="de.systopia.sqltasks"}List of permissions which will be checked before task is ran.{/ts}</p>
+  <p>{ts domain="de.systopia.sqltasks"}List of permissions which will be checked before task is ran. Administrator permission will be used if no other permission is selected. Please check if your cron user has sufficient permissions.{/ts}</p>
 {/htxt}
 
 {htxt id='id-abort-on-error'}
