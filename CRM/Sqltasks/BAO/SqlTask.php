@@ -352,7 +352,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
       $call_task_actions = array_filter($config['actions'], fn ($action) =>
         $action['type'] === 'CRM_Sqltasks_Action_CallTask'
-        && in_array($task_id, $action['tasks'])
+        && in_array($task_id, $action['tasks'] ?? [])
       );
 
       if (empty($call_task_actions)) continue;
