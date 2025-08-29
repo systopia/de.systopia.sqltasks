@@ -131,7 +131,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $timestamp   = date('Y-m-d H:i:s');
     $campaign_id = $this->getConfigValue('campaign_id');
     $data_table  = $this->getDataTable();
-    $task_id     = $this->task->getID();
+    $task_id     = $this->task->id;
     $temp_table  = "temp_sqltask{$task_id}_assign_" . substr(microtime(), 2, 8);
     $membership_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$data_table}` LIKE 'membership_id';");
 
@@ -318,7 +318,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
 
     // store assignment start/end dates
     self::$_assignment_timestamp  = $timestamp;
-    self::$_assignment_task_id    = $this->task->getID();
+    self::$_assignment_task_id    = $this->task->id;
   }
 
 

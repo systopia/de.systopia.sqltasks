@@ -80,6 +80,10 @@ select.pixelInput {
   display: none;
 }
 
+.sql-tasks-actions-block.loading .sql-tasks-actions-wrap, .sql-tasks-execution-block.border-bottom {
+  border-bottom: 1px solid #e8eef0;
+}
+
 .sql-tasks-actions-block.loading .sql-task-preloader-wrap, .sql-tasks-execution-block.loading .sql-task-preloader-wrap {
   display: block;
 }
@@ -104,6 +108,10 @@ select.pixelInput {
 
 .crm-container .sql-tasks .sql-tasks-basic-information-block .crm-section .content > textarea#description {
   height: auto;
+}
+
+.crm-container .sql-tasks .sql-tasks-basic-information-block.border-bottom  {
+  border-bottom: 1px solid #e8eef0;
 }
 
 .crm-container .sql-tasks .crm-sqltask-apiv4 .api-url-controls {
@@ -203,4 +211,20 @@ select.pixelInput {
 .sql-task-action-template-form-wrapper {
   border-bottom: 1px solid grey;
   margin-bottom: 20px;
+}
+
+i.crm-i.fa-toggle-on.sql-task-custom-toggle-icon {
+  color: #0ac60a;
+}
+
+i.crm-i.fa-toggle-on.fa-flip-horizontal.sql-task-custom-toggle-icon {
+  color: #ff0000;
+}
+
+.sql-task-footer-help {
+  padding: 10px;
+}
+
+.sql-task-help {
+  max-width: 810px;
 }

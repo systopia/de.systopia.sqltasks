@@ -33,7 +33,7 @@ class CRM_Sqltasks_Action_SuccessHandler extends CRM_Sqltasks_Action_ResultHandl
     return 9000;
   }
 
-  public function __construct(CRM_Sqltasks_Task $task, array $config) {
+  public function __construct(CRM_Sqltasks_BAO_SqlTask $task, array $config) {
     parent::__construct($task, $config, 'success', E::ts('Success Handler'));
   }
 

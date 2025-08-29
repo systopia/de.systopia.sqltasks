@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Sqltasks</base>
+  <class>SqlTask</class>
+  <name>civicrm_sqltasks</name>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <comment>Unique SqlTask ID</comment>
+    <type>int unsigned</type>
+    <required>true</required>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>name</name>
+    <comment>Name of the task</comment>
+    <type>varchar</type>
+    <length>255</length>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>description</name>
+    <comment>Description of the task</comment>
+    <type>text</type>
+    <required>false</required>
+    <html>
+      <type>TextArea</type>
+    </html>
+  </field>
+
+  <field>
+    <name>category</name>
+    <comment>Category of the task</comment>
+    <type>varchar</type>
+    <length>64</length>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>scheduled</name>
+    <comment>Regular execution frequency ("daily", "weekly", "monthly" etc.)</comment>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>enabled</name>
+    <comment>Is the task enabled?</comment>
+    <type>int unsigned</type>
+    <required>false</required>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>weight</name>
+    <comment>Defines execution order</comment>
+    <type>int unsigned</type>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>last_execution</name>
+    <comment>Date/time of the last task execution</comment>
+    <type>datetime</type>
+    <required>false</required>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>running_since</name>
+    <comment>Start time of the current execution (if the task is running)</comment>
+    <type>datetime</type>
+    <required>false</required>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>run_permissions</name>
+    <comment>Required permissions to run this task</comment>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>input_required</name>
+    <comment>Does the task require input data?</comment>
+    <type>int unsigned</type>
+    <required>true</required>
+    <default>0</default>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>archive_date</name>
+    <comment>Date/time the task was archived</comment>
+    <type>datetime</type>
+    <required>false</required>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>last_runtime</name>
+    <comment>Duration of the last execution in milliseconds</comment>
+    <type>int unsigned</type>
+    <required>false</required>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>parallel_exec</name>
+    <comment>Should this task be executed in parallel?</comment>
+    <type>int unsigned</type>
+    <required>true</required>
+    <default>0</default>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>config</name>
+    <comment>Task configuration (JSON)</comment>
+    <type>text</type>
+    <required>false</required>
+    <html>
+      <type>TextArea</type>
+    </html>
+  </field>
+
+  <field>
+    <name>abort_on_error</name>
+    <comment>Should task execution abort in case of an error?</comment>
+    <type>int unsigned</type>
+    <required>true</required>
+    <default>0</default>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>last_modified</name>
+    <comment>Date/time of the latest change to the task configuration</comment>
+    <type>datetime</type>
+    <required>false</required>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+</table>

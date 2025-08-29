@@ -13,7 +13,8 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
       'name' => 'testSyncGroup',
       'title' => 'testSyncGroup',
     ))['id'];
-    $data = [
+
+    $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
@@ -35,7 +36,8 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ],
     ];
-    $this->createAndExecuteTask($data);
+
+    $this->createAndExecuteTask([ 'config' => $config ]);
 
     $this->assertLogContains("Action 'Synchronise Group' executed in", 'Synchronize Group action should have succeeded');
     $groupContactCount = $this->callApiSuccess('GroupContact', 'getcount', [
