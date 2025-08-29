@@ -17,7 +17,7 @@ class CompilerPass implements CompilerPassInterface {
         'SqltasksRunSQLTask',
         'Civi\Sqltasks\Actions\RunSQLTask',
         E::ts('Run SQL Task'),
-      ], []);
+      ]);
     }
   }
 
