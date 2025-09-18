@@ -14,7 +14,7 @@
         <div class="sql-task-manager-dashboard__item">
             <div class="sql-task-manager-dashboard__item-tile">
                 <div class="sql-task-manager-dashboard__ico">
-                    <i class="crm-i fa-plus-circle"></i>
+                    <i class="crm-i fa-plus-circle" role="img" aria-hidden="true"></i>
                 </div>
                 <div class="sql-task-manager-dashboard__title-text">Add a new task</div>
             </div>
@@ -37,7 +37,7 @@
 
                             <button class="sql-task-manager-dashboard__create-task-btn crm-button" ng-click="addNewTask()" ng-disabled="selectTemplateModel.templateId === undefined">
                                 <div class="sql-task-manager-dashboard__ico">
-                                    <i class="crm-i fa-plus"></i>
+                                    <i class="crm-i fa-plus" role="img" aria-hidden="true"></i>
                                 </div>
                                 <span>{{ts('Add')}}</span>
                             </button>
@@ -47,7 +47,7 @@
                             </select2>
 
                             <a class="sql-task-manager-dashboard__ico" target="_blank" href="{{url('civicrm/sqltasks/templates');}}">
-                                <i class="crm-i fa-wrench"></i>
+                                <i class="crm-i fa-wrench" role="img" aria-hidden="true"></i>
                             </a>
                         </div>
 
@@ -59,7 +59,7 @@
         <div class="sql-task-manager-dashboard__item sql-task-manager-dashboard__item-info">
             <div class="sql-task-manager-dashboard__item-tile">
                 <div class="sql-task-manager-dashboard__ico">
-                    <i class="crm-i fa-info-circle"></i>
+                    <i class="crm-i fa-info-circle" role="img" aria-hidden="true"></i>
                 </div>
                 <div class="sql-task-manager-dashboard__title-text">Info</div>
             </div>
@@ -69,7 +69,7 @@
                      target="_blank"
                      title="{{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}">
                     <div class="sql-task-manager-dashboard__ico">
-                      <i class="crm-i fa-bars"></i>
+                      <i class="crm-i fa-bars" role="img" aria-hidden="true"></i>
                     </div>
                     {{ts('Show task execution logs', {'domain' : 'de.systopia.sqltasks'})}}
                   </a>
@@ -92,7 +92,7 @@
         <div class="sql-task-info-panel">
             <div class="sql-task-info-display-counter">
                 <div class="sql-task-manager-dashboard__ico">
-                    <i class="crm-i fa-bars"></i>
+                    <i class="crm-i fa-bars" role="img" aria-hidden="true"></i>
                 </div>
                 <div>{{ts('Displaying %1 of %2 tasks.', { '1' : displayTasks.length, '2' : tasks.length})}}</div>
             </div>
