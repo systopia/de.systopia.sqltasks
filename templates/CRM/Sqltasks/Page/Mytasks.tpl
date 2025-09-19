@@ -31,7 +31,7 @@
             <a class="button sqltask-mytask-run"
                href="#"
                id="sqltask-{$task.id}"
-               title="{ts domain="de.systopia.sqltasks" 1=$task.name}RUN %1{/ts}"
+               title="{ts escape='htmlattribute' domain="de.systopia.sqltasks" 1=$task.name}RUN %1{/ts}"
                data-task-id="{$task.id}"
                data-is-input-required="{$task.input_required}"
             >

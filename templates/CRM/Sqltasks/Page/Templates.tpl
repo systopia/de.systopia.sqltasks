@@ -75,7 +75,7 @@
             </button>
 
             <a class="sql-task__button sql-task__search-button crm-form-submit default crm-button crm-hover-button"
-               href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts}Go to the SQL Task Manager{/ts}">
+               href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts escape='htmlattribute'}Go to the SQL Task Manager{/ts}">
               <span class="crm-i fa-list"></span>
               <span>{ts}Go to the SQL Task Manager{/ts}</span>
             </a>
