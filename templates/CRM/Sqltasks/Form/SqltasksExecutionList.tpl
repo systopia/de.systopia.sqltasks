@@ -71,13 +71,13 @@
               </button>
 
               <a class="sql-task__search-button crm-form-submit default crm-button crm-hover-button"
-                 href="{crmURL p='civicrm/sqltasks-execution/list' q='reset=1'}" title="{ts}Clear all search criteria{/ts}">
+                 href="{crmURL p='civicrm/sqltasks-execution/list' q='reset=1'}" title="{ts escape='htmlattribute'}Clear all search criteria{/ts}">
                 <span class="ui-button-icon ui-icon fa-undo"></span>
                 <span>{ts}Reset Form{/ts}</span>
               </a>
 
               <a class="sql-task__search-button crm-form-submit default crm-button crm-hover-button"
-                 href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts}Go to the SQL Task Manager{/ts}">
+                 href="{crmURL p='civicrm/sqltasks/manage' q='reset=1'}" title="{ts escape='htmlattribute'}Go to the SQL Task Manager{/ts}">
                 <span class="ui-button-icon ui-icon fa-list"></span>
                 <span>{ts}Go to the SQL Task Manager{/ts}</span>
               </a>

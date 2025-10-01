@@ -3,7 +3,7 @@
     <div class="sql-task__execution-logs-wrap">
       <div class="sql-task__view-logs-buttons">
         <a class="sql-task__view-logs-button crm-form-submit default crm-button crm-hover-button"
-           href="{crmURL p='civicrm/sqltasks-execution/list' q='reset=1'}" title="{ts}Go to lis{/ts}">
+           href="{crmURL p='civicrm/sqltasks-execution/list' q='reset=1'}" title="{ts escape='htmlattribute'}Go to lis{/ts}">
           <span class="ui-button-icon ui-icon fa-list"></span>
           <span class="ui-button-icon-space"> </span>
           <span>{ts}Back to list{/ts}</span>
