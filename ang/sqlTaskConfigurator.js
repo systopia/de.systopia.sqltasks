@@ -729,12 +729,12 @@
 
             const clearBtn = $(document.createElement("label"))
               .addClass("api-url-controls")
-              .append(`<i class="crm-i fa-trash"></i> ${$scope.ts("Clear")}`)
+              .append(`<i class="crm-i fa-trash" role="img" aria-hidden="true"></i> ${$scope.ts("Clear")}`)
               .on("click", () => setApiUrl(""));
 
             const updateBtn = $(document.createElement("label"))
               .addClass("api-url-controls")
-              .append(`<i class="crm-i fa-link"></i> ${$scope.ts("Generate APIv4 Explorer URL")}`)
+              .append(`<i class="crm-i fa-link" role="img" aria-hidden="true"></i> ${$scope.ts("Generate APIv4 Explorer URL")}`)
               .on("click", () => {
                 setApiUrl(serializeApiCall());
 

@@ -45,7 +45,7 @@
             <td>
               <div>
                 <a class="button global-token__button" id="globalTokenCreateButton" href="javascript:;">
-                  <span><i class="crm-i fa-plus-circle"></i><span>{ts}Create new global token{/ts}</span></span>
+                  <span><i class="crm-i fa-plus-circle" role="img" aria-hidden="true"></i><span>{ts}Create new global token{/ts}</span></span>
                 </a>
               </div>
             </td>
@@ -80,18 +80,18 @@
       <td>
         <div class="global-token__edit-mode">
           <a class="button global-token__button global-token__update-token-data-button" href="javascript:;">
-            <span><i class="crm-i fa-check"></i><span>{ts}Update{/ts}</span></span>
+            <span><i class="crm-i fa-check" role="img" aria-hidden="true"></i><span>{ts}Update{/ts}</span></span>
           </a>
           <a class="button global-token__button global-token__cancel-editing-token-data-button" href="javascript:;">
-            <span><i class="crm-i fa-close"></i><span>{ts}Cancel{/ts}</span></span>
+            <span><i class="crm-i fa-close" role="img" aria-hidden="true"></i><span>{ts}Cancel{/ts}</span></span>
           </a>
         </div>
         <div class="global-token__view-mode">
           <a class="button global-token__button global-token__edit-token-data-button" href="javascript:;">
-            <span><i class="crm-i fa-pencil"></i><span>{ts}Edit{/ts}</span></span>
+            <span><i class="crm-i fa-pencil" role="img" aria-hidden="true"></i><span>{ts}Edit{/ts}</span></span>
           </a>
           <a class="button global-token__button global-token__delete-token-button" href="javascript:;">
-            <span><i class="crm-i fa-trash"></i><span>{ts}Delete{/ts}</span></span>
+            <span><i class="crm-i fa-trash" role="img" aria-hidden="true"></i><span>{ts}Delete{/ts}</span></span>
           </a>
         </div>
       </td>

@@ -27,7 +27,7 @@
                 >
                     <td>
                         {if $defaultTemplateId == $template.id}
-                            <i class="crm-i fa-check-circle"></i>
+                            <i class="crm-i fa-check-circle" role="img" aria-hidden="true"></i>
                         {/if}
                     </td>
 
@@ -43,7 +43,7 @@
                                 class="crm-button download sql-task__button"
                                 data-template-id="{$template.id}"
                             >
-                                <i class="crm-i fa-download"></i>
+                                <i class="crm-i fa-download" role="img" aria-hidden="true"></i>
                                 <span>{ts}Download{/ts}</span>
                             </button>
 
@@ -52,12 +52,12 @@
                                 data-template-id="{$template.id}"
                                 {if $defaultTemplateId == $template.id}disabled{/if}
                             >
-                                <i class="crm-i fa-check-circle"></i>
+                                <i class="crm-i fa-check-circle" role="img" aria-hidden="true"></i>
                                 <span>{ts}Set as default{/ts}</span>
                             </button>
 
                             <button class="crm-button delete sql-task__button" data-template-id="{$template.id}">
-                                <i class="crm-i fa-trash"></i>
+                                <i class="crm-i fa-trash" role="img" aria-hidden="true"></i>
                                 <span>{ts}Delete{/ts}</span>
                             </button>
                         </div>
@@ -70,7 +70,7 @@
     <div class="crm-form-block">
         <div class="sql-task__button-wrap">
             <button class="sql-task__button crm-button" id="open-form">
-                <i class="crm-i fa-plus"></i>
+                <i class="crm-i fa-plus" role="img" aria-hidden="true"></i>
                 <span>{ts}New Template{/ts}</span>
             </button>
 
