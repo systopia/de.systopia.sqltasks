@@ -13,5 +13,4 @@ return [
   'partials' => [
     0 => 'ang/deleteTask',
   ],
-  'settings' => [],
 ];
