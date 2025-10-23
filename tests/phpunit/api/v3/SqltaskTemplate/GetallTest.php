@@ -50,14 +50,14 @@ class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase impl
           "config"      => "{}",
           "description" => "...",
         ]);
-      } catch (CiviCRM_API3_Exception $e) {
+      } catch (CRM_Core_Exception $e) {
         $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
       }
     }
 
     try {
       $templatesFromApi = civicrm_api3("SqltaskTemplate", "get_all")["values"];
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltaskTemplate.get_all returns exception:" . $e->getMessage());
     }
 

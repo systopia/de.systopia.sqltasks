@@ -2,8 +2,6 @@
 
 namespace Civi\Utils\Sqltasks;
 
-use Civi;
-use Civi\Utils\CiviCRM_API3_Exception;
 use CRM_Utils_System;
 
 class InfoMessages {
@@ -73,7 +71,7 @@ class InfoMessages {
       ]);
 
       return !empty($job['values'][0]) ? $job['values'][0] : null;
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (\CRM_Core_Exception $e) {
       $this->addMessage('Error(Job.get) while getting dispatcher data:' . $e->getMessage(), 'error');
     }
 

@@ -14,7 +14,7 @@ function civicrm_api3_sqltaskfield_getmessagetemplates() {
       'return' => 'id,msg_title',
       'option.limit' => 0,
     ]);
-  } catch (CiviCRM_API3_Exception $e) {}
+  } catch (CRM_Core_Exception $e) {}
 
   if (!empty($messageTemplate['values'])) {
     foreach ($messageTemplate['values'] as $template) {

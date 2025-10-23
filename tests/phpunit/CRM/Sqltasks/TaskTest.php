@@ -412,7 +412,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
         'config'        => $data['config'],
         'last_modified' => $last_modified,
       ]);
-    } catch (CiviCRM_API3_Exception $exception) {
+    } catch (CRM_Core_Exception $exception) {
       $api_call_failed = TRUE;
     }
 
@@ -433,7 +433,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
         "config"        => $data['config'],
         "last_modified" => $last_modified,
       ]);
-    } catch (CiviCRM_API3_Exception $exception) {
+    } catch (CRM_Core_Exception $exception) {
       $api_call_failed = TRUE;
     }
 

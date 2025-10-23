@@ -50,7 +50,7 @@ class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase impl
 
     try {
       $templateFromApi = civicrm_api3('SqltaskTemplate', 'create', $templateData);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
     }
 

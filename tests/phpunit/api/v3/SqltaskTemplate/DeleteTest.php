@@ -48,14 +48,14 @@ class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase impl
         "config"      => "{}",
         "description" => "...",
       ]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
     }
     $this->assertTrue(isset($templateFromApi['values']["id"]), "Template ID should be set");
 
     try {
       civicrm_api3('SqltaskTemplate', 'delete', [ "id" => $templateFromApi['values']['id']]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltaskTemplate.delete returns exception:" . $e->getMessage());
     }
 

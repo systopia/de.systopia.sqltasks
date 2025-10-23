@@ -42,7 +42,7 @@ class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCa
   public function testDeleteTemplate() {
     try {
       $templatesCountBefore = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
 
@@ -52,20 +52,20 @@ class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCa
         "type"      => "CRM_Sqltasks_Action_RunSQL",
         "config"    => '{"script":"aaaa --- test"}',
       ]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.create returns exception:" . $e->getMessage());
     }
     $this->assertTrue(isset(reset($templateFromApi['values'])["id"]), "Template ID should be set");
 
     try {
       civicrm_api3('SqltasksActionTemplate', 'delete', [ "id" => reset($templateFromApi['values'])['id']]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.delete returns exception:" . $e->getMessage());
     }
 
     try {
       $templatesCountAfterDelete = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
 

@@ -42,7 +42,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
   public function testCreateTemplate() {
     try {
       $templatesCountBefore = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
 
@@ -54,7 +54,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
 
     try {
       $templateFromApi = civicrm_api3('SqltasksActionTemplate', 'create', array_merge($templateData, ["sequential" => 1]));
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.create returns exception:" . $e->getMessage());
     }
 
@@ -62,7 +62,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
 
     try {
       $templatesCountAfter = $this->callAPISuccessGetCount('SqltasksActionTemplate', []);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
 
@@ -75,7 +75,7 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
 
     try {
       $template = civicrm_api3("SqltasksActionTemplate", "get", [ "id" => reset($templateFromApi['values'])["id"]]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
     $this->assertTrue(!empty($template), "Cannot find Template by id = " . reset($templateFromApi['values'])["id"]);
