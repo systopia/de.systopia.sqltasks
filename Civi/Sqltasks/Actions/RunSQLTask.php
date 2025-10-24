@@ -31,7 +31,7 @@ class RunSQLTask extends AbstractAction {
     try {
       civicrm_api3('Sqltask', 'get', [ 'id' => $task_id ]);
     } catch (\Exception $ex) {
-      throw new ExecutionException(E::ts("Task with ID '$task_id' not found"));
+      throw new ExecutionException(E::ts("Task with ID '%1' not found", [1 => $task_id]));
     }
 
     $exec_params = [
