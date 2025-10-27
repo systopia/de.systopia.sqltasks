@@ -15,5 +15,4 @@ return [
   'partials' => [
     0 => 'ang/taskRunner',
   ],
-  'settings' => [],
 ];

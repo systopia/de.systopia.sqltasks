@@ -17,5 +17,4 @@ return [
     1 => 'ang/actions',
     2 => 'ang/inputs',
   ],
-  'settings' => [],
 ];
