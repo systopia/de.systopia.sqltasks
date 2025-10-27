@@ -9,7 +9,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  * @return array $templates
  *
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_sqltask_template_get_all($params) {
   try {
@@ -20,7 +20,7 @@ function civicrm_api3_sqltask_template_get_all($params) {
 
     return civicrm_api3_create_success($templates);
   } catch (\Exception $exception) {
-    throw new API_Exception($exception->getMessage());
+    throw new CRM_Core_Exception($exception->getMessage());
   }
 }
 

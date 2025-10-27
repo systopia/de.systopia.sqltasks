@@ -6,7 +6,7 @@ function civicrm_api3_sqltask_get_warning_message($params) {
   try {
     $result = WarningMessagesManager::getResult($params);
   } catch (Exception $e) {
-    throw new CiviCRM_API3_Exception($e->getMessage());
+    throw new CRM_Core_Exception($e->getMessage());
   }
 
   return civicrm_api3_create_success($result);

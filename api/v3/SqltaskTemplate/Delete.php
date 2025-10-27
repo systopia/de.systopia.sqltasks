@@ -7,14 +7,14 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  * @param array $params
  *
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_sqltask_template_delete($params) {
   try {
     CRM_Sqltasks_BAO_SqltasksTemplate::deleteOne($params["id"]);
     return civicrm_api3_create_success();
   } catch (\Exception $exception) {
-    throw new API_Exception($exception->getMessage());
+    throw new CRM_Core_Exception($exception->getMessage());
   }
 }
 

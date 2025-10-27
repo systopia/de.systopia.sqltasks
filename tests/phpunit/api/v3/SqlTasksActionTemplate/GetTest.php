@@ -48,14 +48,14 @@ class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase 
 
     try {
       $createdTemplateFromApi = civicrm_api3('SqltasksActionTemplate', 'create', array_merge($templateData, ["sequential" => 1]));
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.create returns exception:" . $e->getMessage());
     }
 
     $action_template_id = reset($createdTemplateFromApi["values"])["id"];
     try {
       $templateFromApi = civicrm_api3("SqltasksActionTemplate", "get", [ "id" => $action_template_id ]);
-    } catch (CiviCRM_API3_Exception $e) {
+    } catch (CRM_Core_Exception $e) {
       $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
     }
 
