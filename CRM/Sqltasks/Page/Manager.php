@@ -14,6 +14,9 @@
  * | written permission from the original author(s).        |
  * +--------------------------------------------------------
  */
+
+declare(strict_types = 1);
+
 class CRM_Sqltasks_Page_Manager extends CRM_Core_Page {
 
   /**

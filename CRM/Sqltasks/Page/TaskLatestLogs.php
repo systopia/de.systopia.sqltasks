@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 class CRM_Sqltasks_Page_TaskLatestLogs extends CRM_Core_Page {
 
   public function run() {

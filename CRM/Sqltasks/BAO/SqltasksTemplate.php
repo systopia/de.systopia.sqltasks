@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplate {

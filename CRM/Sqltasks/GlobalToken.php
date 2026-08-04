@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * This class is adapter which safely works with sqltasks global tokens
  */

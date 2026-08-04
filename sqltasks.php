@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 require_once 'sqltasks.civix.php';
 require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;

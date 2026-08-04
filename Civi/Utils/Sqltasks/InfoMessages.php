@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Utils\Sqltasks;
 
 use CRM_Utils_System;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 
 /**
  * Configuration upgrader for converting from format 1 to 2

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Test SegmentationAssign Action, requires de.systopia.segmentation
  *

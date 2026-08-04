@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Page_Export extends CRM_Core_Page {

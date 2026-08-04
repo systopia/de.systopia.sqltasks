@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Sqltasks;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

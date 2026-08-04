@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 

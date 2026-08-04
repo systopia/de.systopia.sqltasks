@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Civi\Utils\Sqltasks\WarningMessages\WarningMessagesManager;
 
 function civicrm_api3_sqltask_get_warning_message($params) {

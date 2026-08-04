@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 define('CUSTOM_SEGMENT_ID', 999999);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Sets new order of all tasks
  * Sqltask.sort API

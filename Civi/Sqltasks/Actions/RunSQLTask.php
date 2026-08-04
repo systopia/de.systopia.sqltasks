@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Sqltasks\Actions;
 
 use Civi\ActionProvider\Action\AbstractAction;

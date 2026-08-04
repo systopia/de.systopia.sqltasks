@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Page_Templates extends CRM_Core_Page {

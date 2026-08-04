@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as ExtensionUtil;
 
 class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {

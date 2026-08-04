@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 trait CRM_Sqltasks_TempTableAlterations {
 
   /**
