@@ -36,7 +36,8 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
       foreach ($to_email as $email) {
         if ($emailNumber === 1) {
           $toEmail = trim($email);
-        } else {
+        }
+        else {
           $ccEmails[] = trim($email);
         }
         $emailNumber++;
@@ -44,10 +45,10 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
 
       civicrm_api3('MessageTemplate', 'send', array_merge($templateParams, [
         'cc' => implode(',', $ccEmails),
-        'to_email' => $toEmail
+        'to_email' => $toEmail,
       ]));
 
-      $this->log("Sent {$this->getID()} message to '{$email}' with cc: " . implode(',', $ccEmails) . ".");
+      $this->log("Sent {$this->getID()} message to '{$email}' with cc: " . implode(',', $ccEmails) . '.');
     }
   }
 

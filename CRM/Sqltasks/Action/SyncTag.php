@@ -52,7 +52,8 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     $use_api = $this->getConfigValue('use_api');
     if ($use_api) {
       $this->executeAPI();
-    } else {
+    }
+    else {
       $this->executeSQL();
     }
   }
@@ -126,8 +127,10 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
          AND entity_id NOT IN (SELECT contact_id FROM `{$contact_table}` {$excludeSqlWhere})");
     while ($tags2remove->fetch()) {
       civicrm_api3('EntityTag', 'delete',
-        array('contact_id' => $tags2remove->contact_id,
-              'tag_id'     => $tag_id));
+        [
+          'contact_id' => $tags2remove->contact_id,
+          'tag_id'     => $tag_id,
+        ]);
     }
 
     // then: add the new ones
@@ -141,10 +144,11 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
         AND et.entity_id IS NULL {$excludeSql}");
 
     while ($tags2add->fetch()) {
-      civicrm_api3('EntityTag', 'create', array(
+      civicrm_api3('EntityTag', 'create', [
         'entity_id'    => $tags2add->contact_id,
         'entity_table' => $entity_table,
-        'tag_id'       => $tag_id));
+        'tag_id'       => $tag_id,
+      ]);
     }
   }
 
@@ -152,11 +156,12 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
    * get a list of eligible groups
    */
   protected function getEligibleTags() {
-    $tag_list = array();
-    $tag_query = civicrm_api3('Tag', 'get', array(
+    $tag_list = [];
+    $tag_query = civicrm_api3('Tag', 'get', [
       'is_enabled'   => 1,
       'option.limit' => 0,
-      'return'       => 'id,name'))['values'];
+      'return'       => 'id,name',
+    ])['values'];
     foreach ($tag_query as $tag) {
       $tag_list[$tag['id']] = CRM_Utils_Array::value('name', $tag, 'Tag') . ' [' . $tag['id'] . ']';
     }
@@ -167,14 +172,14 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
    * Get a list of eligible groups
    */
   public static function getEligibleEntities() {
-    return array(
-      'civicrm_contact'      => E::ts("Contacts"),
-      'civicrm_activity'     => E::ts("Activities"),
-      'civicrm_case'         => E::ts("Cases"),
-      'civicrm_file'         => E::ts("Attachments"),
-      'civicrm_membership'   => E::ts("Memberships"),
-      'civicrm_contribution' => E::ts("Contributions"),
-    );
+    return [
+      'civicrm_contact'      => E::ts('Contacts'),
+      'civicrm_activity'     => E::ts('Activities'),
+      'civicrm_case'         => E::ts('Cases'),
+      'civicrm_file'         => E::ts('Attachments'),
+      'civicrm_membership'   => E::ts('Memberships'),
+      'civicrm_contribution' => E::ts('Contributions'),
+    ];
   }
 
   /**
@@ -187,8 +192,10 @@ class CRM_Sqltasks_Action_SyncTag extends CRM_Sqltasks_Action_ContactSet {
     $table_name = trim($table_name);
     if (empty($table_name)) {
       return 'civicrm_contact';
-    } else {
+    }
+    else {
       return $table_name;
     }
   }
+
 }

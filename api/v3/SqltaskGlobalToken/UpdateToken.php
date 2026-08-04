@@ -11,17 +11,17 @@ function civicrm_api3_sqltask_global_token_update_token($params) {
   $globalToken = CRM_Sqltasks_GlobalToken::singleton();
 
   if (!$globalToken->isTokenExist($params['name'])) {
-    return civicrm_api3_create_error("This token with this name does not exist.");
+    return civicrm_api3_create_error('This token with this name does not exist.');
   }
 
   if (!empty($params['new_name'])) {
     if ($params['new_name'] != $params['name']) {
       if ($globalToken->isTokenExist($params['new_name'])) {
-        return civicrm_api3_create_error(ts("Token name is already exists."));
+        return civicrm_api3_create_error(ts('Token name is already exists.'));
       }
 
       if (strlen($params['new_name']) > CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME) {
-        return civicrm_api3_create_error(ts("Max length of token name is %1", ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME] ));
+        return civicrm_api3_create_error(ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME]));
       }
 
       $globalToken->delete($params['name']);

@@ -8,7 +8,8 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
   const DEFAULT_LIMIT_PER_PAGE = 50;
 
   protected $searchParams = [
-    'order_by' => ['id' => 'DESC'],//ASC DESC
+  //ASC DESC
+    'order_by' => ['id' => 'DESC'],
     'error_status' => 'all',
   ];
 
@@ -31,7 +32,7 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $task_options = [];
     $tasks = Api4\SqlTask::get()->addSelect('name')->execute();
 
-    foreach ($tasks as [ 'id' => $task_id, 'name' => $task_name ]) {
+    foreach ($tasks as ['id' => $task_id, 'name' => $task_name]) {
       $task_options[$task_id] = $task_name;
     }
 
@@ -77,14 +78,16 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $limitPerPage = CRM_Utils_Request::retrieve('limit_per_page', 'Integer');
     if (!empty($limitPerPage)) {
       $this->searchParams['limit_per_page'] = $limitPerPage;
-    } else {
+    }
+    else {
       $this->searchParams['limit_per_page'] = CRM_Sqltasks_Form_SqltasksExecutionList::DEFAULT_LIMIT_PER_PAGE;
     }
 
     $pageNumber = CRM_Utils_Request::retrieve('page_number', 'Integer');
     if (!empty($pageNumber)) {
       $this->searchParams['page_number'] = $pageNumber;
-    } else {
+    }
+    else {
       $this->searchParams['page_number'] = 1;
     }
 
@@ -116,7 +119,7 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
   protected function generatePaginationData($searchParams, $allItemsCount) {
     if ((int) $searchParams['limit_per_page'] >= $allItemsCount) {
-      return null;
+      return NULL;
     }
 
     $currentPage = (int) $searchParams['page_number'];
@@ -136,10 +139,10 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
       'max_page_number' => $maxPageNumber,
       'show_from_count' => $showFromCount,
       'show_to_count' => $showToCount,
-      'next_link' => null,
-      'prev_link' => null,
-      'last_link' => null,
-      'first_link' => null,
+      'next_link' => NULL,
+      'prev_link' => NULL,
+      'last_link' => NULL,
+      'first_link' => NULL,
     ];
 
     if ($nextPageNumber <= $maxPageNumber) {

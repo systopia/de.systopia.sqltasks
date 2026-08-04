@@ -23,17 +23,19 @@ use CRM_Sqltasks_ExtensionUtil as E;
 class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
   public function run() {
-    CRM_Utils_System::setTitle(E::ts("Available SQL Tasks"));
+    CRM_Utils_System::setTitle(E::ts('Available SQL Tasks'));
 
     $allowed_tasks = [];
 
     foreach (CRM_Sqltasks_BAO_SqlTask::generator() as $task) {
-      if (!$task->allowedToRun() || !is_null($task->archive_date)) continue;
+      if (!$task->allowedToRun() || !is_null($task->archive_date)) {
+        continue;
+      }
 
       $allowed_tasks[$task->id] = [
         'id'              => $task->id,
         'name'            => $task->name,
-        'last_runtime'    => sprintf("%.3f", ($task->last_runtime / 1000.0)),
+        'last_runtime'    => sprintf('%.3f', ($task->last_runtime / 1000.0)),
         'description'     => $task->description,
         'input_required'  => $task->input_required,
       ];
@@ -45,4 +47,5 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
 
     parent::run();
   }
+
 }

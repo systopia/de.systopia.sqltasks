@@ -30,11 +30,11 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
       );
     }
 
-    $campaignId = $this->callApiSuccess('Campaign', 'create', array(
+    $campaignId = $this->callApiSuccess('Campaign', 'create', [
       'sequential' => 1,
       'name'       => 'testCampaign',
       'title'      => 'testCampaign',
-    ))['id'];
+    ])['id'];
 
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
@@ -42,8 +42,8 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_segmentationassign;
-                        CREATE TABLE tmp_test_action_segmentationassign AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_segmentationassign;
+                        CREATE TABLE tmp_test_action_segmentationassign AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'                => 'CRM_Sqltasks_Action_SegmentationAssign',
@@ -63,7 +63,7 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains('Resolved 1 segment(s).', 'Should have resolved one segment');
     $this->assertLogContains("Assigned 1 new contacts to segment 'testSegmentationAssign'.", 'Should have assigned one contact to segment "testSegmentationAssign"');
@@ -71,7 +71,7 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
     $this->assertEquals(
       1,
       CRM_Core_DAO::singleValueQuery(
-        "SELECT COUNT(*) FROM civicrm_segmentation WHERE campaign_id = %0 AND entity_id = %1",
+        'SELECT COUNT(*) FROM civicrm_segmentation WHERE campaign_id = %0 AND entity_id = %1',
         [
           [$campaignId, 'Integer'],
           [$this->contactId, 'Integer'],

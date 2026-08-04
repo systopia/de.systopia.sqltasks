@@ -16,8 +16,8 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_successhandler;
-                        CREATE TABLE tmp_test_action_successhandler AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_successhandler;
+                        CREATE TABLE tmp_test_action_successhandler AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'               => 'CRM_Sqltasks_Action_CreateActivity',
@@ -41,12 +41,12 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
           'type'           => 'CRM_Sqltasks_Action_SuccessHandler',
           'enabled'        => TRUE,
           'email'          => 'successhandler@example.com',
-          'email_template' => '1'
+          'email_template' => '1',
         ],
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Create Activity' executed in", 'Create Activity action should have succeeded');
     $mailUtils->checkMailLog([
@@ -90,12 +90,12 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
           'type'           => 'CRM_Sqltasks_Action_ErrorHandler',
           'enabled'        => TRUE,
           'email'          => 'errorhandler@example.com',
-          'email_template' => '1'
+          'email_template' => '1',
         ],
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Error in action 'Create Activity'", 'Create Activity action should have failed');
     $mailUtils->checkMailLog([

@@ -11,9 +11,10 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 function civicrm_api3_sqltask_template_delete($params) {
   try {
-    CRM_Sqltasks_BAO_SqltasksTemplate::deleteOne($params["id"]);
+    CRM_Sqltasks_BAO_SqltasksTemplate::deleteOne($params['id']);
     return civicrm_api3_create_success();
-  } catch (\Exception $exception) {
+  }
+  catch (\Exception $exception) {
     throw new CRM_Core_Exception($exception->getMessage());
   }
 }
@@ -32,5 +33,3 @@ function _civicrm_api3_sqltask_template_delete_spec(&$spec) {
     'description'  => 'Unique template ID',
   ];
 }
-
-?>

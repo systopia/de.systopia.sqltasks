@@ -1,4 +1,4 @@
-# SQL Tasks Extension
+rm # SQL Tasks Extension
 
 ![Screenshot](img/screenshot.gif)
 

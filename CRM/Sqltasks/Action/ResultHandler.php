@@ -59,11 +59,12 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
    * get a list of eligible templates for the email
    */
   protected function getAllTemplates() {
-    $template_options = array();
-    $template_query = civicrm_api3('MessageTemplate', 'get', array(
+    $template_options = [];
+    $template_query = civicrm_api3('MessageTemplate', 'get', [
       'is_active'    => 1,
       'return'       => 'id,msg_title',
-      'option.limit' => 0));
+      'option.limit' => 0,
+    ]);
     foreach ($template_query['values'] as $template) {
       $template_options[$template['id']] = $template['msg_title'];
     }
@@ -133,7 +134,8 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     $should_run = FALSE;
     if ($this->id == 'success') {
       $should_run = $this->shouldSuccessHandlerRun($this->context['actions']);
-    } elseif ($this->id == 'error') {
+    }
+    elseif ($this->id == 'error') {
       $should_run = $this->shouldErrorHandlerRun($this->context['actions']);
     }
     if (!$should_run) {
@@ -145,7 +147,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     if ($this->id == 'error') {
       $errors = $this->getErrorsFromTable();
       foreach ($errors as $error) {
-        $this->log("Reported error: " . $error);
+        $this->log('Reported error: ' . $error);
       }
     }
 
@@ -170,7 +172,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
         $email['attachments'][] = [
           'fullPath'  => $logfile,
           'mime_type' => 'application/zip',
-          'cleanName' => $this->task->name . '-execution.log'
+          'cleanName' => $this->task->name . '-execution.log',
         ];
       }
       $this->sendEmailMessage($email);
@@ -186,17 +188,17 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
     $error_table = $this->getErrorTable();
     if (!$error_table) {
       // it's not properly set
-      return array();
+      return [];
     }
 
     // find error_message column
     $existing_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$error_table}` LIKE 'error_message';");
     if (!$existing_column) {
-      return array();
+      return [];
     }
 
     // finally, return the errors
-    $errors = array();
+    $errors = [];
     $query = CRM_Core_DAO::executeQuery("SELECT `error_message` FROM `{$error_table}`;");
     while ($query->fetch()) {
       if (!empty($query->error_message)) {
@@ -242,6 +244,5 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
 
     return $error_table;
   }
-
 
 }

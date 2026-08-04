@@ -1,0 +1,51 @@
+name: PHP_CodeSniffer
+
+permissions: {}
+
+on:
+  pull_request:
+    paths:
+      - '**.php'
+      - tools/phpcs/composer.json
+      - phpcs.xml.dist
+      - .github/workflows/phpcs.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    name: PHP_CodeSniffer
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: 8.5
+          coverage: none
+          tools: cs2pr
+        env:
+          fail-fast: true
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('tools/phpcs/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer composer-phpcs -- update --no-progress --prefer-dist
+
+      - name: Run PHP_CodeSniffer
+        run: composer phpcs -- -q --report=checkstyle | cs2pr

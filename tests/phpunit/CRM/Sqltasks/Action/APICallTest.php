@@ -14,8 +14,8 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_apicall;
-                        CREATE TABLE tmp_test_action_apicall AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;
+                        CREATE TABLE tmp_test_action_apicall AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'       => 'CRM_Sqltasks_Action_APICall',
@@ -30,10 +30,10 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
           'enabled' => TRUE,
           'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
         ],
-      ]
+      ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
     $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
@@ -77,7 +77,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains('Column "exclude" exists, might skip some rows', '"exclude" column should have been detected');
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
@@ -128,7 +128,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $queryResult = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"
@@ -161,20 +161,21 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
       if ($apiResult['is_error']) {
         trigger_error('API call failed', E_USER_WARNING);
-      } else {
+      }
+      else {
         $phoneProps = array_values($apiResult['values'])[0];
 
         $this->assertEquals(
           $queryResult->contact_id,
           $phoneProps['contact_id'],
           'API result should contain the original contact ID'
-        );
+              );
 
         $this->assertEquals(
-          $phoneNumber,
-          $phoneProps['phone'],
-          'API result should contain the original phone number'
-        );
+                $phoneNumber,
+                $phoneProps['phone'],
+                'API result should contain the original phone number'
+              );
       }
     }
 
@@ -182,7 +183,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
   }
 
   private static function generateRandomPhoneNumber() {
-    $digits = "";
+    $digits = '';
 
     for ($i = 0; $i < 12; $i++) {
       $digits .= (string) random_int(0, 9);

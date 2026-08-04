@@ -63,4 +63,5 @@ class CRM_CivirulesActions_Form_Settings extends CRM_Core_Form {
         VALUES('run_sql_task', 'Run SQL Task', 'CRM_CivirulesActions_SQLTask', 1)"
     );
   }
+
 }

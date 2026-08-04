@@ -73,13 +73,13 @@ class CRM_Sqltasks_Config_Format {
       else {
         $config = json_decode($config, TRUE);
         if (is_null($config)) {
-          throw new Exception( 'Invalid task configuration provided: Invalid JSON');
+          throw new Exception('Invalid task configuration provided: Invalid JSON');
         }
       }
     }
     $version = self::getVersion($config['config']);
     if ($version > self::CURRENT) {
-      throw new Exception( 'Incompatible task configuration version: ' . $config['version'] .
+      throw new Exception('Incompatible task configuration version: ' . $config['version'] .
                           '. Please upgrade ' . CRM_Sqltasks_ExtensionUtil::LONG_NAME . ' to use this configuration.');
     }
 
@@ -115,7 +115,7 @@ class CRM_Sqltasks_Config_Format {
     $jsonPart = substr($config, 0, strpos($config, self::SCRIPT_SENTINEL));
     $config = json_decode($jsonPart, TRUE);
     if (is_null($config)) {
-      throw new Exception( 'Invalid task configuration provided: Invalid JSON');
+      throw new Exception('Invalid task configuration provided: Invalid JSON');
     }
     return $config;
   }

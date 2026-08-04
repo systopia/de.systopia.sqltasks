@@ -94,6 +94,7 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
 
       parent::postProcess();
     }
+
   }
 }
 else {

@@ -52,7 +52,8 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
     $use_api = $this->getConfigValue('use_api');
     if ($use_api) {
       $this->executeAPI();
-    } else {
+    }
+    else {
       $this->executeSQL();
     }
   }
@@ -127,7 +128,6 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
          AND contact_id IN (SELECT contact_id
                                FROM {$contact_table} {$excludeSqlWhere})");
 
-
     // 3. remove the ones that are not in the list any more
     // 3.1. subscription history
     CRM_Core_DAO::executeQuery("
@@ -164,7 +164,7 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
 
     $excludeSql = '';
     if ($this->_columnExists($contact_table, 'exclude')) {
-      $excludeSql = "AND (result.exclude IS NULL OR result.exclude != 1)";
+      $excludeSql = 'AND (result.exclude IS NULL OR result.exclude != 1)';
       $this->log('Column "exclude" exists, might skip some rows');
     }
 
@@ -177,12 +177,12 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
         AND civicrm_group_contact.status = 'Added'
         AND result.contact_id IS NULL {$excludeSql}");
     while ($contacts2remove->fetch()) {
-      civicrm_api3('GroupContact', 'create', array(
+      civicrm_api3('GroupContact', 'create', [
         'contact_id'        => $contacts2remove->contact_id,
         'group_id'          => $group_id,
-        'status'            => 'Removed'));
+        'status'            => 'Removed',
+      ]);
     }
-
 
     // then: add the new ones
     $contacts2add = CRM_Core_DAO::executeQuery("
@@ -193,9 +193,10 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
       WHERE (civicrm_group_contact.status IS NULL OR civicrm_group_contact.status = 'Removed')
         AND result.contact_id IS NOT NULL {$excludeSql}");
     while ($contacts2add->fetch()) {
-      civicrm_api3('GroupContact', 'create', array(
+      civicrm_api3('GroupContact', 'create', [
         'contact_id'        => $contacts2add->contact_id,
-        'group_id'          => $group_id));
+        'group_id'          => $group_id,
+      ]);
     }
   }
 
@@ -203,14 +204,16 @@ class CRM_Sqltasks_Action_SyncGroup extends CRM_Sqltasks_Action_ContactSet {
    * get a list of eligible groups
    */
   protected function getEligibleGroups() {
-    $group_list = array();
-    $group_query = civicrm_api3('Group', 'get', array(
+    $group_list = [];
+    $group_query = civicrm_api3('Group', 'get', [
       'is_enabled'   => 1,
       'option.limit' => 0,
-      'return'       => 'id,title'))['values'];
+      'return'       => 'id,title',
+    ])['values'];
     foreach ($group_query as $group) {
       $group_list[$group['id']] = CRM_Utils_Array::value('title', $group, 'Group') . ' [' . $group['id'] . ']';
     }
     return $group_list;
   }
+
 }

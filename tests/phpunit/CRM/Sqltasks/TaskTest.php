@@ -1,9 +1,6 @@
 <?php
 
 use CRM_Sqltasks_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 
 /**
  * Tests overall task logic
@@ -28,12 +25,12 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
    * Test that tasks are created and fields are set correctly
    */
   public function testCreateTask() {
-    $main_sql = "
+    $main_sql = '
       DROP TABLE IF EXISTS tmp_test_task;
       CREATE TABLE IF NOT EXISTS tmp_test_task AS SELECT 1 AS contact_id;
-    ";
+    ';
 
-    $post_sql = "DROP TABLE IF EXISTS tmp_test_task;";
+    $post_sql = 'DROP TABLE IF EXISTS tmp_test_task;';
 
     $data = [
       'name'          => 'testCreateTask',
@@ -151,15 +148,15 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
    * @throws \Exception
    */
   public function testExecuteTask() {
-    $main_sql = "
+    $main_sql = '
       DROP TABLE IF EXISTS tmp_test_execute;
       CREATE TABLE tmp_test_execute AS SELECT 1 AS contact_id;
-    ";
+    ';
 
-    $post_sql = "
+    $post_sql = '
       DROP TABLE IF EXISTS tmp_test_execute_post;
       CREATE TABLE tmp_test_execute_post AS SELECT 1 AS contact_id;
-    ";
+    ';
 
     $data = [
       'name'    => 'testExecuteTask',
@@ -192,14 +189,14 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $query->fetch();
     $this->assertGreaterThan(0, $query->last_runtime);
 
-    $db_now = strtotime(CRM_Core_DAO::singleValueQuery("SELECT NOW()"));
+    $db_now = strtotime(CRM_Core_DAO::singleValueQuery('SELECT NOW()'));
     $last_exec_time = strtotime($query->last_execution);
     $this->assertLessThanOrEqual(1, abs($db_now - $last_exec_time), 'Task should have been executed recently');
 
-    $executed = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM tmp_test_execute");
+    $executed = CRM_Core_DAO::singleValueQuery('SELECT COUNT(*) FROM tmp_test_execute');
     $this->assertEquals(1, $executed, 'Table and row from Main SQL should have been created');
 
-    $executed = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM tmp_test_execute_post");
+    $executed = CRM_Core_DAO::singleValueQuery('SELECT COUNT(*) FROM tmp_test_execute_post');
     $this->assertEquals(1, $executed, 'Table and row from Post SQL should have been created');
   }
 
@@ -223,7 +220,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
     $this->assertLogContains("Error in action 'Run SQL Script'");
     $this->assertLogContains("Error in action 'Run Cleanup SQL Script'");
   }
@@ -339,7 +336,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
             'table'          => 'tmp_test_input_value',
             'encoding'       => 'UTF-8',
             'delimiter'      => ';',
-            'headers'        => "foo=foo",
+            'headers'        => 'foo=foo',
             'filename'       => basename($tmp),
             'path'           => dirname($tmp),
             'email'          => '',
@@ -350,22 +347,22 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
       ],
     ];
 
-    $this->createAndExecuteTask( $data, [ 'input_val' => 'expected_value' ]);
+    $this->createAndExecuteTask($data, ['input_val' => 'expected_value']);
 
     $this->assertLogContains("Action 'Run SQL Script' executed in");
     $this->assertLogContains('Written 1 records to', 'Records should have been written to CSV');
     $this->assertLogContains("Action 'CSV Export' executed in", 'CSV Export action should have succeeded');
 
-    $actual_value = CRM_Core_DAO::singleValueQuery("SELECT foo FROM tmp_test_input_value");
+    $actual_value = CRM_Core_DAO::singleValueQuery('SELECT foo FROM tmp_test_input_value');
     $this->assertEquals('expected_value', $actual_value, 'Table should contain the value passed via input_value');
 
-    $random = CRM_Core_DAO::singleValueQuery("SELECT random FROM tmp_test_input_value");
+    $random = CRM_Core_DAO::singleValueQuery('SELECT random FROM tmp_test_input_value');
     $this->assertEquals(16, strlen($random), 'Column "random" should contain 16 random characters');
 
-    $language = CRM_Core_DAO::singleValueQuery("SELECT language FROM tmp_test_input_value");
+    $language = CRM_Core_DAO::singleValueQuery('SELECT language FROM tmp_test_input_value');
     $this->assertEquals(Civi::settings()->get('lcMessages'), $language, 'Column "language" should match setting');
 
-    $config = CRM_Core_DAO::singleValueQuery("SELECT config FROM tmp_test_input_value");
+    $config = CRM_Core_DAO::singleValueQuery('SELECT config FROM tmp_test_input_value');
     $this->assertEquals((CRM_Sqltasks_GlobalToken::singleton())->getValue('test'), $config, 'Column "config" should match setting in sqltasks_global_tokens');
 
     $tmp = str_replace(
@@ -390,7 +387,7 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
           [
             'type'    => 'CRM_Sqltasks_Action_RunSQL',
             'enabled' => FALSE,
-            'script'  => "SELECT 1",
+            'script'  => 'SELECT 1',
           ],
         ],
       ],
@@ -412,37 +409,39 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
         'config'        => $data['config'],
         'last_modified' => $last_modified,
       ]);
-    } catch (CRM_Core_Exception $exception) {
+    }
+    catch (CRM_Core_Exception $exception) {
       $api_call_failed = TRUE;
     }
 
     // Assert that the change has been applied as expected
-    $this->assertEquals(false, $api_call_failed, "API call should have succeeded");
+    $this->assertEquals(FALSE, $api_call_failed, 'API call should have succeeded');
 
     $task = CRM_Sqltasks_BAO_SqlTask::findById($task->id);
     $first_action = json_decode($task->config, TRUE)['actions'][0];
-    $this->assertEquals(1, $first_action["enabled"], 'Task config should have changed');
+    $this->assertEquals(1, $first_action['enabled'], 'Task config should have changed');
 
     // Update task after another second with now expired last_modified timestamp
     sleep(1);
     $data['config']['actions'][0]['enabled'] = TRUE;
 
     try {
-      civicrm_api3("Sqltask", "create", [
-        "id"            => $task->id,
-        "config"        => $data['config'],
-        "last_modified" => $last_modified,
+      civicrm_api3('Sqltask', 'create', [
+        'id'            => $task->id,
+        'config'        => $data['config'],
+        'last_modified' => $last_modified,
       ]);
-    } catch (CRM_Core_Exception $exception) {
+    }
+    catch (CRM_Core_Exception $exception) {
       $api_call_failed = TRUE;
     }
 
     // Assert that the change has not been applied due to a mismatch of last_modified timestamps
-    $this->assertEquals(TRUE, $api_call_failed, "API call should have failed");
+    $this->assertEquals(TRUE, $api_call_failed, 'API call should have failed');
 
     $task = CRM_Sqltasks_BAO_SqlTask::findById($task->id);
     $first_action = json_decode($task->config, TRUE)['actions'][0];
-    $this->assertEquals(1, $first_action["enabled"], "Task config should not have changed");
+    $this->assertEquals(1, $first_action['enabled'], 'Task config should not have changed');
   }
 
 }

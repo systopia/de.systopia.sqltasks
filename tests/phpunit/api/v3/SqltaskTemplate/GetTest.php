@@ -41,27 +41,29 @@ class api_v3_SqltaskTemplate_GetTest extends \PHPUnit\Framework\TestCase impleme
    */
   public function testGetTemplate() {
     $templateData = [
-      "name"        => "Test-Template",
-      "config"      => "{}",
-      "description" => "...",
+      'name'        => 'Test-Template',
+      'config'      => '{}',
+      'description' => '...',
     ];
 
     try {
       $createdTemplateFromApi = civicrm_api3('SqltaskTemplate', 'create', $templateData);
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
+    }
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltaskTemplate.create returns exception:' . $e->getMessage());
     }
 
     try {
-      $templateFromApi = civicrm_api3("SqltaskTemplate", "get", [ "id" => $createdTemplateFromApi["values"]["id"]]);
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltaskTemplate.get returns exception:" . $e->getMessage());
+      $templateFromApi = civicrm_api3('SqltaskTemplate', 'get', ['id' => $createdTemplateFromApi['values']['id']]);
+    }
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltaskTemplate.get returns exception:' . $e->getMessage());
     }
 
     foreach (array_keys($templateData) as $property) {
       $this->assertEquals(
         $templateData[$property],
-        $templateFromApi["values"][$property],
+        $templateFromApi['values'][$property],
         sprintf("Template %s should be '%s'", $property, $templateData[$property])
       );
     }

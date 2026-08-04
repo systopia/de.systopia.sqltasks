@@ -59,7 +59,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
 
     $data_table = $this->getDataTable();
     if (empty($data_table)) {
-      throw new Exception("Data table not configured.", 1);
+      throw new Exception('Data table not configured.', 1);
     }
 
     // check if table exists
@@ -75,7 +75,6 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       throw new Exception("Data table '{$data_table}' has neither 'contact_id' nor 'membership_id'.", 1);
     }
 
-
     // check segments
     $segment_from_table = $this->getConfigValue('segment_from_table');
     if ($segment_from_table) {
@@ -84,10 +83,11 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       if (!$segment_colum) {
         throw new Exception("Data table '{$data_table}' has no column 'segment_name'.", 1);
       }
-    } else {
+    }
+    else {
       $segment_name = $this->getConfigValue('segment_name');
       if (empty($segment_name)) {
-        throw new Exception("No segment name given", 1);
+        throw new Exception('No segment name given', 1);
       }
     }
 
@@ -109,7 +109,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     // check campaign
     $campaign_id = $this->getConfigValue('campaign_id');
     if (!$campaign_id) {
-      throw new Exception("No campaign selected", 1);
+      throw new Exception('No campaign selected', 1);
     }
   }
 
@@ -120,7 +120,6 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $table_name = $this->getConfigValue('table');
     return trim($table_name);
   }
-
 
   /**
    * RUN this action
@@ -139,15 +138,15 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $clear = $this->getConfigValue('clear');
     if ($clear) {
       // clear out campaign
-      CRM_Core_DAO::executeQuery("DELETE FROM civicrm_segmentation WHERE campaign_id = %1",
-        array(1 => array($campaign_id, 'Integer')));
-      CRM_Core_DAO::executeQuery("DELETE FROM civicrm_segmentation_exclude WHERE campaign_id = %1",
-        array(1 => array($campaign_id, 'Integer')));
+      CRM_Core_DAO::executeQuery('DELETE FROM civicrm_segmentation WHERE campaign_id = %1',
+        [1 => [$campaign_id, 'Integer']]);
+      CRM_Core_DAO::executeQuery('DELETE FROM civicrm_segmentation_exclude WHERE campaign_id = %1',
+        [1 => [$campaign_id, 'Integer']]);
       $this->log("Cleared out campaign [{$campaign_id}]");
     }
 
     // RESOLVE
-    $segment_name_2_id = array();
+    $segment_name_2_id = [];
     $segment_from_table = $this->getConfigValue('segment_from_table');
     if ($segment_from_table) {
       $segment_query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(segment_name) AS segment_name FROM `{$data_table}`");
@@ -155,7 +154,8 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
         $segment_name_2_id[$segment_query->segment_name] = 0;
       }
 
-    } else {
+    }
+    else {
       $segment_name = $this->getConfigValue('segment_name');
       $segment_name_2_id[$segment_name] = 0;
     }
@@ -163,7 +163,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     // resolve each segment individually
     $segment_count = count($segment_name_2_id);
     foreach (array_keys($segment_name_2_id) as $segment_name) {
-      $segment = civicrm_api3('Segmentation', 'getsegmentid', array('name' => $segment_name));
+      $segment = civicrm_api3('Segmentation', 'getsegmentid', ['name' => $segment_name]);
       $segment_name_2_id[$segment_name] = $segment['id'];
     }
     $this->log("Resolved {$segment_count} segment(s).");
@@ -177,15 +177,18 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     // ASSIGN CONTACT/MEMBERSHIPS
     foreach ($segment_name_2_id as $segment_name => $segment_id) {
       // prepare query parameters
-      $params = array(1 => array($campaign_id,  'Integer'),
-                      2 => array($segment_id,   'Integer'),
-                      3 => array($timestamp,    'String'));
+      $params = [
+        1 => [$campaign_id, 'Integer'],
+        2 => [$segment_id, 'Integer'],
+        3 => [$timestamp, 'String'],
+      ];
 
       if ($segment_from_table) {
         // segments taken from table
         $segment_filter = "WHERE `{$data_table}`.segment_name = %4";
-        $params[4] = array($segment_name, 'String');
-      } else {
+        $params[4] = [$segment_name, 'String'];
+      }
+      else {
         // static segments
         $segment_filter = '';
       }
@@ -236,9 +239,8 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
           WHERE already_excluded IS NULL AND exclude = 1");
         $this->log("Excluded {$count} new memberships from segment '{$segment_name}'.");
 
-
-
-      } else {
+      }
+      else {
         // ASSIGN CONTACTS (multi-segment)
         // create temp table
         CRM_Core_DAO::executeQuery("
@@ -297,7 +299,8 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
         $has_changed = $this->setCampaignToPlanned($campaign_id);
         if ($has_changed) {
           $this->log("Campaign {$campaign_id} set to status 'planned'");
-        } else {
+        }
+        else {
           $this->log("Campaign {$campaign_id} was already in status 'planned'");
         }
         break;
@@ -321,14 +324,14 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     self::$_assignment_task_id    = $this->task->id;
   }
 
-
   /**
    * Get the start date of the current assignment
    */
   public static function getAssignmentTimestamp($task_id) {
     if (self::$_assignment_task_id == $task_id) {
       return self::$_assignment_timestamp;
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -337,14 +340,14 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
    * get the campaign status options
    */
   public static function getCampaignStatusOptions() {
-    return array(
+    return [
       'leave'     => E::ts("don't change status"),
       'planned'   => E::ts("(re)set to 'planned'"),
       // 'start'     => E::ts("start (if 'planned') with fixed segment order"),
       // 'start_t'   => E::ts("start (if 'planned') with segment order from table"),
-      'restart'   => E::ts("(re)start with fixed segment order"),
-      'restart_t' => E::ts("(re)start with segment order from table"),
-      );
+      'restart'   => E::ts('(re)start with fixed segment order'),
+      'restart_t' => E::ts('(re)start with segment order from table'),
+    ];
   }
 
   /**
@@ -353,15 +356,18 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
    * @return TRUE if the campaign needed to be modified for this
    */
   protected function setCampaignToPlanned($campaign_id) {
-    $campaign = civicrm_api3('Campaign', 'getsingle', array(
+    $campaign = civicrm_api3('Campaign', 'getsingle', [
       'id'     => $campaign_id,
-      'return' => 'id,status_id'));
+      'return' => 'id,status_id',
+    ]);
     if ($campaign['status_id'] == 1) {
       return FALSE;
-    } else {
-      civicrm_api3('Campaign', 'create', array(
+    }
+    else {
+      civicrm_api3('Campaign', 'create', [
         'id'        => $campaign_id,
-        'status_id' => 1));
+        'status_id' => 1,
+      ]);
       return TRUE;
     }
   }
@@ -372,7 +378,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
    * the configured parts going to the top
    */
   protected function getSegmentOrder($campaign_id) {
-    $new_order = array();
+    $new_order = [];
     $status_change = $this->getConfigValue('start');
 
     if ($status_change == 'restart_t') {
@@ -381,24 +387,27 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(`segment_name`) AS sname FROM `{$table_name}` ORDER BY `segment_weight` ASC");
       while ($query->fetch()) {
         // look up segment by name
-        $segment = civicrm_api3('Segmentation', 'getsegmentid', array('name' => $query->sname));
+        $segment = civicrm_api3('Segmentation', 'getsegmentid', ['name' => $query->sname]);
         if (!empty($segment['id'])) {
           $new_order[] = $segment['id'];
-        } else {
+        }
+        else {
           $this->log("Warning: Couldn't resolve segment '{$query->sname}'.");
         }
       }
 
-    } else {
+    }
+    else {
       // get the order from the text field
       $order_value = $this->getConfigValue('segment_order');
       $segment_names = explode("\n", $order_value);
       foreach ($segment_names as $segment_name) {
         $segment_name = trim($segment_name);
-        $segment_id = CRM_Core_DAO::singleValueQuery("SELECT id FROM `civicrm_segmentation_index` WHERE name = %1", array(1 => array($segment_name, 'String')));
+        $segment_id = CRM_Core_DAO::singleValueQuery('SELECT id FROM `civicrm_segmentation_index` WHERE name = %1', [1 => [$segment_name, 'String']]);
         if ($segment_id) {
           $new_order[] = $segment_id;
-        } else {
+        }
+        else {
           $this->log("Warning: referenced segment '{$segment_name}' could not be identified!");
         }
       }

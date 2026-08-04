@@ -38,7 +38,7 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
     $taskExecutionResult = $task->execute($params);
     $this->log = $taskExecutionResult['logs'];
 
-    return array_merge($taskExecutionResult, [ 'task' => $task ]);
+    return array_merge($taskExecutionResult, ['task' => $task]);
   }
 
   protected function assertLogContains($expected, $message = '') {

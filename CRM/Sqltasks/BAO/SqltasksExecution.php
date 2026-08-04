@@ -46,28 +46,28 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     $new_path = $config->customFileUploadDir . $base_name;
     copy($path, $new_path);
 
-    $file = civicrm_api3('File', 'create', array(
-        'description' => $title,
-        'mime_type'   => $mime_type,
-        'uri'         => $base_name,
-    ));
+    $file = civicrm_api3('File', 'create', [
+      'description' => $title,
+      'mime_type'   => $mime_type,
+      'uri'         => $base_name,
+    ]);
 
     $download_link = CRM_Utils_System::url(
-      "civicrm/file",
+      'civicrm/file',
       "reset=1&id={$file['id']}&filename={$base_name}&mime-type={$mime_type}",
       TRUE
     );
 
     $file_entry = [
-        'as_attachment' => $attachment,
-        'download_link' => $download_link,
-        'file_id'       => $file['id'],
-        'filename'      => $filename,
-        'mime_type'     => $mime_type,
-        'offer_link'    => $download_link,
-        'path'          => $path,
-        'task_id'       => $this->getID(),
-        'title'         => $title,
+      'as_attachment' => $attachment,
+      'download_link' => $download_link,
+      'file_id'       => $file['id'],
+      'filename'      => $filename,
+      'mime_type'     => $mime_type,
+      'offer_link'    => $download_link,
+      'path'          => $path,
+      'task_id'       => $this->getID(),
+      'title'         => $title,
     ];
 
     self::$file_entries[] = $file_entry;
@@ -128,19 +128,19 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     }
 
     if (!empty($params['to_start_date'])) {
-      $api->addWhere('start_date', '<=', $params["to_start_date"]);
+      $api->addWhere('start_date', '<=', $params['to_start_date']);
     }
 
     if (!empty($params['from_start_date'])) {
-      $api->addWhere('start_date', '>=', $params["from_start_date"]);
+      $api->addWhere('start_date', '>=', $params['from_start_date']);
     }
 
     if (!empty($params['to_end_date'])) {
-      $api->addWhere('end_date', '<=', $params["to_end_date"]);
+      $api->addWhere('end_date', '<=', $params['to_end_date']);
     }
 
     if (!empty($params['from_end_date'])) {
-      $api->addWhere('end_date', '>=', $params["from_end_date"]);
+      $api->addWhere('end_date', '>=', $params['from_end_date']);
     }
 
     if (!empty($params['order_by']) && is_array($params['order_by'])) {
@@ -256,7 +256,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   public static function getTheLatestExecutionId($sqltaskId) {
     $sqltaskId = (int) $sqltaskId;
     if (empty($sqltaskId)) {
-      return null;
+      return NULL;
     }
 
     $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['sqltask_id' => $sqltaskId, 'order_by' => ['id' => 'DESC'], 'limit' => 1]);
@@ -265,7 +265,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       return $sqltasksExecution['id'];
     }
 
-    return null;
+    return NULL;
   }
 
   /**
@@ -310,9 +310,11 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
    * @return array
    */
   public static function prepareLogs($logsString) {
-    if (empty($logsString)) return [];
+    if (empty($logsString)) {
+      return [];
+    }
 
-    $logs = json_decode($logsString, true);
+    $logs = json_decode($logsString, TRUE);
 
     foreach ($logs as $key => $log) {
       $microseconds = $log['timestamp_in_microseconds'] ?? 0;

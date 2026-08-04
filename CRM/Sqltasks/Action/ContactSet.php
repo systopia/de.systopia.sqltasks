@@ -28,7 +28,6 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
     return trim($table_name);
   }
 
-
   /**
    * Check if this action is configured correctly
    */
@@ -37,7 +36,7 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
 
     $contact_table = $this->getContactTable();
     if (empty($contact_table)) {
-      throw new Exception("Contact Table not configured.", 1);
+      throw new Exception('Contact Table not configured.', 1);
     }
 
     // check if table exists
@@ -52,4 +51,5 @@ abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
       throw new Exception("Contact Table '{$contact_table}' doesn't have a column 'contact_id'.", 1);
     }
   }
+
 }

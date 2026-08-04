@@ -78,7 +78,7 @@ class CRM_Sqltasks_Action_RunPHP extends CRM_Sqltasks_Action {
       eval(html_entity_decode($this->getConfigValue('php_code')));
     }
     catch (Exception $e) {
-      $this->log("PHP failed: " . $e->getMessage() . " - " . $e->getTraceAsString());
+      $this->log('PHP failed: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
       throw $e;
     }
   }

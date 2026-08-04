@@ -5,7 +5,8 @@ use Civi\Utils\Sqltasks\WarningMessages\WarningMessagesManager;
 function civicrm_api3_sqltask_get_warning_message($params) {
   try {
     $result = WarningMessagesManager::getResult($params);
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     throw new CRM_Core_Exception($e->getMessage());
   }
 

@@ -1,7 +1,5 @@
 <?php
 
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 
 /**
  * Test configuration format utility class

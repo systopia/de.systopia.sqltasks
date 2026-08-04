@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Create GitHub release
+
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Package extension
+        id: package-extension
+        run: |
+          # Use extension long name as archive prefix instead of directory name
+          # to allow extension long name to differ from directory name.
+          EXT_LONG_NAME=$(grep '<extension ' info.xml | sed -E 's/.+ key="([^"]+)".+/\1/g')
+          if [ -z "$EXT_LONG_NAME" ]; then
+            echo "Extension long name not found in info.xml"
+            exit 1
+          fi
+
+          FILENAME="$EXT_LONG_NAME-${GITHUB_REF_NAME}.zip"
+          git archive --prefix "$EXT_LONG_NAME/" --output="$FILENAME" --worktree-attributes "${GITHUB_REF_NAME}"
+          echo "FILENAME=$FILENAME" >> "$GITHUB_OUTPUT"
+
+      - name: Parse git tag
+        id: version
+        run: |
+          if echo ${GITHUB_REF_NAME} | grep -Eq '^[1-9][0-9]*\.[0-9]+\.[0-9]+$'; then
+            echo "PRERELEASE=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "PRERELEASE=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+        with:
+          artifactErrorsFailBuild: true
+          draft: true
+          generateReleaseNotes: true
+          prerelease: ${{ steps.version.outputs.PRERELEASE }}
+          artifacts: ${{ steps.package-extension.outputs.FILENAME }}

@@ -27,22 +27,22 @@ function civicrm_api3_sqltask_create($params) {
   if (!is_null($task->archive_date)) {
     return civicrm_api3_create_error(
       "Task(id={$task->id}) is archived. " .
-      "Cannot update any fields. " .
-      "To update fields please unarchive the task."
+      'Cannot update any fields. ' .
+      'To update fields please unarchive the task.'
     );
   }
 
   // Prevent concurrent changes
   if (
-    isset($params["last_modified"])
+    isset($params['last_modified'])
     && isset($task->last_modified)
-    && strtotime($params["last_modified"]) !== strtotime($task->last_modified)
+    && strtotime($params['last_modified']) !== strtotime($task->last_modified)
   ) {
     $last_modified_fmt = date('H:i:s, j M Y', strtotime($task->last_modified));
 
     return civicrm_api3_create_error(
       "This task has been modified by another user at $last_modified_fmt",
-      [ "error_type" => "CONCURRENT_CHANGES" ]
+      ['error_type' => 'CONCURRENT_CHANGES']
     );
 
     unset($params['last_modified']);
@@ -104,7 +104,7 @@ function _civicrm_api3_sqltask_create_spec(&$params) {
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Weight',
-    'description'  => 'Determines the order in which tasks are executed (lower is executed earlier)'
+    'description'  => 'Determines the order in which tasks are executed (lower is executed earlier)',
   ];
 
   $params['scheduled'] = [

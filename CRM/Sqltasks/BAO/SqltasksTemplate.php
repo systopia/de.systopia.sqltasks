@@ -14,12 +14,12 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
   public static function create ($params) {
     $hook = empty($params['id']) ? 'create' : 'edit';
 
-    CRM_Utils_Hook::pre($hook, "SqltasksTemplate", CRM_Utils_Array::value('id', $params), $params);
+    CRM_Utils_Hook::pre($hook, 'SqltasksTemplate', CRM_Utils_Array::value('id', $params), $params);
     $instance = new CRM_Sqltasks_BAO_SqltasksTemplate();
     $instance->copyValues($params);
-    $instance->last_modified = date("Y-m-d H:i:s");
+    $instance->last_modified = date('Y-m-d H:i:s');
     $instance->save();
-    CRM_Utils_Hook::post($hook, "SqltasksTemplate", $instance->id, $instance);
+    CRM_Utils_Hook::post($hook, 'SqltasksTemplate', $instance->id, $instance);
 
     return $instance;
   }
@@ -30,13 +30,13 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
    * @param bool $id
    */
   public static function deleteOne ($id) {
-    $params = [ "id" => $id ];
+    $params = ['id' => $id];
 
-    CRM_Utils_Hook::pre("delete", "SqltasksTemplate", $id, $params);
+    CRM_Utils_Hook::pre('delete', 'SqltasksTemplate', $id, $params);
     $instance = new CRM_Sqltasks_DAO_SqltasksTemplate();
     $instance->id = $id;
     $instance->delete();
-    CRM_Utils_Hook::post("delete", "SqltasksTemplate", $id, $params);
+    CRM_Utils_Hook::post('delete', 'SqltasksTemplate', $id, $params);
   }
 
   /**
@@ -65,8 +65,8 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
     $result = [];
 
     $dao = CRM_Core_DAO::executeQuery(
-      "SELECT * FROM %1;",
-      [ 1 => [ self::getTableName(), "MysqlColumnNameOrAlias" ] ]
+      'SELECT * FROM %1;',
+      [1 => [self::getTableName(), 'MysqlColumnNameOrAlias']]
     );
 
     while ($dao->fetch()) {
@@ -87,16 +87,18 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
     $result = [];
 
     $dao = CRM_Core_DAO::executeQuery(
-      "SELECT * FROM %1 WHERE `id` = %2;",
+      'SELECT * FROM %1 WHERE `id` = %2;',
       [
-        1 => [ self::getTableName(), "MysqlColumnNameOrAlias" ],
-        2 => [ $id, "Integer" ],
+        1 => [self::getTableName(), 'MysqlColumnNameOrAlias'],
+        2 => [$id, 'Integer'],
       ]
     );
 
     $dao->fetch();
 
-    if (empty($dao->id)) return null;
+    if (empty($dao->id)) {
+      return NULL;
+    }
 
     return CRM_Sqltasks_BAO_SqltasksTemplate::fromDAO($dao);
   }

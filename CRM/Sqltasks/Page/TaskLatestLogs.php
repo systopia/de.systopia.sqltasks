@@ -1,5 +1,6 @@
 <?php
 class CRM_Sqltasks_Page_TaskLatestLogs extends CRM_Core_Page {
+
   public function run() {
     $taskId = CRM_Utils_Request::retrieve('sqltask_id', 'Integer');
     if (empty($taskId)) {

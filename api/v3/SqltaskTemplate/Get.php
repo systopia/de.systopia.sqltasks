@@ -13,18 +13,18 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 function civicrm_api3_sqltask_template_Get($params) {
   try {
-    $template = CRM_Sqltasks_BAO_SqltasksTemplate::getOne($params["id"]);
+    $template = CRM_Sqltasks_BAO_SqltasksTemplate::getOne($params['id']);
 
     if (empty($template)) {
-      return civicrm_api3_create_success(null);
+      return civicrm_api3_create_success(NULL);
     }
 
     return civicrm_api3_create_success($template->mapToArray());
-  } catch (\Exception $exception) {
+  }
+  catch (\Exception $exception) {
     throw new CRM_Core_Exception($exception->getMessage());
   }
 }
-
 
 /**
  * @param array $spec description of fields supported by this API call
@@ -40,5 +40,3 @@ function _civicrm_api3_sqltask_template_get_spec(&$spec) {
     'description'  => 'Unique template ID',
   ];
 }
-
-?>

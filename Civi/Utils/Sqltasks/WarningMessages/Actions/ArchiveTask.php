@@ -2,7 +2,6 @@
 
 namespace Civi\Utils\Sqltasks\WarningMessages\Actions;
 
-use Civi\Api4;
 use CRM_Sqltasks_BAO_SqlTask;
 use CRM_Utils_Type;
 

@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -22,7 +21,7 @@ class CRM_Sqltasks_GlobalToken {
    *
    * @var CRM_Sqltasks_GlobalToken
    */
-  private static $instance = null;
+  private static $instance = NULL;
 
   /**
    * All tokens
@@ -37,7 +36,7 @@ class CRM_Sqltasks_GlobalToken {
    * @return CRM_Sqltasks_GlobalToken
    */
   public static function singleton() {
-    if (static::$instance === null) {
+    if (static::$instance === NULL) {
       static::$instance = new static();
     }
 
@@ -158,6 +157,7 @@ class CRM_Sqltasks_GlobalToken {
   }
 
   private function __clone() {}
+
   public function __wakeup() {}
 
 }

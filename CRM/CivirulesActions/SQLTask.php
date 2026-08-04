@@ -1,6 +1,5 @@
 <?php
 
-use Civi\Api4;
 
 if (class_exists('CRM_Civirules_Action')) {
 
@@ -59,7 +58,9 @@ if (class_exists('CRM_Civirules_Action')) {
           'log_to_file' => !empty($params['log_to_file']),
           'check_permissions' => FALSE,
         ]);
-      } catch (CRM_Core_Exception $e) {}
+      }
+      catch (CRM_Core_Exception $e) {
+      }
     }
 
     /**
@@ -69,7 +70,9 @@ if (class_exists('CRM_Civirules_Action')) {
     public function userFriendlyConditionParams() {
       $params = $this->getActionParameters();
 
-      if (empty($params['sqltask_id'])) return '';
+      if (empty($params['sqltask_id'])) {
+        return '';
+      }
 
       return CRM_Sqltasks_DAO_SqlTask::getFieldValue(
         'CRM_Sqltasks_DAO_SqlTask',

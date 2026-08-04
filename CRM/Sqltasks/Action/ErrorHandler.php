@@ -34,6 +34,7 @@ class CRM_Sqltasks_Action_ErrorHandler extends CRM_Sqltasks_Action_ResultHandler
   }
 
   public function __construct(CRM_Sqltasks_BAO_SqlTask $task, array $config) {
-    parent::__construct($task, $config, 'error',   E::ts('Error Handler'));
+    parent::__construct($task, $config, 'error', E::ts('Error Handler'));
   }
+
 }

@@ -19,21 +19,21 @@ class CRM_Sqltasks_Action_RunPHPTest extends CRM_Sqltasks_Action_AbstractActionT
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_php;
-                        CREATE TABLE tmp_test_action_php AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_php;
+                        CREATE TABLE tmp_test_action_php AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'     => 'CRM_Sqltasks_Action_RunPHP',
           'enabled'  => TRUE,
-          'php_code' => "CRM_Core_DAO::executeQuery('TRUNCATE TABLE tmp_test_action_php');"
+          'php_code' => "CRM_Core_DAO::executeQuery('TRUNCATE TABLE tmp_test_action_php');",
         ],
-      ]
+      ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Run PHP Code' executed in", 'Run PHP action should have succeeded');
-    $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(1) FROM tmp_test_action_php");
+    $count = CRM_Core_DAO::singleValueQuery('SELECT COUNT(1) FROM tmp_test_action_php');
     $this->assertEquals(0, $count, 'Table tmp_test_action_php should have been truncated');
   }
 

@@ -30,9 +30,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   /**
    * Types of CSV field enclosure
    */
-  const ENCLOSURE_NONE = "none";
-  const ENCLOSURE_PARTIAL = "partial";
-  const ENCLOSURE_FULL = "full";
+  const ENCLOSURE_NONE = 'none';
+  const ENCLOSURE_PARTIAL = 'partial';
+  const ENCLOSURE_FULL = 'full';
 
   /**
    * Get identifier string
@@ -61,12 +61,12 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    * get all possible delimiters
    */
   public static function getDelimiterOptions() {
-    return array(
+    return [
       ';' => E::ts('Semicolon (;)'),
       ',' => E::ts('Comma (,)'),
       '|' => E::ts('Vertical bar (|)'),
       '' => E::ts('other'),
-    );
+    ];
   }
 
   /**
@@ -80,11 +80,12 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    * get a list of eligible templates for the email
    */
   protected function getAllTemplates() {
-    $template_options = array();
-    $template_query = civicrm_api3('MessageTemplate', 'get', array(
+    $template_options = [];
+    $template_query = civicrm_api3('MessageTemplate', 'get', [
       'is_active'    => 1,
       'return'       => 'id,msg_title',
-      'option.limit' => 0));
+      'option.limit' => 0,
+    ]);
     foreach ($template_query['values'] as $template) {
       $template_options[$template['id']] = $template['msg_title'];
     }
@@ -95,7 +96,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    * Get all possible encodings
    */
   public static function getEncodingOptions() {
-    $encodings = array();
+    $encodings = [];
     $mb_list = mb_list_encodings();
     foreach ($mb_list as $mb_encoding) {
       $encodings[$mb_encoding] = $mb_encoding;
@@ -135,7 +136,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
    * get a list of (header, column) definitions
    */
   protected function getColumnSpecs() {
-    $header2column = array();
+    $header2column = [];
     $columns_spec = trim($this->getConfigValue('headers'));
     $spec_lines = explode(PHP_EOL, $columns_spec);
     foreach ($spec_lines as $spec_line) {
@@ -144,9 +145,10 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         $header = trim(substr($spec_line, 0, $separator_index));
         $column = trim(substr($spec_line, $separator_index + 1));
         if (!empty($header) && !empty($column)) {
-          $header2column[] = array($header, $column);
+          $header2column[] = [$header, $column];
         }
-      } else {
+      }
+      else {
         // this line is ignored, it doesn't have the asdasd=asdasd form
       }
     }
@@ -160,7 +162,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   protected function getFilePath($filename = NULL) {
     $file_path = $this->getConfigValue('path');
     $file_path = trim($file_path);
-    if(empty($file_path)){
+    if (empty($file_path)) {
       $file_path = CRM_Core_Config::singleton()->customFileUploadDir;
     }
     while (DIRECTORY_SEPARATOR == substr($file_path, strlen($file_path) - 1)) {
@@ -182,7 +184,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     $export_table = $this->getExportTable();
     if (empty($export_table)) {
-      throw new Exception("Export Table not configured.", 1);
+      throw new Exception('Export Table not configured.', 1);
     }
 
     // check if table exists
@@ -217,7 +219,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
     // }
 
-    $out = Writer::createFromString("");
+    $out = Writer::createFromString('');
 
     // then: run the query
     $export_table = $this->getExportTable();
@@ -227,7 +229,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $delimiter = $this->getConfigValue('delimiter');
     $delimiter_other = $this->getConfigValue('delimiter_other');
 
-    if(empty($delimiter) && !empty($delimiter_other)){
+    if (empty($delimiter) && !empty($delimiter_other)) {
       $delimiter = $delimiter_other;
     }
 
@@ -235,11 +237,11 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     // Set output encoding
     $encConfig  = $this->getConfigValue('encoding');
-    $encoding = empty($encConfig) ? "UTF-8" : $encConfig;
-    CharsetConverter::addTo($out, "UTF-8", $encoding);
+    $encoding = empty($encConfig) ? 'UTF-8' : $encConfig;
+    CharsetConverter::addTo($out, 'UTF-8', $encoding);
 
     // Set field enclosure
-    $enclosureMode = $this->getConfigValue("enclosure_mode");
+    $enclosureMode = $this->getConfigValue('enclosure_mode');
 
     if ($enclosureMode === self::ENCLOSURE_NONE) {
       $out->setEnclosure(chr(0));
@@ -250,8 +252,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     }
 
     // parse specs
-    $headers = array();
-    $columns = array();
+    $headers = [];
+    $columns = [];
     foreach ($column_specs as $column_spec) {
       $headers[] = $column_spec[0];
       $columns[] = $column_spec[1];
@@ -272,7 +274,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $query = CRM_Core_DAO::executeQuery("SELECT {$column_list} FROM {$export_table} {$excludeSql}");
     while ($query->fetch()) {
       $this->setHasExecuted();
-      $record = array();
+      $record = [];
       foreach ($column_specs as $column_spec) {
         $column = $column_spec[1];
         // TODO: formatting?
@@ -287,8 +289,8 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     if ($enclosureMode === self::ENCLOSURE_NONE) {
       mb_internal_encoding($encoding);
-      $csvOutput = mb_ereg_replace(chr(0), "", $csvOutput);
-      mb_internal_encoding("UTF-8");
+      $csvOutput = mb_ereg_replace(chr(0), '', $csvOutput);
+      mb_internal_encoding('UTF-8');
     }
 
     file_put_contents($filepath, $csvOutput);
@@ -298,7 +300,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $discard_empty = $this->getConfigValue('discard_empty');
     if ($count == 0 && !empty($discard_empty)) {
       unlink($filepath);
-      $this->log("Discarded empty file, no upload/email will succeed");
+      $this->log('Discarded empty file, no upload/email will succeed');
       return;
     }
 
@@ -308,7 +310,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
       // zip the file
       $zip = new ZipArchive();
       $zipfile = $filepath . '.zip';
-      if ($zip->open($zipfile, ZipArchive::CREATE)!==TRUE) {
+      if ($zip->open($zipfile, ZipArchive::CREATE) !== TRUE) {
         throw new Exception("Cannot open zipfile '{$zipfile}'", 1);
       }
       $zip->addFile($filepath, $filename);
@@ -323,7 +325,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     $mime_type = $this->getConfigValue('zip') ? 'application/zip' : 'text/csv';
 
     $this->context['execution']->addGeneratedFile(
-        E::ts("%1 CSV Export", [1 => $this->task->name]),
+        E::ts('%1 CSV Export', [1 => $this->task->name]),
         $filename,
         $filepath,
         $mime_type,
@@ -335,15 +337,15 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     if (!empty($config_email) && !empty($config_email_template)) {
       // send the template via email
       $email = [
-          'id' => $this->getConfigValue('email_template'),
-          'to_email' => $this->getConfigValue('email'),
+        'id' => $this->getConfigValue('email_template'),
+        'to_email' => $this->getConfigValue('email'),
       ];
       // add file as attachment or setup URL token
       if (!$config_offer_link) {
         $attachment = [
           'fullPath'  => $filepath,
           'mime_type' => $mime_type,
-          'cleanName' => basename($filepath)
+          'cleanName' => basename($filepath),
         ];
         $email['attachments'] = [$attachment];
       }
@@ -356,9 +358,10 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
         function() use ($filename, $filepath) {
           return $this->uploadSftp($filename, $filepath);
         },
-        Civi::settings()->get("sqltasks_sftp_max_retries"),
-        Civi::settings()->get("sqltasks_sftp_retry_initial_wait")
+        Civi::settings()->get('sqltasks_sftp_max_retries'),
+        Civi::settings()->get('sqltasks_sftp_retry_initial_wait')
       );
     }
   }
+
 }

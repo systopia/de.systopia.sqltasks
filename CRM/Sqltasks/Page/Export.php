@@ -37,7 +37,7 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
       $tasks = CRM_Sqltasks_BAO_SqlTask::generator();
       if ($tasks->valid()) {
         $zip = new ZipArchive();
-        $fileURL = CRM_Core_Config::singleton()->uploadDir . "sqltasks_" . date('Ymd') . ".zip";
+        $fileURL = CRM_Core_Config::singleton()->uploadDir . 'sqltasks_' . date('Ymd') . '.zip';
         if ($zip->open($fileURL, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE) {
           foreach ($tasks as $task) {
             $taskFileName = $this->getTaskFileName($task);

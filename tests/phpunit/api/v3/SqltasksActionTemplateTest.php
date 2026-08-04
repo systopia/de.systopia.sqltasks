@@ -59,9 +59,9 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
 
     $get = $this->callAPISuccess('SqltasksActionTemplate', 'get', []);
     $this->assertEquals(1, $get['count']);
-    $this->assertEquals("ActionTemplate", $get['values'][$created['id']]['name']);
-    $this->assertEquals("CRM_Sqltasks_Action_RunSQL", $get['values'][$created['id']]['type']);
-    $this->assertEquals("{}", $get['values'][$created['id']]['config']);
+    $this->assertEquals('ActionTemplate', $get['values'][$created['id']]['name']);
+    $this->assertEquals('CRM_Sqltasks_Action_RunSQL', $get['values'][$created['id']]['type']);
+    $this->assertEquals('{}', $get['values'][$created['id']]['config']);
 
     $this->callAPISuccess('SqltasksActionTemplate', 'delete', [
       'id' => $created['id'],

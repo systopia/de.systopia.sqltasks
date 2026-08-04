@@ -3,7 +3,6 @@
 namespace Civi\Utils\Sqltasks\WarningMessages\Actions;
 
 use Civi\Api4;
-use CRM_Sqltasks_BAO_SqlTask;
 use CRM_Utils_System;
 use CRM_Utils_Type;
 use Exception;
@@ -45,18 +44,18 @@ class Base {
    */
   private function getDefaultWarningWindowData() {
     return [
-      'isAllowDoAction' => false,
+      'isAllowDoAction' => FALSE,
       'warningWindow' => [
         'title' => $this->params['action'],
         'message' => 'Do "' . $this->params['action'] . '" action?',
         'yesButtonText' => 'Continue',
         'yesButtonClasses' => '',
-        'isShowYesButton' => true,
+        'isShowYesButton' => TRUE,
         'yesButtonIcon' => 'fa-check',
         'noButtonText' => 'Cancel',
         'noButtonClasses' => '',
         'noButtonIcon' => 'fa-times',
-      ]
+      ],
     ];
   }
 
@@ -84,7 +83,8 @@ class Base {
 
       if ($requiredFieldType === CRM_Utils_Type::T_INT) {
         $this->params['action_data'][$requiredFieldName] = (int) $this->rawParams['action_data'][$requiredFieldName];
-      } elseif ($requiredFieldType === CRM_Utils_Type::T_STRING) {
+      }
+      elseif ($requiredFieldType === CRM_Utils_Type::T_STRING) {
         $this->params['action_data'][$requiredFieldName] = (string) $this->rawParams['action_data'][$requiredFieldName];
       }
     }

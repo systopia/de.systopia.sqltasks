@@ -32,11 +32,11 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
     $segmentId = $this->callApiSuccess('Segmentation', 'getsegmentid', [
       'name' => 'testSegmentationExport',
     ])['id'];
-    $campaignId = $this->callApiSuccess('Campaign', 'create', array(
+    $campaignId = $this->callApiSuccess('Campaign', 'create', [
       'sequential' => 1,
       'name'       => 'testSegmentationExport',
       'title'      => 'testSegmentationExport',
-    ))['id'];
+    ])['id'];
     $tmp = tempnam(sys_get_temp_dir(), 'seg');
 
     $config = [
@@ -45,8 +45,8 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_segmentationexport;
-                        CREATE TABLE tmp_test_action_segmentationexport AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_segmentationexport;
+                        CREATE TABLE tmp_test_action_segmentationexport AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'                => 'CRM_Sqltasks_Action_SegmentationAssign',
@@ -80,7 +80,7 @@ class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_Abs
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Exporter 'Selektion (Excel)' to file", 'Should have exported file');
     $this->assertLogContains('Zipped file into', 'Should have zipped file');

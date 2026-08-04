@@ -39,17 +39,17 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
     ];
 
     /* V2 sample:
-      {
-        "version": 2,
-        "actions": [
-          {
-            "type": "CRM_Sqltasks_Action_CreateActivity",
-            "enabled": true,
-            ...
-          }
-        ]
-      }
-    */
+    {
+    "version": 2,
+    "actions": [
+    {
+    "type": "CRM_Sqltasks_Action_CreateActivity",
+    "enabled": true,
+    ...
+    }
+    ]
+    }
+     */
 
     // iterate over all prefixes
     foreach ($prefixToTypeList as $prefix => $type) {
@@ -87,7 +87,7 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
 
     $scheduleDetails = [
       'scheduled_month', 'scheduled_weekday', 'scheduled_day', 'scheduled_hour',
-      'scheduled_minute'
+      'scheduled_minute',
     ];
     foreach ($scheduleDetails as $key) {
       if (!empty($this->config['config'][$key])) {

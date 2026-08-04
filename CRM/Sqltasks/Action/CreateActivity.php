@@ -70,7 +70,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $individual = $this->getConfigValue('individual');
     if ($individual) {
       $this->createIndividualActivities();
-    } else {
+    }
+    else {
       $this->createMassActivity();
     }
     $this->createExclusionActivity();
@@ -95,7 +96,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     }
 
     // create activity first
-    $activity_data = array(
+    $activity_data = [
       'activity_date_time' => $this->getDateTime($this->getConfigValue('activity_date_time')),
       'activity_type_id'   => $this->getConfigValue('activity_type_id'),
       'campaign_id'        => $this->getConfigValue('campaign_id'),
@@ -110,10 +111,10 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'engagement_level'   => $this->getConfigValue('engagement_level'),
       'location'           => $this->resolveTokens($this->getConfigValue('location'), $record),
       'duration'           => $this->resolveTokens($this->getConfigValue('duration'), $record),
-    );
+    ];
     $unsetIfEmpty = [
       'source_contact_id', 'campaign_id', 'medium_id', 'source_record_id',
-      'priority_id', 'engagement_level', 'location', 'duration'
+      'priority_id', 'engagement_level', 'location', 'duration',
     ];
     foreach ($unsetIfEmpty as $field) {
       if (empty($activity_data[$field])) {
@@ -141,13 +142,15 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       // add all targets separately
       $target_query = CRM_Core_DAO::executeQuery("SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL {$excludeSql}");
       while ($target_query->fetch()) {
-        civicrm_api3('ActivityContact', 'create', array(
+        civicrm_api3('ActivityContact', 'create', [
           'activity_id'    => $activity['id'],
           'contact_id'     => (int) $target_query->contact_id,
-          'record_type_id' => 3));
+          'record_type_id' => 3,
+        ]);
       }
 
-    } else {
+    }
+    else {
       // just add everyone in the group as a target
       CRM_Core_DAO::executeQuery("
         INSERT IGNORE INTO civicrm_activity_contact
@@ -174,7 +177,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $contact_table      = $this->getContactTable();
 
     // static activity parameters
-    $activity_template = array(
+    $activity_template = [
       'activity_date_time' => $this->getDateTime($this->getConfigValue('activity_date_time')),
       'activity_type_id'   => $this->getConfigValue('activity_type_id'),
       'campaign_id'        => $this->getConfigValue('campaign_id'),
@@ -184,7 +187,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       'medium_id'          => $this->getConfigValue('medium_id'),
       'priority_id'        => $this->getConfigValue('priority_id'),
       'engagement_level'   => $this->getConfigValue('engagement_level'),
-    );
+    ];
     $unsetIfEmpty = ['source_contact_id', 'campaign_id', 'medium_id', 'priority_id', 'engagement_level'];
     foreach ($unsetIfEmpty as $field) {
       if (empty($activity_template[$field])) {
@@ -210,7 +213,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
     $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} {$excludeSql}");
     $unsetIfEmpty = ['source_record_id', 'location', 'duration'];
     while ($record->fetch()) {
-      if (empty($record->contact_id)) continue;
+      if (empty($record->contact_id)) {
+        continue;
+      }
       $this->setHasExecuted();
 
       // compile activity
@@ -229,7 +234,8 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
       if ($use_api) {
         $activity_id = (int) civicrm_api3('Activity', 'create', $activity)['id'];
-      } else {
+      }
+      else {
         $activity_id = $this->createActivitySQL($activity);
       }
 
@@ -269,7 +275,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
         'status_id' => $this->getConfigValue('status_id'),
         'source_contact_id' => $this->getConfigValue('source_contact_id'),
         'subject' => ts('Control Group - %1', [
-          1 => $this->resolveTokens($this->getConfigValue('subject'), $record)
+          1 => $this->resolveTokens($this->getConfigValue('subject'), $record),
         ]),
         'medium_id' => $this->getConfigValue('medium_id'),
         'priority_id' => $this->getConfigValue('priority_id'),

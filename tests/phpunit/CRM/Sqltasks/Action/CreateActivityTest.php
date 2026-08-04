@@ -23,15 +23,15 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       'option_group_id' => 'activity_type',
     ]);
 
-    CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `civicrm_segmentation_exclude`");
+    CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS `civicrm_segmentation_exclude`');
 
     CRM_Core_DAO::executeQuery(
-      "CREATE TABLE `civicrm_segmentation_exclude` (campaign_id INT, contact_id INT)"
+      'CREATE TABLE `civicrm_segmentation_exclude` (campaign_id INT, contact_id INT)'
     );
   }
 
   public function tearDown() : void {
-    CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `civicrm_segmentation_exclude`");
+    CRM_Core_DAO::executeQuery('DROP TABLE IF EXISTS `civicrm_segmentation_exclude`');
     parent::tearDown();
   }
 
@@ -42,8 +42,8 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_createactivity;
-                        CREATE TABLE tmp_test_action_createactivity AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_createactivity;
+                        CREATE TABLE tmp_test_action_createactivity AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'               => 'CRM_Sqltasks_Action_CreateActivity',
@@ -66,7 +66,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Create Activity' executed in", 'Create Activity action should have succeeded');
     $activityCount = $this->callApiSuccess('Phone', 'getcount', [
@@ -92,7 +92,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       ];
 
       CRM_Core_DAO::executeQuery(
-        "INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)",
+        'INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)',
         [
           1 => [$this->campaignID, 'Integer'],
           2 => [$contactID, 'Integer'],
@@ -124,7 +124,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         ],
       ];
 
-      $this->createAndExecuteTask([ 'config' => $config ]);
+      $this->createAndExecuteTask(['config' => $config]);
 
       $activityResult = $this->callApiSuccess('Activity', 'getsingle', [
         'subject' => $activitySubject,
@@ -146,7 +146,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
           'Field sqltask_activity_id should not be null'
         );
 
-        if ((int) $queryResult->exclude){
+        if ((int) $queryResult->exclude) {
           $exclActivity = $this->callAPISuccess('Activity', 'getsingle', [
             'id' => $queryResult->sqltask_activity_id,
           ]);
@@ -184,7 +184,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       ];
 
       CRM_Core_DAO::executeQuery(
-        "INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)",
+        'INSERT INTO `civicrm_segmentation_exclude` (campaign_id, contact_id) VALUES (%1, %2)',
         [
           1 => [$this->campaignID, 'Integer'],
           2 => [$contactID, 'Integer'],
@@ -213,7 +213,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         ],
       ];
 
-      $this->createAndExecuteTask([ 'config' => $config ]);
+      $this->createAndExecuteTask(['config' => $config]);
 
       $queryResult = CRM_Core_DAO::executeQuery(
         "SELECT `sqltask_activity_id`, `contact_id`, `exclude` FROM `$tmpContactTable`"
@@ -248,7 +248,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
         $activityContactCount = $this->callAPISuccessGetCount('ActivityContact', [
           'activity_id'    => $queryResult->sqltask_activity_id,
           'contact_id'     => $queryResult->contact_id,
-          'record_type_id' => "Activity Targets",
+          'record_type_id' => 'Activity Targets',
         ]);
 
         $this->assertEquals(
