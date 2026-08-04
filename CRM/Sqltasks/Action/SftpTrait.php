@@ -15,7 +15,11 @@ trait CRM_Sqltasks_Action_SftpTrait {
     $credentials = $this->getConfigValue('upload');
     if (!empty($credentials)) {
       $credentials = trim($credentials);
-      if (preg_match('#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#', $credentials, $match)) {
+      if (preg_match(
+        '#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#',
+        $credentials,
+        $match
+      )) {
         return $match;
       }
       else {
@@ -55,7 +59,9 @@ trait CRM_Sqltasks_Action_SftpTrait {
       // upload
       $target_file = $credentials['remote_path'] . '/' . $filename;
       if (!$sftp->put($target_file, $filepath, $mode)) {
-        throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
+        throw new Exception(
+          "Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1
+        );
       }
 
       $this->log("Uploaded file '{$filename}' to {$credentials['host']}/{$target_file}");
@@ -77,7 +83,13 @@ trait CRM_Sqltasks_Action_SftpTrait {
    * @return mixed
    * @throws Exception
    */
-  public function retrySftp(callable $callable, int $maxRetries = 5, int $initialWait = 1, array $expectedErrors = [Exception::class], int $exponent = 2) {
+  public function retrySftp(
+    callable $callable,
+    int $maxRetries = 5,
+    int $initialWait = 1,
+    array $expectedErrors = [Exception::class],
+    int $exponent = 2
+  ) {
     try {
       return call_user_func($callable);
     }

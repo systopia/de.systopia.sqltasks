@@ -216,14 +216,19 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
                                                    AND civicrm_segmentation.membership_id = civicrm_membership.id
                                                    AND civicrm_segmentation.segment_id    = %2
             LEFT JOIN civicrm_segmentation_exclude ON civicrm_segmentation_exclude.campaign_id    = %1
-                                                   AND civicrm_segmentation_exclude.membership_id = civicrm_membership.id
+                                                   AND civicrm_segmentation_exclude.membership_id
+                                                     = civicrm_membership.id
                                                    AND civicrm_segmentation_exclude.segment_id    = %2
             {$segment_filter}", $params);
         // get count
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
+        $count = CRM_Core_DAO::singleValueQuery("
+          SELECT COUNT(*)
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
         // assign memberships
         CRM_Core_DAO::executeQuery("
-          INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
+          INSERT IGNORE INTO `civicrm_segmentation`
+            (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
           SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
           FROM `{$temp_table}`
           WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
@@ -233,9 +238,13 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
         }
 
         // handle exclusions
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_excluded IS NULL AND exclude = 1");
+        $count = CRM_Core_DAO::singleValueQuery("
+          SELECT COUNT(*)
+          FROM `{$temp_table}`
+          WHERE already_excluded IS NULL AND exclude = 1");
         CRM_Core_DAO::executeQuery("
-          INSERT IGNORE INTO `civicrm_segmentation_exclude` (campaign_id, segment_id, contact_id, membership_id, created_date)
+          INSERT IGNORE INTO `civicrm_segmentation_exclude`
+            (campaign_id, segment_id, contact_id, membership_id, created_date)
           SELECT campaign_id, segment_id, entity_id, membership_id, datetime
           FROM `{$temp_table}`
           WHERE already_excluded IS NULL AND exclude = 1");
@@ -265,10 +274,14 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
                                            AND civicrm_segmentation_exclude.segment_id = %2
             {$segment_filter}", $params);
         // get count
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
+        $count = CRM_Core_DAO::singleValueQuery("
+          SELECT COUNT(*)
+          FROM `{$temp_table}`
+          WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
         // assign memberships
         CRM_Core_DAO::executeQuery("
-          INSERT IGNORE INTO `civicrm_segmentation` (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
+          INSERT IGNORE INTO `civicrm_segmentation`
+            (entity_id, datetime, campaign_id, segment_id, test_group, membership_id)
           SELECT entity_id, datetime, campaign_id, segment_id, test_group, membership_id
           FROM `{$temp_table}`
           WHERE already_assigned IS NULL AND (exclude IS NULL or exclude = 0)");
@@ -278,9 +291,13 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
         }
 
         // handle exclusions
-        $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM `{$temp_table}` WHERE already_excluded IS NULL AND exclude = 1");
+        $count = CRM_Core_DAO::singleValueQuery("
+          SELECT COUNT(*)
+          FROM `{$temp_table}`
+          WHERE already_excluded IS NULL AND exclude = 1");
         CRM_Core_DAO::executeQuery("
-          INSERT IGNORE INTO `civicrm_segmentation_exclude` (campaign_id, segment_id, contact_id, membership_id, created_date)
+          INSERT IGNORE INTO `civicrm_segmentation_exclude`
+            (campaign_id, segment_id, contact_id, membership_id, created_date)
           SELECT campaign_id, segment_id, entity_id, membership_id, datetime
           FROM `{$temp_table}`
           WHERE already_excluded IS NULL AND exclude = 1");
@@ -386,7 +403,10 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     if ($status_change == 'restart_t') {
       // get the order from the table
       $table_name = $this->getConfigValue('segment_order_table');
-      $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(`segment_name`) AS sname FROM `{$table_name}` ORDER BY `segment_weight` ASC");
+      $query = CRM_Core_DAO::executeQuery("
+        SELECT DISTINCT(`segment_name`) AS sname
+        FROM `{$table_name}`
+        ORDER BY `segment_weight` ASC");
       while ($query->fetch()) {
         // look up segment by name
         $segment = civicrm_api3('Segmentation', 'getsegmentid', ['name' => $query->sname]);
@@ -405,7 +425,10 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
       $segment_names = explode("\n", $order_value);
       foreach ($segment_names as $segment_name) {
         $segment_name = trim($segment_name);
-        $segment_id = CRM_Core_DAO::singleValueQuery('SELECT id FROM `civicrm_segmentation_index` WHERE name = %1', [1 => [$segment_name, 'String']]);
+        $segment_id = CRM_Core_DAO::singleValueQuery(
+          'SELECT id FROM `civicrm_segmentation_index` WHERE name = %1',
+          [1 => [$segment_name, 'String']]
+        );
         if ($segment_id) {
           $new_order[] = $segment_id;
         }

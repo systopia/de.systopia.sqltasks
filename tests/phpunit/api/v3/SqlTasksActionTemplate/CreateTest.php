@@ -11,7 +11,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -56,7 +59,9 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
     ];
 
     try {
-      $templateFromApi = civicrm_api3('SqltasksActionTemplate', 'create', array_merge($templateData, ['sequential' => 1]));
+      $templateFromApi = civicrm_api3(
+        'SqltasksActionTemplate', 'create', array_merge($templateData, ['sequential' => 1])
+      );
     }
     catch (CRM_Core_Exception $e) {
       $this->assertEquals(FALSE, TRUE, 'SqltasksActionTemplate.create returns exception:' . $e->getMessage());
@@ -75,7 +80,8 @@ class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCa
     $this->assertEquals(
       ($templatesCountBefore + 1),
       $templatesCountAfter,
-      'There should be exactly ' . $expectedTemplateCount . ' template in the database. But exist - ' . $templatesCountAfter
+      'There should be exactly ' . $expectedTemplateCount . ' template in the database.'
+      . ' But exist - ' . $templatesCountAfter
     );
 
     try {

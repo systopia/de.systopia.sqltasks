@@ -10,7 +10,10 @@ use Civi\Test\TransactionalInterface;
  * SqltasksActionTemplate API Test Case
  * @group headless
  */
-class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -31,7 +34,10 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
    */
   public function setUp() : void {
     $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('SqltasksActionTemplate');
-    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'SqltasksActionTemplate' . ' not found.');
+    $this->assertTrue(
+      $table && CRM_Core_DAO::checkTableExists($table),
+      'There was a problem with extension installation. Table for ' . 'SqltasksActionTemplate' . ' not found.'
+    );
     parent::setUp();
   }
 

@@ -19,7 +19,8 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
           'script'  => "DROP TABLE IF EXISTS tmp_test_action_csvexport;
-                        CREATE TABLE tmp_test_action_csvexport AS SELECT email, is_primary FROM civicrm_email WHERE email='john.doe@example.com';",
+                        CREATE TABLE tmp_test_action_csvexport AS
+                          SELECT email, is_primary FROM civicrm_email WHERE email='john.doe@example.com';",
         ],
         [
           'type'           => 'CRM_Sqltasks_Action_CSVExport',

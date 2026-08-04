@@ -11,7 +11,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -64,7 +67,8 @@ class api_v3_SqltaskTemplate_CreateTest extends \PHPUnit\Framework\TestCase impl
     $this->assertEquals(
       ($templatesCountBefore + 1),
       $templatesCountAfter,
-      'There should be exactly ' . $expectedTemplateCount . ' template in the database. But exist - ' . $templatesCountAfter
+      'There should be exactly ' . $expectedTemplateCount . ' template in the database.'
+      . ' But exist - ' . $templatesCountAfter
     );
 
     $template = CRM_Sqltasks_BAO_SqltasksTemplate::getOne($templateFromApi['values']['id']);

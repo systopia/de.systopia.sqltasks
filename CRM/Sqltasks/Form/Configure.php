@@ -26,7 +26,9 @@ class CRM_Sqltasks_Form_Configure extends CRM_Core_Form {
   public function buildQuickForm() {
     // get the ID
     $task_id = CRM_Utils_Request::retrieve('tid', 'Integer');
-    $redirectUrl = CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$task_id}"));
+    $redirectUrl = CRM_Utils_System::redirect(
+      CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$task_id}")
+    );
     CRM_Utils_System::redirect($redirectUrl);
   }
 

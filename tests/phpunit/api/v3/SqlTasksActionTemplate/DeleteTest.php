@@ -11,7 +11,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -78,7 +81,8 @@ class api_v3_SqltasksActionTemplate_DeleteTest extends \PHPUnit\Framework\TestCa
     $this->assertEquals(
       $templatesCountBefore,
       $templatesCountAfterDelete,
-      'There should be exactly ' . $templatesCountBefore . ' template in the database. But exist - ' . $templatesCountAfterDelete
+      'There should be exactly ' . $templatesCountBefore . ' template in the database.'
+      . ' But exist - ' . $templatesCountAfterDelete
     );
   }
 

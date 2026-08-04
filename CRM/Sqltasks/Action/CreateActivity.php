@@ -142,7 +142,9 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
 
     if ($use_api) {
       // add all targets separately
-      $target_query = CRM_Core_DAO::executeQuery("SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL {$excludeSql}");
+      $target_query = CRM_Core_DAO::executeQuery(
+        "SELECT contact_id FROM `{$contact_table}` WHERE contact_id IS NOT NULL {$excludeSql}"
+      );
       while ($target_query->fetch()) {
         civicrm_api3('ActivityContact', 'create', [
           'activity_id'    => $activity['id'],
@@ -266,13 +268,17 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
       SELECT
         COUNT(*) AS contact_count
       FROM {$contact_table}
-      JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id AND civicrm_segmentation_exclude.campaign_id = %0
+      JOIN civicrm_segmentation_exclude
+        ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id
+        AND civicrm_segmentation_exclude.campaign_id = %0
       WHERE exclude = 1", [[$this->getConfigValue('campaign_id'), 'Integer']]);
     if ($count > 0) {
       $record = CRM_Core_DAO::executeQuery("SELECT * FROM {$contact_table} WHERE exclude = 1 LIMIT 1")->fetch();
       $activity_data = [
         'activity_date_time' => $this->getDateTime($this->getConfigValue('activity_date_time')),
-        'activity_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_Activity', 'activity_type_id', 'Exclusion Record'),
+        'activity_type_id' => CRM_Core_PseudoConstant::getKey(
+          'CRM_Activity_BAO_Activity', 'activity_type_id', 'Exclusion Record'
+        ),
         'campaign_id' => $this->getConfigValue('campaign_id'),
         'status_id' => $this->getConfigValue('status_id'),
         'source_contact_id' => $this->getConfigValue('source_contact_id'),
@@ -313,12 +319,17 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
                       civicrm_contact.id AS contact_id,
                       3                  AS record_type
                     FROM {$contact_table}
-                    JOIN civicrm_segmentation_exclude ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id
+                    JOIN civicrm_segmentation_exclude
+                      ON {$contact_table}.contact_id = civicrm_segmentation_exclude.contact_id
                     LEFT JOIN civicrm_contact ON civicrm_contact.id = civicrm_segmentation_exclude.contact_id
-                    LEFT JOIN civicrm_segmentation_order ON civicrm_segmentation_order.campaign_id = civicrm_segmentation_exclude.campaign_id AND civicrm_segmentation_order.segment_id = civicrm_segmentation_exclude.segment_id
+                    LEFT JOIN civicrm_segmentation_order
+                      ON civicrm_segmentation_order.campaign_id = civicrm_segmentation_exclude.campaign_id
+                      AND civicrm_segmentation_order.segment_id = civicrm_segmentation_exclude.segment_id
                     WHERE civicrm_segmentation_exclude.campaign_id = %1
                       AND civicrm_contact.is_deleted = 0)";
-      CRM_Core_DAO::executeQuery($query, [[$activity['id'], 'Integer'], [$this->getConfigValue('campaign_id'), 'Integer']]);
+      CRM_Core_DAO::executeQuery(
+        $query, [[$activity['id'], 'Integer'], [$this->getConfigValue('campaign_id'), 'Integer']]
+      );
       CRM_Segmentation_Logic::addExclusionSegmentForMassActivity($activity['id'], $this->getConfigValue('campaign_id'));
       $this->log("Created exclusion record activities for {$count} contacts");
     }

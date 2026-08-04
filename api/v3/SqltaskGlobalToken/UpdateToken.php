@@ -23,7 +23,9 @@ function civicrm_api3_sqltask_global_token_update_token($params) {
       }
 
       if (strlen($params['new_name']) > CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME) {
-        return civicrm_api3_create_error(ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME]));
+        return civicrm_api3_create_error(
+          ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME])
+        );
       }
 
       $globalToken->delete($params['name']);

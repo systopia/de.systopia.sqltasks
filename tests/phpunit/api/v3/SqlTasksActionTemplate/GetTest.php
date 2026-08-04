@@ -11,7 +11,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -49,7 +52,9 @@ class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase 
     ];
 
     try {
-      $createdTemplateFromApi = civicrm_api3('SqltasksActionTemplate', 'create', array_merge($templateData, ['sequential' => 1]));
+      $createdTemplateFromApi = civicrm_api3(
+        'SqltasksActionTemplate', 'create', array_merge($templateData, ['sequential' => 1])
+      );
     }
     catch (CRM_Core_Exception $e) {
       $this->assertEquals(FALSE, TRUE, 'SqltasksActionTemplate.create returns exception:' . $e->getMessage());

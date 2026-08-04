@@ -181,7 +181,10 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     if ($use_last_assignment) {
       $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->id);
       if (!$timestamp) {
-        throw new Exception("Restrict export to current assignemnt requested, but no current assignemnt detected. Activate the 'Assign to Campaign' task!", 1);
+        throw new Exception(
+          'Restrict export to current assignemnt requested, but no current assignemnt detected.'
+          . " Activate the 'Assign to Campaign' task!", 1
+        );
       }
     }
 

@@ -262,7 +262,9 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
       return NULL;
     }
 
-    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(['sqltask_id' => $sqltaskId, 'order_by' => ['id' => 'DESC'], 'limit' => 1]);
+    $sqltasksExecutions = CRM_Sqltasks_BAO_SqltasksExecution::getAll(
+      ['sqltask_id' => $sqltaskId, 'order_by' => ['id' => 'DESC'], 'limit' => 1]
+    );
 
     foreach ($sqltasksExecutions as $sqltasksExecution) {
       return $sqltasksExecution['id'];

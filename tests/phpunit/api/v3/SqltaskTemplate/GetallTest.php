@@ -11,7 +11,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -69,7 +72,8 @@ class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase impl
     $this->assertEquals(
       $expectedCountOfTemplates,
       count($templatesFromApi),
-      'Exactly ' . $expectedCountOfTemplates . ' templates should have been returned. But exist - ' . count($templatesFromApi)
+      'Exactly ' . $expectedCountOfTemplates . ' templates should have been returned.'
+      . ' But exist - ' . count($templatesFromApi)
     );
   }
 

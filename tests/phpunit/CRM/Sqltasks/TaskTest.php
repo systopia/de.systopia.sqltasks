@@ -71,7 +71,9 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertEquals('monthly', $query->scheduled);
     $this->assertEquals(0, $query->parallel_exec);
     $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task', $query->config);
-    $this->assertStringContainsString('CREATE TABLE IF NOT EXISTS tmp_test_task AS SELECT 1 AS contact_id', $query->config);
+    $this->assertStringContainsString(
+      'CREATE TABLE IF NOT EXISTS tmp_test_task AS SELECT 1 AS contact_id', $query->config
+    );
     $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task', $query->config);
   }
 
@@ -140,7 +142,9 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertEquals('Test Task Category 2', $query->category);
     $this->assertEquals('daily', $query->scheduled);
     $this->assertEquals(1, $query->parallel_exec);
-    $this->assertStringContainsString('CREATE TABLE IF NOT EXISTS tmp_test_task_2 AS SELECT 1 AS contact_id', $query->config);
+    $this->assertStringContainsString(
+      'CREATE TABLE IF NOT EXISTS tmp_test_task_2 AS SELECT 1 AS contact_id', $query->config
+    );
     $this->assertStringContainsString('DROP TABLE IF EXISTS tmp_test_task_2', $query->config);
   }
 
@@ -365,7 +369,10 @@ class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
     $this->assertEquals(Civi::settings()->get('lcMessages'), $language, 'Column "language" should match setting');
 
     $config = CRM_Core_DAO::singleValueQuery('SELECT config FROM tmp_test_input_value');
-    $this->assertEquals((CRM_Sqltasks_GlobalToken::singleton())->getValue('test'), $config, 'Column "config" should match setting in sqltasks_global_tokens');
+    $this->assertEquals(
+      (CRM_Sqltasks_GlobalToken::singleton())->getValue('test'), $config,
+      'Column "config" should match setting in sqltasks_global_tokens'
+    );
 
     $tmp = str_replace(
       ['{context.input_val}', '{setting.lcMessages}'],

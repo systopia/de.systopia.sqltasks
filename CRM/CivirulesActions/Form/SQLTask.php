@@ -100,5 +100,7 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
   }
 }
 else {
-  throw new Exception('Class "CRM_CivirulesActions_Form_Form" does not exists. Please install "CiviRules" extension.', 1);
+  throw new Exception(
+    'Class "CRM_CivirulesActions_Form_Form" does not exists. Please install "CiviRules" extension.', 1
+  );
 }

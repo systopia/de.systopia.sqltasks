@@ -50,25 +50,35 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     // add column: category
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'category';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `category` varchar(64) COMMENT 'task category';");
+      CRM_Core_DAO::executeQuery(
+        "ALTER TABLE `civicrm_sqltasks` ADD COLUMN `category` varchar(64) COMMENT 'task category';"
+      );
     }
 
     // add column: running_since
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'running_since';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `running_since` datetime COMMENT 'set while task is being executed';");
+      CRM_Core_DAO::executeQuery(
+        "ALTER TABLE `civicrm_sqltasks` ADD COLUMN `running_since` datetime COMMENT 'set while task is being executed';"
+      );
     }
 
     // add column: last_runtime
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'last_runtime';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `last_runtime` int unsigned COMMENT 'stores the runtime of the last execution in milliseconds';");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD COLUMN `last_runtime` int unsigned'
+        . " COMMENT 'stores the runtime of the last execution in milliseconds';"
+      );
     }
 
     // add column: parallel_exec
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'parallel_exec';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `parallel_exec` tinyint COMMENT 'should this task be executed in parallel?';");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD COLUMN `parallel_exec` tinyint'
+        . " COMMENT 'should this task be executed in parallel?';"
+      );
     }
 
     // update rebuild log tables
@@ -90,7 +100,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     // add column: last_runtime
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'run_permissions';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `run_permissions` varchar(256) COMMENT 'permissions required to run';");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD COLUMN `run_permissions` varchar(256)'
+        . " COMMENT 'permissions required to run';"
+      );
     }
 
     // update rebuild log tables
@@ -211,7 +224,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     // add column: input_required
     $column_exists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'input_required';");
     if (!$column_exists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN `input_required` tinyint COMMENT 'should this task require user input?';");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD COLUMN `input_required` tinyint'
+        . " COMMENT 'should this task require user input?';"
+      );
       // update rebuild log tables
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
@@ -296,7 +312,9 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
    */
   public function upgrade_0110() {
     $this->ctx->log->info('Change character limit(set 255) for \'name\' column in \'civicrm_sqltasks\' table.');
-    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `name` `name` varchar(255) COMMENT 'name of the task'");
+    CRM_Core_DAO::executeQuery(
+      "ALTER TABLE `civicrm_sqltasks` CHANGE COLUMN `name` `name` varchar(255) COMMENT 'name of the task'"
+    );
 
     // update rebuild log tables
     $logging = new CRM_Logging_Schema();
@@ -312,7 +330,9 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Adding \'archive_date\' column to \'civicrm_sqltasks\' table if column doesn\'t exist');
     $isColumnExists = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `civicrm_sqltasks` LIKE 'archive_date';");
     if (!$isColumnExists) {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD COLUMN  `archive_date` datetime NULL DEFAULT NULL COMMENT 'archive date'");
+      CRM_Core_DAO::executeQuery(
+        "ALTER TABLE `civicrm_sqltasks` ADD COLUMN  `archive_date` datetime NULL DEFAULT NULL COMMENT 'archive date'"
+      );
       // update rebuild log tables
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
@@ -339,7 +359,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
 
     if (!$column_exists) {
       $this->ctx->log->info('Adding column `abort_on_error` tinyint NOT NULL DEFAULT 0 to table `civicrm_sqltasks`');
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD `abort_on_error` tinyint NOT NULL DEFAULT 0 COMMENT 'should abort task execution on error?'");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD `abort_on_error` tinyint NOT NULL DEFAULT 0'
+        . " COMMENT 'should abort task execution on error?'"
+      );
 
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();
@@ -363,7 +386,10 @@ class CRM_Sqltasks_Upgrader extends CRM_Extension_Upgrader_Base {
 
     if (!$column_exists) {
       $this->ctx->log->info('Adding column `last_modified` tinyint NOT NULL DEFAULT 0 to table `civicrm_sqltasks`');
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_sqltasks` ADD `last_modified` datetime COMMENT 'last time the configuration of the task has been modified'");
+      CRM_Core_DAO::executeQuery(
+        'ALTER TABLE `civicrm_sqltasks` ADD `last_modified` datetime'
+        . " COMMENT 'last time the configuration of the task has been modified'"
+      );
 
       $logging = new CRM_Logging_Schema();
       $logging->fixSchemaDifferences();

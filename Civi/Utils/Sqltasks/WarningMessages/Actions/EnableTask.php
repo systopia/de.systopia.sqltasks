@@ -28,7 +28,8 @@ class EnableTask extends Base {
 
     $data['warningWindow']['title'] = 'Enabling task';
     $data['warningWindow']['isShowYesButton'] = TRUE;
-    $data['warningWindow']['message'] = '<p>When you enable this task, it may be executed automatically by the following task(s):</p>';
+    $data['warningWindow']['message'] = '<p>When you enable this task, it may be executed automatically'
+      . ' by the following task(s):</p>';
     $data['warningWindow']['message'] .= $this->prepareTaskLinks($dep_task_ids);
 
     return $data;

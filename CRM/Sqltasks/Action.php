@@ -274,7 +274,9 @@ abstract class CRM_Sqltasks_Action {
     }
 
     if (!$className::isSupported()) {
-      throw new Exception("Action type '{$className}' is not supported. Please make sure all dependencies are satisfied.");
+      throw new Exception(
+        "Action type '{$className}' is not supported. Please make sure all dependencies are satisfied."
+      );
     }
 
     return new $className($task, $config);
@@ -375,7 +377,9 @@ abstract class CRM_Sqltasks_Action {
         'return'       => 'id,title',
       ])['values'];
       foreach ($campaign_query as $campaign) {
-        self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value('title', $campaign, "Campaign {$campaign['id']}");
+        self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value(
+          'title', $campaign, "Campaign {$campaign['id']}"
+        );
       }
     }
 

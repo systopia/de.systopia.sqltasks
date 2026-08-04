@@ -41,7 +41,9 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
 
     $this->createAndExecuteTask(['config' => $config]);
 
-    $this->assertLogContains("Action 'Synchronise Group' executed in", 'Synchronize Group action should have succeeded');
+    $this->assertLogContains(
+      "Action 'Synchronise Group' executed in", 'Synchronize Group action should have succeeded'
+    );
     $groupContactCount = $this->callApiSuccess('GroupContact', 'getcount', [
       'contact_id' => $this->contactId,
       'group_id'   => $groupId,
@@ -57,7 +59,8 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
     $this->assertEquals(
       1,
       CRM_Core_DAO::singleValueQuery(
-        "SELECT COUNT(*) FROM civicrm_subscription_history WHERE group_id = %0 AND status = 'Added' AND contact_id = %1",
+        'SELECT COUNT(*) FROM civicrm_subscription_history'
+        . " WHERE group_id = %0 AND status = 'Added' AND contact_id = %1",
         [
           [$groupId, 'Integer'],
           [$this->contactId, 'Integer'],

@@ -68,7 +68,8 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
           'script'  => "DROP TABLE IF EXISTS tmp_test_action_errorhandler;
-                        CREATE TABLE tmp_test_action_errorhandler AS SELECT contact_id FROM civicrm_email WHERE email='john.doe@example.com';",
+                        CREATE TABLE tmp_test_action_errorhandler AS
+                          SELECT contact_id FROM civicrm_email WHERE email='john.doe@example.com';",
         ],
         [
           'type'               => 'CRM_Sqltasks_Action_CreateActivity',

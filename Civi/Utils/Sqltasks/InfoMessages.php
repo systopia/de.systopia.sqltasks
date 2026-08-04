@@ -29,7 +29,9 @@ class InfoMessages {
     }
 
     if ($dispatcherData['is_active'] != 1) {
-      $this->addMessage('The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.');
+      $this->addMessage(
+        'The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.'
+      );
       return;
     }
 
@@ -44,7 +46,8 @@ class InfoMessages {
     }
 
     if ($dispatcherData['run_frequency'] === 'Always') {
-      $message = 'The dispatcher (and therefore all active tasks) will be triggered <strong>with every cron-run</strong>.';
+      $message = 'The dispatcher (and therefore all active tasks) will be triggered'
+        . ' <strong>with every cron-run</strong>.';
       $message .= 'Ask your administrator how often that is, ';
       $message .= 'in order to know the effective maximum frequency these tasks are being executed with.';
       $this->addMessage($message);

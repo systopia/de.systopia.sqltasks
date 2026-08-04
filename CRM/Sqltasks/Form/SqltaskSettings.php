@@ -10,7 +10,10 @@ class CRM_Sqltasks_Form_SqltaskSettings extends CRM_Core_Form {
   public function buildQuickForm() {
     $this->setTitle(E::ts('SQL Task Settings'));
     $this->add('checkbox', Settings::SQLTASKS_IS_DISPATCHER_DISABLED, E::ts('SQL Task Dispatcher disabled?'));
-    $this->add('number', Settings::SQLTASKS_MAX_FAILS_NUMBER, E::ts('Maximum number of fails before dispatcher is disabled'), NULL, TRUE);
+    $this->add(
+      'number', Settings::SQLTASKS_MAX_FAILS_NUMBER,
+      E::ts('Maximum number of fails before dispatcher is disabled'), NULL, TRUE
+    );
     $this->addButtons([[
       'type' => 'submit',
       'name' => E::ts('Save'),
@@ -37,7 +40,10 @@ class CRM_Sqltasks_Form_SqltaskSettings extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
 
-    if (!empty($values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED]) && $values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED] == 1) {
+    if (
+      !empty($values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED])
+      && $values[Settings::SQLTASKS_IS_DISPATCHER_DISABLED] == 1
+    ) {
       Settings::disableDispatcher();
     }
     else {

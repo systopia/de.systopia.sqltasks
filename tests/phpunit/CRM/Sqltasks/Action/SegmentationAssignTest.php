@@ -68,8 +68,13 @@ class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_Abs
     $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains('Resolved 1 segment(s).', 'Should have resolved one segment');
-    $this->assertLogContains("Assigned 1 new contacts to segment 'testSegmentationAssign'.", 'Should have assigned one contact to segment "testSegmentationAssign"');
-    $this->assertLogContains("Action 'Assign to Campaign (Segmentation)' executed in", 'Assign to Campaign action should have succeeded');
+    $this->assertLogContains(
+      "Assigned 1 new contacts to segment 'testSegmentationAssign'.",
+      'Should have assigned one contact to segment "testSegmentationAssign"'
+    );
+    $this->assertLogContains(
+      "Action 'Assign to Campaign (Segmentation)' executed in", 'Assign to Campaign action should have succeeded'
+    );
     $this->assertEquals(
       1,
       CRM_Core_DAO::singleValueQuery(
