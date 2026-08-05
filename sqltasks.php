@@ -216,8 +216,6 @@ function _sqltasks_add_admin_items(&$menu, $path) {
 
 /**
  * Implements hook_alterLogTables().
- *
- * @param array $logTableSpec
  */
 function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
   if (empty($logTableSpec) && is_array($logTableSpec)) {

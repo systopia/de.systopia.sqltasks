@@ -123,9 +123,6 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
           $parameters[$parameter] = $value;
         }
       }
-      else {
-        // this line is ignored, it doesn't have the asdasd=asdasd form
-      }
     }
 
     return $parameters;
