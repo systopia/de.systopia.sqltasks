@@ -17,7 +17,7 @@ class RunSQLTask extends AbstractAction {
   /**
    * Run the action
    *
-   * @param ParameterInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    * @return void
    */

@@ -7,7 +7,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
-  const DEFAULT_LIMIT_PER_PAGE = 50;
+  public const DEFAULT_LIMIT_PER_PAGE = 50;
 
   protected $searchParams = [
   //ASC DESC

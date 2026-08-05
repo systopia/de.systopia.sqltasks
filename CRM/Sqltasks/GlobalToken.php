@@ -11,12 +11,12 @@ class CRM_Sqltasks_GlobalToken {
    * Setting name in CiviCRM
    * There located sqltasks global tokens
    */
-  const SETTING_NAME = 'sqltasks_global_tokens';
+  public const SETTING_NAME = 'sqltasks_global_tokens';
 
   /**
    * Max length of token name
    */
-  const MAX_LENGTH_OF_TOKEN_NAME = 60;
+  public const MAX_LENGTH_OF_TOKEN_NAME = 60;
 
   /**
    * Instance

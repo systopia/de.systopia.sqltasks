@@ -10,7 +10,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
 
-  const API_RESULT_COLUMN = 'value';
+  public const API_RESULT_COLUMN = 'value';
 
   /**
    * ReturnValue Key

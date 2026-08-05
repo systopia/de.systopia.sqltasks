@@ -7,16 +7,16 @@ declare(strict_types = 1);
  */
 class CRM_Sqltasks_Config_Format {
 
-  const LEGACY_FORMAT_HEADER = '/^\/\* ##### SQLTASK VERSION 0.9 ###########\n/';
-  const LEGACY_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
-  const LEGACY_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
+  public const LEGACY_FORMAT_HEADER = '/^\/\* ##### SQLTASK VERSION 0.9 ###########\n/';
+  public const LEGACY_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
+  public const LEGACY_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
 
-  const SCRIPT_SENTINEL = "##### EDITS BELOW THIS LINE WILL BE IGNORED #####\n";
+  public const SCRIPT_SENTINEL = "##### EDITS BELOW THIS LINE WILL BE IGNORED #####\n";
 
   /**
    * Current version of the task configuration format
    */
-  const CURRENT = 2;
+  public const CURRENT = 2;
 
   /**
    * Determine the version of a task configuration

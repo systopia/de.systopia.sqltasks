@@ -22,7 +22,6 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
   /**
    * Export task configuration to a file
    *
-   * @return void|null
    * @throws \CRM_Core_Exception
    */
   public function run() {

@@ -7,13 +7,13 @@ use CRM_Sqltasks_ExtensionUtil as ExtensionUtil;
 class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
   use CRM_Sqltasks_TempTableAlterations;
 
-  const ACTION_ID = 'api_v4';
-  const ACTION_NAME = 'APIv4 Call';
-  const API_RESULT_COLUMN = 'sqltask_api_result';
-  const DEFAULT_TEMPLATE_ORDER = 350;
-  const ERROR_HANDLING_LOG_ONLY = 'log_only';
-  const ERROR_HANDLING_REPORT_AND_CONTINUE = 'report_error_and_continue';
-  const ERROR_HANDLING_REPORT_AND_ABORT = 'report_error_and_abort';
+  public const ACTION_ID = 'api_v4';
+  public const ACTION_NAME = 'APIv4 Call';
+  public const API_RESULT_COLUMN = 'sqltask_api_result';
+  public const DEFAULT_TEMPLATE_ORDER = 350;
+  public const ERROR_HANDLING_LOG_ONLY = 'log_only';
+  public const ERROR_HANDLING_REPORT_AND_CONTINUE = 'report_error_and_continue';
+  public const ERROR_HANDLING_REPORT_AND_ABORT = 'report_error_and_abort';
 
   private $errorHandlingMode;
   private $fails;

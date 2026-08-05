@@ -9,7 +9,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
-  const PARALLEL_EXEC_ALLOWED = 2;
+  public const PARALLEL_EXEC_ALLOWED = 2;
 
   private static $schedulingOptions = [
     'always',
@@ -305,8 +305,9 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * Generator that iterates over all tasks in the database
    *
    * @param array $params
-   * @return CRM_Sqltasks_BAO_SqlTask
+   * @return \Generator<CRM_Sqltasks_BAO_SqlTask>
    */
+  // phpcs:ignore Drupal.Commenting.FunctionComment.InvalidNoReturn
   public static function generator($params = []) {
     $bao = new self();
 

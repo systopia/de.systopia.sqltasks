@@ -22,14 +22,14 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Config {
 
-  const SQLTASK_FILE_FORMAT_VERSION = '0.9';
+  public const SQLTASK_FILE_FORMAT_VERSION = '0.9';
 
-  const SQLTASK_FILE_FORMAT_FILE_HEADER = '/* ##### SQLTASK VERSION '
+  public const SQLTASK_FILE_FORMAT_FILE_HEADER = '/* ##### SQLTASK VERSION '
     . self::SQLTASK_FILE_FORMAT_VERSION . " ###########\n";
-  const SQLTASK_FILE_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
-  const SQLTASK_FILE_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
+  public const SQLTASK_FILE_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
+  public const SQLTASK_FILE_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
 
-  const SQLTASK_FILE_FORMAT_FILE_HEADER_PREG
+  public const SQLTASK_FILE_FORMAT_FILE_HEADER_PREG
     = '/^\/\* ##### SQLTASK VERSION (?P<version>[0-9]+[.][0-9]+) ###########\n/';
 
   private static $singleton = NULL;

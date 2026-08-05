@@ -13,7 +13,7 @@ use Civi\Test\Api3TestTrait;
 abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_AbstractTaskTest {
   use Api3TestTrait;
 
-  const TEST_CONTACT_SQL = "SELECT contact_id FROM civicrm_email WHERE email = 'john.doe@example.com';";
+  public const TEST_CONTACT_SQL = "SELECT contact_id FROM civicrm_email WHERE email = 'john.doe@example.com';";
 
   /**
    * @var int

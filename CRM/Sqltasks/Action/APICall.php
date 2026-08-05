@@ -32,21 +32,21 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    * Is default
    * (this is setting option which set how to handle API errors)
    */
-  const LOG_ONLY = 'log_only';
+  public const LOG_ONLY = 'log_only';
 
   /**
    * Report task error and continue API calls
    * (this is setting option which set how to handle API errors)
    */
-  const REPORT_ERROR_AND_CONTINUE = 'report_error_and_continue';
+  public const REPORT_ERROR_AND_CONTINUE = 'report_error_and_continue';
 
   /**
    * Report task error and abort API calls
    * (this is setting option which set how to handle API errors)
    */
-  const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
+  public const REPORT_ERROR_AND_ABORT = 'report_error_and_abort';
 
-  const API_RESULT_COLUMN = 'sqltask_api_result';
+  public const API_RESULT_COLUMN = 'sqltask_api_result';
 
   /**
    * Get identifier string

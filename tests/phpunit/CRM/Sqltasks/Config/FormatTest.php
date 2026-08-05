@@ -10,7 +10,7 @@ declare(strict_types = 1);
  */
 class CRM_Sqltasks_Config_FormatTest extends CRM_Sqltasks_AbstractTaskTest {
 
-  const SAMPLE_V1 = '{
+  public const SAMPLE_V1 = '{
     "description": "Sample description",
     "category": "Sample",
     "scheduled": "daily",
@@ -36,7 +36,7 @@ class CRM_Sqltasks_Config_FormatTest extends CRM_Sqltasks_AbstractTaskTest {
     }
   }';
 
-  const SAMPLE_LEGACY = '/* ##### SQLTASK VERSION 0.9 ###########
+  public const SAMPLE_LEGACY = '/* ##### SQLTASK VERSION 0.9 ###########
 {
     "description": "Sample description",
     "category": "Sample",
@@ -60,7 +60,7 @@ sample main script
 -- ############ POST SQL ###############
 sample post script';
 
-  const SAMPLE_V2_APPENDED_SCRIPT = '{
+  public const SAMPLE_V2_APPENDED_SCRIPT = '{
     "description": "Sample description",
     "category": "Sample",
     "scheduled": "daily",

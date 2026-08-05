@@ -32,9 +32,9 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   /**
    * Types of CSV field enclosure
    */
-  const ENCLOSURE_NONE = 'none';
-  const ENCLOSURE_PARTIAL = 'partial';
-  const ENCLOSURE_FULL = 'full';
+  public const ENCLOSURE_NONE = 'none';
+  public const ENCLOSURE_PARTIAL = 'partial';
+  public const ENCLOSURE_FULL = 'full';
 
   /**
    * Get identifier string

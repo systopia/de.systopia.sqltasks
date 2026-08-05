@@ -8,9 +8,9 @@ use Civi;
 
 class Settings {
 
-  const SQLTASKS_MAX_FAILS_NUMBER = 'sqltasks_max_fails_number';
+  public const SQLTASKS_MAX_FAILS_NUMBER = 'sqltasks_max_fails_number';
 
-  const SQLTASKS_IS_DISPATCHER_DISABLED = 'sqltasks_is_dispatcher_disabled';
+  public const SQLTASKS_IS_DISPATCHER_DISABLED = 'sqltasks_is_dispatcher_disabled';
 
   public static function isDispatcherDisabled() {
     return Civi::settings()->get(Settings::SQLTASKS_IS_DISPATCHER_DISABLED) == 1;
