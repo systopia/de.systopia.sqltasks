@@ -23,7 +23,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet {
-  use CRM_Sqltasks_TempTableAlterations;
+  use CRM_Sqltasks_TempTableAlterationsTrait;
 
   public const ACTIVITY_ID_COLUMN = 'sqltask_activity_id';
 

@@ -207,7 +207,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       $paramPairs[] = "$key=$value";
     }
 
-    return join("\r\n", $paramPairs);
+    return implode("\r\n", $paramPairs);
   }
 
 }

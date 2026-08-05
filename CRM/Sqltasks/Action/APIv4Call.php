@@ -5,7 +5,7 @@ declare(strict_types = 1);
 use CRM_Sqltasks_ExtensionUtil as ExtensionUtil;
 
 class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
-  use CRM_Sqltasks_TempTableAlterations;
+  use CRM_Sqltasks_TempTableAlterationsTrait;
 
   public const ACTION_ID = 'api_v4';
   public const ACTION_NAME = 'APIv4 Call';

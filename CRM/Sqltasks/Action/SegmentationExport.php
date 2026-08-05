@@ -191,7 +191,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     // check file path
     $file_check = $this->getFilePath();
-    if (!is_writeable($file_check)) {
+    if (!is_writable($file_check)) {
       throw new Exception("Cannot export file to '{$file_check}'.", 1);
     }
   }

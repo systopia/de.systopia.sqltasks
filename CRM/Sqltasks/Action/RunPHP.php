@@ -77,6 +77,7 @@ class CRM_Sqltasks_Action_RunPHP extends CRM_Sqltasks_Action {
     // has_executed is always false for RunSQL
     $this->resetHasExecuted();
     try {
+      // phpcs:ignore Drupal.Functions.DiscouragedFunctions.Discouraged
       eval(html_entity_decode($this->getConfigValue('php_code')));
     }
     catch (Exception $e) {

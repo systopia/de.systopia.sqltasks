@@ -170,7 +170,6 @@ abstract class CRM_Sqltasks_Action {
           break;
 
         default:
-
         case 'setting':
           $settingVal = Civi::settings()->get($match['token']);
           if (!empty($settingVal)) {

@@ -150,9 +150,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
           $header2column[] = [$header, $column];
         }
       }
-      else {
-        // this line is ignored, it doesn't have the asdasd=asdasd form
-      }
     }
 
     return $header2column;
@@ -197,7 +194,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
 
     // check file path
     $file_check = $this->getFilePath();
-    if (!is_writeable($file_check)) {
+    if (!is_writable($file_check)) {
       throw new Exception("Cannot export file to '{$file_check}'.", 1);
     }
 

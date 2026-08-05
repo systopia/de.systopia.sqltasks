@@ -25,7 +25,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  */
 class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
-  use CRM_Sqltasks_TempTableAlterations;
+  use CRM_Sqltasks_TempTableAlterationsTrait;
 
   /**
    * Log only
@@ -285,7 +285,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
    */
   private function getHandleApiErrors() {
     $handle_api_errors = $this->getConfigValue('handle_api_errors');
-    if (key_exists($handle_api_errors, self::getHandleApiErrorsOptions())) {
+    if (array_key_exists($handle_api_errors, self::getHandleApiErrorsOptions())) {
       return $handle_api_errors;
     }
 
