@@ -60,7 +60,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     foreach ($tableRows as $row) {
       $contactID = $row['contact_id'];
@@ -117,11 +117,11 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
         ],
       ];
 
-      $exec_result = $this->createAndExecuteTask([ 'config' => $config ]);
+      $exec_result = $this->createAndExecuteTask(['config' => $config]);
 
       switch ($errorHandling) {
-        case 'log_only': {
-          $this->assertLogContains("0 API call(s) successfull.");
+        case 'log_only':
+          $this->assertLogContains('0 API call(s) successfull.');
 
           $this->assertLogContains(
             "$rowCount API call(s) FAILED with message: 'Api Contact no_such_action version 4 does not exist.'"
@@ -134,10 +134,9 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           );
 
           break;
-        }
 
-        case 'report_error_and_continue': {
-          $this->assertLogContains("0 API call(s) successfull.");
+        case 'report_error_and_continue':
+          $this->assertLogContains('0 API call(s) successfull.');
 
           $this->assertLogContains(
             "$rowCount API call(s) FAILED with message: 'Api Contact no_such_action version 4 does not exist.'"
@@ -150,10 +149,9 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           );
 
           break;
-        }
 
-        case 'report_error_and_abort': {
-          $this->assertLogContains("0 API call(s) successfull.");
+        case 'report_error_and_abort':
+          $this->assertLogContains('0 API call(s) successfull.');
 
           $this->assertLogContains(
             "1 API call(s) FAILED with message: 'Api Contact no_such_action version 4 does not exist.'"
@@ -170,7 +168,6 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
           );
 
           break;
-        }
       }
     }
   }
@@ -210,7 +207,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $query = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result` FROM `$tmpContactTable`"
@@ -248,7 +245,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       [
         'contact_id' => $contactID,
         'exclude'    => 0,
-      ]
+      ],
     ];
 
     $randomChars = bin2hex(random_bytes(8));
@@ -279,7 +276,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask($data, [ 'input_val' => $randomChars ]);
+    $this->createAndExecuteTask($data, ['input_val' => $randomChars]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')
@@ -304,7 +301,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       [
         'contact_id' => $contactID,
         'exclude'    => 0,
-      ]
+      ],
     ];
 
     $randomChars = bin2hex(random_bytes(8));
@@ -333,7 +330,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')
@@ -358,7 +355,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       [
         'contact_id' => $contactID,
         'exclude'    => 0,
-      ]
+      ],
     ];
 
     $config = [
@@ -385,7 +382,7 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $noteResult = Api4\Note::get()
       ->addWhere('entity_table', '=', 'civicrm_contact')

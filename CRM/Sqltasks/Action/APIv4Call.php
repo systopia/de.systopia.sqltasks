@@ -59,7 +59,7 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
 
           CRM_Core_DAO::executeQuery(
             "UPDATE `$dataTable` SET `$apiResultColumn` = %1 WHERE `$dataTableAutoIncCol` = $recordID",
-            [ 1 => [$resultJSON, 'String'] ]
+            [1 => [$resultJSON, 'String']]
           );
         }
 
@@ -96,19 +96,18 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
     $this->fails[$msg]++;
 
     switch ($this->errorHandlingMode) {
-      case self::ERROR_HANDLING_LOG_ONLY: {
+      case self::ERROR_HANDLING_LOG_ONLY:
         // Nothing to do here
         break;
-      }
-      case self::ERROR_HANDLING_REPORT_AND_CONTINUE: {
+
+      case self::ERROR_HANDLING_REPORT_AND_CONTINUE:
         $this->reportError();
         break;
-      }
-      case self::ERROR_HANDLING_REPORT_AND_ABORT: {
+
+      case self::ERROR_HANDLING_REPORT_AND_ABORT:
         $this->reportError();
         $this->skip = TRUE;
         break;
-      }
     }
   }
 

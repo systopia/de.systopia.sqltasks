@@ -27,7 +27,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    */
   public function __construct($params = []) {
     parent::__construct();
-    $this->updateAttributes($params, [ 'save' => FALSE ]);
+    $this->updateAttributes($params, ['save' => FALSE]);
   }
 
   /**
@@ -95,7 +95,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
     $queue->createItem($queue_task);
 
-    return [ 'execution_id' => $execution->id ];
+    return ['execution_id' => $execution->id];
   }
 
   /**
@@ -155,15 +155,15 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       }
     }
 
-    $execution->logInfo("Starting task execution.");
+    $execution->logInfo('Starting task execution.');
 
     // Commit any pending transactions to ensure consistent behaviour
-    CRM_Core_DAO::executeQuery("COMMIT");
+    CRM_Core_DAO::executeQuery('COMMIT');
 
     $this->updateAttributes([
       'last_execution' => date('Y-m-d H:i:s'),
       'running_since'  => date('Y-m-d H:i:s'),
-    ], [ 'update_mod_timestamp' => FALSE ]);
+    ], ['update_mod_timestamp' => FALSE]);
 
     $actions = CRM_Sqltasks_Action::getAllActiveActions($this);
 
@@ -184,7 +184,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       if (
         $execution->hasErrors()
         && $this->abort_on_error
-        && get_class($action) !== "CRM_Sqltasks_Action_ErrorHandler"
+        && get_class($action) !== 'CRM_Sqltasks_Action_ErrorHandler'
       ) {
         $execution->logInfo("Skipped '$action_name' due to previous error");
         continue;
@@ -203,7 +203,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       try {
         $action->execute();
 
-        if (get_class($action) == "CRM_Sqltasks_Action_ReturnValue") {
+        if (get_class($action) == 'CRM_Sqltasks_Action_ReturnValue') {
           $execution->setReturnValue($action->return_key, $action->return_value);
         }
 
@@ -215,13 +215,13 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       }
     }
 
-    $execution->logInfo("Finished task execution.");
+    $execution->logInfo('Finished task execution.');
     $execution->stop();
 
     $this->updateAttributes([
       'last_runtime'  => $execution->runtime,
       'running_since' => NULL,
-    ], [ 'update_mod_timestamp' => FALSE ]);
+    ], ['update_mod_timestamp' => FALSE]);
 
     if (!$parallel_exec_allowed) {
       $lock->release();
@@ -320,11 +320,11 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @return array
    */
   public static function getTaskOrder() {
-    $result = CRM_Core_DAO::executeQuery("
+    $result = CRM_Core_DAO::executeQuery('
       SELECT id
       FROM civicrm_sqltasks
       ORDER BY weight ASC, id ASC
-    ");
+    ');
 
     $task_order = [];
 
@@ -401,20 +401,20 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     $max_fails_number = Settings::getMaxFailsNumber();
 
     // Reset timed out tasks (after 23 hours)
-    CRM_Core_DAO::executeQuery("
+    CRM_Core_DAO::executeQuery('
       UPDATE `civicrm_sqltasks`
       SET running_since = NULL
       WHERE running_since < (NOW() - INTERVAL 23 HOUR);
-    ");
+    ');
 
     // Find out whether there are still running tasks
-    $still_running = CRM_Core_DAO::singleValueQuery("
+    $still_running = CRM_Core_DAO::singleValueQuery('
       SELECT COUNT(*)
       FROM `civicrm_sqltasks`
       WHERE running_since IS NOT NULL;
-    ");
+    ');
 
-    foreach (self::generator([ 'enabled' => 1 ]) as $task) {
+    foreach (self::generator(['enabled' => 1]) as $task) {
       if ($still_running && !in_array((int) $task->parallel_exec, [1, 2], TRUE)) continue;
       $tasks[] = $task;
     }
@@ -530,7 +530,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @return void
    */
   public function unarchive() {
-    $this->updateAttributes([ 'archive_date' => NULL ]);
+    $this->updateAttributes(['archive_date' => NULL]);
   }
 
   /**
@@ -555,7 +555,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       switch ($key) {
         case 'abort_on_error':
         case 'enabled':
-        case 'input_required': {
+        case 'input_required':
           $value = $value === '' ? FALSE : $value;
 
           if (!in_array($value, [TRUE, FALSE, 1, 0, '1', '0'], TRUE)) {
@@ -570,66 +570,59 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
             && isset($this->id)
             && !empty(self::getDependentTasks($this->id, TRUE))
           ) {
-            throw new Exception("Task can not be disabled, other tasks depend on it");
+            throw new Exception('Task can not be disabled, other tasks depend on it');
           }
 
           $this->$key = $value;
           break;
-        }
 
-        case 'parallel_exec': {
+        case 'parallel_exec':
           if (!in_array($value, [0, 1, 2, '0', '1', '2'], TRUE)) {
             throw new Exception("Attribute '$key' must be one of 0, 1 or 2");
           }
 
           $this->$key = (int) $value;
           break;
-        }
 
         case 'last_runtime':
-        case 'weight': {
+        case 'weight':
           if (!CRM_Utils_Rule::positiveInteger($value)) {
             throw new Exception("Attribute '$key' must be a positive integer");
           }
 
           $this->$key = (int) $value;
           break;
-        }
 
         case 'category':
         case 'description':
         case 'name':
-        case 'run_permissions': {
+        case 'run_permissions':
           $this->$key = (string) $value;
           break;
-        }
 
         case 'archive_date':
         case 'last_execution':
-        case 'running_since': {
+        case 'running_since':
           if (strtotime($value) === FALSE) {
             throw new Exception("Attribute '$key' must be a date");
           }
 
           $this->$key = date('Y-m-d H:i:s', strtotime($value));
           break;
-        }
 
-        case 'config': {
+        case 'config':
           $value = is_string($value) ? json_decode($value, TRUE) : $value;
           $config = self::validateConfiguration($value);
           $this->$key = json_encode($config);
           break;
-        }
 
-        case 'scheduled': {
+        case 'scheduled':
           if (!in_array($value, self::$schedulingOptions)) {
             throw new Exception("Attribute '$key' must be a valid interval");
           }
 
           $this->$key = (string) $value;
           break;
-        }
       }
     }
 
@@ -684,7 +677,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    */
   private static function validateConfiguration($config) {
     if (!is_array($config)) {
-      throw new Exception("Task configuration must be an associative array");
+      throw new Exception('Task configuration must be an associative array');
     }
 
     $config['version'] = $config['version'] ?? 1;
