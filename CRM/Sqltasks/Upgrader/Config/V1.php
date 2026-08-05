@@ -40,6 +40,7 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
       'error'               => 'CRM_Sqltasks_Action_ErrorHandler',
     ];
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /* V2 sample:
     {
     "version": 2,

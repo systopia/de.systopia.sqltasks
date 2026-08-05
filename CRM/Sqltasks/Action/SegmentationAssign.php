@@ -138,6 +138,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     $temp_table  = "temp_sqltask{$task_id}_assign_" . substr(microtime(), 2, 8);
     $membership_column = CRM_Core_DAO::singleValueQuery("SHOW COLUMNS FROM `{$data_table}` LIKE 'membership_id';");
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // CLEAR (if requested)
     $clear = $this->getConfigValue('clear');
     if ($clear) {
@@ -364,6 +365,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
     return [
       'leave'     => E::ts("don't change status"),
       'planned'   => E::ts("(re)set to 'planned'"),
+      // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
       // 'start'     => E::ts("start (if 'planned') with fixed segment order"),
       // 'start_t'   => E::ts("start (if 'planned') with segment order from table"),
       'restart'   => E::ts('(re)start with fixed segment order'),

@@ -215,9 +215,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // first: get filename, open stream
     $filename = $this->getFileName();
     $filepath = $this->getFilePath($filename);
-    // if (!file_exists($filepath)) {
-    //   throw new Exception("Cannot export file to '{$filepath}'.", 1);
-    // }
 
     $out = Writer::createFromString('');
 
@@ -265,7 +262,6 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     // write the records
     $count = 0;
     $column_list = implode(',', $columns);
-    // error_log("SELECT {$column_list} FROM {$export_table}");
     $excludeSql = '';
     if ($this->_columnExists($export_table, 'exclude')) {
       $excludeSql = 'WHERE (exclude IS NULL OR exclude != 1)';
@@ -296,6 +292,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
     file_put_contents($filepath, $csvOutput);
     $this->log("Written {$count} records to '{$filepath}'");
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // CONTINUE WITH EMPTY FILES?
     $discard_empty = $this->getConfigValue('discard_empty');
     if ($count == 0 && !empty($discard_empty)) {

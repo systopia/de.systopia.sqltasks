@@ -84,6 +84,7 @@ class RunSQLTask extends AbstractAction {
         TRUE,
     // mixed $defaultValue
         NULL,
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // string|null $fkEntity
         NULL,
     // array $options

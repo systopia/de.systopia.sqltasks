@@ -98,6 +98,7 @@ trait CRM_Sqltasks_Action_SftpTrait {
       $errors = class_parents($e);
       array_push($errors, get_class($e));
 
+      // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
       // if unexpected, re-throw
       if (!array_intersect($errors, $expectedErrors)) {
         throw $e;

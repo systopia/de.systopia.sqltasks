@@ -200,6 +200,7 @@ abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
       return [];
     }
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // finally, return the errors
     $errors = [];
     $query = CRM_Core_DAO::executeQuery("SELECT `error_message` FROM `{$error_table}`;");

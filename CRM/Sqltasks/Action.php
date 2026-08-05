@@ -362,6 +362,7 @@ abstract class CRM_Sqltasks_Action {
   protected function getEligibleCampaigns($empty_option = FALSE) {
     $campaign_list = [];
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // add empty option (if requested)
     if ($empty_option) {
       $campaign_list[0] = E::ts('- none -');

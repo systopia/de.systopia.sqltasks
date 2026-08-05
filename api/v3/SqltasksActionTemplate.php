@@ -13,6 +13,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
 function _civicrm_api3_sqltasks_action_template_create_spec(&$spec) {
+  // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
   // $spec['some_parameter']['api.required'] = 1;
 }
 
