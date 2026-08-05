@@ -24,6 +24,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *  'error'   will be triggered if an error occurs during execution
  *
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action_ResultHandler extends CRM_Sqltasks_Action {
   use CRM_Sqltasks_Action_EmailActionTrait;
 

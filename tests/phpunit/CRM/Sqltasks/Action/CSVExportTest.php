@@ -12,15 +12,17 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
   public function testFileExport() {
     $tmp = tempnam(sys_get_temp_dir(), 'csv');
 
+    $createTableSql = "DROP TABLE IF EXISTS tmp_test_action_csvexport;
+                        CREATE TABLE tmp_test_action_csvexport AS
+                          SELECT email, is_primary FROM civicrm_email WHERE email='john.doe@example.com';";
+
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_csvexport;
-                        CREATE TABLE tmp_test_action_csvexport AS
-                          SELECT email, is_primary FROM civicrm_email WHERE email='john.doe@example.com';",
+          'script'  => $createTableSql,
         ],
         [
           'type'           => 'CRM_Sqltasks_Action_CSVExport',
@@ -57,23 +59,25 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
       $outputFilename = tempnam(sys_get_temp_dir(), "csv-$mode-");
       $tmpTable = 'tmp_test_action_csvexport';
 
+      $createAndInsertSql = "
+        DROP TABLE IF EXISTS $tmpTable;
+        CREATE TABLE $tmpTable (c1 varchar(255), c2 varchar(255), c3 varchar(255));
+        INSERT INTO $tmpTable (c1, c2, c3) VALUES ('a', 'b b', '  c\" ');
+        INSERT INTO $tmpTable (c1, c2, c3) VALUES ('', ' ', '\t');
+        INSERT INTO $tmpTable (c1, c2, c3) VALUES ('€', 'éáó', 'ä ö ü');
+      ";
+
       $config = [
         'version' => CRM_Sqltasks_Config_Format::CURRENT,
         'actions' => [
           [
             'type'    => 'CRM_Sqltasks_Action_RunSQL',
-            'enabled' => true,
-            'script'  => "
-              DROP TABLE IF EXISTS $tmpTable;
-              CREATE TABLE $tmpTable (c1 varchar(255), c2 varchar(255), c3 varchar(255));
-              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('a', 'b b', '  c\" ');
-              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('', ' ', '\t');
-              INSERT INTO $tmpTable (c1, c2, c3) VALUES ('€', 'éáó', 'ä ö ü');
-            ",
+            'enabled' => TRUE,
+            'script'  => $createAndInsertSql,
           ],
           [
             'type'           => 'CRM_Sqltasks_Action_CSVExport',
-            'enabled'        => true,
+            'enabled'        => TRUE,
             'table'          => $tmpTable,
             'encoding'       => 'UTF-8',
             'delimiter'      => ';',
@@ -87,7 +91,7 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
           ],
           [
             'type'    => 'CRM_Sqltasks_Action_PostSQL',
-            'enabled' => true,
+            'enabled' => TRUE,
             'script'  => "DROP TABLE IF EXISTS $tmpTable;",
           ],
         ],

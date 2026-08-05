@@ -56,6 +56,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
   /**
    * Check if this action is configured correctly
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function checkConfiguration() {
     parent::checkConfiguration();
 
@@ -126,6 +127,7 @@ class CRM_Sqltasks_Action_SegmentationAssign extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     // get some basic data
     $this->resetHasExecuted();

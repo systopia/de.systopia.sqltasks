@@ -211,6 +211,7 @@ class CRM_Sqltasks_Action_CSVExport extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     $this->resetHasExecuted();
 

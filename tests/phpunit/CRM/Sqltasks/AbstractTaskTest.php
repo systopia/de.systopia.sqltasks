@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @group headless
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements HeadlessInterface, HookInterface {
 
   /**

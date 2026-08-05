@@ -45,7 +45,9 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
         continue;
       }
 
-      if (property_exists($query, 'exclude') && $query->exclude) continue;
+      if (property_exists($query, 'exclude') && $query->exclude) {
+        continue;
+      }
 
       $paramsSubstituted = $this->substitueParameterVariables($params, $query);
 
@@ -64,7 +66,8 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
         }
 
         $this->successCount++;
-      } catch (Exception $ex) {
+      }
+      catch (Exception $ex) {
         $this->handleError($ex);
       }
     }
@@ -148,4 +151,5 @@ class CRM_Sqltasks_Action_APIv4Call extends CRM_Sqltasks_Action {
     $this->skipCount = 0;
     $this->successCount = 0;
   }
+
 }

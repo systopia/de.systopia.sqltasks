@@ -20,6 +20,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
 /**
  * Abstract, contact set based action
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action_ContactSet extends CRM_Sqltasks_Action {
 
   /**

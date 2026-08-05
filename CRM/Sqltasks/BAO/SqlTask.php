@@ -104,8 +104,11 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @param array $params
    * @return array
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute($params = []) {
-    if (empty($this->id)) return;
+    if (empty($this->id)) {
+      return;
+    }
 
     $input_value = $params['input_val'] ?? NULL;
 
@@ -119,7 +122,8 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
         'log_to_file' => !empty($params['log_to_file']),
         'sqltask_id'  => $this->id,
       ]);
-    } else {
+    }
+    else {
       $exec_props = CRM_Sqltasks_BAO_SqltasksExecution::getById($params['execution_id']);
       $execution = new CRM_Sqltasks_BAO_SqltasksExecution($exec_props);
     }
@@ -195,7 +199,8 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
       try {
         $action->checkConfiguration();
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         $execution->reportError("Configuration Error '$action_name': " . $e->getMessage());
         continue;
       }
@@ -210,7 +215,8 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
         $runtime = microtime(TRUE) - $timestamp;
         $log_message = sprintf("Action '%s' executed in %.3fs.", $action_name, $runtime);
         $execution->logInfo($log_message);
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         $execution->reportError("Error in action '$action_name': " . $e->getMessage());
       }
     }
@@ -251,15 +257,15 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @return array
    */
   public function exportData($attributes = []) {
-    $archive_date = is_null($this->archive_date)
+    $archive_date = $this->archive_date === NULL
       ? NULL
       : date('Y-m-d H:i:s', strtotime($this->archive_date));
 
-    $last_execution = is_null($this->last_execution)
+    $last_execution = $this->last_execution === NULL
       ? NULL
       : date('Y-m-d H:i:s', strtotime($this->last_execution));
 
-    $last_modified = is_null($this->last_modified)
+    $last_modified = $this->last_modified === NULL
       ? NULL
       : date('Y-m-d H:i:s', strtotime($this->last_modified));
 
@@ -282,7 +288,9 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
       'weight'          => (int) $this->weight,
     ];
 
-    if (empty($attributes)) return $task_data;
+    if (empty($attributes)) {
+      return $task_data;
+    }
 
     foreach ($task_data as $name => $_) {
       if (!in_array($name, $attributes, TRUE)) {
@@ -350,14 +358,18 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     foreach (self::generator() as $task) {
       $config = json_decode($task->config, TRUE);
 
-      if (is_null($config)) continue;
+      if ($config === NULL) {
+        continue;
+      }
 
       $call_task_actions = array_filter($config['actions'], fn ($action) =>
         $action['type'] === 'CRM_Sqltasks_Action_CallTask'
         && in_array($task_id, $action['tasks'] ?? [])
       );
 
-      if (empty($call_task_actions)) continue;
+      if (empty($call_task_actions)) {
+        continue;
+      }
 
       if (!$must_be_enabled) {
         $task_ids[] = $task->id;
@@ -415,7 +427,9 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     ');
 
     foreach (self::generator(['enabled' => 1]) as $task) {
-      if ($still_running && !in_array((int) $task->parallel_exec, [1, 2], TRUE)) continue;
+      if ($still_running && !in_array((int) $task->parallel_exec, [1, 2], TRUE)) {
+        continue;
+      }
       $tasks[] = $task;
     }
 
@@ -432,7 +446,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     foreach ($tasks as $task) {
       if (
         Settings::isDispatcherDisabled()
-        || !is_null($task->archive_date)
+        || $task->archive_date !== NULL
         || !$task->allowedToRun()
         || !$task->shouldRun()
       ) {
@@ -445,7 +459,8 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
 
       if ($exec_result['error_count'] > 0) {
         $error_count++;
-      } else {
+      }
+      else {
         $success_count++;
       }
 
@@ -467,14 +482,16 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     ];
   }
 
-
   /**
    * Determine whether the task should be executed
    *
    * @return boolean
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function shouldRun() {
-    if ($this->scheduled === 'always') return TRUE;
+    if ($this->scheduled === 'always') {
+      return TRUE;
+    }
 
     $config = json_decode($this->config, TRUE);
     $scheduled_month = (int) ($config['scheduled_month'] ?? 1);
@@ -540,6 +557,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
    * @param array $options
    * @return void
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public function updateAttributes($params, $options = []) {
     $save = $options['save'] ?? TRUE;
     $update_mod_timestamp = $options['update_mod_timestamp'] ?? TRUE;
@@ -657,7 +675,7 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
     }
   }
 
-/* --- Private methods -------------------------------------------------------------------------- */
+  /* --- Private methods -------------------------------------------------------------------------- */
 
   /**
    * Get the name for a database lock depending on the task ID
@@ -688,7 +706,9 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
         $action['type'] !== CRM_Sqltasks_Action_CallTask::class
         || empty($action['tasks'])
         || !is_array($action['tasks'])
-      ) continue;
+      ) {
+        continue;
+      }
 
       $execute_disabled_tasks = !empty($action['is_execute_disabled_tasks']);
 
@@ -696,12 +716,17 @@ class CRM_Sqltasks_BAO_SqlTask extends CRM_Sqltasks_DAO_SqlTask {
         function ($task_id) use ($execute_disabled_tasks) {
           try {
             $task = self::findById($task_id);
-          } catch (Exception $_) {
+          }
+          catch (Exception $_) {
             return FALSE;
           }
 
-          if (!is_null($task->archive_date)) return FALSE;
-          if (!$execute_disabled_tasks && empty($task->enabled)) return FALSE;
+          if ($task->archive_date !== NULL) {
+            return FALSE;
+          }
+          if (!$execute_disabled_tasks && empty($task->enabled)) {
+            return FALSE;
+          }
 
           return TRUE;
         });

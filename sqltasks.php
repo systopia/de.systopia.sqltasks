@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore PSR1.Files.SideEffects.FoundWithSymbols
 /*-------------------------------------------------------+
 | SYSTOPIA SQL TASKS EXTENSION                           |
 | Copyright (C) 2017 SYSTOPIA                            |

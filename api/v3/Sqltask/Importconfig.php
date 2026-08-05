@@ -18,7 +18,7 @@ function civicrm_api3_sqltask_importconfig($params) {
     return civicrm_api3_create_error("Task(id=$task_id) does not exist.");
   }
 
-  if (!is_null($task->archive_date)) {
+  if ($task->archive_date !== NULL) {
     return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not import config.");
   }
 

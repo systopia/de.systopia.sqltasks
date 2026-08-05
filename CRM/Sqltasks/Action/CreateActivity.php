@@ -175,6 +175,7 @@ class CRM_Sqltasks_Action_CreateActivity extends CRM_Sqltasks_Action_ContactSet 
   /**
    * Generate individual activities
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function createIndividualActivities() {
     $use_api            = $this->getConfigValue('use_api');
     $store_activity_ids = $this->getConfigValue('store_activity_ids');

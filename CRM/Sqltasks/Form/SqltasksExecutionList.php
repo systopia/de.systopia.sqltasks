@@ -71,6 +71,7 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     );
   }
 
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function setSearchParams() {
     $taskId = CRM_Utils_Request::retrieve('sqltask_id', 'Integer');
     if (!empty($taskId)) {

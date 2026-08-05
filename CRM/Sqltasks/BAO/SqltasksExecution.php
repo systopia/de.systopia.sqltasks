@@ -111,6 +111,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
     return $instance;
   }
 
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function buildApiQuery($params) {
     $api = \Civi\Api4\SqltasksExecution::get();
 

@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-use \Civi\Api4 as Api4;
+use Civi\Api4 as Api4;
 
 /**
  * Test APIv4Call Action
@@ -400,4 +400,5 @@ class CRM_Sqltasks_Action_APIv4CallTest extends CRM_Sqltasks_Action_AbstractActi
       "The created note should contain '123 $maxAttachments 456'"
     );
   }
+
 }

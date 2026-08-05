@@ -26,7 +26,7 @@ function civicrm_api3_sqltask_create($params) {
   }
 
   // Reject update if task is archived
-  if (!is_null($task->archive_date)) {
+  if ($task->archive_date !== NULL) {
     return civicrm_api3_create_error(
       "Task(id={$task->id}) is archived. " .
       'Cannot update any fields. ' .

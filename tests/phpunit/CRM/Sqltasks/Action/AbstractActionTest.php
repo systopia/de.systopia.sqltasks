@@ -9,6 +9,7 @@ use Civi\Test\Api3TestTrait;
  *
  * @group headless
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_AbstractTaskTest {
   use Api3TestTrait;
 

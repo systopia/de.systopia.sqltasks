@@ -30,7 +30,7 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
     $allowed_tasks = [];
 
     foreach (CRM_Sqltasks_BAO_SqlTask::generator() as $task) {
-      if (!$task->allowedToRun() || !is_null($task->archive_date)) {
+      if (!$task->allowedToRun() || $task->archive_date !== NULL) {
         continue;
       }
 

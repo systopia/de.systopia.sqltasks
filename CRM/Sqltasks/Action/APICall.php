@@ -159,6 +159,7 @@ class CRM_Sqltasks_Action_APICall extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     $handle_api_errors = $this->getHandleApiErrors();
 

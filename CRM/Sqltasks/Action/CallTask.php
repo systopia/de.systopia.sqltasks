@@ -50,6 +50,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     $this->resetHasExecuted();
 
@@ -156,7 +157,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       [1 => [$execution_id, 'Integer']]
     );
 
-    return !is_null($end_date);
+    return $end_date !== NULL;
   }
 
   /**

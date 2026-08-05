@@ -22,6 +22,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  * @todo turn this into an entity
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action {
 
   protected static $_campaign_list = NULL;

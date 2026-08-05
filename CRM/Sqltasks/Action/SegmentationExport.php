@@ -69,6 +69,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   /**
    * get the preferred filename
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function getFileName() {
     $file_name = $this->getConfigValue('filename');
     $file_name = trim($file_name);
@@ -199,6 +200,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
    * RUN this action
    * @throws Exception
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     // get some basic data
     $this->resetHasExecuted();

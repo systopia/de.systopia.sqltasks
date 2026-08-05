@@ -31,7 +31,7 @@ function civicrm_api3_sqltask_execute($params) {
   $task_id = $params['id'];
   $task = CRM_Sqltasks_BAO_SqlTask::findById($params['id']);
 
-  if (!is_null($task->archive_date)) {
+  if ($task->archive_date !== NULL) {
     return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not execute Task.");
   }
 
