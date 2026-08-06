@@ -1236,7 +1236,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$string of function trim expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 7
 			path: CRM/Sqltasks/Action/CSVExport.php
 
 		-
