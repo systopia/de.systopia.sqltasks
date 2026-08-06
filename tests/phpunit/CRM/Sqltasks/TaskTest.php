@@ -8,6 +8,8 @@ use CRM_Sqltasks_ExtensionUtil as E;
  * Tests overall task logic
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_BAO_SqlTask
  */
 class CRM_Sqltasks_TaskTest extends CRM_Sqltasks_AbstractTaskTest {
 

@@ -10,11 +10,11 @@ use Civi\Test\TransactionalInterface;
  * SqltasksActionTemplate.Create API Test Case
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_sqltasks_action_template_create
  */
-class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements
-    HeadlessInterface,
-    HookInterface,
-    TransactionalInterface {
+// phpcs:ignore Generic.Files.LineLength.TooLong
+class api_v3_SqltasksActionTemplate_CreateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**

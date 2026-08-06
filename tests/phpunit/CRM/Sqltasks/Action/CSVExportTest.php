@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test CSVExport Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_CSVExport
  */
 class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
@@ -100,7 +102,7 @@ class CRM_Sqltasks_Action_CSVExportTest extends CRM_Sqltasks_Action_AbstractActi
       $this->createAndExecuteTask(['config' => $config]);
 
       $this->assertFileEquals(
-        __DIR__ . "/../../../../fixtures/csvexport_enclosure_${mode}.csv",
+        __DIR__ . "/../../../../fixtures/csvexport_enclosure_{$mode}.csv",
         $outputFilename
       );
     }

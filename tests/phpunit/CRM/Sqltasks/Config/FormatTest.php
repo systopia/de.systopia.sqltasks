@@ -7,6 +7,8 @@ declare(strict_types = 1);
  * Test configuration format utility class
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Config_Format
  */
 class CRM_Sqltasks_Config_FormatTest extends CRM_Sqltasks_AbstractTaskTest {
 

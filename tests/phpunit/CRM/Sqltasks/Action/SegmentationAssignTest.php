@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test SegmentationAssign Action, requires de.systopia.segmentation
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SegmentationAssign
  */
 class CRM_Sqltasks_Action_SegmentationAssignTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

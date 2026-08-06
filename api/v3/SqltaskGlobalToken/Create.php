@@ -2,6 +2,8 @@
 
 declare(strict_types = 1);
 
+use CRM_Sqltasks_ExtensionUtil as E;
+
 /**
  * Creates new global token
  *
@@ -13,7 +15,7 @@ function civicrm_api3_sqltask_global_token_create($params) {
   $globalToken = CRM_Sqltasks_GlobalToken::singleton();
 
   if ($globalToken->isTokenExist($params['name'])) {
-    return civicrm_api3_create_error(ts('Token name is already exists.'));
+    return civicrm_api3_create_error(E::ts('Token name is already exists.'));
   }
 
   if (!isset($params['value'])) {
@@ -22,7 +24,7 @@ function civicrm_api3_sqltask_global_token_create($params) {
 
   if (strlen($params['name']) > CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME) {
     return civicrm_api3_create_error(
-      ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME])
+      E::ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME])
     );
   }
 

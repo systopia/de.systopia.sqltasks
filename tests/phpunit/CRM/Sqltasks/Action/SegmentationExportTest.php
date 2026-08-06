@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test SegmentationExport Action, requires de.systopia.segmentation
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SegmentationExport
  */
 class CRM_Sqltasks_Action_SegmentationExportTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

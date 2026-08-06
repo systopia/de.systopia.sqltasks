@@ -1,1 +1,42 @@
-[]
+[
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFileExport",
+        "message": "Method League\\Csv\\AbstractCsv::createFromString() is deprecated since league/csv:9.27.0, use League\\Csv\\AbstractCsv::fromString() instead",
+        "count": 1
+    },
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFileExport",
+        "message": "Method League\\Csv\\AbstractCsv::getContent() is deprecated since league/csv:9.7.0, use League\\Csv\\AbstractCsv::toString() instead",
+        "count": 1
+    },
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFieldEnclosureTypes",
+        "message": "Method League\\Csv\\AbstractCsv::createFromString() is deprecated since league/csv:9.27.0, use League\\Csv\\AbstractCsv::fromString() instead",
+        "count": 3
+    },
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFieldEnclosureTypes",
+        "message": "Constant League\\Csv\\EncloseField::FILTERNAME is deprecated since league/csv:9.10.0, use League\\Csv\\Writer::forceEnclosure() instead",
+        "count": 5
+    },
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFieldEnclosureTypes",
+        "message": "Method League\\Csv\\AbstractCsv::addStreamFilter() is deprecated since league/csv:9.18.0, use League\\Csv\\AbstractCsv::appendStreamFilterOnRead() or League\\Csv\\AbstractCsv::prependStreamFilterOnRead() instead",
+        "count": 2
+    },
+    {
+        "location": "CRM_Sqltasks_Action_CSVExportTest::testFieldEnclosureTypes",
+        "message": "Method League\\Csv\\AbstractCsv::getContent() is deprecated since league/csv:9.7.0, use League\\Csv\\AbstractCsv::toString() instead",
+        "count": 3
+    },
+    {
+        "location": "CRM_Sqltasks_TaskTest::testGlobalTokens",
+        "message": "Method League\\Csv\\AbstractCsv::createFromString() is deprecated since league/csv:9.27.0, use League\\Csv\\AbstractCsv::fromString() instead",
+        "count": 1
+    },
+    {
+        "location": "CRM_Sqltasks_TaskTest::testGlobalTokens",
+        "message": "Method League\\Csv\\AbstractCsv::getContent() is deprecated since league/csv:9.7.0, use League\\Csv\\AbstractCsv::toString() instead",
+        "count": 1
+    }
+]

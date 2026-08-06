@@ -8,6 +8,8 @@ use Civi\Api4\EntityTag;
  * Test SyncTag Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SyncTag
  */
 class CRM_Sqltasks_Action_SyncTagTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

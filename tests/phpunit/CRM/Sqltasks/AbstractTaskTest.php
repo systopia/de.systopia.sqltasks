@@ -27,6 +27,9 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
   }
 
   public function setUp() : void {
+    Civi::settings()->set('mailing_backend', [
+      'outBound_option' => CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB,
+    ]);
     parent::setUp();
   }
 

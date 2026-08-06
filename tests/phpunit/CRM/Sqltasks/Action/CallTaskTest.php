@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test CallTask Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_CallTask
  */
 class CRM_Sqltasks_Action_CallTaskTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

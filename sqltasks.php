@@ -1,4 +1,5 @@
-<?php // phpcs:ignore PSR1.Files.SideEffects.FoundWithSymbols
+<?php
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 /*-------------------------------------------------------+
 | SYSTOPIA SQL TASKS EXTENSION                           |
 | Copyright (C) 2017 SYSTOPIA                            |
@@ -16,7 +17,6 @@
 declare(strict_types = 1);
 
 require_once 'sqltasks.civix.php';
-require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

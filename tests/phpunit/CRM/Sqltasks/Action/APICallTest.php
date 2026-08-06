@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test APICall Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_APICall
  */
 class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
@@ -143,7 +145,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
     );
 
     while ($queryResult->fetch()) {
-      $this->assertObjectHasAttribute(
+      $this->assertObjectHasProperty(
         'sqltask_api_result',
         $queryResult,
         'Temporary table should have a sqltask_api_result column'

@@ -9,11 +9,11 @@ use Civi\Test\TransactionalInterface;
 /**
  * SqltasksActionTemplate API Test Case
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_BAO_SqltasksActionTemplate
  */
-class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase implements
-    HeadlessInterface,
-    HookInterface,
-    TransactionalInterface {
+// phpcs:ignore Generic.Files.LineLength.TooLong
+class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**

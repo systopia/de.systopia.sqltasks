@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test SyncGroup Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SyncGroup
  */
 class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

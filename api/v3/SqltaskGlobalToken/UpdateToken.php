@@ -2,6 +2,8 @@
 
 declare(strict_types = 1);
 
+use CRM_Sqltasks_ExtensionUtil as E;
+
 /**
  * Update token data
  *
@@ -19,12 +21,12 @@ function civicrm_api3_sqltask_global_token_update_token($params) {
   if (!empty($params['new_name'])) {
     if ($params['new_name'] != $params['name']) {
       if ($globalToken->isTokenExist($params['new_name'])) {
-        return civicrm_api3_create_error(ts('Token name is already exists.'));
+        return civicrm_api3_create_error(E::ts('Token name is already exists.'));
       }
 
       if (strlen($params['new_name']) > CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME) {
         return civicrm_api3_create_error(
-          ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME])
+          E::ts('Max length of token name is %1', ['1' => CRM_Sqltasks_GlobalToken::MAX_LENGTH_OF_TOKEN_NAME])
         );
       }
 

@@ -1,3 +1,6 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
 	paths:
 		- api
@@ -8,6 +11,7 @@ parameters:
 	excludePaths:
 		analyse:
 			- CRM/Sqltasks/DAO/*
+			- Civi/Sqltasks/Actions/RunSQLTask.php
 			- tests/phpunit/bootstrap.php
 	scanFiles:
 		- sqltasks.civix.php

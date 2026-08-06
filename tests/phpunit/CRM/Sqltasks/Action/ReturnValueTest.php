@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test RunPHP Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_RunPHP
  */
 class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractActionTest {
 

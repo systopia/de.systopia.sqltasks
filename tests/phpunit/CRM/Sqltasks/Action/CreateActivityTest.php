@@ -6,6 +6,8 @@ declare(strict_types = 1);
  * Test CreateActivity Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_CreateActivity
  */
 class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_AbstractActionTest {
   public $campaignID;
@@ -137,7 +139,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       );
 
       while ($queryResult->fetch()) {
-        $this->assertObjectHasAttribute(
+        $this->assertObjectHasProperty(
           'sqltask_activity_id',
           $queryResult,
           'Temporary table should have a sqltask_activity_id column'
@@ -222,7 +224,7 @@ class CRM_Sqltasks_Action_CreateActivityTest extends CRM_Sqltasks_Action_Abstrac
       );
 
       while ($queryResult->fetch()) {
-        $this->assertObjectHasAttribute(
+        $this->assertObjectHasProperty(
           'sqltask_activity_id',
           $queryResult,
           'Temporary table should have a sqltask_activity_id column'

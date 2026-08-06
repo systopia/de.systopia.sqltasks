@@ -42,16 +42,16 @@ class CRM_Sqltasks_Upgrader_Config_V1 {
 
     // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /* V2 sample:
-    {
-    "version": 2,
-    "actions": [
-    {
-    "type": "CRM_Sqltasks_Action_CreateActivity",
-    "enabled": true,
-    ...
-    }
-    ]
-    }
+     * {
+     *   "version": 2,
+     *   "actions": [
+     *     {
+     *       "type": "CRM_Sqltasks_Action_CreateActivity",
+     *       "enabled": true,
+     *       ...
+     *     }
+     *   ]
+     * }
      */
 
     // iterate over all prefixes

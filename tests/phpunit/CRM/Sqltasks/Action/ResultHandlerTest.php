@@ -6,12 +6,35 @@ declare(strict_types = 1);
  * Test ResultHandler Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_ResultHandler
  */
 class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
-  public function testSuccessHandler() {
-    $mailUtils = new CiviMailUtils($this, TRUE);
+  /**
+   * @var array<int, array<string, mixed>>
+   */
+  protected $sentMails = [];
 
+  public function setUp() : void {
+    $this->sentMails = [];
+    parent::setUp();
+  }
+
+  /**
+   * @param array<string, mixed> $params
+   * @param string $context
+   */
+  public function hook_civicrm_alterMailParams(&$params, $context): void {
+    $this->sentMails[] = $params;
+  }
+
+  protected function assertMailSentTo(string $email, string $message = ''): void {
+    $recipients = array_column($this->sentMails, 'toEmail');
+    self::assertContains($email, $recipients, $message);
+  }
+
+  public function testSuccessHandler() {
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
       'actions' => [
@@ -51,15 +74,13 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
     $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Create Activity' executed in", 'Create Activity action should have succeeded');
-    $mailUtils->checkMailLog([
+    $this->assertMailSentTo(
       'successhandler@example.com',
-    ]);
-    $mailUtils->stop();
+      'Success handler should have sent a mail'
+    );
   }
 
   public function testErrorHandler() {
-    $mailUtils = new CiviMailUtils($this, TRUE);
-
     // Contains invalid activity_activity_type_id, should cause error
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
@@ -101,10 +122,10 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
     $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Error in action 'Create Activity'", 'Create Activity action should have failed');
-    $mailUtils->checkMailLog([
+    $this->assertMailSentTo(
       'errorhandler@example.com',
-    ]);
-    $mailUtils->stop();
+      'Error handler should have sent a mail'
+    );
   }
 
 }

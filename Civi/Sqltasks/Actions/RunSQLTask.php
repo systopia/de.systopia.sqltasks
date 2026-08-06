@@ -74,22 +74,13 @@ class RunSQLTask extends AbstractAction {
   public function getConfigurationSpecification() {
     return new SpecificationBag([
       new Specification(
-    // string $name
         'task_id',
-    // string $dataType
         'Integer',
-    // string $title
         E::ts('Task ID'),
-    // bool $required
         TRUE,
-    // mixed $defaultValue
         NULL,
-    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-    // string|null $fkEntity
         NULL,
-    // array $options
         NULL,
-    // bool $multiple
         FALSE
       ),
       new Specification(

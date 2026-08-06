@@ -132,13 +132,16 @@ abstract class CRM_Sqltasks_Action {
    * @param $string
    * @param $record
    *
-   * @return string
+   * @return ($string is string ? string : mixed)
    */
   protected function resolveTokens($string, $record) {
+    if (!is_string($string)) {
+      return $string;
+    }
     while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
       $token = $match['token'];
       $value = isset($record->$token) ? $record->$token : '';
-      $string = str_replace('{' . $match['token'] . '}', $value, $string);
+      $string = str_replace('{' . $match['token'] . '}', self::tokenValueToString($value), $string);
     }
     return $string;
   }
@@ -185,13 +188,18 @@ abstract class CRM_Sqltasks_Action {
       if (empty($tokenValue)) {
         $this->log("No value found for token {$token}");
       }
-      $value = str_replace(
-        $token,
-        $tokenValue,
-        $value
-      );
+      $value = str_replace($token, self::tokenValueToString($tokenValue), $value);
     }
     return $value;
+  }
+
+  /**
+   * @param mixed $value
+   *
+   * @return string
+   */
+  protected static function tokenValueToString($value) {
+    return is_scalar($value) ? (string) $value : '';
   }
 
   /**

@@ -10,11 +10,11 @@ use Civi\Test\TransactionalInterface;
  * SqltaskTemplate.Getall API Test Case
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_sqltask_template_get_all
  */
-class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase implements
-    HeadlessInterface,
-    HookInterface,
-    TransactionalInterface {
+// phpcs:ignore Generic.Files.LineLength.TooLong
+class api_v3_SqltaskTemplate_GetallTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
