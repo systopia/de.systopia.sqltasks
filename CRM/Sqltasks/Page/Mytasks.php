@@ -34,7 +34,7 @@ class CRM_Sqltasks_Page_Mytasks extends CRM_Core_Page {
         continue;
       }
 
-      $allowed_tasks[$task->id] = [
+      $allowed_tasks[(int) $task->id] = [
         'id'              => $task->id,
         'name'            => $task->name,
         'last_runtime'    => sprintf('%.3f', ($task->last_runtime / 1000.0)),

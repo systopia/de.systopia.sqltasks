@@ -339,7 +339,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
   }
 
   public function reportError($error_message = NULL) {
-    $this->error_count++;
+    $this->error_count = (int) $this->error_count + 1;
 
     if (isset($error_message)) {
       $this->logError($error_message);
