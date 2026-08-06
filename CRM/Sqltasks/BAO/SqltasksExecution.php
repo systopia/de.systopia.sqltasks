@@ -106,7 +106,7 @@ class CRM_Sqltasks_BAO_SqltasksExecution extends CRM_Sqltasks_DAO_SqltasksExecut
 
     self::$file_entries = [];
 
-    CRM_Utils_Hook::post('create', 'SqltasksExecution', $instance->id, $instance);
+    CRM_Utils_Hook::post('create', 'SqltasksExecution', (int) $instance->id, $instance);
 
     return $instance;
   }

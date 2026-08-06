@@ -21,7 +21,7 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
     $instance->copyValues($params);
     $instance->last_modified = date('Y-m-d H:i:s');
     $instance->save();
-    CRM_Utils_Hook::post($hook, 'SqltasksTemplate', $instance->id, $instance);
+    CRM_Utils_Hook::post($hook, 'SqltasksTemplate', (int) $instance->id, $instance);
 
     return $instance;
   }
@@ -29,9 +29,10 @@ class CRM_Sqltasks_BAO_SqltasksTemplate extends CRM_Sqltasks_DAO_SqltasksTemplat
   /**
    * Delete a template with a given ID
    *
-   * @param bool $id
+   * @param int|string $id
    */
   public static function deleteOne ($id) {
+    $id = (int) $id;
     $params = ['id' => $id];
 
     CRM_Utils_Hook::pre('delete', 'SqltasksTemplate', $id, $params);
