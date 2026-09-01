@@ -73,8 +73,10 @@ trait CRM_Sqltasks_Action_SftpTrait {
       // upload
       $target_file = $credentials['remote_path'] . '/' . $filename;
       if (!$sftp->put($target_file, $filepath, $mode)) {
+        $sftpLog = $sftp->getSFTPLog();
         throw new Exception(
-          "Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1
+          "Upload to {$credentials['user']}@{$credentials['host']} failed: "
+          . (is_string($sftpLog) ? $sftpLog : print_r($sftpLog, TRUE)), 1
         );
       }
 
