@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
+use Civi\Core\HookInterface;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * SqltasksActionTemplate.Get API Test Case
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_sqltasks_action_template_get
  */
+// phpcs:ignore Generic.Files.LineLength.TooLong
 class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
@@ -41,28 +46,32 @@ class api_v3_SqltasksActionTemplate_GetTest extends \PHPUnit\Framework\TestCase 
    */
   public function testGetActionTemplate() {
     $templateData = [
-      "name"      => "Test Template",
-      "type"      => "CRM_Sqltasks_Action_RunSQL",
-      "config"    => '{"script":"aaaa --- test"}'
+      'name'      => 'Test Template',
+      'type'      => 'CRM_Sqltasks_Action_RunSQL',
+      'config'    => '{"script":"aaaa --- test"}',
     ];
 
     try {
-      $createdTemplateFromApi = civicrm_api3('SqltasksActionTemplate', 'create', array_merge($templateData, ["sequential" => 1]));
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltasksActionTemplate.create returns exception:" . $e->getMessage());
+      $createdTemplateFromApi = civicrm_api3(
+        'SqltasksActionTemplate', 'create', array_merge($templateData, ['sequential' => 1])
+      );
+    }
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltasksActionTemplate.create returns exception:' . $e->getMessage());
     }
 
-    $action_template_id = reset($createdTemplateFromApi["values"])["id"];
+    $action_template_id = reset($createdTemplateFromApi['values'])['id'];
     try {
-      $templateFromApi = civicrm_api3("SqltasksActionTemplate", "get", [ "id" => $action_template_id ]);
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltasksActionTemplate.get returns exception:" . $e->getMessage());
+      $templateFromApi = civicrm_api3('SqltasksActionTemplate', 'get', ['id' => $action_template_id]);
+    }
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltasksActionTemplate.get returns exception:' . $e->getMessage());
     }
 
     foreach (array_keys($templateData) as $property) {
       $this->assertEquals(
         $templateData[$property],
-        reset($templateFromApi["values"])[$property],
+        reset($templateFromApi['values'])[$property],
         sprintf("Template %s should be '%s'", $property, $templateData[$property])
       );
     }

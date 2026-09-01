@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Page_SqltasksExecutionView extends CRM_Core_Page {
@@ -17,7 +20,9 @@ class CRM_Sqltasks_Page_SqltasksExecutionView extends CRM_Core_Page {
     }
 
     $task = CRM_Sqltasks_BAO_SqlTask::findById($sqltasksExecution['sqltask_id']);
-    $manageSqlTaskUrl = CRM_Utils_System::url('civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$sqltasksExecution['sqltask_id']}");
+    $manageSqlTaskUrl = CRM_Utils_System::url(
+      'civicrm/a/', NULL, TRUE, "/sqltasks/configure/{$sqltasksExecution['sqltask_id']}"
+    );
 
     $this->assign('manageSqlTaskUrl', $manageSqlTaskUrl);
     $this->assign('task', $task->toArray());

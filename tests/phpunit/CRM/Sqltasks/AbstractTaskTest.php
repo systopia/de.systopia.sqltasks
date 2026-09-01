@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
+use Civi\Core\HookInterface;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,6 +11,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @group headless
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements HeadlessInterface, HookInterface {
 
   /**
@@ -24,6 +27,9 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
   }
 
   public function setUp() : void {
+    Civi::settings()->set('mailing_backend', [
+      'outBound_option' => CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB,
+    ]);
     parent::setUp();
   }
 
@@ -38,7 +44,7 @@ abstract class CRM_Sqltasks_AbstractTaskTest extends TestCase implements Headles
     $taskExecutionResult = $task->execute($params);
     $this->log = $taskExecutionResult['logs'];
 
-    return array_merge($taskExecutionResult, [ 'task' => $task ]);
+    return array_merge($taskExecutionResult, ['task' => $task]);
   }
 
   protected function assertLogContains($expected, $message = '') {

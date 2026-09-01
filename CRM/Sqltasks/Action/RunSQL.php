@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -84,7 +86,7 @@ class CRM_Sqltasks_Action_RunSQL extends CRM_Sqltasks_Action {
       if ($e instanceof PEAR_Exception && $e->getCause() instanceof DB_Error) {
         $message .= ' Details: ' . $e->getCause()->getUserInfo();
       }
-      $this->log("SQL execution failed: " . $message);
+      $this->log('SQL execution failed: ' . $message);
       throw $e;
     }
   }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -14,12 +16,15 @@ use CRM_Sqltasks_ExtensionUtil as E;
 function civicrm_api3_sqltask_template_get_all($params) {
   try {
     $templates = array_map(
-      function ($bao) { return $bao->mapToArray(); },
+      function ($bao) {
+        return $bao->mapToArray();
+      },
       CRM_Sqltasks_BAO_SqltasksTemplate::getAll()
     );
 
     return civicrm_api3_create_success($templates);
-  } catch (\Exception $exception) {
+  }
+  catch (\Exception $exception) {
     throw new CRM_Core_Exception($exception->getMessage());
   }
 }
@@ -32,5 +37,3 @@ function civicrm_api3_sqltask_template_get_all($params) {
 function _civicrm_api3_sqltask_template_get_all_spec(&$spec) {
   // no parameters
 }
-
-?>

@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -20,11 +22,13 @@ use CRM_Sqltasks_ExtensionUtil as E;
  *
  * @todo turn this into an entity
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action {
 
   protected static $_campaign_list = NULL;
 
-  /** @var CRM_Sqltasks_BAO_SqlTask */
+  /**
+   * @var CRM_Sqltasks_BAO_SqlTask */
   protected $task = NULL;
   protected $config = NULL;
   protected $has_executed = TRUE;
@@ -73,7 +77,6 @@ abstract class CRM_Sqltasks_Action {
     $this->context['execution']->logGeneric($type, $message);
   }
 
-
   /**
    * Get the given key from the config
    *
@@ -85,7 +88,8 @@ abstract class CRM_Sqltasks_Action {
   public function getConfigValue($name, $resolveGlobalTokens = TRUE) {
     if (isset($this->config[$name])) {
       return $resolveGlobalTokens ? $this->resolveGlobalTokens($this->config[$name]) : $this->config[$name];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -108,7 +112,7 @@ abstract class CRM_Sqltasks_Action {
    * @return array
    */
   protected function getIDList($string) {
-    $id_list = array();
+    $id_list = [];
     if (!empty($string)) {
       $items = explode(',', $string);
       foreach ($items as $item) {
@@ -128,13 +132,16 @@ abstract class CRM_Sqltasks_Action {
    * @param $string
    * @param $record
    *
-   * @return string
+   * @return ($string is string ? string : mixed)
    */
   protected function resolveTokens($string, $record) {
+    if (!is_string($string)) {
+      return $string;
+    }
     while (preg_match('/\{(?P<token>\w+)\}/', $string, $match)) {
       $token = $match['token'];
       $value = isset($record->$token) ? $record->$token : '';
-      $string = str_replace('{' . $match['token'] . '}', $value, $string);
+      $string = str_replace('{' . $match['token'] . '}', self::tokenValueToString($value), $string);
     }
     return $string;
   }
@@ -164,8 +171,8 @@ abstract class CRM_Sqltasks_Action {
             $tokenValue = $this->context[$match['token']];
           }
           break;
-        default:
 
+        default:
         case 'setting':
           $settingVal = Civi::settings()->get($match['token']);
           if (!empty($settingVal)) {
@@ -181,13 +188,18 @@ abstract class CRM_Sqltasks_Action {
       if (empty($tokenValue)) {
         $this->log("No value found for token {$token}");
       }
-      $value = str_replace(
-        $token,
-        $tokenValue,
-        $value
-      );
+      $value = str_replace($token, self::tokenValueToString($tokenValue), $value);
     }
     return $value;
+  }
+
+  /**
+   * @param mixed $value
+   *
+   * @return string
+   */
+  protected static function tokenValueToString($value) {
+    return is_scalar($value) ? (string) $value : '';
   }
 
   /**
@@ -218,15 +230,16 @@ abstract class CRM_Sqltasks_Action {
    * get a list of the options from the given option group
    */
   protected function getOptions($option_group_name, $empty_option = TRUE) {
-    $options = array();
+    $options = [];
     if ($empty_option) {
       $options[''] = E::ts('- none -');
     }
-    $values = civicrm_api3('OptionValue', 'get', array(
+    $values = civicrm_api3('OptionValue', 'get', [
       'option_group_id' => $option_group_name,
       'is_active'       => 1,
       'return'          => 'value,label',
-      'option.limit'    => 0))['values'];
+      'option.limit'    => 0,
+    ])['values'];
     foreach ($values as $option_value) {
       $options[$option_value['value']] = $option_value['label'];
     }
@@ -269,7 +282,9 @@ abstract class CRM_Sqltasks_Action {
     }
 
     if (!$className::isSupported()) {
-      throw new Exception("Action type '{$className}' is not supported. Please make sure all dependencies are satisfied.");
+      throw new Exception(
+        "Action type '{$className}' is not supported. Please make sure all dependencies are satisfied."
+      );
     }
 
     return new $className($task, $config);
@@ -298,7 +313,7 @@ abstract class CRM_Sqltasks_Action {
         $actions[] = [
           'type'                => $className,
           'default_order'       => $className::getDefaultOrder(),
-          'is_default_template' => $className::isDefaultTemplateAction()
+          'is_default_template' => $className::isDefaultTemplateAction(),
         ];
       }
     }
@@ -353,8 +368,9 @@ abstract class CRM_Sqltasks_Action {
    * get a list of eligible groups
    */
   protected function getEligibleCampaigns($empty_option = FALSE) {
-    $campaign_list = array();
+    $campaign_list = [];
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     // add empty option (if requested)
     if ($empty_option) {
       $campaign_list[0] = E::ts('- none -');
@@ -362,14 +378,17 @@ abstract class CRM_Sqltasks_Action {
 
     // load campaigns (cached)
     if (self::$_campaign_list === NULL) {
-      self::$_campaign_list = array();
-      $campaign_query = civicrm_api3('Campaign', 'get', array(
+      self::$_campaign_list = [];
+      $campaign_query = civicrm_api3('Campaign', 'get', [
         'is_active'    => 1,
         'option.limit' => 0,
         'option.sort'  => 'title ASC',
-        'return'       => 'id,title'))['values'];
+        'return'       => 'id,title',
+      ])['values'];
       foreach ($campaign_query as $campaign) {
-        self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value('title', $campaign, "Campaign {$campaign['id']}");
+        self::$_campaign_list[$campaign['id']] = CRM_Utils_Array::value(
+          'title', $campaign, "Campaign {$campaign['id']}"
+        );
       }
     }
 

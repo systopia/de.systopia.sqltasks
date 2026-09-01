@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Test APICall Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_APICall
  */
 class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
@@ -14,8 +18,8 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_apicall;
-                        CREATE TABLE tmp_test_action_apicall AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;
+                        CREATE TABLE tmp_test_action_apicall AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'       => 'CRM_Sqltasks_Action_APICall',
@@ -30,10 +34,10 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
           'enabled' => TRUE,
           'script'  => 'DROP TABLE IF EXISTS tmp_test_action_apicall;',
         ],
-      ]
+      ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
     $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
@@ -58,8 +62,12 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
           'enabled' => TRUE,
           'script'  => "DROP TABLE IF EXISTS tmp_test_action_apicall;
                         CREATE TABLE tmp_test_action_apicall (contact_id INT(10), exclude BOOL, phone varchar(255));
-                        INSERT INTO tmp_test_action_apicall SELECT contact_id, 0 as exclude, '1800testInclude' as phone FROM civicrm_email WHERE email='john.doe@example.com';
-                        INSERT INTO tmp_test_action_apicall SELECT contact_id, 1 as exclude, '1800testExclude' as phone FROM civicrm_email WHERE email='jane.doe@example.com'",
+                        INSERT INTO tmp_test_action_apicall
+                          SELECT contact_id, 0 as exclude, '1800testInclude' as phone
+                          FROM civicrm_email WHERE email='john.doe@example.com';
+                        INSERT INTO tmp_test_action_apicall
+                          SELECT contact_id, 1 as exclude, '1800testExclude' as phone
+                          FROM civicrm_email WHERE email='jane.doe@example.com'",
         ],
         [
           'type'       => 'CRM_Sqltasks_Action_APICall',
@@ -77,9 +85,11 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
-    $this->assertLogContains('Column "exclude" exists, might skip some rows', '"exclude" column should have been detected');
+    $this->assertLogContains(
+      'Column "exclude" exists, might skip some rows', '"exclude" column should have been detected'
+    );
     $this->assertLogContains('1 API call(s) successfull.', '1 API call should have succeeded');
     $this->assertLogContains("Action 'APIv3 Call' executed in", 'API call action should have succeeded');
     $phoneCount = $this->callApiSuccess('Phone', 'getcount', [
@@ -128,14 +138,14 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $queryResult = CRM_Core_DAO::executeQuery(
       "SELECT `contact_id`, `sqltask_api_result`, `exclude` FROM `$tmpContactTable`"
     );
 
     while ($queryResult->fetch()) {
-      $this->assertObjectHasAttribute(
+      $this->assertObjectHasProperty(
         'sqltask_api_result',
         $queryResult,
         'Temporary table should have a sqltask_api_result column'
@@ -161,20 +171,21 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
 
       if ($apiResult['is_error']) {
         trigger_error('API call failed', E_USER_WARNING);
-      } else {
+      }
+      else {
         $phoneProps = array_values($apiResult['values'])[0];
 
         $this->assertEquals(
           $queryResult->contact_id,
           $phoneProps['contact_id'],
           'API result should contain the original contact ID'
-        );
+              );
 
         $this->assertEquals(
-          $phoneNumber,
-          $phoneProps['phone'],
-          'API result should contain the original phone number'
-        );
+                $phoneNumber,
+                $phoneProps['phone'],
+                'API result should contain the original phone number'
+              );
       }
     }
 
@@ -182,7 +193,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
   }
 
   private static function generateRandomPhoneNumber() {
-    $digits = "";
+    $digits = '';
 
     for ($i = 0; $i < 12; $i++) {
       $digits .= (string) random_int(0, 9);
@@ -198,7 +209,7 @@ class CRM_Sqltasks_Action_APICallTest extends CRM_Sqltasks_Action_AbstractAction
       $paramPairs[] = "$key=$value";
     }
 
-    return join("\r\n", $paramPairs);
+    return implode("\r\n", $paramPairs);
   }
 
 }

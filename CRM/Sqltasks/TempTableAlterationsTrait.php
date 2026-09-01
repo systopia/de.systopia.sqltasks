@@ -1,6 +1,8 @@
 <?php
 
-trait CRM_Sqltasks_TempTableAlterations {
+declare(strict_types = 1);
+
+trait CRM_Sqltasks_TempTableAlterationsTrait {
 
   /**
    * Add a column to the temporary data table in which the results of

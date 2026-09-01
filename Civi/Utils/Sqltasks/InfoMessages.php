@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Utils\Sqltasks;
 
 use CRM_Utils_System;
@@ -27,7 +29,9 @@ class InfoMessages {
     }
 
     if ($dispatcherData['is_active'] != 1) {
-      $this->addMessage('The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.');
+      $this->addMessage(
+        'The dispatcher is currently <strong>disabled</strong>, none of the tasks will be executed automatically.'
+      );
       return;
     }
 
@@ -42,19 +46,23 @@ class InfoMessages {
     }
 
     if ($dispatcherData['run_frequency'] === 'Always') {
-      $message = 'The dispatcher (and therefore all active tasks) will be triggered <strong>with every cron-run</strong>.';
+      $message = 'The dispatcher (and therefore all active tasks) will be triggered'
+        . ' <strong>with every cron-run</strong>.';
       $message .= 'Ask your administrator how often that is, ';
       $message .= 'in order to know the effective maximum frequency these tasks are being executed with.';
       $this->addMessage($message);
-    } elseif ($dispatcherData['run_frequency'] === 'Daily') {
+    }
+    elseif ($dispatcherData['run_frequency'] === 'Daily') {
       $message = 'The dispatcher is run <strong>every day</strong> after midnight.';
       $message .= 'This is effectively the maximum frequency these tasks are being executed with.';
       $this->addMessage($message);
-    } elseif ($dispatcherData['run_frequency'] === 'Hourly') {
+    }
+    elseif ($dispatcherData['run_frequency'] === 'Hourly') {
       $message = 'The dispatcher is run <strong>every hour</strong> on the hour.';
       $message .= 'This is effectively the maximum frequency these tasks are being executed with.';
       $this->addMessage($message);
-    } else {
+    }
+    else {
       $this->addMessage('Unexpected run frequency: ' . $dispatcherData['run_frequency'], 'error');
     }
   }
@@ -65,17 +73,18 @@ class InfoMessages {
   protected function getDispatcherData() {
     try {
       $job = civicrm_api3('Job', 'get', [
-          'sequential' => 1,
-          'api_entity' => "Sqltask",
-          'api_action' => "execute",
+        'sequential' => 1,
+        'api_entity' => 'Sqltask',
+        'api_action' => 'execute',
       ]);
 
-      return !empty($job['values'][0]) ? $job['values'][0] : null;
-    } catch (\CRM_Core_Exception $e) {
+      return !empty($job['values'][0]) ? $job['values'][0] : NULL;
+    }
+    catch (\CRM_Core_Exception $e) {
       $this->addMessage('Error(Job.get) while getting dispatcher data:' . $e->getMessage(), 'error');
     }
 
-    return null;
+    return NULL;
   }
 
   /**
@@ -85,8 +94,8 @@ class InfoMessages {
    */
   private function addMessage($message, $type = 'info') {
     $this->infoMessages[] = [
-        'text' => $message,
-        'type' => $type,
+      'text' => $message,
+      'type' => $type,
     ];
   }
 

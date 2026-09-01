@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -15,7 +17,8 @@ function civicrm_api3_sqltask_template_create($params) {
   try {
     $instance = CRM_Sqltasks_BAO_SqltasksTemplate::create($params);
     return civicrm_api3_create_success($instance->mapToArray());
-  } catch (\Exception $exception) {
+  }
+  catch (\Exception $exception) {
     throw new CRM_Core_Exception($exception->getMessage());
   }
 }
@@ -58,5 +61,3 @@ function _civicrm_api3_sqltask_template_create_spec(&$spec) {
     'description'  => 'JSON task configuration object',
   ];
 }
-
-?>

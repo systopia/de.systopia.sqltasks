@@ -1,5 +1,6 @@
-
 <?php
+
+declare(strict_types = 1);
 
 /**
  * This class is adapter which safely works with sqltasks global tokens
@@ -10,19 +11,19 @@ class CRM_Sqltasks_GlobalToken {
    * Setting name in CiviCRM
    * There located sqltasks global tokens
    */
-  const SETTING_NAME = 'sqltasks_global_tokens';
+  public const SETTING_NAME = 'sqltasks_global_tokens';
 
   /**
    * Max length of token name
    */
-  const MAX_LENGTH_OF_TOKEN_NAME = 60;
+  public const MAX_LENGTH_OF_TOKEN_NAME = 60;
 
   /**
    * Instance
    *
    * @var CRM_Sqltasks_GlobalToken
    */
-  private static $instance = null;
+  private static $instance = NULL;
 
   /**
    * All tokens
@@ -37,7 +38,7 @@ class CRM_Sqltasks_GlobalToken {
    * @return CRM_Sqltasks_GlobalToken
    */
   public static function singleton() {
-    if (static::$instance === null) {
+    if (static::$instance === NULL) {
       static::$instance = new static();
     }
 
@@ -158,6 +159,7 @@ class CRM_Sqltasks_GlobalToken {
   }
 
   private function __clone() {}
+
   public function __wakeup() {}
 
 }

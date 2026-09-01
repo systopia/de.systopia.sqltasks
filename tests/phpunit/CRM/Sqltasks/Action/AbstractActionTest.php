@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Civi\Test\Api3TestTrait;
 
 /**
@@ -7,10 +9,11 @@ use Civi\Test\Api3TestTrait;
  *
  * @group headless
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Sqltasks_Action_AbstractActionTest extends CRM_Sqltasks_AbstractTaskTest {
   use Api3TestTrait;
 
-  const TEST_CONTACT_SQL = "SELECT contact_id FROM civicrm_email WHERE email = 'john.doe@example.com';";
+  public const TEST_CONTACT_SQL = "SELECT contact_id FROM civicrm_email WHERE email = 'john.doe@example.com';";
 
   /**
    * @var int

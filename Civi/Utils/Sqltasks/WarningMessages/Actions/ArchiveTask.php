@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Utils\Sqltasks\WarningMessages\Actions;
 
-use Civi\Api4;
 use CRM_Sqltasks_BAO_SqlTask;
 use CRM_Utils_Type;
 
@@ -27,7 +28,8 @@ class ArchiveTask extends Base {
 
     $data['warningWindow']['title'] = 'Archiving task';
     $data['warningWindow']['isShowYesButton'] = FALSE;
-    $data['warningWindow']['message'] = '<p>This task is used by another task. Please remove the task from the following task(s) before archiving it:</p>';
+    $data['warningWindow']['message'] = '<p>This task is used by another task.'
+      . ' Please remove the task from the following task(s) before archiving it:</p>';
     $data['warningWindow']['message'] .= $this->prepareTaskLinks($dep_task_ids);
 
     return $data;

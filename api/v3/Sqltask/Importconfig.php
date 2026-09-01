@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Import sql task config
  *
@@ -16,15 +18,17 @@ function civicrm_api3_sqltask_importconfig($params) {
     return civicrm_api3_create_error("Task(id=$task_id) does not exist.");
   }
 
-  if (!is_null($task->archive_date)) {
+  if ($task->archive_date !== NULL) {
     return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not import config.");
   }
 
   if (!empty($params['import_json_data']) && is_array($params['import_json_data'])) {
     $data = CRM_Sqltasks_Config_Format::toLatest($params['import_json_data']);
-  } else if (!empty($params['import_data'])) {
+  }
+  elseif (!empty($params['import_data'])) {
     $data = CRM_Sqltasks_Config_Format::toLatest($params['import_data']);
-  } else {
+  }
+  else {
     return civicrm_api3_create_error(ts("Can't parse config file."));
   }
 

@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Utility class for the task configuration format
  */
 class CRM_Sqltasks_Config_Format {
 
-  const LEGACY_FORMAT_HEADER = '/^\/\* ##### SQLTASK VERSION 0.9 ###########\n/';
-  const LEGACY_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
-  const LEGACY_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
+  public const LEGACY_FORMAT_HEADER = '/^\/\* ##### SQLTASK VERSION 0.9 ###########\n/';
+  public const LEGACY_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
+  public const LEGACY_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
 
-  const SCRIPT_SENTINEL = "##### EDITS BELOW THIS LINE WILL BE IGNORED #####\n";
+  public const SCRIPT_SENTINEL = "##### EDITS BELOW THIS LINE WILL BE IGNORED #####\n";
 
   /**
    * Current version of the task configuration format
    */
-  const CURRENT = 2;
+  public const CURRENT = 2;
 
   /**
    * Determine the version of a task configuration
@@ -72,14 +74,14 @@ class CRM_Sqltasks_Config_Format {
       }
       else {
         $config = json_decode($config, TRUE);
-        if (is_null($config)) {
-          throw new Exception( 'Invalid task configuration provided: Invalid JSON');
+        if ($config === NULL) {
+          throw new Exception('Invalid task configuration provided: Invalid JSON');
         }
       }
     }
     $version = self::getVersion($config['config']);
     if ($version > self::CURRENT) {
-      throw new Exception( 'Incompatible task configuration version: ' . $config['version'] .
+      throw new Exception('Incompatible task configuration version: ' . $config['version'] .
                           '. Please upgrade ' . CRM_Sqltasks_ExtensionUtil::LONG_NAME . ' to use this configuration.');
     }
 
@@ -90,7 +92,7 @@ class CRM_Sqltasks_Config_Format {
         break;
     }
 
-    if (is_null($upgrader)) {
+    if ($upgrader === NULL) {
       // config is already on latest version
       return $config;
     }
@@ -114,8 +116,8 @@ class CRM_Sqltasks_Config_Format {
   public static function extractConfigFromV2WithAppendedScripts($config) {
     $jsonPart = substr($config, 0, strpos($config, self::SCRIPT_SENTINEL));
     $config = json_decode($jsonPart, TRUE);
-    if (is_null($config)) {
-      throw new Exception( 'Invalid task configuration provided: Invalid JSON');
+    if ($config === NULL) {
+      throw new Exception('Invalid task configuration provided: Invalid JSON');
     }
     return $config;
   }

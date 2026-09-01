@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
+use Civi\Core\HookInterface;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * SqltaskTemplate.Delete API Test Case
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_sqltask_template_delete
  */
+// phpcs:ignore Generic.Files.LineLength.TooLong
 class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
@@ -44,27 +49,30 @@ class api_v3_SqltaskTemplate_DeleteTest extends \PHPUnit\Framework\TestCase impl
 
     try {
       $templateFromApi = civicrm_api3('SqltaskTemplate', 'create', [
-        "name"        => "Test-Template",
-        "config"      => "{}",
-        "description" => "...",
+        'name'        => 'Test-Template',
+        'config'      => '{}',
+        'description' => '...',
       ]);
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltaskTemplate.create returns exception:" . $e->getMessage());
     }
-    $this->assertTrue(isset($templateFromApi['values']["id"]), "Template ID should be set");
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltaskTemplate.create returns exception:' . $e->getMessage());
+    }
+    $this->assertTrue(isset($templateFromApi['values']['id']), 'Template ID should be set');
 
     try {
-      civicrm_api3('SqltaskTemplate', 'delete', [ "id" => $templateFromApi['values']['id']]);
-    } catch (CRM_Core_Exception $e) {
-      $this->assertEquals(false, true, "SqltaskTemplate.delete returns exception:" . $e->getMessage());
+      civicrm_api3('SqltaskTemplate', 'delete', ['id' => $templateFromApi['values']['id']]);
+    }
+    catch (CRM_Core_Exception $e) {
+      $this->assertEquals(FALSE, TRUE, 'SqltaskTemplate.delete returns exception:' . $e->getMessage());
     }
 
     $templatesCountAfterDelete = count(CRM_Sqltasks_BAO_SqltasksTemplate::getAll());
 
     $this->assertEquals(
       $templatesCountBefore,
-      $templatesCountAfterDelete ,
-      "There should be exactly " . $templatesCountBefore . " template in the database. But exist - " . $templatesCountAfterDelete
+      $templatesCountAfterDelete,
+      'There should be exactly ' . $templatesCountBefore . ' template in the database.'
+      . ' But exist - ' . $templatesCountAfterDelete
     );
   }
 

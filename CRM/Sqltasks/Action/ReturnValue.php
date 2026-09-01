@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -8,7 +10,7 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
 
-  const API_RESULT_COLUMN = 'value';
+  public const API_RESULT_COLUMN = 'value';
 
   /**
    * ReturnValue Key
@@ -68,7 +70,7 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
 
     $data_table = $this->getDataTable();
     if (empty($data_table)) {
-      throw new Exception("Data table not configured.", 1);
+      throw new Exception('Data table not configured.', 1);
     }
 
     // check if table exists
@@ -80,7 +82,7 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
     // check if parameter is set
     $parameter = $this->getConfigValue('parameter');
     if (empty($parameter)) {
-      throw new Exception("Parameter not set", 1);
+      throw new Exception('Parameter not set', 1);
     }
 
     $reserved_parameters = ['log', 'files', 'runtime'];
@@ -96,7 +98,7 @@ class CRM_Sqltasks_Action_ReturnValue extends CRM_Sqltasks_Action {
    */
   public function execute() {
     $data_table = $this->getDataTable();
-    $query = CRM_Core_DAO::executeQuery("SELECT `". self::API_RESULT_COLUMN ."` FROM `{$data_table}`");
+    $query = CRM_Core_DAO::executeQuery('SELECT `' . self::API_RESULT_COLUMN . "` FROM `{$data_table}`");
 
     $this->return_key = $this->getConfigValue('parameter');
     $this->return_value = $query->fetchValue();

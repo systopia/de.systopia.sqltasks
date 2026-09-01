@@ -1,0 +1,46 @@
+includes:
+	- phpstan.neon.dist
+
+parameters:
+	bootstrapFiles:
+		- vendor/autoload.php
+	# Because we test with different versions in CI we may have unmatched errors.
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		# Errors we get when using "prefer-lowest"
+
+		# Required with symfony/event-dispatcher <4.4.27
+		- '#::getSubscribedEvents\(\) return type has no value type specified in iterable type array.$#'
+
+		# Required with phpseclib/phpseclib <3.0
+		-
+			message: '#^Instantiated class phpseclib\\Net\\SFTP not found\.$#'
+			path: CRM/Sqltasks/Action/SftpTrait.php
+		-
+			message: '#unknown class phpseclib\\Net\\SFTP\.$#'
+			path: CRM/Sqltasks/Action/SftpTrait.php
+		-
+			message: '#unknown class phpseclib3\\Net\\SFTP\.$#'
+			path: CRM/Sqltasks/Action/SftpTrait.php
+		-
+			message: '#^Class Net_SFTP does not have a constructor and must be instantiated without any parameters\.$#'
+			path: CRM/Sqltasks/Action/SftpTrait.php
+
+		# Required with civicrm/civicrm-core <6.0
+		-
+			message: '#^Parameter \#1 \$string of function (trim|strlen|substr) expects string, mixed given\.$#'
+			paths:
+				- CRM/Sqltasks/Action/CSVExport.php
+				- CRM/Sqltasks/Action/SftpTrait.php
+		-
+			message: '#^Binary operation "\.\=" between mixed and non\-falsy\-string results in an error\.$#'
+			path: CRM/Sqltasks/Action/CSVExport.php
+		-
+			message: '#^Binary operation "\." between mixed and string results in an error\.$#'
+			path: CRM/Sqltasks/BAO/SqltasksExecution.php
+		-
+			message: '#^Parameter \#2 \$params of static method Civi\:\:queue\(\) expects array\{#'
+			path: CRM/Sqltasks/BAO/SqlTask.php
+		-
+			message: '#^Only booleans are allowed in &&, string given on the left side\.$#'
+			path: tests/phpunit/api/v3/SqltasksActionTemplateTest.php

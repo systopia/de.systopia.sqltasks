@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
+use Civi\Core\HookInterface;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * SqltasksActionTemplate API Test Case
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_BAO_SqltasksActionTemplate
  */
+// phpcs:ignore Generic.Files.LineLength.TooLong
 class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
@@ -29,7 +34,10 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
    */
   public function setUp() : void {
     $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('SqltasksActionTemplate');
-    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'SqltasksActionTemplate' . ' not found.');
+    $this->assertTrue(
+      $table && CRM_Core_DAO::checkTableExists($table),
+      'There was a problem with extension installation. Table for ' . 'SqltasksActionTemplate' . ' not found.'
+    );
     parent::setUp();
   }
 
@@ -59,9 +67,9 @@ class api_v3_SqltasksActionTemplateTest extends \PHPUnit\Framework\TestCase impl
 
     $get = $this->callAPISuccess('SqltasksActionTemplate', 'get', []);
     $this->assertEquals(1, $get['count']);
-    $this->assertEquals("ActionTemplate", $get['values'][$created['id']]['name']);
-    $this->assertEquals("CRM_Sqltasks_Action_RunSQL", $get['values'][$created['id']]['type']);
-    $this->assertEquals("{}", $get['values'][$created['id']]['config']);
+    $this->assertEquals('ActionTemplate', $get['values'][$created['id']]['name']);
+    $this->assertEquals('CRM_Sqltasks_Action_RunSQL', $get['values'][$created['id']]['type']);
+    $this->assertEquals('{}', $get['values'][$created['id']]['config']);
 
     $this->callAPISuccess('SqltasksActionTemplate', 'delete', [
       'id' => $created['id'],

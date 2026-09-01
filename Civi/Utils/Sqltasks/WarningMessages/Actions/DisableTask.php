@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Utils\Sqltasks\WarningMessages\Actions;
 
 use CRM_Sqltasks_BAO_SqlTask;
@@ -37,7 +39,8 @@ class DisableTask extends Base {
       return $data;
     }
 
-    $data['warningWindow']['message'] .= '<p>This task is used by another task. Please remove the task from the following task(s) before disabling it:</p>';
+    $data['warningWindow']['message'] .= '<p>This task is used by another task.'
+      . ' Please remove the task from the following task(s) before disabling it:</p>';
     $data['warningWindow']['message'] .= $this->prepareTaskLinks($enabled_dep_task_ids);
 
     return $data;

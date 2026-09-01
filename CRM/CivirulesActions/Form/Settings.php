@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_CivirulesActions_Form_Settings extends CRM_Core_Form {
@@ -63,4 +65,5 @@ class CRM_CivirulesActions_Form_Settings extends CRM_Core_Form {
         VALUES('run_sql_task', 'Run SQL Task', 'CRM_CivirulesActions_SQLTask', 1)"
     );
   }
+
 }

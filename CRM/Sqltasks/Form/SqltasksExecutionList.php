@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types = 1);
+
 use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
-  const DEFAULT_LIMIT_PER_PAGE = 50;
+  public const DEFAULT_LIMIT_PER_PAGE = 50;
 
   protected $searchParams = [
-    'order_by' => ['id' => 'DESC'],//ASC DESC
+  //ASC DESC
+    'order_by' => ['id' => 'DESC'],
     'error_status' => 'all',
   ];
 
@@ -31,19 +34,26 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $task_options = [];
     $tasks = Api4\SqlTask::get()->addSelect('name')->execute();
 
-    foreach ($tasks as [ 'id' => $task_id, 'name' => $task_name ]) {
+    foreach ($tasks as ['id' => $task_id, 'name' => $task_name]) {
       $task_options[$task_id] = $task_name;
     }
 
-    $this->add('select', 'sqltask_id', E::ts('SQL Task ID'), $task_options, FALSE, ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]);
+    $this->add(
+      'select', 'sqltask_id', E::ts('SQL Task ID'), $task_options, FALSE,
+      ['class' => 'crm-select2 huge', 'placeholder' => E::ts('- any -')]
+    );
     $this->add('text', 'input', E::ts('Input value'), ['class' => 'medium', 'placeholder' => 'input value']);
     $this->addRadio('error_status', E::ts('Error Status'), [
       'all' => 'Show all executions',
       'only_errors' => 'With errors',
       'no_errors' => 'No errors',
     ]);
-    $this->addEntityRef('created_id', E::ts('Contact ID of task executor'), ['class' => 'huge', 'placeholder' => '- any -']);
-    $this->add('datepicker', 'from_start_date', E::ts('From start date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
+    $this->addEntityRef(
+      'created_id', E::ts('Contact ID of task executor'), ['class' => 'huge', 'placeholder' => '- any -']
+    );
+    $this->add(
+      'datepicker', 'from_start_date', E::ts('From start date'), ['class' => 'medium'], FALSE, ['time' => FALSE]
+    );
     $this->add('datepicker', 'to_start_date', E::ts('To start date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
     $this->add('datepicker', 'from_end_date', E::ts('From end date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
     $this->add('datepicker', 'to_end_date', E::ts('To end date'), ['class' => 'medium'], FALSE, ['time' => FALSE]);
@@ -56,9 +66,12 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
   }
 
   public function postProcess() {
-    $this->controller->setDestination(CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query($this->searchParams)));
+    $this->controller->setDestination(
+      CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query($this->searchParams))
+    );
   }
 
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function setSearchParams() {
     $taskId = CRM_Utils_Request::retrieve('sqltask_id', 'Integer');
     if (!empty($taskId)) {
@@ -77,14 +90,16 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $limitPerPage = CRM_Utils_Request::retrieve('limit_per_page', 'Integer');
     if (!empty($limitPerPage)) {
       $this->searchParams['limit_per_page'] = $limitPerPage;
-    } else {
+    }
+    else {
       $this->searchParams['limit_per_page'] = CRM_Sqltasks_Form_SqltasksExecutionList::DEFAULT_LIMIT_PER_PAGE;
     }
 
     $pageNumber = CRM_Utils_Request::retrieve('page_number', 'Integer');
     if (!empty($pageNumber)) {
       $this->searchParams['page_number'] = $pageNumber;
-    } else {
+    }
+    else {
       $this->searchParams['page_number'] = 1;
     }
 
@@ -116,7 +131,7 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
 
   protected function generatePaginationData($searchParams, $allItemsCount) {
     if ((int) $searchParams['limit_per_page'] >= $allItemsCount) {
-      return null;
+      return NULL;
     }
 
     $currentPage = (int) $searchParams['page_number'];
@@ -124,7 +139,9 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
     $nextPageNumber = $currentPage + 1;
     $prevPageNumber = $currentPage - 1;
     $firstPageNumber = 1;
-    $maxPageNumber = (int) floor(($allItemsCount % $limitPerPage !== 0) ? $allItemsCount / $limitPerPage + 1 : $allItemsCount / $limitPerPage);
+    $maxPageNumber = (int) floor(
+      ($allItemsCount % $limitPerPage !== 0) ? $allItemsCount / $limitPerPage + 1 : $allItemsCount / $limitPerPage
+    );
     $lastPageNumber = $maxPageNumber;
     $showToCount = (int) ($currentPage === $lastPageNumber) ? $allItemsCount : $limitPerPage * $currentPage;
     $showFromCount = (int) (($currentPage - 1) * $limitPerPage + 1);
@@ -136,26 +153,38 @@ class CRM_Sqltasks_Form_SqltasksExecutionList extends CRM_Core_Form {
       'max_page_number' => $maxPageNumber,
       'show_from_count' => $showFromCount,
       'show_to_count' => $showToCount,
-      'next_link' => null,
-      'prev_link' => null,
-      'last_link' => null,
-      'first_link' => null,
+      'next_link' => NULL,
+      'prev_link' => NULL,
+      'last_link' => NULL,
+      'first_link' => NULL,
     ];
 
     if ($nextPageNumber <= $maxPageNumber) {
-      $data['next_link'] = CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query(array_merge($searchParams, ['page_number' => $nextPageNumber])));
+      $data['next_link'] = CRM_Utils_System::url(
+        'civicrm/sqltasks-execution/list',
+        http_build_query(array_merge($searchParams, ['page_number' => $nextPageNumber]))
+      );
     }
 
     if ($prevPageNumber >= 1) {
-      $data['prev_link'] = CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query(array_merge($searchParams, ['page_number' => $prevPageNumber])));
+      $data['prev_link'] = CRM_Utils_System::url(
+        'civicrm/sqltasks-execution/list',
+        http_build_query(array_merge($searchParams, ['page_number' => $prevPageNumber]))
+      );
     }
 
     if ($lastPageNumber !== $currentPage) {
-      $data['last_link'] = CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query(array_merge($searchParams, ['page_number' => $lastPageNumber])));
+      $data['last_link'] = CRM_Utils_System::url(
+        'civicrm/sqltasks-execution/list',
+        http_build_query(array_merge($searchParams, ['page_number' => $lastPageNumber]))
+      );
     }
 
     if ($firstPageNumber !== $currentPage) {
-      $data['first_link'] = CRM_Utils_System::url('civicrm/sqltasks-execution/list', http_build_query(array_merge($searchParams, ['page_number' => $firstPageNumber])));
+      $data['first_link'] = CRM_Utils_System::url(
+        'civicrm/sqltasks-execution/list',
+        http_build_query(array_merge($searchParams, ['page_number' => $firstPageNumber]))
+      );
     }
 
     return $data;

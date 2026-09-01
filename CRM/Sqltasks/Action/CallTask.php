@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
 
@@ -48,6 +50,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   /**
    * RUN this action
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     $this->resetHasExecuted();
 
@@ -59,7 +62,9 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       $this->getConfigValue('execute_in_parallel') == 1
       && self::backgroundQueueEnabled();
 
-    if (empty($task_ids) && empty($categories)) return;
+    if (empty($task_ids) && empty($categories)) {
+      return;
+    }
 
     $tasks_2_run = self::findTasks([
       'categories'             => $categories,
@@ -74,7 +79,9 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       $task_id = $task['id'];
       $task_name = $task['name'];
 
-      if ($task_id == $this->task->id) continue;
+      if ($task_id == $this->task->id) {
+        continue;
+      }
 
       $task = CRM_Sqltasks_BAO_SqlTask::findById($task_id);
 
@@ -101,7 +108,9 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
       $queued_execs_copy = $queued_execs;
 
       foreach ($queued_execs_copy as $i => $exec_id) {
-        if (!self::executionHasEnded($exec_id)) continue;
+        if (!self::executionHasEnded($exec_id)) {
+          continue;
+        }
 
         unset($queued_execs[$i]);
         $execution = CRM_Sqltasks_BAO_SqltasksExecution::findById($exec_id);
@@ -111,7 +120,9 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
           $this->log($execution->renderLogMessage($log_entry));
         }
 
-        if ((int) $execution->error_count < 1) continue;
+        if ((int) $execution->error_count < 1) {
+          continue;
+        }
 
         throw new Exception("Execution of task {$execution->sqltask_id} encountered errors.");
       }
@@ -143,10 +154,10 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
   private static function executionHasEnded($execution_id) {
     $end_date = CRM_Core_DAO::singleValueQuery(
       'SELECT end_date FROM civicrm_sqltasks_execution WHERE id = %1',
-      [ 1 => [$execution_id, 'Integer'] ]
+      [1 => [$execution_id, 'Integer']]
     );
 
-    return !is_null($end_date);
+    return $end_date !== NULL;
   }
 
   /**
@@ -169,7 +180,7 @@ class CRM_Sqltasks_Action_CallTask extends CRM_Sqltasks_Action {
     $categories = empty($params['categories']) ? [$random_value] : $params['categories'];
 
     $query->addClause('OR',
-      ['id',       'IN', $task_ids],
+      ['id', 'IN', $task_ids],
       ['category', 'IN', $categories]
     );
 

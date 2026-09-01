@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
@@ -20,7 +22,6 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
   /**
    * Export task configuration to a file
    *
-   * @return void|null
    * @throws \CRM_Core_Exception
    */
   public function run() {
@@ -37,7 +38,7 @@ class CRM_Sqltasks_Page_Export extends CRM_Core_Page {
       $tasks = CRM_Sqltasks_BAO_SqlTask::generator();
       if ($tasks->valid()) {
         $zip = new ZipArchive();
-        $fileURL = CRM_Core_Config::singleton()->uploadDir . "sqltasks_" . date('Ymd') . ".zip";
+        $fileURL = CRM_Core_Config::singleton()->uploadDir . 'sqltasks_' . date('Ymd') . '.zip';
         if ($zip->open($fileURL, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE) {
           foreach ($tasks as $task) {
             $taskFileName = $this->getTaskFileName($task);

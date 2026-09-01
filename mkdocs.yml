@@ -1,5 +1,8 @@
 site_name: SQL Tasks
+site_description: Manage recurring tasks based on SQL queries
+site_author: SYSTOPIA
 repo_url: https://github.com/systopia/de.systopia.sqltasks
+
 theme:
   name: material
 
@@ -18,14 +21,18 @@ nav:
 - 'Known issues': known-issues.md
 
 markdown_extensions:
-- attr_list
-- admonition
-- def_list
-- codehilite
-- toc:
-    permalink: true
-- pymdownx.superfences
-- pymdownx.inlinehilite
-- pymdownx.tilde
-- pymdownx.betterem
-- pymdownx.mark
+  - attr_list
+  - admonition
+  - def_list
+  - codehilite
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tilde
+  - pymdownx.betterem
+  - pymdownx.mark
+
+plugins:
+  - search:
+      lang: en

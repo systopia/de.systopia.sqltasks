@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -52,11 +54,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
    * get a list of eligible templates for the email
    */
   protected function getAllTemplates() {
-    $template_options = array();
-    $template_query = civicrm_api3('MessageTemplate', 'get', array(
+    $template_options = [];
+    $template_query = civicrm_api3('MessageTemplate', 'get', [
       'is_active'    => 1,
       'return'       => 'id,msg_title',
-      'option.limit' => 0));
+      'option.limit' => 0,
+    ]);
     foreach ($template_query['values'] as $template) {
       $template_options[$template['id']] = $template['msg_title'];
     }
@@ -66,6 +69,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   /**
    * get the preferred filename
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function getFileName() {
     $file_name = $this->getConfigValue('filename');
     $file_name = trim($file_name);
@@ -86,12 +90,14 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
           try {
             $campaign_id = $this->getConfigValue('campaign_id');
             if ($campaign_id) {
-              $value = civicrm_api3('Campaign', 'getvalue', array(
+              $value = civicrm_api3('Campaign', 'getvalue', [
                 'return' => 'title',
-                'id'     => $campaign_id));
+                'id'     => $campaign_id,
+              ]);
             }
-          } catch (Exception $e) {
-            $value = "ERROR";
+          }
+          catch (Exception $e) {
+            $value = 'ERROR';
           }
           break;
 
@@ -99,11 +105,13 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
           try {
             $campaign_id = $this->getConfigValue('campaign_id');
             if ($campaign_id) {
-              $value = civicrm_api3('Campaign', 'getvalue', array(
+              $value = civicrm_api3('Campaign', 'getvalue', [
                 'return' => 'external_identifier',
-                'id'     => $campaign_id));
+                'id'     => $campaign_id,
+              ]);
             }
-          } catch (Exception $e) {
+          }
+          catch (Exception $e) {
             // probably just not set....
           }
           break;
@@ -118,7 +126,6 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
     return $file_name;
   }
-
 
   /**
    * get the selected filepath
@@ -144,10 +151,12 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
   protected function getSelectedSegments() {
     $segments = $this->getConfigValue('segments');
     if (empty($segments)) {
-      return array();
-    } elseif (is_array($segments)) {
+      return [];
+    }
+    elseif (is_array($segments)) {
       return $segments;
-    } else {
+    }
+    else {
       return explode(',', $segments);
     }
   }
@@ -161,42 +170,45 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     // check campaign
     $campaign_id = $this->getConfigValue('campaign_id');
     if (!$campaign_id) {
-      throw new Exception("No campaign selected", 1);
+      throw new Exception('No campaign selected', 1);
     }
 
     $exporters = $this->getConfigValue('exporter');
     if (empty($exporters)) {
-      throw new Exception("No exporters selected", 1);
+      throw new Exception('No exporters selected', 1);
     }
 
     $use_last_assignment = $this->getConfigValue('date_current');
     if ($use_last_assignment) {
       $timestamp = CRM_Sqltasks_Action_SegmentationAssign::getAssignmentTimestamp($this->task->id);
       if (!$timestamp) {
-        throw new Exception("Restrict export to current assignemnt requested, but no current assignemnt detected. Activate the 'Assign to Campaign' task!", 1);
+        throw new Exception(
+          'Restrict export to current assignemnt requested, but no current assignemnt detected.'
+          . " Activate the 'Assign to Campaign' task!", 1
+        );
       }
     }
 
     // check file path
     $file_check = $this->getFilePath();
-    if (!is_writeable($file_check)) {
+    if (!is_writable($file_check)) {
       throw new Exception("Cannot export file to '{$file_check}'.", 1);
     }
   }
-
 
   /**
    * RUN this action
    * @throws Exception
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute() {
     // get some basic data
     $this->resetHasExecuted();
     $campaign_id = $this->getConfigValue('campaign_id');
-    $exported_files = array();
+    $exported_files = [];
 
     // compile parameters
-    $params = array();
+    $params = [];
     $segments = $this->getSelectedSegments();
     if (!empty($segments)) {
       $params['segments'] = $segments;
@@ -211,7 +223,8 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
         $params['start_date'] = $timestamp;
         $params['end_date']   = $timestamp;
       }
-    } else {
+    }
+    else {
       $date_from = strtotime($this->getConfigValue('date_from'));
       if ($date_from) {
         $params['start_date'] = date('Y-m-d H:i:s', $date_from);
@@ -230,7 +243,8 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       $exporter = CRM_Segmentation_Exporter::getExporter($exporter_id);
       $exportedRowCount = $exporter->generateFile($campaign_id, $params);
       if ($exportedRowCount > 0) {
-        $this->setHasExecuted(); // exporter iterated over > 0 rows
+        // exporter iterated over > 0 rows
+        $this->setHasExecuted();
       }
       $exported_file = $exporter->getExportedFile();
       $discard_empty = $this->getConfigValue('discard_empty');
@@ -245,7 +259,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
 
       }
       elseif ($discard_empty && $exportedRowCount == 0) {
-        $this->log("No contacts found in segment, discarding file.");
+        $this->log('No contacts found in segment, discarding file.');
         unlink($exported_file);
       }
       else {
@@ -256,7 +270,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     }
 
     if (!$has_exported) {
-      $this->log("No export produced, skipping upload/email.");
+      $this->log('No export produced, skipping upload/email.');
       return;
     }
 
@@ -269,7 +283,7 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
       $this->log("Overwriting existing file '{$filepath}'.");
     }
     $zip = new ZipArchive();
-    if ($zip->open($filepath, ZipArchive::CREATE)!==TRUE) {
+    if ($zip->open($filepath, ZipArchive::CREATE) !== TRUE) {
       throw new Exception("Cannot open zipfile '{$filepath}'", 1);
     }
     foreach ($exported_files as $exported_file => $exported_file_name) {
@@ -278,15 +292,14 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
     $zip->close();
     $this->log("Zipped file into '{$filepath}'");
 
-
     // PROCESS 1: EMAIL
     $config_email = $this->getConfigValue('email');
     $config_email_template = $this->getConfigValue('email_template');
     if (!empty($config_email) && !empty($config_email_template)) {
-      $attachment  = [
+      $attachment = [
         'fullPath'  => $filepath,
         'mime_type' => 'application/zip',
-        'cleanName' => basename($filepath)
+        'cleanName' => basename($filepath),
       ];
       // send the template via email
       $email = [
@@ -303,8 +316,8 @@ class CRM_Sqltasks_Action_SegmentationExport extends CRM_Sqltasks_Action {
         function() use ($filename, $filepath) {
           return $this->uploadSftp($filename, $filepath);
         },
-        Civi::settings()->get("sqltasks_sftp_max_retries"),
-        Civi::settings()->get("sqltasks_sftp_retry_initial_wait")
+        Civi::settings()->get('sqltasks_sftp_max_retries'),
+        Civi::settings()->get('sqltasks_sftp_retry_initial_wait')
       );
     }
   }

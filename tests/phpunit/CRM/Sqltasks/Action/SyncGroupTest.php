@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Test SyncGroup Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SyncGroup
  */
 class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
   public function testSyncGroup() {
-    $groupId = $this->callApiSuccess('Group', 'create', array(
+    $groupId = $this->callApiSuccess('Group', 'create', [
       'sequential' => 1,
       'name' => 'testSyncGroup',
       'title' => 'testSyncGroup',
-    ))['id'];
+    ])['id'];
 
     $config = [
       'version' => CRM_Sqltasks_Config_Format::CURRENT,
@@ -20,8 +24,8 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_syncgroup;
-                        CREATE TABLE tmp_test_action_syncgroup AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_syncgroup;
+                        CREATE TABLE tmp_test_action_syncgroup AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'          => 'CRM_Sqltasks_Action_SyncGroup',
@@ -37,9 +41,11 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
       ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
-    $this->assertLogContains("Action 'Synchronise Group' executed in", 'Synchronize Group action should have succeeded');
+    $this->assertLogContains(
+      "Action 'Synchronise Group' executed in", 'Synchronize Group action should have succeeded'
+    );
     $groupContactCount = $this->callApiSuccess('GroupContact', 'getcount', [
       'contact_id' => $this->contactId,
       'group_id'   => $groupId,
@@ -55,7 +61,8 @@ class CRM_Sqltasks_Action_SyncGroupTest extends CRM_Sqltasks_Action_AbstractActi
     $this->assertEquals(
       1,
       CRM_Core_DAO::singleValueQuery(
-        "SELECT COUNT(*) FROM civicrm_subscription_history WHERE group_id = %0 AND status = 'Added' AND contact_id = %1",
+        'SELECT COUNT(*) FROM civicrm_subscription_history'
+        . " WHERE group_id = %0 AND status = 'Added' AND contact_id = %1",
         [
           [$groupId, 'Integer'],
           [$this->contactId, 'Integer'],

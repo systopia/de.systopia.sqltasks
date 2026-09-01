@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -20,13 +22,15 @@ use CRM_Sqltasks_ExtensionUtil as E;
  */
 class CRM_Sqltasks_Config {
 
-  const SQLTASK_FILE_FORMAT_VERSION = '0.9';
+  public const SQLTASK_FILE_FORMAT_VERSION = '0.9';
 
-  const SQLTASK_FILE_FORMAT_FILE_HEADER = "/* ##### SQLTASK VERSION " . self::SQLTASK_FILE_FORMAT_VERSION . " ###########\n";
-  const SQLTASK_FILE_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
-  const SQLTASK_FILE_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
+  public const SQLTASK_FILE_FORMAT_FILE_HEADER = '/* ##### SQLTASK VERSION '
+    . self::SQLTASK_FILE_FORMAT_VERSION . " ###########\n";
+  public const SQLTASK_FILE_FORMAT_MAIN_HEADER = "\n*/ ############ MAIN SQL ###############\n";
+  public const SQLTASK_FILE_FORMAT_POST_HEADER = "\n-- ############ POST SQL ###############\n";
 
-  const SQLTASK_FILE_FORMAT_FILE_HEADER_PREG = '/^\/\* ##### SQLTASK VERSION (?P<version>[0-9]+[.][0-9]+) ###########\n/';
+  public const SQLTASK_FILE_FORMAT_FILE_HEADER_PREG
+    = '/^\/\* ##### SQLTASK VERSION (?P<version>[0-9]+[.][0-9]+) ###########\n/';
 
   private static $singleton = NULL;
 
@@ -50,13 +54,14 @@ class CRM_Sqltasks_Config {
     $jobs = $config->getScheduledJobs();
     if (empty($jobs)) {
       // none found? create a new one
-      civicrm_api3('Job', 'create', array(
+      civicrm_api3('Job', 'create', [
         'api_entity'    => 'Sqltask',
         'api_action'    => 'execute',
         'run_frequency' => 'Always',
         'name'          => E::ts('Run SQL Tasks'),
         'description'   => E::ts('Triggers the SQL Task dispatcher, see: civicrm/sqltasks/manage'),
-        'is_active'     => '0'));
+        'is_active'     => '0',
+      ]);
     }
   }
 
@@ -66,10 +71,11 @@ class CRM_Sqltasks_Config {
   public function getScheduledJobs() {
     if ($this->jobs === NULL) {
       // find all scheduled jobs calling Sqltask.execute
-      $query = civicrm_api3('Job', 'get', array(
+      $query = civicrm_api3('Job', 'get', [
         'api_entity'   => 'Sqltask',
         'api_action'   => 'execute',
-        'option.limit' => 0));
+        'option.limit' => 0,
+      ]);
       $this->jobs = $query['values'];
     }
     return $this->jobs;

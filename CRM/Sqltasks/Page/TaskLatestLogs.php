@@ -1,5 +1,9 @@
 <?php
+
+declare(strict_types = 1);
+
 class CRM_Sqltasks_Page_TaskLatestLogs extends CRM_Core_Page {
+
   public function run() {
     $taskId = CRM_Utils_Request::retrieve('sqltask_id', 'Integer');
     if (empty($taskId)) {
@@ -11,7 +15,9 @@ class CRM_Sqltasks_Page_TaskLatestLogs extends CRM_Core_Page {
       throw new Exception('Cannot find any logs for sqltask id=.' . $taskId);
     }
 
-    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/sqltasks-execution/view', ['id' => $sqltasksExecutionId]));
+    CRM_Utils_System::redirect(
+      CRM_Utils_System::url('civicrm/sqltasks-execution/view', ['id' => $sqltasksExecutionId])
+    );
   }
 
 }

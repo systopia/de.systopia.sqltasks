@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 use Civi\Api4\EntityTag;
 
 /**
  * Test SyncTag Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_SyncTag
  */
 class CRM_Sqltasks_Action_SyncTagTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
@@ -21,8 +25,8 @@ class CRM_Sqltasks_Action_SyncTagTest extends CRM_Sqltasks_Action_AbstractAction
         [
           'type'    => 'CRM_Sqltasks_Action_RunSQL',
           'enabled' => TRUE,
-          'script'  => "DROP TABLE IF EXISTS tmp_test_action_synctag;
-                        CREATE TABLE tmp_test_action_synctag AS " . self::TEST_CONTACT_SQL,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_synctag;
+                        CREATE TABLE tmp_test_action_synctag AS ' . self::TEST_CONTACT_SQL,
         ],
         [
           'type'          => 'CRM_Sqltasks_Action_SyncTag',
@@ -36,10 +40,10 @@ class CRM_Sqltasks_Action_SyncTagTest extends CRM_Sqltasks_Action_AbstractAction
           'enabled' => TRUE,
           'script'  => 'DROP TABLE IF EXISTS tmp_test_action_synctag;',
         ],
-      ]
+      ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Synchronise Tag' executed in", 'Synchronize Tag action should have succeeded');
 
@@ -81,7 +85,7 @@ class CRM_Sqltasks_Action_SyncTagTest extends CRM_Sqltasks_Action_AbstractAction
     $this->assertEquals(1, $entityTagCount, 'Second contact should have been tagged');
 
     // Re-run the task and ensure the manually-added contact was removed
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
     $this->assertLogContains("Action 'Synchronise Tag' executed in", 'Synchronize Tag action should have succeeded');
 
     $entityTagCount = $this->callApiSuccess('EntityTag', 'getcount', [

@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
@@ -34,6 +36,7 @@ class CRM_Sqltasks_Action_ErrorHandler extends CRM_Sqltasks_Action_ResultHandler
   }
 
   public function __construct(CRM_Sqltasks_BAO_SqlTask $task, array $config) {
-    parent::__construct($task, $config, 'error',   E::ts('Error Handler'));
+    parent::__construct($task, $config, 'error', E::ts('Error Handler'));
   }
+
 }

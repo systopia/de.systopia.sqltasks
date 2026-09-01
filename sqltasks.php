@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 /*-------------------------------------------------------+
 | SYSTOPIA SQL TASKS EXTENSION                           |
 | Copyright (C) 2017 SYSTOPIA                            |
@@ -13,8 +14,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 require_once 'sqltasks.civix.php';
-require_once 'CRM/Sqltasks/Config.php';
 use CRM_Sqltasks_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -58,37 +60,37 @@ function sqltasks_civicrm_enable() {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  */
 function sqltasks_civicrm_navigationMenu(&$menu) {
-  _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', array(
-      'label'      => E::ts('My Tasks'),
-      'name'       => 'sqltasks_mytasks',
-      'url'        => 'civicrm/sqltasks/mytasks',
-      'permission' => 'access CiviCRM',
-      'operator'   => 'OR',
-      'separator'  => 0,
-  ));
+  _sqltasks_civix_insert_navigation_menu($menu, 'Contacts', [
+    'label'      => E::ts('My Tasks'),
+    'name'       => 'sqltasks_mytasks',
+    'url'        => 'civicrm/sqltasks/mytasks',
+    'permission' => 'access CiviCRM',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ]);
 
   // also add to Automation section
   if (!_sqltasks_menu_exists($menu, 'Administer/automation')) {
     _sqltasks_civix_insert_navigation_menu($menu, 'Administer', [
-        'label'      => E::ts('Automation'),
-        'name'       => 'automation',
-        'url'        => NULL,
-        'permission' => 'administer CiviCRM',
-        'operator'   => NULL,
-        'separator'  => 0,
+      'label'      => E::ts('Automation'),
+      'name'       => 'automation',
+      'url'        => NULL,
+      'permission' => 'administer CiviCRM',
+      'operator'   => NULL,
+      'separator'  => 0,
     ]);
   }
   _sqltasks_add_admin_items($menu, 'Administer/System Settings');
   _sqltasks_add_admin_items($menu, 'Administer/automation');
 
-  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', array(
+  _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', [
     'label'      => E::ts('Templates'),
     'name'       => 'templates',
     'url'        => 'civicrm/sqltasks/templates',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
     'separator'  => 0,
-  ));
+  ]);
 
   _sqltasks_civix_insert_navigation_menu($menu, 'Administer/System Settings/sqltasks_manage', [
     'label'      => E::ts('Execution Logs'),
@@ -116,7 +118,7 @@ function sqltasks_civicrm_navigationMenu(&$menu) {
  */
 function sqltasks_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   // remark: permission check is on a task level
-  $permissions['sqltask']['execute'] = array('access CiviCRM');
+  $permissions['sqltask']['execute'] = ['access CiviCRM'];
 }
 
 /**
@@ -125,10 +127,10 @@ function sqltasks_civicrm_alterAPIPermissions($entity, $action, &$params, &$perm
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens/
  */
 function sqltasks_civicrm_tokens(&$tokens) {
-  $tokens['sqltasks'] = array(
-    'sqltasks.downloadURL'   => E::ts("SQL Tasks: generated file download link"),
-    'sqltasks.downloadTitle' => E::ts("SQL Tasks: generated file name"),
-  );
+  $tokens['sqltasks'] = [
+    'sqltasks.downloadURL'   => E::ts('SQL Tasks: generated file download link'),
+    'sqltasks.downloadTitle' => E::ts('SQL Tasks: generated file name'),
+  ];
 }
 
 /**
@@ -136,7 +138,7 @@ function sqltasks_civicrm_tokens(&$tokens) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues/
  */
-function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = array(), $context = NULL) {
+function sqltasks_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
   $files     = CRM_Sqltasks_BAO_SqltasksExecution::getAllFiles();
   $last_file = CRM_Sqltasks_BAO_SqltasksExecution::getLastFile();
   foreach ($cids as $cid) {
@@ -166,11 +168,11 @@ function _sqltasks_menu_exists(&$menu, $path) {
   foreach ($menu as $key => &$entry) {
     if ($entry['attributes']['name'] == $first) {
       if (empty($path)) {
-        return true;
+        return TRUE;
       }
       $found = _sqltasks_menu_exists($entry['child'], implode('/', $path));
       if ($found) {
-        return true;
+        return TRUE;
       }
     }
   }
@@ -186,36 +188,34 @@ function _sqltasks_add_admin_items(&$menu, $path) {
     'operator'   => 'OR',
     'separator'  => 0,
   ]);
-  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', [
     'label'      => E::ts('Global Token Manager'),
     'name'       => 'global_token_manager',
     'url'        => 'civicrm/sqltasks/global-token-manager',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
     'separator'  => 0,
-  ));
-  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+  ]);
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', [
     'label'      => E::ts('Task Templates'),
     'name'       => 'templates',
     'url'        => 'civicrm/sqltasks/templates',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
     'separator'  => 0,
-  ));
-  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', array(
+  ]);
+  _sqltasks_civix_insert_navigation_menu($menu, $path . '/sqltasks_manage', [
     'label'      => E::ts('Export All Tasks'),
     'name'       => 'export_all',
     'url'        => 'civicrm/sqltasks/export',
     'permission' => 'administer CiviCRM',
     'operator'   => 'OR',
     'separator'  => 0,
-  ));
+  ]);
 }
 
 /**
  * Implements hook_alterLogTables().
- *
- * @param array $logTableSpec
  */
 function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
   if (empty($logTableSpec) && is_array($logTableSpec)) {
@@ -232,7 +232,7 @@ function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
     ],
     'columns' => [
       'civicrm_sqltasks' => ['last_execution', 'running_since', 'last_runtime'],
-    ]
+    ],
   ];
 
   foreach ($excludedLogItems['tables'] as $excludedLogTable) {
@@ -247,7 +247,8 @@ function sqltasks_civicrm_alterLogTables(&$logTableSpec) {
         foreach ($columnNames as $columnName) {
           $logTableSpec[$tableName][] = $columnName;
         }
-      } else {
+      }
+      else {
         $logTableSpec[$tableName]['exceptions'] = $columnNames;
       }
     }

@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Test RunPHP Action
  *
  * @group headless
+ *
+ * @covers \CRM_Sqltasks_Action_RunPHP
  */
 class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractActionTest {
 
@@ -26,29 +30,30 @@ class CRM_Sqltasks_Action_ReturnValueTest extends CRM_Sqltasks_Action_AbstractAc
               INSERT INTO `tmp_return`
               (`value`)
               VALUES
-              ('output');"
+              ('output');",
         ],
         [
           'type'     => 'CRM_Sqltasks_Action_ReturnValue',
           'enabled'  => TRUE,
           'table' => 'tmp_return',
-          'parameter' => 'test'
+          'parameter' => 'test',
         ],
-      ]
+      ],
     ];
 
-    $this->createAndExecuteTask([ 'config' => $config ]);
+    $this->createAndExecuteTask(['config' => $config]);
 
     $this->assertLogContains("Action 'Return Value' executed in", 'Return Value action should have succeeded');
 
     $params = [
       'id' => 1,
       'log_to_file' => '',
-      'input_val' => ''
+      'input_val' => '',
     ];
     $result = $this->callApiSuccess('Sqltask', 'execute', $params);
 
     $this->assertArrayHasKey('test', $result['values']);
     $this->assertContains('output', $result['values']);
   }
+
 }

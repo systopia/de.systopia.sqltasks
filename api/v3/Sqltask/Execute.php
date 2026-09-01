@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * SQL Task Execution
  *
@@ -29,7 +31,7 @@ function civicrm_api3_sqltask_execute($params) {
   $task_id = $params['id'];
   $task = CRM_Sqltasks_BAO_SqlTask::findById($params['id']);
 
-  if (!is_null($task->archive_date)) {
+  if ($task->archive_date !== NULL) {
     return civicrm_api3_create_error("Task(id=$task_id) is archived. Can not execute Task.");
   }
 
@@ -43,7 +45,8 @@ function civicrm_api3_sqltask_execute($params) {
 
   if (!empty($params['async'])) {
     $result = $task->enqueue($params);
-  } else {
+  }
+  else {
     $result = $task->execute($params);
   }
 
@@ -58,43 +61,43 @@ function civicrm_api3_sqltask_execute($params) {
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_sqltask_execute_spec(&$params) {
-  $params['id'] = array(
+  $params['id'] = [
     'name'         => 'id',
     'api.required' => 0,
     'api.aliases'  => ['task_id'],
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Task ID',
     'description'  => 'If given, only this task will run. Regardless of scheduling and time',
-  );
-  $params['async'] = array(
+  ];
+  $params['async'] = [
     'name'         => 'async',
     'api.required' => FALSE,
     'api.default'  => FALSE,
     'type'         => CRM_Utils_Type::T_BOOLEAN,
     'title'        => 'Async (background execution)',
     'description'  => 'Execute the task in a background queue?',
-  );
-  $params['execution_id'] = array(
+  ];
+  $params['execution_id'] = [
     'name'         => 'execution_id',
     'api.required' => FALSE,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Execution ID',
     'description'  => 'ID of an existing SQLTask Execution',
-  );
-  $params['log_to_file'] = array(
+  ];
+  $params['log_to_file'] = [
     'name'         => 'log_to_file',
     'api.required' => 0,
     'api.default'  => 0,
     'type'         => CRM_Utils_Type::T_BOOLEAN,
     'title'        => 'Log to a file?',
     'description'  => 'Log task output to a file instead of returning it in the API results?',
-  );
-  $params['input_val'] = array(
+  ];
+  $params['input_val'] = [
     'name'         => 'input_val',
     'api.required' => 0,
     'api.default'  => '',
     'type'         => CRM_Utils_Type::T_STRING,
     'title'        => 'Input Value',
     'description'  => 'Input value with execution context. Will be forwarded to all actions',
-  );
+  ];
 }

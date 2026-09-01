@@ -1,0 +1,91 @@
+name: PHPStan
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+    inputs:
+      civicrm-version:
+        description: 'CiviCRM version constraint'
+        required: false
+        type: string
+  pull_request:
+    paths:
+      - '**.php'
+      - composer.json
+      - tools/phpstan/composer.json
+      - phpstan-baseline.neon
+      - phpstan.ci.neon
+      - phpstan.neon.dist
+      - .github/workflows/phpstan.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.civicrm-version }}
+  cancel-in-progress: true
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.1', '8.5']
+        prefer: ['prefer-stable', 'prefer-lowest']
+    name: PHPStan with PHP ${{ matrix.php-versions }} ${{ matrix.prefer }}
+
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+        env:
+          fail-fast: true
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.prefer }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-${{ matrix.prefer }}-
+
+      - name: Install dependencies
+        env:
+          COMPOSER_COMPILE: all
+          INPUTS_CIVICRM_VERSION: ${{ inputs.civicrm-version }}
+          MATRIX_PREFER: ${{ matrix.prefer }}
+        run: |
+          if [ "${MATRIX_PREFER}" = "prefer-lowest" ]; then
+            # Actually test with lowest possible versions.
+            export COMPOSER_NO_SECURITY_BLOCKING=1
+          fi
+
+          composer config --no-plugins allow-plugins.civicrm/composer-compile-plugin false
+          composer config --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-plugins allow-plugins.composer/installers true
+          composer config --no-plugins allow-plugins.cweagans/composer-patches true
+
+          composer config --json "extra.installer-paths.$(dirname $PWD)/{\$name}" '["type:civicrm-ext"]'
+          composer require --ignore-platform-reqs --no-progress composer/installers
+
+          if [ -n "${INPUTS_CIVICRM_VERSION}" ]; then
+            composer require --no-update "civicrm/civicrm-core:${INPUTS_CIVICRM_VERSION}" \
+              "civicrm/civicrm-packages:${INPUTS_CIVICRM_VERSION}"
+          fi
+
+          # Run with --no-scripts so ComposerHelper doesn't prevent installation
+          # of civicrm packages.
+          composer update --no-scripts --no-progress --${MATRIX_PREFER} --optimize-autoloader --ignore-platform-reqs
+          composer composer-phpunit -- update --no-progress --optimize-autoloader
+          composer composer-phpstan -- update --no-progress --optimize-autoloader
+
+      - name: Run PHPStan
+        run: composer phpstan -- analyse -c phpstan.ci.neon

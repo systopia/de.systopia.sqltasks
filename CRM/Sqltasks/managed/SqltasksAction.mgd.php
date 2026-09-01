@@ -1,6 +1,8 @@
 <?php
 // Adds option group for SqltasksAction
 
+declare(strict_types = 1);
+
 return [
   [
     'name' => 'SqltasksAction',

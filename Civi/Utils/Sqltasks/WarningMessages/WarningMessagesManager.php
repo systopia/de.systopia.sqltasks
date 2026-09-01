@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Utils\Sqltasks\WarningMessages;
 
 use Civi\Utils\Sqltasks\WarningMessages\Actions\ArchiveTask;

@@ -1,4 +1,6 @@
-<?php
+<?php // phpcs:ignore PSR1.Files.SideEffects.FoundWithSymbols
+
+declare(strict_types = 1);
 
 use Civi\Api4;
 use CRM_Sqltasks_ExtensionUtil as E;
@@ -94,8 +96,11 @@ if (class_exists('CRM_CivirulesActions_Form_Form')) {
 
       parent::postProcess();
     }
+
   }
 }
 else {
-  throw new Exception('Class "CRM_CivirulesActions_Form_Form" does not exists. Please install "CiviRules" extension.', 1);
+  throw new Exception(
+    'Class "CRM_CivirulesActions_Form_Form" does not exists. Please install "CiviRules" extension.', 1
+  );
 }

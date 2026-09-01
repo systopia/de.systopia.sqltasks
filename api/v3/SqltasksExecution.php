@@ -1,17 +1,8 @@
 <?php
-use CRM_Sqltasks_ExtensionUtil as E;
 
-/**
- * SqltasksExecution.create API specification (optional).
- * This is used for documentation and validation.
- *
- * @param array $spec description of fields supported by this API call
- *
- * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
- */
-function _civicrm_api3_sqltasks_execution_create_spec(&$spec) {
-  // $spec['some_parameter']['api.required'] = 1;
-}
+declare(strict_types = 1);
+
+use CRM_Sqltasks_ExtensionUtil as E;
 
 /**
  * SqltasksExecution.create API.

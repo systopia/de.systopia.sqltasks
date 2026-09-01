@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Trait for Action classes that upload file with sftp
  */
@@ -13,9 +15,14 @@ trait CRM_Sqltasks_Action_SftpTrait {
     $credentials = $this->getConfigValue('upload');
     if (!empty($credentials)) {
       $credentials = trim($credentials);
-      if (preg_match('#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#', $credentials, $match)) {
+      if (preg_match(
+        '#^sftp:\/\/(?<user>[^:]+):(?<password>[^@]+)@(?<host>[\w.-]+)(?<remote_path>\/[\/\w_-]+)$#',
+        $credentials,
+        $match
+      )) {
         return $match;
-      } else {
+      }
+      else {
         return 'ERROR';
       }
     }
@@ -52,7 +59,7 @@ trait CRM_Sqltasks_Action_SftpTrait {
       }
       else {
         // legacy phpseclib v1 (PEAR-style)
-        require_once('Net/SFTP.php');
+        require_once 'Net/SFTP.php';
         $sftp = new Net_SFTP($credentials['host']);
         $mode = NET_SFTP_LOCAL_FILE;
         if (!defined('NET_SFTP_LOGGING') && defined('NET_SFTP_LOG_SIMPLE')) {
@@ -66,12 +73,17 @@ trait CRM_Sqltasks_Action_SftpTrait {
       // upload
       $target_file = $credentials['remote_path'] . '/' . $filename;
       if (!$sftp->put($target_file, $filepath, $mode)) {
-        throw new Exception("Upload to {$credentials['user']}@{$credentials['host']} failed: " . $sftp->getSFTPLog(), 1);
+        $sftpLog = $sftp->getSFTPLog();
+        throw new Exception(
+          "Upload to {$credentials['user']}@{$credentials['host']} failed: "
+          . (is_string($sftpLog) ? $sftpLog : print_r($sftpLog, TRUE)), 1
+        );
       }
 
       $this->log("Uploaded file '{$filename}' to {$credentials['host']}/{$target_file}");
 
-    } else {
+    }
+    else {
       throw new Exception("Upload failed, couldn't parse credentials", 1);
     }
   }
@@ -87,23 +99,30 @@ trait CRM_Sqltasks_Action_SftpTrait {
    * @return mixed
    * @throws Exception
    */
-  function retrySftp(callable $callable, int $maxRetries = 5, int $initialWait = 1, array $expectedErrors = [Exception::class], int $exponent = 2)
-  {
+  public function retrySftp(
+    callable $callable,
+    int $maxRetries = 5,
+    int $initialWait = 1,
+    array $expectedErrors = [Exception::class],
+    int $exponent = 2
+  ) {
     try {
       return call_user_func($callable);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       // get whole inheritance chain
       $errors = class_parents($e);
       array_push($errors, get_class($e));
 
+      // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
       // if unexpected, re-throw
       if (!array_intersect($errors, $expectedErrors)) {
         throw $e;
       }
 
       // exponential backoff
-      if ((int)$maxRetries > 0) {
-        $this->log("Error during SFTP Upload (retrying): " . $e->getMessage(), 'error');
+      if ((int) $maxRetries > 0) {
+        $this->log('Error during SFTP Upload (retrying): ' . $e->getMessage(), 'error');
 
         usleep($initialWait * 1E6);
         return $this->retrySftp($callable, $maxRetries - 1, $initialWait * $exponent, $expectedErrors, $exponent);
@@ -113,4 +132,5 @@ trait CRM_Sqltasks_Action_SftpTrait {
       throw $e;
     }
   }
+
 }

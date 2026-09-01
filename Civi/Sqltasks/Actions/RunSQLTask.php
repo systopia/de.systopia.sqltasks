@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Sqltasks\Actions;
 
-use \Civi\ActionProvider\Action\AbstractAction;
-use \Civi\ActionProvider\Exception\ExecutionException;
-use \Civi\ActionProvider\Parameter\ParameterBagInterface;
-use \Civi\ActionProvider\Parameter\SpecificationBag;
-use \Civi\ActionProvider\Parameter\Specification;
+use Civi\ActionProvider\Action\AbstractAction;
+use Civi\ActionProvider\Exception\ExecutionException;
+use Civi\ActionProvider\Parameter\ParameterBagInterface;
+use Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\ActionProvider\Parameter\Specification;
 
 use CRM_Sqltasks_ExtensionUtil as E;
 
@@ -15,8 +17,8 @@ class RunSQLTask extends AbstractAction {
   /**
    * Run the action
    *
-   * @param ParameterInterface $parameters
-   * @param ParameterBagInterface $output
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
@@ -29,8 +31,9 @@ class RunSQLTask extends AbstractAction {
     $input_values = $parameters->getParameter('input_values');
 
     try {
-      civicrm_api3('Sqltask', 'get', [ 'id' => $task_id ]);
-    } catch (\Exception $ex) {
+      civicrm_api3('Sqltask', 'get', ['id' => $task_id]);
+    }
+    catch (\Exception $ex) {
       throw new ExecutionException(E::ts("Task with ID '%1' not found", [1 => $task_id]));
     }
 
@@ -43,7 +46,8 @@ class RunSQLTask extends AbstractAction {
     if (is_array($input_values)) {
       if (count($input_values) < 1) {
         $exec_params['input_val'] = NULL;
-      } else if (count($input_values) < 2) {
+      }
+      elseif (count($input_values) < 2) {
         $exec_params['input_val'] = $input_values[0];
       }
     }
@@ -58,25 +62,26 @@ class RunSQLTask extends AbstractAction {
       if (isset($return_parameter) && isset($exec_result['values'][$return_parameter])) {
         $output->setParameter('return_value', $exec_result['values'][$return_parameter]);
       }
-    } catch (\Exception $ex) {
+    }
+    catch (\Exception $ex) {
       throw new ExecutionException(E::ts('Task execution failed'));
     }
   }
 
   /**
-   * @return SpecificationBag
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
       new Specification(
-        'task_id',        // string $name
-        'Integer',        // string $dataType
-        E::ts('Task ID'), // string $title
-        TRUE,             // bool $required
-        NULL,             // mixed $defaultValue
-        NULL,             // string|null $fkEntity
-        NULL,             // array $options
-        FALSE             // bool $multiple
+        'task_id',
+        'Integer',
+        E::ts('Task ID'),
+        TRUE,
+        NULL,
+        NULL,
+        NULL,
+        FALSE
       ),
       new Specification(
         'log_to_file',
@@ -102,7 +107,7 @@ class RunSQLTask extends AbstractAction {
   }
 
   /**
-   * @return SpecificationBag
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
@@ -120,7 +125,7 @@ class RunSQLTask extends AbstractAction {
   }
 
   /**
-   * @return SpecificationBag
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag
    */
   public function getOutputSpecification() {
     return new SpecificationBag([
