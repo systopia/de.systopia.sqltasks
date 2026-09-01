@@ -40,17 +40,31 @@ trait CRM_Sqltasks_Action_SftpTrait {
   public function uploadSftp(string $filename, string $filepath) {
     $credentials = $this->getCredentials();
     if ($credentials && $credentials != 'ERROR') {
-      define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
       // connect
-      if (stream_resolve_include_path('Net/SFTP.php') === FALSE) {
-        $sftp = new phpseclib\Net\SFTP($credentials['host']);
-        $mode = phpseclib\Net\SFTP::SOURCE_LOCAL_FILE;
+      if (class_exists(\phpseclib3\Net\SFTP::class)) {
+        $sftpClass = \phpseclib3\Net\SFTP::class;
+        $sftp = new $sftpClass($credentials['host']);
+        $mode = $sftpClass::SOURCE_LOCAL_FILE;
+        if (!defined('NET_SFTP_LOGGING') && defined($sftpClass . '::LOG_SIMPLE')) {
+          define('NET_SFTP_LOGGING', constant($sftpClass . '::LOG_SIMPLE'));
+        }
+      }
+      elseif (class_exists(\phpseclib\Net\SFTP::class)) {
+        $sftpClass = \phpseclib\Net\SFTP::class;
+        $sftp = new $sftpClass($credentials['host']);
+        $mode = $sftpClass::SOURCE_LOCAL_FILE;
+        if (!defined('NET_SFTP_LOGGING') && defined($sftpClass . '::LOG_SIMPLE')) {
+          define('NET_SFTP_LOGGING', constant($sftpClass . '::LOG_SIMPLE'));
+        }
       }
       else {
-        // used for legacy versions of phpseclib
+        // legacy phpseclib v1 (PEAR-style)
         require_once 'Net/SFTP.php';
         $sftp = new Net_SFTP($credentials['host']);
         $mode = NET_SFTP_LOCAL_FILE;
+        if (!defined('NET_SFTP_LOGGING') && defined('NET_SFTP_LOG_SIMPLE')) {
+          define('NET_SFTP_LOGGING', NET_SFTP_LOG_SIMPLE);
+        }
       }
       if (!$sftp->login($credentials['user'], $credentials['password'])) {
         throw new Exception("Login to {$credentials['user']}@{$credentials['host']} Failed", 1);
