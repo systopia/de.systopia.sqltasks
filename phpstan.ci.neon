@@ -20,6 +20,9 @@ parameters:
 			message: '#unknown class phpseclib\\Net\\SFTP\.$#'
 			path: CRM/Sqltasks/Action/SftpTrait.php
 		-
+			message: '#unknown class phpseclib3\\Net\\SFTP\.$#'
+			path: CRM/Sqltasks/Action/SftpTrait.php
+		-
 			message: '#^Class Net_SFTP does not have a constructor and must be instantiated without any parameters\.$#'
 			path: CRM/Sqltasks/Action/SftpTrait.php
 
