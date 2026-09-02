@@ -109,6 +109,7 @@
       action's API calls (formatted as JSON) to the data table.
     {/ts}
   </p>
+  <p>{ts domain="de.systopia.sqltasks"}Note that this only works for tables, not views.{/ts}</p>
 {/htxt}
 
 
