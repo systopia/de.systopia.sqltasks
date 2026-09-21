@@ -128,4 +128,76 @@ class CRM_Sqltasks_Action_ResultHandlerTest extends CRM_Sqltasks_Action_Abstract
     );
   }
 
+  /**
+   * A task that succeeds does not run its error handler. The log should say so
+   * in terms of the error handler, not of a success handler the task may not
+   * even have.
+   */
+  public function testSkippedErrorHandlerIsNamedInTheLog() {
+    $config = [
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_skippedhandler;
+                        CREATE TABLE tmp_test_action_skippedhandler AS ' . self::TEST_CONTACT_SQL,
+        ],
+        [
+          'type'    => 'CRM_Sqltasks_Action_PostSQL',
+          'enabled' => TRUE,
+          'script'  => 'DROP TABLE IF EXISTS tmp_test_action_skippedhandler;',
+        ],
+        [
+          'type'           => 'CRM_Sqltasks_Action_ErrorHandler',
+          'enabled'        => TRUE,
+          'email'          => 'errorhandler@example.com',
+          'email_template' => '1',
+        ],
+      ],
+    ];
+
+    $this->createAndExecuteTask(['config' => $config]);
+
+    $this->assertLogContains(
+      'Skipping Error Handler, no errors were recorded',
+      'The skipped handler should be named, with the reason it was skipped'
+    );
+    $this->assertStringNotContainsString(
+      'Success Handler',
+      implode("\n", $this->log),
+      'This task has no success handler, so the log should not mention one'
+    );
+  }
+
+  /**
+   * The success handler keeps its own message: it is skipped when none of the
+   * actions reported doing anything.
+   */
+  public function testSkippedSuccessHandlerKeepsItsMessage() {
+    $config = [
+      'version' => CRM_Sqltasks_Config_Format::CURRENT,
+      'actions' => [
+        [
+          'type'    => 'CRM_Sqltasks_Action_RunSQL',
+          'enabled' => TRUE,
+          'script'  => 'SELECT 1;',
+        ],
+        [
+          'type'           => 'CRM_Sqltasks_Action_SuccessHandler',
+          'enabled'        => TRUE,
+          'email'          => 'successhandler@example.com',
+          'email_template' => '1',
+        ],
+      ],
+    ];
+
+    $this->createAndExecuteTask(['config' => $config]);
+
+    $this->assertLogContains(
+      "Skipping Success Handler, actions didn't do anything",
+      'The success handler message should be unchanged'
+    );
+  }
+
 }
