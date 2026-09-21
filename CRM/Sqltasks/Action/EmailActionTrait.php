@@ -10,6 +10,13 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
   public function sendEmailMessage(array $params) {
     [$domainEmailName, $domainEmailAddress] = CRM_Core_BAO_Domain::getNameAndEmail();
 
+    // Describe the task and its execution, so that the message template can
+    // name what it is reporting on. Anything the caller passes takes precedence.
+    $params['tplParams'] = array_merge(
+      $this->getTaskTemplateParams(),
+      $params['tplParams'] ?? []
+    );
+
     $templateParams = array_merge(
       [
         'id'        => $params['id'],
@@ -52,6 +59,40 @@ trait CRM_Sqltasks_Action_EmailActionTrait {
 
       $this->log("Sent {$this->getID()} message to '{$email}' with cc: " . implode(',', $ccEmails) . '.');
     }
+  }
+
+  /**
+   * Smarty variables describing the task and the current execution.
+   *
+   * Without these, a notification cannot name the task it belongs to, and the
+   * log is only reachable through the optional attachment.
+   *
+   * @return array<string, mixed>
+   */
+  protected function getTaskTemplateParams(): array {
+    $taskParams = [
+      'sqltask' => [
+        'id'          => $this->task->id,
+        'name'        => $this->task->name,
+        'description' => $this->task->description,
+      ],
+    ];
+
+    $execution = $this->context['execution'] ?? NULL;
+
+    if ($execution instanceof CRM_Sqltasks_BAO_SqltasksExecution) {
+      $result = $execution->result();
+
+      $taskParams['sqltask_execution'] = [
+        'id'          => $execution->id,
+        'error_count' => $result['error_count'],
+        'log'         => $result['logs'],
+        'runtime'     => $result['runtime'],
+        'status'      => $result['status'],
+      ];
+    }
+
+    return $taskParams;
   }
 
 }
