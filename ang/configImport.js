@@ -1,4 +1,4 @@
-(function(angular, $, _) {
+(function(angular, $) {
   var moduleName = "configImport";
 
   var moduleDependencies = ["ngRoute"];
@@ -83,4 +83,4 @@
       }
     };
   });
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$);

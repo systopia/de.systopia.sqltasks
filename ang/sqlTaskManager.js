@@ -1,4 +1,4 @@
-(function(angular, $, _) {
+(function(angular, $) {
   var moduleName = "sqlTaskManager";
   var moduleDependencies = ["ngRoute", "ui.sortable"];
   angular.module(moduleName, moduleDependencies);
@@ -459,4 +459,4 @@
     }
   }));
 
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$);

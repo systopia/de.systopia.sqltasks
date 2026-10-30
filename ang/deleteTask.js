@@ -1,4 +1,4 @@
-(function(angular, $, _) {
+(function(angular, $) {
   var moduleName = "deleteTask";
 
   var moduleDependencies = ["ngRoute"];
@@ -55,4 +55,4 @@
         $scope.$apply();
       });
     });
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$);

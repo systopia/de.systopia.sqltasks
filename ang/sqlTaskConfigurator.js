@@ -1,4 +1,4 @@
-(function(angular, $, _) {
+(function(angular, $) {
   var moduleName = "sqlTaskConfigurator";
 
   var moduleDependencies = ["ngRoute", "ui.sortable"];
@@ -673,7 +673,7 @@
         $scope.onParamsChange = function (paramsJSON) {
           try {
             const params = JSON.parse(paramsJSON);
-            if (!_.isEqual(params, $scope.parsedApiUrl.parameters)) setApiUrl("");
+            if (!angular.equals(params, $scope.parsedApiUrl.parameters)) setApiUrl("");
           } catch (_error) {}
         }
 
@@ -2205,4 +2205,4 @@
     };
   });
 
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$);

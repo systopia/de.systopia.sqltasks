@@ -1,4 +1,4 @@
-(function(angular, $, _) {
+(function(angular, $) {
   var moduleName = "taskRunner";
   var moduleDependencies = ["ngRoute"];
   angular.module(moduleName, moduleDependencies);
@@ -176,4 +176,4 @@
       $scope.loadTask(),
     ]).then(() => $scope.$apply());
   });
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$);
